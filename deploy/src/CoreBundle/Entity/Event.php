@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -40,11 +43,33 @@ class Event
      */
     private $description;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Tournament", inversedBy="events")
+     */
+    private $tournament;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Game", inversedBy="events")
+     */
+    private $game;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Phase", mappedBy="event")
+     */
+    private $phases;
+
+    /**
+     *
+     */
+    public function __construct()
+    {
+        $this->phases = new ArrayCollection();
+    }
 
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -66,35 +91,19 @@ class Event
     }
 
     /**
-     * @param string $name
-     *
-     * @return Event
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @param string $description
-     *
-     * @return Event
+     * @param string $name
      */
-    public function setDescription($description)
+    public function setName(string $name)
     {
-        $this->description = $description;
-
-        return $this;
+        $this->name = $name;
     }
 
     /**
@@ -103,6 +112,54 @@ class Event
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return Tournament
+     */
+    public function getTournament(): Tournament
+    {
+        return $this->tournament;
+    }
+
+    /**
+     * @param Tournament $tournament
+     */
+    public function setTournament(Tournament $tournament)
+    {
+        $this->tournament = $tournament;
+    }
+
+    /**
+     * @return Game
+     */
+    public function getGame(): Game
+    {
+        return $this->game;
+    }
+
+    /**
+     * @param Game $game
+     */
+    public function setGame(Game $game)
+    {
+        $this->game = $game;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getPhases(): ArrayCollection
+    {
+        return $this->phases;
     }
 }
 

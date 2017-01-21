@@ -6,6 +6,7 @@ namespace AppBundle\Command;
 
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Game;
+use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\Tournament;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -63,12 +64,15 @@ class TournamentImportCommand extends ContainerAwareCommand
 
         $client = new Client();
         $slug = 'tournament/syndicate-2016';
-        $response = $client->get('https://api.smash.gg/'.$slug.'?expand[]=event');
+        $response = $client->get('https://api.smash.gg/'.$slug.'?expand[]=event&expand[]=phase');
 
         $apiData = \GuzzleHttp\json_decode($response->getBody(), true);
         $tournamentData = $apiData['entities']['tournament'];
         $eventsData = $apiData['entities']['event'];
+
+        $events = [];
         $games = [];
+        $phases = [];
 
         $tournament = $this->findTournament($slug);
         $tournament->setName($tournamentData['name']);
@@ -84,10 +88,28 @@ class TournamentImportCommand extends ContainerAwareCommand
         }
 
         foreach ($eventsData as $eventData) {
-            $event = $this->findEvent($eventData['id'], $tournament);
+            $eventId = $eventData['id'];
+            $event = $this->findEvent($eventId, $tournament);
             $event->setName($eventData['name']);
             $event->setDescription($eventData['description']);
-            // TODO Assign game to event.
+            $event->setTournament($tournament);
+
+            $game = $games[$eventData['videogameId']];
+            $event->setGame($game);
+
+            $events[$eventId] = $event;
+        }
+
+        foreach ($apiData['entities']['phase'] as $phaseData) {
+            $phaseId = $phaseData['id'];
+            $phase = $this->findPhase($phaseId);
+            $phase->setName($phaseData['name']);
+            $phase->setPhaseOrder($phaseData['phaseOrder']);
+
+            $event = $events[$phaseData['eventId']];
+            $phase->setEvent($event);
+
+            $phases[$phaseId] = $phase;
         }
 
         $this->entityManager->flush();
@@ -96,12 +118,12 @@ class TournamentImportCommand extends ContainerAwareCommand
 
     /**
      * @param string $slug
-     * @return Tournament|null
+     * @return Tournament
      */
-    protected function findTournament(string $slug)
+    protected function findTournament(string $slug): Tournament
     {
         $tournament = $this->getRepository('CoreBundle:Tournament')->findOneBy([
-            'slug' => $slug,
+            'smashggSlug' => $slug,
         ]);
 
         if (!$tournament instanceof Tournament) {
@@ -117,13 +139,13 @@ class TournamentImportCommand extends ContainerAwareCommand
     /**
      * @param int        $smashGgId
      * @param Tournament $tournament
-     * @return Event|null
+     * @return Event
      */
-    protected function findEvent(int $smashGgId, Tournament $tournament)
+    protected function findEvent(int $smashGgId, Tournament $tournament): Event
     {
-        // TODO Also search by tournament.
         $event = $this->getRepository('CoreBundle:Event')->findOneBy([
             'smashggId' => $smashGgId,
+            'tournament' => $tournament,
         ]);
 
         if (!$event instanceof Event) {
@@ -140,7 +162,7 @@ class TournamentImportCommand extends ContainerAwareCommand
      * @param int $smashGgId
      * @return Game
      */
-    protected function findGame(int $smashGgId)
+    protected function findGame(int $smashGgId): Game
     {
         $game = $this->getRepository('CoreBundle:Game')->findOneBy([
             'smashggId' => $smashGgId,
@@ -157,10 +179,30 @@ class TournamentImportCommand extends ContainerAwareCommand
     }
 
     /**
+     * @param int $smashGgId
+     * @return Phase
+     */
+    protected function findPhase(int $smashGgId): Phase
+    {
+        $phase = $this->getRepository('CoreBundle:Phase')->findOneBy([
+            'smashggId' => $smashGgId,
+        ]);
+
+        if (!$phase instanceof Phase) {
+            $phase = new Phase();
+            $phase->setSmashggId($smashGgId);
+
+            $this->entityManager->persist($phase);
+        }
+
+        return $phase;
+    }
+
+    /**
      * @param string $entityName
      * @return EntityRepository
      */
-    protected function getRepository(string $entityName)
+    protected function getRepository(string $entityName): EntityRepository
     {
         return $this->entityManager->getRepository($entityName);
     }

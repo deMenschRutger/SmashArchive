@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace CoreBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="game")
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\GameRepository")
+ * @ORM\Table(name="phase")
+ * @ORM\Entity(repositoryClass="CoreBundle\Repository\PhaseRepository")
  */
-class Game
+class Phase
 {
     /**
      * @var int
@@ -32,29 +31,21 @@ class Game
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
 
     /**
-     * @var string
+     * @var int
      *
-     * @ORM\Column(name="display_name", type="string", length=255)
+     * @ORM\Column(name="phaseOrder", type="integer")
      */
-    private $displayName;
+    private $phaseOrder;
 
     /**
-     * @ORM\OneToMany(targetEntity="Event", mappedBy="game")
+     * @ORM\ManyToOne(targetEntity="Event", inversedBy="phases")
      */
-    private $events;
-
-    /**
-     *
-     */
-    public function __construct()
-    {
-        $this->events = new ArrayCollection();
-    }
+    private $event;
 
     /**
      * @return int
@@ -65,7 +56,7 @@ class Game
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getSmashggId()
     {
@@ -73,7 +64,7 @@ class Game
     }
 
     /**
-     * @param int $smashggId
+     * @param string $smashggId
      */
     public function setSmashggId($smashggId)
     {
@@ -97,26 +88,35 @@ class Game
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getDisplayName(): string
+    public function getPhaseOrder(): int
     {
-        return $this->displayName;
+        return $this->phaseOrder;
     }
 
     /**
-     * @param string $displayName
+     * @param integer $phaseOrder
      */
-    public function setDisplayName(string $displayName)
+    public function setPhaseOrder(int $phaseOrder)
     {
-        $this->displayName = $displayName;
+        $this->phaseOrder = $phaseOrder;
     }
 
     /**
-     * @return ArrayCollection
+     * @return Event
      */
-    public function getEvents()
+    public function getEvent(): Event
     {
-        return $this->events;
+        return $this->event;
+    }
+
+    /**
+     * @param Event $event
+     */
+    public function setEvent(Event $event)
+    {
+        $this->event = $event;
     }
 }
+

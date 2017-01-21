@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace CoreBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -41,9 +44,22 @@ class Tournament
     private $slug;
 
     /**
+     * @ORM\OneToMany(targetEntity="Event", mappedBy="tournament")
+     */
+    private $events;
+
+    /**
+     *
+     */
+    public function __construct()
+    {
+        $this->events = new ArrayCollection();
+    }
+
+    /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -65,43 +81,43 @@ class Tournament
     }
 
     /**
-     * @param string $name
-     *
-     * @return Tournament
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
-     * @param string $slug
-     *
-     * @return Tournament
+     * @param string $name
      */
-    public function setSlug($slug)
+    public function setName(string $name)
     {
-        $this->slug = $slug;
-
-        return $this;
+        $this->name = $name;
     }
 
     /**
      * @return string
      */
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->slug;
+    }
+
+    /**
+     * @param string $slug
+     */
+    public function setSlug(string $slug)
+    {
+        $this->slug = $slug;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getEvents(): ArrayCollection
+    {
+        return $this->events;
     }
 }
 
