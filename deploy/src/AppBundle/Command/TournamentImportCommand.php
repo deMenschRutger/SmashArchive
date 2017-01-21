@@ -7,6 +7,7 @@ namespace AppBundle\Command;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Game;
 use CoreBundle\Entity\Phase;
+use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Tournament;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -64,7 +65,15 @@ class TournamentImportCommand extends ContainerAwareCommand
 
         $client = new Client();
         $slug = 'tournament/syndicate-2016';
-        $response = $client->get('https://api.smash.gg/'.$slug.'?expand[]=event&expand[]=phase');
+        $response = $client->get('https://api.smash.gg/'.$slug, [
+            'query' => [
+                'expand' => [
+                    'event',
+                    'phase',
+                    'groups',
+                ],
+            ],
+        ]);
 
         $apiData = \GuzzleHttp\json_decode($response->getBody(), true);
         $tournamentData = $apiData['entities']['tournament'];
@@ -73,6 +82,7 @@ class TournamentImportCommand extends ContainerAwareCommand
         $events = [];
         $games = [];
         $phases = [];
+        $phaseGroups = [];
 
         $tournament = $this->findTournament($slug);
         $tournament->setName($tournamentData['name']);
@@ -112,8 +122,39 @@ class TournamentImportCommand extends ContainerAwareCommand
             $phases[$phaseId] = $phase;
         }
 
+        foreach ($apiData['entities']['groups'] as $phaseGroupData) {
+            $phaseGroupId = $phaseGroupData['id'];
+            $phaseGroup = $this->findPhaseGroup($phaseGroupId);
+            $phaseGroup->setName($phaseGroupData['displayIdentifier']);
+
+            $phase = $phases[$phaseGroupData['phaseId']];
+            $phaseGroup->setPhase($phase);
+
+            $this->processPhaseGroup($phaseGroupId);
+
+            $phaseGroups[$phaseGroupId] = $phaseGroup;
+        }
+
         $this->entityManager->flush();
         $this->io->success('Successfully imported the tournament!');
+    }
+
+    /**
+     * @param int $id
+     */
+    protected function processPhaseGroup(int $id)
+    {
+        $client = new Client();
+        $response = $client->get('https://api.smash.gg/phase_group/'.$id, [
+            'query' => [
+                'expand' => [
+                    'sets',
+                ],
+            ],
+        ]);
+
+        $apiData = \GuzzleHttp\json_decode($response->getBody(), true);
+        $phaseGroupData = $apiData;
     }
 
     /**
@@ -196,6 +237,26 @@ class TournamentImportCommand extends ContainerAwareCommand
         }
 
         return $phase;
+    }
+
+    /**
+     * @param int $smashGgId
+     * @return PhaseGroup
+     */
+    protected function findPhaseGroup(int $smashGgId): PhaseGroup
+    {
+        $phaseGroup = $this->getRepository('CoreBundle:PhaseGroup')->findOneBy([
+            'smashggId' => $smashGgId,
+        ]);
+
+        if (!$phaseGroup instanceof PhaseGroup) {
+            $phaseGroup = new PhaseGroup();
+            $phaseGroup->setSmashggId($smashGgId);
+
+            $this->entityManager->persist($phaseGroup);
+        }
+
+        return $phaseGroup;
     }
 
     /**

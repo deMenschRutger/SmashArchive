@@ -7,10 +7,10 @@ namespace CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="phase")
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\PhaseRepository")
+ * @ORM\Table(name="phase_group")
+ * @ORM\Entity(repositoryClass="CoreBundle\Repository\PhaseGroupRepository")
  */
-class Phase
+class PhaseGroup
 {
     /**
      * @var int
@@ -36,21 +36,9 @@ class Phase
     private $name;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="phaseOrder", type="integer")
+     * @ORM\ManyToOne(targetEntity="Phase", inversedBy="phaseGroups")
      */
-    private $phaseOrder;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Event", inversedBy="phases")
-     */
-    private $event;
-
-    /**
-     * @ORM\OneToMany(targetEntity="PhaseGroup", mappedBy="phase")
-     */
-    private $phaseGroups;
+    private $phase;
 
     /**
      * @return int
@@ -93,35 +81,19 @@ class Phase
     }
 
     /**
-     * @return int
+     * @return Phase
      */
-    public function getPhaseOrder(): int
+    public function getPhase(): Phase
     {
-        return $this->phaseOrder;
+        return $this->phase;
     }
 
     /**
-     * @param integer $phaseOrder
+     * @param Phase $phase
      */
-    public function setPhaseOrder(int $phaseOrder)
+    public function setPhase(Phase $phase)
     {
-        $this->phaseOrder = $phaseOrder;
-    }
-
-    /**
-     * @return Event
-     */
-    public function getEvent(): Event
-    {
-        return $this->event;
-    }
-
-    /**
-     * @param Event $event
-     */
-    public function setEvent(Event $event)
-    {
-        $this->event = $event;
+        $this->phase = $phase;
     }
 }
 
