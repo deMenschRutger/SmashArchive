@@ -2,7 +2,9 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\Tournament;
 use Doctrine\ORM\EntityManager;
+use GuzzleHttp\Client;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -53,5 +55,33 @@ class TournamentImportCommand extends ContainerAwareCommand
     {
         $this->io = new SymfonyStyle($input, $output);
         $this->io->title('Import tournament...');
+
+        $client = new Client();
+        $slug = 'syndicate-2016';
+        $response = $client->get('https://api.smash.gg/tournament/'.$slug);
+        $tournamentData = \GuzzleHttp\json_decode($response->getBody(), true);
+
+        $tournament = $this
+            ->entityManager
+            ->getRepository('AppBundle:Tournament')
+            ->findOneBy([
+                'slug' => $slug,
+            ]);
+        ;
+
+        if (!$tournament instanceof Tournament) {
+            $slug = substr($tournamentData['entities']['tournament']['slug'], 11);
+
+            $tournament = new Tournament();
+            $tournament->setSlug($slug);
+
+            $this->entityManager->persist($tournament);
+        }
+
+        $tournament->setName($tournamentData['entities']['tournament']['name']);
+
+        $this->entityManager->flush();
+
+        $this->io->success('Successfully imported the tournament!');
     }
 }
