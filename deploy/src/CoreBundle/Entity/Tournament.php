@@ -1,12 +1,12 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="tournament")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\TournamentRepository")
+ * @ORM\Entity(repositoryClass="CoreBundle\Repository\TournamentRepository")
  */
 class Tournament
 {
@@ -22,6 +22,13 @@ class Tournament
     /**
      * @var string
      *
+     * @ORM\Column(name="smashgg_slug", type="string", length=255, nullable=true)
+     */
+    private $smashggSlug;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
@@ -33,10 +40,7 @@ class Tournament
      */
     private $slug;
 
-
     /**
-     * Get id
-     *
      * @return int
      */
     public function getId()
@@ -45,8 +49,22 @@ class Tournament
     }
 
     /**
-     * Set name
-     *
+     * @return string
+     */
+    public function getSmashggSlug()
+    {
+        return $this->smashggSlug;
+    }
+
+    /**
+     * @param string $smashggSlug
+     */
+    public function setSmashggSlug($smashggSlug)
+    {
+        $this->smashggSlug = $smashggSlug;
+    }
+
+    /**
      * @param string $name
      *
      * @return Tournament
@@ -59,8 +77,6 @@ class Tournament
     }
 
     /**
-     * Get name
-     *
      * @return string
      */
     public function getName()
@@ -69,8 +85,6 @@ class Tournament
     }
 
     /**
-     * Set slug
-     *
      * @param string $slug
      *
      * @return Tournament
@@ -83,8 +97,6 @@ class Tournament
     }
 
     /**
-     * Get slug
-     *
      * @return string
      */
     public function getSlug()
