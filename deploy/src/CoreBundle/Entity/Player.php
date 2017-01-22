@@ -8,10 +8,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="entrant")
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\EntrantRepository")
+ * @ORM\Table(name="player")
+ * @ORM\Entity(repositoryClass="CoreBundle\Repository\PlayerRepository")
  */
-class Entrant
+class Player
 {
     /**
      * @var int
@@ -32,34 +32,21 @@ class Entrant
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(name="gamer_tag", type="string")
      */
-    private $name;
+    private $gamerTag;
 
     /**
-     * @ORM\OneToMany(targetEntity="Set", mappedBy="entrantOne")
+     * @ORM\ManyToMany(targetEntity="Entrant", mappedBy="players")
      */
-    private $entrantOneSets;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Set", mappedBy="entrantTwo")
-     */
-    private $entrantTwoSets;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Player", inversedBy="entrants")
-     * @ORM\JoinTable(name="entrants_players")
-     */
-    private $players;
+    private $entrants;
 
     /**
      *
      */
     public function __construct()
     {
-        $this->entrantOneSets = new ArrayCollection();
-        $this->entrantTwoSets = new ArrayCollection();
-        $this->players = new ArrayCollection();
+        $this->entrants = new ArrayCollection();
     }
 
     /**
@@ -89,34 +76,33 @@ class Entrant
     /**
      * @return string
      */
-    public function getName(): string
+    public function getGamerTag(): string
     {
-        return $this->name;
+        return $this->gamerTag;
     }
 
     /**
-     * @param string $name
+     * @param string $gamerTag
      */
-    public function setName(string $name)
+    public function setGamerTag(string $gamerTag)
     {
-        $this->name = $name;
+        $this->gamerTag = $gamerTag;
     }
 
     /**
      * @return ArrayCollection
      */
-    public function getPlayers()
+    public function getEntrants()
     {
-        return $this->players;
+        return $this->entrants;
     }
 
     /**
-     * @param Player $player
+     * @param Entrant $entrant
      */
-    public function addPlayer(Player $player)
+    public function addEntrant(Entrant $entrant)
     {
-        $player->addEntrant($this);
-        $this->players[] = $player;
+        $this->entrants[] = $entrant;
     }
 }
 

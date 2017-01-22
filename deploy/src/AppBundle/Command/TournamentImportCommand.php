@@ -9,6 +9,7 @@ use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Game;
 use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\PhaseGroup;
+use CoreBundle\Entity\Player;
 use CoreBundle\Entity\Set;
 use CoreBundle\Entity\Tournament;
 use Doctrine\ORM\EntityManager;
@@ -66,7 +67,7 @@ class TournamentImportCommand extends ContainerAwareCommand
         $this->io->title('Import tournament...');
 
         $client = new Client();
-        $slug = 'tournament/syndicate-2016';
+        $slug = 'tournament/arcamelee-1';
         $response = $client->get('https://api.smash.gg/'.$slug, [
             'query' => [
                 'expand' => ['event', 'phase', 'groups'],
@@ -154,6 +155,15 @@ class TournamentImportCommand extends ContainerAwareCommand
             $entrantId = $entrantData['id'];
             $entrant = $this->findEntrant($entrantId);
             $entrant->setName($entrantData['name']);
+
+            foreach ($entrantData['playerIds'] as $playerId) {
+                $playerData = $entrantData['mutations']['players'][$playerId];
+
+                $player = $this->findPlayer($playerId);
+                $player->setGamerTag($playerData['gamerTag']);
+
+                $entrant->addPlayer($player);
+            }
 
             $entrants[$entrantId] = $entrant;
         }
@@ -297,6 +307,26 @@ class TournamentImportCommand extends ContainerAwareCommand
         }
 
         return $set;
+    }
+
+    /**
+     * @param int $smashGgId
+     * @return Player
+     */
+    protected function findPlayer(int $smashGgId): Player
+    {
+        $player = $this->getRepository('CoreBundle:Player')->findOneBy([
+            'smashggId' => $smashGgId,
+        ]);
+
+        if (!$player instanceof Player) {
+            $player = new Player();
+            $player->setSmashggId($smashGgId);
+
+            $this->entityManager->persist($player);
+        }
+
+        return $player;
     }
 
     /**
