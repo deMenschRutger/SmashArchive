@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace CoreBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="phase_group")
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\PhaseGroupRepository")
+ * @ORM\Table(name="entrant")
+ * @ORM\Entity(repositoryClass="CoreBundle\Repository\EntrantRepository")
  */
-class PhaseGroup
+class Entrant
 {
     /**
      * @var int
@@ -37,14 +36,14 @@ class PhaseGroup
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Phase", inversedBy="phaseGroups")
+     * @ORM\OneToMany(targetEntity="Set", mappedBy="entrantOne")
      */
-    private $phase;
+    private $entrantOneSets;
 
     /**
-     * @ORM\OneToMany(targetEntity="Set", mappedBy="phaseGroup")
+     * @ORM\OneToMany(targetEntity="Set", mappedBy="entrantTwo")
      */
-    private $sets;
+    private $entrantTwoSets;
 
     /**
      * @return int
@@ -84,30 +83,6 @@ class PhaseGroup
     public function setName(string $name)
     {
         $this->name = $name;
-    }
-
-    /**
-     * @return Phase
-     */
-    public function getPhase(): Phase
-    {
-        return $this->phase;
-    }
-
-    /**
-     * @param Phase $phase
-     */
-    public function setPhase(Phase $phase)
-    {
-        $this->phase = $phase;
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getSets(): ArrayCollection
-    {
-        return $this->sets;
     }
 }
 
