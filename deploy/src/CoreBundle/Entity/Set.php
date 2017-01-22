@@ -161,7 +161,7 @@ class Set
     /**
      * @return Entrant
      */
-    public function getWinner(): Entrant
+    public function getWinner()
     {
         return $this->winner;
     }
@@ -177,7 +177,7 @@ class Set
     /**
      * @return Entrant
      */
-    public function getLoser(): Entrant
+    public function getLoser()
     {
         return $this->loser;
     }
