@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -113,9 +114,9 @@ class Tournament
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getEvents(): ArrayCollection
+    public function getEvents(): Collection
     {
         return $this->events;
     }

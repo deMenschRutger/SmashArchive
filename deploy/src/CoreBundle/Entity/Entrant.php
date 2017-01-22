@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -103,11 +104,20 @@ class Entrant
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getPlayers()
+    public function getPlayers(): Collection
     {
         return $this->players;
+    }
+
+    /**
+     * @param Player $player
+     * @return bool
+     */
+    public function hasPlayer(Player $player)
+    {
+        return $this->players->contains($player);
     }
 
     /**

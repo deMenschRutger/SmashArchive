@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -155,9 +156,9 @@ class Event
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection
      */
-    public function getPhases(): ArrayCollection
+    public function getPhases(): Collection
     {
         return $this->phases;
     }

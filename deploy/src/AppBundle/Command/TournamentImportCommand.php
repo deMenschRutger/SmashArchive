@@ -67,7 +67,8 @@ class TournamentImportCommand extends ContainerAwareCommand
         $this->io->title('Import tournament...');
 
         $client = new Client();
-        $slug = 'tournament/arcamelee-1';
+//        $slug = 'tournament/arcamelee-1';
+        $slug = 'tournament/syndicate-2016';
         $response = $client->get('https://api.smash.gg/'.$slug, [
             'query' => [
                 'expand' => ['event', 'phase', 'groups'],
@@ -150,6 +151,19 @@ class TournamentImportCommand extends ContainerAwareCommand
 
         $apiData = \GuzzleHttp\json_decode($response->getBody(), true);
         $entrants = [];
+        $players = [];
+
+        foreach ($apiData['entities']['player'] as $playerData) {
+            $playerId = $playerData['id'];
+            $player = $this->findPlayer($playerId);
+            $player->setGamerTag($playerData['gamerTag']);
+
+            $players[$playerId] = $player;
+        }
+
+        // We need to flush the entity manager here, otherwise the next event won't find new players created in
+        // previous events associated with this tournament.
+        $this->entityManager->flush();
 
         foreach ($apiData['entities']['entrants'] as $entrantData) {
             $entrantId = $entrantData['id'];
@@ -157,13 +171,14 @@ class TournamentImportCommand extends ContainerAwareCommand
             $entrant->setName($entrantData['name']);
 
             foreach ($entrantData['playerIds'] as $playerId) {
-                $playerData = $entrantData['mutations']['players'][$playerId];
+                $player = $players[$playerId];
 
-                $player = $this->findPlayer($playerId);
-                $player->setGamerTag($playerData['gamerTag']);
-
-                $entrant->addPlayer($player);
+                if (!$entrant->hasPlayer($player)) {
+                    $entrant->addPlayer($player);
+                }
             }
+
+            // TODO Also remove players that are no longer part of the entrant.
 
             $entrants[$entrantId] = $entrant;
         }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CoreBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -122,6 +123,14 @@ class Phase
     public function setEvent(Event $event)
     {
         $this->event = $event;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getPhaseGroups(): Collection
+    {
+        return $this->phaseGroups;
     }
 }
 

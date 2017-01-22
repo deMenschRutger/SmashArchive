@@ -9,3 +9,9 @@ services:
         arguments: ["@doctrine.orm.default_entity_manager"]
         tags:
             - { name: console.command }
+
+    event.generate.results:
+        class: AppBundle\Command\EventGenerateResultsCommand
+        arguments: ["@doctrine.orm.default_entity_manager"]
+        tags:
+            - { name: console.command }
