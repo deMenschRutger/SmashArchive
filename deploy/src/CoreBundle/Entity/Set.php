@@ -29,6 +29,13 @@ class Set
     private $smashggId;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="round", type="integer")
+     */
+    private $round;
+
+    /**
      * @var PhaseGroup
      *
      * @ORM\ManyToOne(targetEntity="PhaseGroup", inversedBy="sets")
@@ -41,6 +48,20 @@ class Set
      * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="entrantOneSets")
      */
     private $entrantOne;
+
+    /**
+     * @var Entrant
+     *
+     * @ORM\ManyToOne(targetEntity="Entrant")
+     */
+    private $winner;
+
+    /**
+     * @var Entrant
+     *
+     * @ORM\ManyToOne(targetEntity="Entrant")
+     */
+    private $loser;
 
     /**
      * @var Entrant
@@ -66,11 +87,27 @@ class Set
     }
 
     /**
-     * @param string $smashggId
+     * @param int $smashggId
      */
     public function setSmashggId($smashggId)
     {
         $this->smashggId = $smashggId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRound(): int
+    {
+        return $this->round;
+    }
+
+    /**
+     * @param int $round
+     */
+    public function setRound(int $round)
+    {
+        $this->round = $round;
     }
 
     /**
@@ -119,6 +156,38 @@ class Set
     public function setEntrantTwo(Entrant $entrantTwo)
     {
         $this->entrantTwo = $entrantTwo;
+    }
+
+    /**
+     * @return Entrant
+     */
+    public function getWinner(): Entrant
+    {
+        return $this->winner;
+    }
+
+    /**
+     * @param Entrant $winner
+     */
+    public function setWinner(Entrant $winner = null)
+    {
+        $this->winner = $winner;
+    }
+
+    /**
+     * @return Entrant
+     */
+    public function getLoser(): Entrant
+    {
+        return $this->loser;
+    }
+
+    /**
+     * @param Entrant $loser
+     */
+    public function setLoser(Entrant $loser = null)
+    {
+        $this->loser = $loser;
     }
 }
 

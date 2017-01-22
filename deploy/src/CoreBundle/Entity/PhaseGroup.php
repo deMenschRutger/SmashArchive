@@ -38,6 +38,13 @@ class PhaseGroup
     private $name;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="type", type="smallint")
+     */
+    private $type;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Phase", inversedBy="phaseGroups")
      */
     private $phase;
@@ -85,6 +92,22 @@ class PhaseGroup
     public function setName(string $name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getType(): int
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param int $type
+     */
+    public function setType(int $type)
+    {
+        $this->type = $type;
     }
 
     /**

@@ -67,8 +67,8 @@ class TournamentImportCommand extends ContainerAwareCommand
         $this->io->title('Import tournament...');
 
         $client = new Client();
-//        $slug = 'tournament/arcamelee-1';
-        $slug = 'tournament/syndicate-2016';
+        $slug = 'tournament/arcamelee-1';
+//        $slug = 'tournament/syndicate-2016';
         $response = $client->get('https://api.smash.gg/'.$slug, [
             'query' => [
                 'expand' => ['event', 'phase', 'groups'],
@@ -125,6 +125,7 @@ class TournamentImportCommand extends ContainerAwareCommand
             $phaseGroupId = $phaseGroupData['id'];
             $phaseGroup = $this->findPhaseGroup($phaseGroupId);
             $phaseGroup->setName($phaseGroupData['displayIdentifier']);
+            $phaseGroup->setType($phaseGroupData['groupTypeId']);
 
             $phase = $phases[$phaseGroupData['phaseId']];
             $phaseGroup->setPhase($phase);
@@ -185,10 +186,13 @@ class TournamentImportCommand extends ContainerAwareCommand
 
         foreach ($apiData['entities']['sets'] as $setData) {
             $set = $this->findSet($setData['id']);
+            $set->setRound($setData['round']);
             $set->setPhaseGroup($phaseGroup);
 
             $entrantOneId = $setData['entrant1Id'];
             $entrantTwoId = $setData['entrant2Id'];
+            $entrantOne = null;
+            $entrantTwo = null;
 
             if ($entrantOneId) {
                 $entrantOne = $entrants[$entrantOneId];
@@ -198,6 +202,14 @@ class TournamentImportCommand extends ContainerAwareCommand
             if ($entrantTwoId) {
                 $entrantTwo = $entrants[$entrantTwoId];
                 $set->setEntrantTwo($entrantTwo);
+            }
+
+            if ($setData['winnerId'] && $setData['winnerId'] == $setData['entrant1Id']) {
+                $set->setWinner($entrantOne);
+                $set->setLoser($entrantTwo);
+            } elseif ($setData['winnerId'] && $setData['winnerId'] == $setData['entrant2Id']) {
+                $set->setWinner($entrantTwo);
+                $set->setLoser($entrantOne);
             }
         }
     }
