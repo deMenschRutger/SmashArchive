@@ -67,49 +67,71 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
         $phases = $this
             ->entityManager
             ->createQueryBuilder()
-            ->select('p')
+            ->select('p, pg, s')
             ->from('CoreBundle:Phase', 'p')
+            ->join('p.phaseGroups', 'pg')
+            ->join('pg.sets', 's')
             ->join('p.event', 'e')
             ->where('e.id = ?1')
             ->setParameter(1, $eventId)
             ->orderBy('p.phaseOrder')
+            ->addOrderBy('s.round')
             ->getQuery()
             ->getResult()
         ;
 
-        $sets = [];
-
         foreach ($phases as $phase) {
             /** @var PhaseGroup $phaseGroup */
             foreach ($phase->getPhaseGroups() as $phaseGroup) {
-                /** @var Set $set */
-                foreach ($phaseGroup->getSets() as $set) {
-                    $round = $set->getRound();
+                $this->processPhaseGroup($phaseGroup);
 
-                    if ($round < 0) {
-                        $sets[$round][] = $set;
-                    }
-                }
+                break 2;
             }
         }
+    }
 
-        $counter = count($sets[-1]) * 2 + 1;
+    /**
+     * @param PhaseGroup $phaseGroup
+     */
+    protected function processPhaseGroup(PhaseGroup $phaseGroup)
+    {
+        $sets = $phaseGroup->getSets();
 
-        foreach ($sets as $round => $roundSets) {
+        if (count($sets) === 0) {
+            $this->io->writeln('No sets found.');
+
+            return;
+        }
+
+        $setsByRound = [];
+
+        /** @var Set $set */
+        foreach ($sets as $set) {
+            $round = $set->getRound();
+
             if ($round < 0) {
-                foreach ($roundSets as $set) {
-                    $counter--;
-                    $loser = $set->getLoser();
-
-                    if ($loser instanceof Entrant) {
-                        $this->io->writeln($counter.': '.$loser->getName());
-                    } else {
-                        $this->io->writeln('bye');
-                    }
-                }
+                $setsByRound[$round][] = $set;
             }
         }
 
-        // TODO Include GFs.
+        /** @var Set $grandFinals */
+        $grandFinals = $sets->last();
+
+        $this->io->writeln('1: '.$grandFinals->getWinner()->getName());
+        $this->io->writeln('2: '.$grandFinals->getLoser()->getName());
+
+        $ranking = 3;
+
+        foreach ($setsByRound as $round => $roundSets) {
+            foreach ($roundSets as $set) {
+                $loser = $set->getLoser();
+
+                if ($loser instanceof Entrant) {
+                    $this->io->writeln($ranking.': '.$loser->getName());
+                }
+            }
+
+            $ranking += count($roundSets);
+        }
     }
 }
