@@ -8,7 +8,9 @@ use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Set;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Internal\Hydration\ArrayHydrator;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -61,7 +63,7 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
     {
         $this->io = new SymfonyStyle($input, $output);
 
-        $eventId = 1;
+        $eventId = 3;
 
         /** @var Phase[] $phases */
         $phases = $this
@@ -74,7 +76,7 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
             ->join('p.event', 'e')
             ->where('e.id = ?1')
             ->setParameter(1, $eventId)
-            ->orderBy('p.phaseOrder')
+            ->orderBy('p.phaseOrder', 'DESC')
             ->addOrderBy('s.round')
             ->getQuery()
             ->getResult()
@@ -84,8 +86,6 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
             /** @var PhaseGroup $phaseGroup */
             foreach ($phase->getPhaseGroups() as $phaseGroup) {
                 $this->processPhaseGroup($phaseGroup);
-
-                break 2;
             }
         }
     }
@@ -95,7 +95,7 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
      */
     protected function processPhaseGroup(PhaseGroup $phaseGroup)
     {
-        $sets = $phaseGroup->getSets();
+        $sets = $phaseGroup->getSets()->getValues();
 
         if (count($sets) === 0) {
             $this->io->writeln('No sets found.');
@@ -115,10 +115,22 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
         }
 
         /** @var Set $grandFinals */
-        $grandFinals = $sets->last();
+        $grandFinals = array_pop($sets);
 
-        $this->io->writeln('1: '.$grandFinals->getWinner()->getName());
-        $this->io->writeln('2: '.$grandFinals->getLoser()->getName());
+        if (!$grandFinals->getWinner() instanceof Entrant) {
+            $grandFinals = array_pop($sets);
+        }
+
+        $grandFinalsWinner = $grandFinals->getWinner();
+        $grandFinalsLoser = $grandFinals->getLoser();
+
+        if ($grandFinalsWinner instanceof Entrant) {
+            $this->io->writeln('1: '.$grandFinals->getWinner()->getName());
+        }
+
+        if ($grandFinalsLoser instanceof Entrant) {
+            $this->io->writeln('2: '.$grandFinals->getLoser()->getName());
+        }
 
         $ranking = 3;
 
