@@ -52,6 +52,13 @@ class Set
     /**
      * @var Entrant
      *
+     * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="entrantTwoSets")
+     */
+    private $entrantTwo;
+
+    /**
+     * @var Entrant
+     *
      * @ORM\ManyToOne(targetEntity="Entrant")
      */
     private $winner;
@@ -62,13 +69,6 @@ class Set
      * @ORM\ManyToOne(targetEntity="Entrant")
      */
     private $loser;
-
-    /**
-     * @var Entrant
-     *
-     * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="entrantTwoSets")
-     */
-    private $entrantTwo;
 
     /**
      * @return int
