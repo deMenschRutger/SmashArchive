@@ -2,6 +2,10 @@
 
 {% block body %}
 
-    Head to head
+    {% for playerId, score in record %}
+
+        {{ playerId }}: {{ score }}<br>
+
+    {% endfor %}
 
 {% endblock %}

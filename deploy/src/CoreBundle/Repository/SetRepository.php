@@ -12,9 +12,31 @@ use Doctrine\ORM\EntityRepository;
 class SetRepository extends EntityRepository
 {
     /**
+     * @param int $playerId
+     * @return array
+     *
+     * @TODO Search by player instead of entrant.
+     */
+    public function findByPlayerId(int $playerId)
+    {
+        return $this
+            ->createQueryBuilder('s')
+            ->select('s.id')
+            ->join('s.entrantOne', 'e1')
+            ->join('s.entrantTwo', 'e2')
+            ->where('e1.id = ?1')
+            ->orWhere('e2.id = ?2')
+            ->setParameter(1, $playerId)
+            ->setParameter(2, $playerId)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
      * @param int $playerOneId
      * @param int $playerTwoId
-     * @return mixed
+     * @return array
      */
     public function findHeadToHeadSets(int $playerOneId, int $playerTwoId)
     {

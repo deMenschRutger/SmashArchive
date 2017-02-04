@@ -6,35 +6,14 @@ namespace Domain\Handler\Player;
 
 use CoreBundle\Entity\Set;
 use CoreBundle\Repository\SetRepository;
-use Doctrine\ORM\EntityManager;
-use Domain\Command\HeadToHeadCommand;
+use Domain\Command\Player\HeadToHeadCommand;
+use Domain\Handler\AbstractHandler;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class HeadToHeadHandler
+class HeadToHeadHandler extends AbstractHandler
 {
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * @return EntityManager
-     */
-    public function getEntityManager(): EntityManager
-    {
-        return $this->entityManager;
-    }
-
-    /**
-     * @param EntityManager $entityManager
-     */
-    public function setEntityManager(EntityManager $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     /**
      * @param HeadToHeadCommand $command
      * @return array

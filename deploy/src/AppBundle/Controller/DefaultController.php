@@ -29,7 +29,7 @@ class DefaultController extends AbstractDefaultController
      * @param int $playerTwoId
      * @return Response
      *
-     * @Route("/players/head-to-head/{playerOneId}/{playerTwoId}", requirements={
+     * @Route("/players/head-to-head/{playerOneId}/{playerTwoId}/", requirements={
      *  "playerOneId" = "\d+",
      *  "playerTwoId" = "\d+"
      * })
