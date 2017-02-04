@@ -1,0 +1,7 @@
+services:
+    bus.handler.player.head_to_head:
+        class: Domain\Handler\Player\HeadToHeadHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\HeadToHeadCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]

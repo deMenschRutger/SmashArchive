@@ -18,6 +18,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new MediaMonks\RestApiBundle\MediaMonksRestApiBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
+            new League\Tactician\Bundle\TacticianBundle(),
 
             new AppBundle\AppBundle(),
             new CoreBundle\CoreBundle(),

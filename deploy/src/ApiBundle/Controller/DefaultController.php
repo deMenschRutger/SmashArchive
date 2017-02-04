@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace ApiBundle\Controller;
 
-use CoreBundle\Entity\Set;
-use CoreBundle\Repository\SetRepository;
+use CoreBundle\Controller\AbstractDefaultController;
+use Domain\Command\HeadToHeadCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
+ * @Route(service="api.controller.default")
+ *
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class DefaultController extends Controller
+class DefaultController extends AbstractDefaultController
 {
     /**
      * @Route("/")
@@ -23,34 +24,19 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/head-to-head/{playerOne}/{playerTwo}")
+     * @param int $playerOneId
+     * @param int $playerTwoId
+     * @return array
+     *
+     * @Route("/head-to-head/{playerOneId}/{playerTwoId}")
      *
      * @TODO Add route requirements.
      * @TODO Use slugs instead of IDs?
      */
-    public function headToHeadAction($playerOne, $playerTwo)
+    public function headToHeadAction($playerOneId, $playerTwoId)
     {
-        /** @var SetRepository $repository */
-        $repository = $this->getDoctrine()->getManager()->getRepository('CoreBundle:Set');
-        $sets = $repository->findHeadToHeadSets(intval($playerOne), intval($playerTwo));
+        $command = new HeadToHeadCommand($playerOneId, $playerTwoId);
 
-        $playerOneScore = 0;
-        $playerTwoScore = 0;
-
-        foreach ($sets as $set) {
-            /** @var Set $set */
-            $winnerId = $set->getWinner()->getPlayers()->first()->getId();
-
-            if ($winnerId == $playerOne) {
-                $playerOneScore += 1;
-            } elseif ($winnerId == $playerTwo) {
-                $playerTwoScore += 1;
-            }
-        }
-
-        return [
-            $playerOne => $playerOneScore,
-            $playerTwo => $playerTwoScore,
-        ];
+        return $this->commandBus->handle($command);
     }
 }
