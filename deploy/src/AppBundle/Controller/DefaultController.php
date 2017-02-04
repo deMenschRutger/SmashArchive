@@ -29,9 +29,11 @@ class DefaultController extends AbstractDefaultController
      * @param int $playerTwoId
      * @return Response
      *
-     * @Route("/players/head-to-head/{playerOneId}/{playerTwoId}")
+     * @Route("/players/head-to-head/{playerOneId}/{playerTwoId}", requirements={
+     *  "playerOneId" = "\d+",
+     *  "playerTwoId" = "\d+"
+     * })
      *
-     * @TODO Add route requirements.
      * @TODO Use slugs instead of IDs?
      */
     public function headToHeadAction($playerOneId, $playerTwoId)
