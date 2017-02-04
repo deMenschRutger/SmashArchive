@@ -1,0 +1,6 @@
+services:
+    app.controller.default:
+        class: AppBundle\Controller\DefaultController
+        calls:
+            - ['setContainer', ['@service_container']]
+            - ['setCommandBus', ['@tactician.commandbus']]

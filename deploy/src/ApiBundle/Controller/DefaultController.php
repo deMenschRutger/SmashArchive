@@ -9,9 +9,9 @@ use Domain\Command\HeadToHeadCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 /**
- * @Route(service="api.controller.default")
- *
  * @author Rutger Mensch <rutger@rutgermensch.com>
+ *
+ * @Route(service="api.controller.default")
  */
 class DefaultController extends AbstractDefaultController
 {
@@ -28,7 +28,7 @@ class DefaultController extends AbstractDefaultController
      * @param int $playerTwoId
      * @return array
      *
-     * @Route("/head-to-head/{playerOneId}/{playerTwoId}")
+     * @Route("/players/head-to-head/{playerOneId}/{playerTwoId}")
      *
      * @TODO Add route requirements.
      * @TODO Use slugs instead of IDs?

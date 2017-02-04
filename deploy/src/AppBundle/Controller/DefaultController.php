@@ -1,21 +1,46 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AppBundle\Controller;
 
+use CoreBundle\Controller\AbstractDefaultController;
+use Domain\Command\HeadToHeadCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-class DefaultController extends Controller
+/**
+ * @author Rutger Mensch <rutger@rutgermensch.com>
+ *
+ * @Route(service="app.controller.default")
+ */
+class DefaultController extends AbstractDefaultController
 {
     /**
      * @Route("/", name="homepage")
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
-        // replace this example code with whatever you need
-        return $this->render('default/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
+        return $this->render('AppBundle:Default:index.html.twig');
+    }
+
+    /**
+     * @param int $playerOneId
+     * @param int $playerTwoId
+     * @return Response
+     *
+     * @Route("/players/head-to-head/{playerOneId}/{playerTwoId}")
+     *
+     * @TODO Add route requirements.
+     * @TODO Use slugs instead of IDs?
+     */
+    public function headToHeadAction($playerOneId, $playerTwoId)
+    {
+        $command = new HeadToHeadCommand($playerOneId, $playerTwoId);
+        $record = $this->commandBus->handle($command);
+
+        return $this->render('AppBundle:Players:head-to-head.html.twig', [
+            'record' => $record,
         ]);
     }
 }
