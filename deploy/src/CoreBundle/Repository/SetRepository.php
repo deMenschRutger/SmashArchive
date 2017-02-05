@@ -21,7 +21,7 @@ class SetRepository extends EntityRepository
     {
         return $this
             ->createQueryBuilder('s')
-            ->select('s.id')
+            ->select('s')
             ->join('s.entrantOne', 'e1')
             ->join('s.entrantTwo', 'e2')
             ->where('e1.id = ?1')

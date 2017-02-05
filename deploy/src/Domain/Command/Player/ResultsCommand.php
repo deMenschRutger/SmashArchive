@@ -7,7 +7,7 @@ namespace Domain\Command\Player;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @author Rutger Mensch <rutger@mediamonks.com>
+ * @author Rutger Mensch <rutger@rutgermensch.com>
  */
 class ResultsCommand
 {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AppBundle\Controller;
 
 use CoreBundle\Controller\AbstractDefaultController;
-use Domain\Command\HeadToHeadCommand;
+use Domain\Command\Player\HeadToHeadCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Response;
 
