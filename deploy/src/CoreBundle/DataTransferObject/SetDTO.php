@@ -8,7 +8,7 @@ use CoreBundle\Entity\Set;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
- * @author Rutger Mensch <rutger@mediamonks.com>
+ * @author Rutger Mensch <rutger@rutgermensch.com>
  */
 class SetDTO
 {

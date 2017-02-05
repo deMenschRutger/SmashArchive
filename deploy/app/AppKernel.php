@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new MediaMonks\RestApiBundle\MediaMonksRestApiBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new League\Tactician\Bundle\TacticianBundle(),
+            new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
 
             new AppBundle\AppBundle(),
             new CoreBundle\CoreBundle(),

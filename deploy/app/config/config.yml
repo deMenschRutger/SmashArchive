@@ -74,5 +74,11 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
+stof_doctrine_extensions:
+    orm:
+        default:
+            timestampable: true
+#            sluggable: true
+
 mediamonks_rest_api:
     serializer: 'jms'

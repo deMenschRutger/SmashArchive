@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CoreBundle\Entity;
 
+use CoreBundle\Entity\Traits\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Set
 {
+    use TimestampableTrait;
+
     /**
      * @var int
      *

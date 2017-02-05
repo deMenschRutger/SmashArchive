@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * @author Rutger Mensch (rutger@rutgermensch.com)
+ * @author Rutger Mensch <rutger@rutgermensch.com>
  */
 class TournamentImportCommand extends ContainerAwareCommand
 {
@@ -87,6 +87,8 @@ class TournamentImportCommand extends ContainerAwareCommand
         $tournament->setName($tournamentData['name']);
         $tournament->setSlug($tournamentData['shortSlug']); // TODO Create slug ourselves.
 
+        $this->io->comment('Starting import...');
+
         foreach ($apiData['entities']['videogame'] as $gameData) {
             $gameId = $gameData['id'];
             $game = $this->findGame($gameId);
@@ -138,7 +140,7 @@ class TournamentImportCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param int $id
+     * @param int $id The ID of the PhaseGroup.
      * @param PhaseGroup $phaseGroup
      */
     protected function processPhaseGroup(int $id, PhaseGroup $phaseGroup)
@@ -184,6 +186,10 @@ class TournamentImportCommand extends ContainerAwareCommand
             $entrants[$entrantId] = $entrant;
         }
 
+        $setCount = count($apiData['entities']['sets']);
+        $this->io->comment("Importing sets for phase group #{$id}.");
+        $this->io->progressStart($setCount);
+
         foreach ($apiData['entities']['sets'] as $setData) {
             $set = $this->findSet($setData['id']);
             $set->setRound($setData['round']);
@@ -211,7 +217,11 @@ class TournamentImportCommand extends ContainerAwareCommand
                 $set->setWinner($entrantTwo);
                 $set->setLoser($entrantOne);
             }
+
+            $this->io->progressAdvance(1);
         }
+
+        $this->io->progressFinish();
     }
 
     /**
