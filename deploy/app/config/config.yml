@@ -78,7 +78,7 @@ stof_doctrine_extensions:
     orm:
         default:
             timestampable: true
-#            sluggable: true
+            sluggable: true
 
 mediamonks_rest_api:
     serializer: 'jms'

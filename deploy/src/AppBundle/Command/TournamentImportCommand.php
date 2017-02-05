@@ -85,7 +85,6 @@ class TournamentImportCommand extends ContainerAwareCommand
 
         $tournament = $this->findTournament($slug);
         $tournament->setName($tournamentData['name']);
-        $tournament->setSlug($tournamentData['shortSlug']); // TODO Create slug ourselves.
 
         $this->io->comment('Starting import...');
 

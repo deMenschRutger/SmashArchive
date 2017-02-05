@@ -8,6 +8,7 @@ use CoreBundle\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Table(name="player")
@@ -25,6 +26,14 @@ class Player
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+    /**
+     * @var string
+     *
+     * @Gedmo\Slug(fields={"gamerTag"})
+     * @ORM\Column(name="slug", type="string", length=255, unique=true)
+     */
+    private $slug;
 
     /**
      * @var string
@@ -59,6 +68,14 @@ class Player
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 
     /**
