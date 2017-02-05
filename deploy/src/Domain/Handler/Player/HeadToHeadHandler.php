@@ -32,6 +32,12 @@ class HeadToHeadHandler extends AbstractHandler
 
         foreach ($sets as $set) {
             /** @var Set $set */
+
+            if ($set->getWinner() === null) {
+                // This can happen if the result of a set was never submitted.
+                continue;
+            }
+
             $winnerId = $set->getWinner()->getPlayers()->first()->getId();
 
             if ($winnerId == $playerOneId) {

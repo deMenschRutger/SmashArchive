@@ -10,3 +10,9 @@ services:
         arguments: ["@doctrine.orm.default_entity_manager"]
         tags:
             - { name: console.command }
+
+    command.smashranking.import:
+        class: CoreBundle\Command\SmashRankingImportCommand
+        arguments: ["@doctrine.orm.default_entity_manager"]
+        tags:
+            - { name: console.command }

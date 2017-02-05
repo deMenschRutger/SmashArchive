@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use GuzzleHttp\Client;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -53,6 +54,11 @@ class TournamentImportCommand extends ContainerAwareCommand
         $this
             ->setName('tournament:import')
             ->setDescription('Import a tournament from a third-party (like smash.gg)')
+            ->addArgument(
+                'slug',
+                InputArgument::REQUIRED,
+                'The slug of the tournament on smash.gg.'
+            )
         ;
     }
 
@@ -67,8 +73,9 @@ class TournamentImportCommand extends ContainerAwareCommand
         $this->io->title('Import tournament...');
 
         $client = new Client();
-        $slug = 'tournament/arcamelee-1';
+//        $slug = 'tournament/arcamelee-1';
 //        $slug = 'tournament/syndicate-2016';
+        $slug = $input->getArgument('slug');
         $response = $client->get('https://api.smash.gg/'.$slug, [
             'query' => [
                 'expand' => ['event', 'phase', 'groups'],
