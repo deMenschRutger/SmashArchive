@@ -284,6 +284,7 @@ class SmashRankingImportCommand extends ContainerAwareCommand
                 $this->entityManager->persist($entity);
 
                 $phase = new Phase();
+                // TODO Change the name based on event type 4, 5 or 6.
                 $phase->setName('Bracket');
                 $phase->setEvent($entity);
                 $phase->setPhaseOrder(1);
@@ -302,6 +303,8 @@ class SmashRankingImportCommand extends ContainerAwareCommand
             }
         }
 
+        $this->entityManager->flush();
+
 
 
         $matches = $this->getFromJson('match');
@@ -315,12 +318,15 @@ class SmashRankingImportCommand extends ContainerAwareCommand
                 continue;
             }
 
+            /** @var PhaseGroup $phaseGroup */
             $phaseGroup = $phaseGroups[$eventId];
-            $entrantOne = $this->getEntrant($match['winner']);
-            $entrantTwo = $this->getEntrant($match['loser']);
+            $tournamentId = $phaseGroup->getPhase()->getEvent()->getTournament()->getId();
+            $entrantOne = $this->getEntrant($match['winner'], $tournamentId);
+            $entrantTwo = $this->getEntrant($match['loser'], $tournamentId);
 
             $set = new Set();
             $set->setPhaseGroup($phaseGroup);
+            // TODO Map rounds to the way smash.gg uses them.
             $set->setRound($match['round']);
             $set->setEntrantOne($entrantOne);
             $set->setEntrantTwo($entrantTwo);
@@ -343,35 +349,39 @@ class SmashRankingImportCommand extends ContainerAwareCommand
 
     /**
      * @param integer $playerId
+     * @param integer $tournamentId
      * @return Entrant|bool
-     *
-     * @TODO I think this is completely wrong.
      */
-    protected function getEntrant($playerId)
+    protected function getEntrant($playerId, $tournamentId)
     {
+        if (isset($this->entrants[$tournamentId][$playerId])) {
+            return $this->entrants[$tournamentId][$playerId];
+        }
+
         if (!array_key_exists($playerId, $this->players)) {
             return false;
         }
 
-        if (array_key_exists('entrant', $this->players[$playerId])) {
-            return $this->players[$playerId]['entrant'];
+        if (array_key_exists('entity', $this->players[$playerId])) {
+            $player = $this->players[$playerId]['entity'];
+        } else {
+            $tag = $this->players[$playerId]['tag'];
+            $player = new Player();
+            $player->setGamerTag($tag);
+
+            $this->entityManager->persist($player);
+
+            $this->players[$playerId]['entity'] = $player;
         }
 
-        $player = $this->players[$playerId];
-        $entity = new Player();
-        $entity->setGamerTag($player['tag']);
-
-        $this->entityManager->persist($entity);
-
         $entrant = new Entrant();
-        $entrant->setName($player['tag']);
+        $entrant->setName($player->getGamerTag());
+        $entrant->addPlayer($player);
+        $player->addEntrant($entrant);
 
         $this->entityManager->persist($entrant);
 
-        $entrant->addPlayer($entity);
-        $entity->addEntrant($entrant);
-
-        $this->players[$playerId]['entrant'] = $entrant;
+        $this->entrants[$tournamentId][$playerId] = $entrant;
 
         return $entrant;
     }
