@@ -1,4 +1,12 @@
 services:
-#    core.example:
-#        class: CoreBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]
+    command.tournament.import:
+        class: CoreBundle\Command\TournamentImportCommand
+        arguments: ["@doctrine.orm.default_entity_manager"]
+        tags:
+            - { name: console.command }
+
+    command.event.results.generate:
+        class: CoreBundle\Command\EventGenerateResultsCommand
+        arguments: ["@doctrine.orm.default_entity_manager"]
+        tags:
+            - { name: console.command }

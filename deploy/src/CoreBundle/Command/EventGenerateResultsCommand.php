@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AppBundle\Command;
+namespace CoreBundle\Command;
 
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Phase;
