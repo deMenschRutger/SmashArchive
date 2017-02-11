@@ -126,10 +126,10 @@ class SmashRankingImportCommand extends ContainerAwareCommand
         $scenarios = [
             'NoPhasesMultipleEvents'       => false, // Open (273 tournaments)
             'NoPhasesSingleEventBracket'   => false, // Cleared (1057 tournaments)
-            'NoPhasesSingleEventNoBracket' => true,  // Cleared (11 tournaments)
+            'NoPhasesSingleEventNoBracket' => false, // Cleared (11 tournaments)
             'PhasesMultipleEvents'         => false, // Open (114 tournaments)
-            'PhasesSingleEventBracket'     => false, // Open (75 tournaments)
-            'PhasesSingleEventNoBracket'   => false, // Open (1 tournament)
+            'PhasesSingleEventBracket'     => false, // Cleared (75 tournaments)
+            'PhasesSingleEventNoBracket'   => false, // Cleared (1 tournament)
         ];
 
         foreach ($scenarios as $scenario => $active) {
