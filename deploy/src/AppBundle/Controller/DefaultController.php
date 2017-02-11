@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AppBundle\Controller;
 
 use CoreBundle\Controller\AbstractDefaultController;
+use CoreBundle\Repository\PlayerRepository;
 use Domain\Command\Player\HeadToHeadCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,6 +44,29 @@ class DefaultController extends AbstractDefaultController
 
         return $this->render('AppBundle:Players:head-to-head.html.twig', [
             'record' => $record,
+        ]);
+    }
+
+    /**
+     * @param string $slug
+     * @return Response
+     *
+     * @Route("/players/{slug}/")
+     */
+    public function playerAction($slug)
+    {
+        /** @var PlayerRepository $playerRepository */
+        $playerRepository = $this->getDoctrine()->getManager()->getRepository('CoreBundle:Player');
+
+        $sets = $playerRepository->findSetsBySlug($slug);
+        $setsByTournament = [];
+
+        foreach ($sets as $set) {
+            $setsByTournament[$set['tournamentName']][] = $set;
+        }
+
+        return $this->render('AppBundle:Players:player.html.twig', [
+            'setsByTournament' => $setsByTournament,
         ]);
     }
 }

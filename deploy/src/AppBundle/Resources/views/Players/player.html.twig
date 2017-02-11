@@ -1,0 +1,23 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block body %}
+
+    {% for tournamentName, sets in setsByTournament %}
+
+        {{ tournamentName }}<br>
+
+        {% for set in sets %}
+
+            {{ set.entrantOneName }} ({{ set.entrantOneId }})
+            vs.
+            {{ set.entrantTwoName }} ({{ set.entrantTwoId }})
+            (winner: {{ set.winnerId }})
+            <br>
+
+        {% endfor %}
+
+        <br>
+
+    {% endfor %}
+
+{% endblock %}
