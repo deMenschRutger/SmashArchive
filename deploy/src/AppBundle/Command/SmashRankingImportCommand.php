@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CoreBundle\Command;
+namespace AppBundle\Command;
 
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Event;
@@ -60,7 +60,7 @@ class SmashRankingImportCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('smashranking:import')
+            ->setName('app:smashranking:import')
             ->setDescription('Import data from the smashranking.eu database.')
             ->addOption(
                 'categorize-models',

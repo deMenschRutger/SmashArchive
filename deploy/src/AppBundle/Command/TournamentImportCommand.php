@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CoreBundle\Command;
+namespace AppBundle\Command;
 
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Event;
@@ -52,7 +52,7 @@ class TournamentImportCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('tournament:import')
+            ->setName('app:tournament:import')
             ->setDescription('Import a tournament from a third-party (like smash.gg)')
             ->addArgument(
                 'slug',

@@ -1,18 +1,1 @@
 services:
-    command.tournament.import:
-        class: CoreBundle\Command\TournamentImportCommand
-        arguments: ["@doctrine.orm.default_entity_manager"]
-        tags:
-            - { name: console.command }
-
-    command.event.results.generate:
-        class: CoreBundle\Command\EventGenerateResultsCommand
-        arguments: ["@doctrine.orm.default_entity_manager"]
-        tags:
-            - { name: console.command }
-
-    command.smashranking.import:
-        class: CoreBundle\Command\SmashRankingImportCommand
-        arguments: ["@doctrine.orm.default_entity_manager"]
-        tags:
-            - { name: console.command }

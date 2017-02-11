@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace CoreBundle\Command;
+namespace AppBundle\Command;
 
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Phase;
@@ -47,7 +47,7 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('event:generate:results')
+            ->setName('app:event:generate:results')
             ->setDescription('Generate the complete results for an entire event.')
         ;
     }
