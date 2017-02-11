@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *
  * @TODO Take into account 'forfeit' and 'publish' on the match model.
  */
-class SmashRankingImporter
+abstract class AbstractScenario
 {
     /**
      * @var array
@@ -121,45 +121,31 @@ class SmashRankingImporter
     /**
      * @return void
      */
-    public function import()
+    abstract public function importWithConfiguration();
+
+    /**
+     * @param bool $hasPhases
+     * @param bool $hasMultipleEvents
+     * @param bool $isBracket
+     */
+    public function import(bool $hasPhases, bool $hasMultipleEvents, bool $isBracket)
     {
-        /*
-         * 1 Tournament has phases or no phases?
-         * 1.1 Phases -> Can be imported (count: 190)
-         * 1.2 No Phases -> 2 (count: 1341)
-         *
-         * 2 No phases: Single event or multiple events?
-         * 2.1 Single event -> 3 (count: 1068)
-         * 2.2 Multiple events -> 4 (count: 273)
-         *
-         * 3 Single event: is it a bracket (type 4, 5 or 6)?
-         * 3.1 Yes -> Import them all (count: 1057)
-         * 3.2 No -> Possible, but placings need to be determined in a different way (count: 11)
-         *
-         * 4 Multiple events: are they all brackets (type 4, 5 or 6)?
-         * 4.1 Yes -> They must be separate events somehow (maybe singles and doubles)?
-         * 4.2 No -> We probably have phases that weren't marked as phases.
-         */
-
-        $this->io->title('Import data from the smashranking.eu database...');
-
         $this->io->text('Importing tournaments...');
         $tournaments = $this->getTournaments();
 
         $this->io->text('Importing events...');
-        $events = $this->getEvents();
+        $events = $this->getEvents($hasPhases, $hasMultipleEvents, $isBracket);
 
-        $this->io->text('Processing events...');
-        $phaseGroups = $this->processEvents($events, $tournaments);
+//        $this->io->text('Processing events...');
+//        $phaseGroups = $this->processEvents($events, $tournaments);
 
-        $this->io->text('Flushing entity manager...');
-        $this->entityManager->flush();
+//        $this->io->text('Flushing entity manager...');
+//        $this->entityManager->flush();
 
-        $this->io->text('Processing phase groups...');
-        $this->processPhaseGroups($phaseGroups);
+//        $this->io->text('Processing phase groups...');
+//        $this->processPhaseGroups($phaseGroups);
 
-        $this->entityManager->flush();
-        $this->io->success('Successfully imported the data from smashranking.eu!');
+//        $this->entityManager->flush();
     }
 
     /**
@@ -198,10 +184,31 @@ class SmashRankingImporter
     }
 
     /**
+     * @param bool $hasPhases
+     * @param bool $hasMultipleEvents
+     * @param bool $isBracket
      * @return array
      */
-    protected function getEvents()
+    protected function getEvents(bool $hasPhases, bool $hasMultipleEvents, bool $isBracket)
     {
+        /*
+         * 1 Tournament has phases or no phases?
+         * 1.1 Phases -> Can be imported (count: 190)
+         * 1.2 No Phases -> 2 (count: 1341)
+         *
+         * 2 No phases: Single event or multiple events?
+         * 2.1 Single event -> 3 (count: 1068)
+         * 2.2 Multiple events -> 4 (count: 273)
+         *
+         * 3 Single event: is it a bracket (type 4, 5 or 6)?
+         * 3.1 Yes -> Import them all (count: 1057)
+         * 3.2 No -> Possible, but placings need to be determined in a different way (count: 11)
+         *
+         * 4 Multiple events: are they all brackets (type 4, 5 or 6)?
+         * 4.1 Yes -> They must be separate events somehow (maybe singles and doubles)?
+         * 4.2 No -> We probably have phases that weren't marked as phases.
+         */
+
         $events = $this->getContentFromJson('event');
         $eventsPerTournament = [];
 
@@ -222,23 +229,46 @@ class SmashRankingImporter
             }
         }
 
-        $eventsPerTournament = array_filter($eventsPerTournament, function ($tournament) {
+        $this->io->text(sprintf('Found %d tournaments before phase filtering.', count($eventsPerTournament)));
+
+        $eventsPerTournament = array_filter($eventsPerTournament, function ($tournament) use ($hasPhases) {
+            if ($hasPhases) {
+                return $tournament['hasPhases'];
+            }
+
             return !$tournament['hasPhases'];
         });
 
-        $eventsPerTournament = array_filter($eventsPerTournament, function ($tournament) {
-            if (count($tournament['events']) > 1) {
-                return false;
+        $this->io->text(sprintf('Found %d tournaments after phase filtering.', count($eventsPerTournament)));
+
+        $eventsPerTournament = array_filter($eventsPerTournament, function ($tournament) use ($hasMultipleEvents) {
+            if ($hasMultipleEvents) {
+                return count($tournament['events']) > 1;
+            }
+
+            return count($tournament['events']) === 1;
+        });
+
+        $this->io->text(sprintf('Found %d tournaments after event count filtering.', count($eventsPerTournament)));
+
+        // TODO Some tournaments are lost completely here.
+        $eventsPerTournament = array_filter($eventsPerTournament, function ($tournament) use ($isBracket) {
+            $eventTypes = [1, 2, 3];
+
+            if ($isBracket) {
+                $eventTypes = [4, 5, 6];
             }
 
             foreach ($tournament['events'] as $eventId => $event) {
-                if (!in_array($event['type'], [4, 5, 6])) {
+                if (!in_array($event['type'], $eventTypes)) {
                     return false;
                 }
             }
 
             return true;
         });
+
+        $this->io->text(sprintf('Found %d tournaments after event type filtering.', count($eventsPerTournament)));
 
         return $eventsPerTournament;
     }
@@ -321,7 +351,7 @@ class SmashRankingImporter
             $counter++;
         }
 
-        $this->io->comment("Counted {$counter} sets.");
+        $this->io->text("Counted {$counter} sets.");
     }
 
     /**

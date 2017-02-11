@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Command;
 
+use AppBundle\Importer\SmashRanking\AbstractScenario;
 use AppBundle\Importer\SmashRanking\SmashRankingImporter;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -121,8 +122,32 @@ class SmashRankingImportCommand extends ContainerAwareCommand
         $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $contentDirPath = realpath($rootDir.'/../var/tmp/smashranking/');
 
-        $importer = new SmashRankingImporter($contentDirPath, $this->io, $this->entityManager);
-        $importer->import();
+        $this->io->title('Import data from the smashranking.eu database...');
+        $scenarios = [
+            'NoPhasesMultipleEventsBracket' =>   true,
+            'NoPhasesMultipleEventsNoBracket' => true,
+            'NoPhasesSingleEventBracket' =>      true,
+            'NoPhasesSingleEventNoBracket' =>    true,
+            'PhasesMultipleEventsBracket' =>     true,
+            'PhasesMultipleEventsNoBracket' =>   true,
+            'PhasesSingleEventBracket' =>        true,
+            'PhasesSingleEventNoBracket' =>      true,
+        ];
+
+        foreach ($scenarios as $scenario => $active) {
+            if (!$active) {
+                continue;
+            }
+
+            $this->io->section("Importing tournaments for scenario '{$scenario}'...");
+            $class = 'AppBundle\Importer\SmashRanking\\'.$scenario;
+
+            /** @var AbstractScenario $scenario */
+            $scenario = new $class($contentDirPath, $this->io, $this->entityManager);
+            $scenario->importWithConfiguration();
+        }
+
+        $this->io->success('Successfully imported the data from smashranking.eu!');
     }
 
     /**
