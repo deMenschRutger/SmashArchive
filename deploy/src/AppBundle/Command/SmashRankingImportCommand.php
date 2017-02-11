@@ -124,14 +124,12 @@ class SmashRankingImportCommand extends ContainerAwareCommand
 
         $this->io->title('Import data from the smashranking.eu database...');
         $scenarios = [
-            'NoPhasesMultipleEventsBracket' =>   true,
-            'NoPhasesMultipleEventsNoBracket' => true,
-            'NoPhasesSingleEventBracket' =>      true,
-            'NoPhasesSingleEventNoBracket' =>    true,
-            'PhasesMultipleEventsBracket' =>     true,
-            'PhasesMultipleEventsNoBracket' =>   true,
-            'PhasesSingleEventBracket' =>        true,
-            'PhasesSingleEventNoBracket' =>      true,
+            'NoPhasesMultipleEvents'       => false, // Open (273 tournaments)
+            'NoPhasesSingleEventBracket'   => false, // Cleared (1057 tournaments)
+            'NoPhasesSingleEventNoBracket' => true,  // Cleared (11 tournaments)
+            'PhasesMultipleEvents'         => false, // Open (114 tournaments)
+            'PhasesSingleEventBracket'     => false, // Open (75 tournaments)
+            'PhasesSingleEventNoBracket'   => false, // Open (1 tournament)
         ];
 
         foreach ($scenarios as $scenario => $active) {

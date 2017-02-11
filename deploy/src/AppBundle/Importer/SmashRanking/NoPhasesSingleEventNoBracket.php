@@ -10,6 +10,11 @@ namespace AppBundle\Importer\SmashRanking;
 class NoPhasesSingleEventNoBracket extends AbstractScenario
 {
     /**
+     * @var string
+     */
+    protected $defaultPhaseGroupsName = 'Round Robin Pool';
+
+    /**
      * @return void
      */
     public function importWithConfiguration()

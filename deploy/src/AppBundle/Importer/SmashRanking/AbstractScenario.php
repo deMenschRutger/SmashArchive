@@ -77,6 +77,11 @@ abstract class AbstractScenario
     /**
      * @var string
      */
+    protected $defaultPhaseGroupsName = 'Bracket';
+
+    /**
+     * @var string
+     */
     protected $contentDirPath;
 
     /**
@@ -136,16 +141,16 @@ abstract class AbstractScenario
         $this->io->text('Importing events...');
         $events = $this->getEvents($hasPhases, $hasMultipleEvents, $isBracket);
 
-//        $this->io->text('Processing events...');
-//        $phaseGroups = $this->processEvents($events, $tournaments);
+        $this->io->text('Processing events...');
+        $phaseGroups = $this->processEvents($events, $tournaments);
 
-//        $this->io->text('Flushing entity manager...');
-//        $this->entityManager->flush();
+        $this->io->text('Flushing entity manager...');
+        $this->entityManager->flush();
 
-//        $this->io->text('Processing phase groups...');
-//        $this->processPhaseGroups($phaseGroups);
+        $this->io->text('Processing phase groups...');
+        $this->processPhaseGroups($phaseGroups);
 
-//        $this->entityManager->flush();
+        $this->entityManager->flush();
     }
 
     /**
@@ -251,24 +256,25 @@ abstract class AbstractScenario
 
         $this->io->text(sprintf('Found %d tournaments after event count filtering.', count($eventsPerTournament)));
 
-        // TODO Some tournaments are lost completely here.
-        $eventsPerTournament = array_filter($eventsPerTournament, function ($tournament) use ($isBracket) {
-            $eventTypes = [1, 2, 3];
+        if (!$hasMultipleEvents) {
+            $eventsPerTournament = array_filter($eventsPerTournament, function ($tournament) use ($isBracket) {
+                $eventTypes = [1, 2, 3];
 
-            if ($isBracket) {
-                $eventTypes = [4, 5, 6];
-            }
-
-            foreach ($tournament['events'] as $eventId => $event) {
-                if (!in_array($event['type'], $eventTypes)) {
-                    return false;
+                if ($isBracket) {
+                    $eventTypes = [4, 5, 6];
                 }
-            }
 
-            return true;
-        });
+                foreach ($tournament['events'] as $eventId => $event) {
+                    if (!in_array($event['type'], $eventTypes)) {
+                        return false;
+                    }
+                }
 
-        $this->io->text(sprintf('Found %d tournaments after event type filtering.', count($eventsPerTournament)));
+                return true;
+            });
+
+            $this->io->text(sprintf('Found %d tournaments after event type filtering.', count($eventsPerTournament)));
+        }
 
         return $eventsPerTournament;
     }
@@ -302,7 +308,7 @@ abstract class AbstractScenario
                 $this->entityManager->persist($phase);
 
                 $phaseGroup = new PhaseGroup();
-                $phaseGroup->setName('Bracket');
+                $phaseGroup->setName($this->defaultPhaseGroupsName);
                 $phaseGroup->setType(2);
                 $phaseGroup->setPhase($phase);
 
@@ -337,10 +343,16 @@ abstract class AbstractScenario
             $entrantOne = $this->getEntrant($match['winner'], $tournamentId);
             $entrantTwo = $this->getEntrant($match['loser'], $tournamentId);
 
+            $round = $match['round'];
+
+            if ($round === null) {
+                $round = 1;
+            }
+
             $set = new Set();
             $set->setPhaseGroup($phaseGroup);
             // TODO Map rounds to the way smash.gg uses them.
-            $set->setRound($match['round']);
+            $set->setRound($round);
             $set->setEntrantOne($entrantOne);
             $set->setEntrantTwo($entrantTwo);
             $set->setWinner($entrantOne);
