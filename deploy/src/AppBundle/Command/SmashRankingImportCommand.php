@@ -115,23 +115,22 @@ class SmashRankingImportCommand extends ContainerAwareCommand
 
     /**
      * @return void
-     *
-     * @TODO Players are not shared between importers.
      */
     protected function import()
     {
         $rootDir = $this->getContainer()->get('kernel')->getRootDir();
         $contentDirPath = realpath($rootDir.'/../var/tmp/smashranking/');
 
-        $this->io->title('Import data from the smashranking.eu database...');
+        $this->io->title('Importing data from the smashranking.eu database...');
         $scenarios = [
             'NoPhasesMultipleEvents'       => false, // Cleared (273 tournaments)
             'NoPhasesSingleEventBracket'   => false, // Cleared (1057 tournaments)
             'NoPhasesSingleEventNoBracket' => false, // Cleared (11 tournaments)
             'PhasesMultipleEvents'         => true, // Cleared (114 tournaments)
-            'PhasesSingleEventBracket'     => false,  // Cleared (75 tournaments)
+            'PhasesSingleEventBracket'     => true,  // Cleared (75 tournaments)
             'PhasesSingleEventNoBracket'   => false, // Cleared (1 tournament)
         ];
+        $players = [];
 
         foreach ($scenarios as $scenario => $active) {
             if (!$active) {
@@ -142,8 +141,9 @@ class SmashRankingImportCommand extends ContainerAwareCommand
             $class = 'AppBundle\Importer\SmashRanking\\'.$scenario;
 
             /** @var AbstractScenario $scenario */
-            $scenario = new $class($contentDirPath, $this->io, $this->entityManager);
+            $scenario = new $class($contentDirPath, $this->io, $this->entityManager, $players);
             $scenario->importWithConfiguration();
+            $players = $scenario->getPlayers();
         }
 
         $this->io->success('Successfully imported the data from smashranking.eu!');

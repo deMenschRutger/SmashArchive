@@ -113,13 +113,14 @@ abstract class AbstractScenario
      * @param string        $contentDirPath
      * @param SymfonyStyle  $io
      * @param EntityManager $entityManager
+     * @param array         $players
      */
-    public function __construct(string $contentDirPath, SymfonyStyle $io, EntityManager $entityManager)
+    public function __construct(string $contentDirPath, SymfonyStyle $io, EntityManager $entityManager, array $players)
     {
         $this->contentDirPath = $contentDirPath;
         $this->io = $io;
         $this->entityManager = $entityManager;
-
+        $this->players = $players;
         $this->melee = $this->entityManager->find('CoreBundle:Game', 1);
     }
 
@@ -127,6 +128,14 @@ abstract class AbstractScenario
      * @return void
      */
     abstract public function importWithConfiguration();
+
+    /**
+     * @return array
+     */
+    public function getPlayers(): array
+    {
+        return $this->players;
+    }
 
     /**
      * @param bool $hasPhases
@@ -329,8 +338,11 @@ abstract class AbstractScenario
      */
     protected function processPhaseGroups(array $phaseGroups)
     {
+        if (count($this->players) === 0) {
+            $this->players = $this->getContentFromJson('smasher');
+        }
+
         $matches = $this->getContentFromJson('match');
-        $this->players = $this->getContentFromJson('smasher');
         $counter = 0;
 
         foreach ($matches as $matchId => $match) {
