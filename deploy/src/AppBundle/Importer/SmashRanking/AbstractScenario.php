@@ -24,14 +24,40 @@ abstract class AbstractScenario
 {
     /**
      * @var array
+     *
+     * Set the brackets to single elimination first, and to double elimination later when detected.
      */
     protected $eventTypes = [
-        1 => 'Swiss System',
-        2 => 'Round Robin Pool',
-        3 => 'Bracket Pool',
-        4 => 'Bracket',
-        5 => 'Intermediate Bracket',
-        6 => 'Amateur Bracket',
+        1 => [
+            'originalName' => 'Swiss System',
+            'eventName' => 'Melee Singles',
+            'newTypeId' => PhaseGroup::TYPE_SWISS,
+        ],
+        2 => [
+            'originalName' => 'Round Robin Pool',
+            'eventName' => 'Melee Singles',
+            'newTypeId' => PhaseGroup::TYPE_ROUND_ROBIN,
+        ],
+        3 => [
+            'originalName' => 'Bracket pool',
+            'eventName' => 'Melee Singles',
+            'newTypeId' => PhaseGroup::TYPE_SINGLE_ELIMINATION,
+        ],
+        4 => [
+            'originalName' => 'Bracket',
+            'eventName' => 'Melee Singles',
+            'newTypeId' => PhaseGroup::TYPE_SINGLE_ELIMINATION,
+        ],
+        5 => [
+            'originalName' => 'Intermediate Bracket',
+            'eventName' => 'Melee Singles',
+            'newTypeId' => PhaseGroup::TYPE_SINGLE_ELIMINATION,
+        ],
+        6 => [
+            'originalName' => 'Amateur Bracket',
+            'eventName' => 'Melee Singles',
+            'newTypeId' => PhaseGroup::TYPE_SINGLE_ELIMINATION,
+        ],
     ];
 
     /**
@@ -60,9 +86,9 @@ abstract class AbstractScenario
         20 => -11, // 'L12'
         21 => -12, // 'L13'
         22 => -13, // 'L14'
-        23 => -14, // 'R1'
-        24 => -15, // 'R2'
-        25 => -16, // 'R3'
+        23 => 'R1',
+        24 => 'R2',
+        25 => 'R3',
         26 => 'R4',
         27 => 'R5',
         28 => 'R6',
@@ -77,7 +103,7 @@ abstract class AbstractScenario
     /**
      * @var string
      */
-    protected $defaultPhaseGroupsName = 'Bracket';
+    protected $defaultPhaseName = 'Bracket';
 
     /**
      * @var string
@@ -153,13 +179,13 @@ abstract class AbstractScenario
         $this->io->text('Processing events...');
         $phaseGroups = $this->processEvents($events, $tournaments);
 
-        $this->io->text('Flushing entity manager...');
-        $this->entityManager->flush();
-
-        $this->io->text('Processing phase groups...');
-        $this->processPhaseGroups($phaseGroups);
-
-        $this->entityManager->flush();
+//        $this->io->text('Flushing entity manager...');
+//        $this->entityManager->flush();
+//
+//        $this->io->text('Processing phase groups...');
+//        $this->processPhaseGroups($phaseGroups);
+//
+//        $this->entityManager->flush();
     }
 
     /**
@@ -293,20 +319,37 @@ abstract class AbstractScenario
      */
     protected function processEvents(array $events, array $tournaments)
     {
+        /*
+         * Assumptions:
+         *
+         * - If there is a 'name_bracket', it is the name of a phase (top 64 etc.). This phase will have only on phase group (a bracket).
+         * - If the event is of type 5 or 6 it is a different event (intermediate and amateur brackets respectively).
+         * - Intermediate and amateur brackets never have more than one phase.
+         * - If the event has a truthy value in the 'pool' field, it is a phase group part of a phase preceding a bracket or subsequent pool phase.
+         * - If the event is a pool, it will not have a value in the 'name_bracket' field, and the name of the pool will be in the 'pool' field.
+         */
+
         $phaseGroups = [];
 
         foreach ($events as $tournamentId => $tournament) {
             $tournamentEntity = $tournaments[$tournamentId];
 
             foreach ($tournament['events'] as $eventId => $event) {
+                $eventName = $this->eventTypes[$event['type']]['eventName'];
+
                 $entity = new Event();
-                $entity->setName('Melee Singles');
+                $entity->setName($eventName);
                 $entity->setGame($this->melee);
                 $entity->setTournament($tournamentEntity);
 
                 $this->entityManager->persist($entity);
 
-                $phaseName = $this->eventTypes[$event['type']];
+                $phaseName = $this->defaultPhaseName;
+
+                if ($event['name_bracket']) {
+                    $phaseName = $event['name_bracket'];
+                }
+
                 $phase = new Phase();
                 $phase->setName($phaseName);
                 $phase->setEvent($entity);
@@ -316,10 +359,11 @@ abstract class AbstractScenario
 
                 $resultsUrl = $event['result_page'] ? $event['result_page'] : null;
                 $smashRankingInfo = \GuzzleHttp\json_encode($event, JSON_PRETTY_PRINT);
+                $phaseGroupType = $this->eventTypes[$event['type']]['newTypeId'];
 
                 $phaseGroup = new PhaseGroup();
-                $phaseGroup->setName($this->defaultPhaseGroupsName);
-                $phaseGroup->setType(2);
+                $phaseGroup->setName($phaseName);
+                $phaseGroup->setType($phaseGroupType);
                 $phaseGroup->setPhase($phase);
                 $phaseGroup->setResultsUrl($resultsUrl);
                 $phaseGroup->setSmashRankingInfo($smashRankingInfo);
@@ -354,7 +398,8 @@ abstract class AbstractScenario
 
             /** @var PhaseGroup $phaseGroup */
             $phaseGroup = $phaseGroups[$eventId];
-            $tournamentId = $phaseGroup->getPhase()->getEvent()->getTournament()->getId();
+            $event = $phaseGroup->getPhase()->getEvent();
+            $tournamentId = $event->getTournament()->getId();
             $entrantOne = $this->getEntrant($match['winner'], $tournamentId);
             $entrantTwo = $this->getEntrant($match['loser'], $tournamentId);
 
@@ -362,6 +407,11 @@ abstract class AbstractScenario
 
             if ($round === null) {
                 $round = 1;
+            } elseif ($round > 8 && $phaseGroup->getType() === PhaseGroup::TYPE_SINGLE_ELIMINATION) {
+                // If the round goes above 8 it means we have a match in the losers bracket, therefore this is a double
+                // elimination bracket.
+                $phaseGroup->setType(PhaseGroup::TYPE_DOUBLE_ELIMINATION);
+
             }
 
             $set = new Set();

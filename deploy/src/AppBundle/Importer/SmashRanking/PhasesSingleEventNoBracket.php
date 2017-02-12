@@ -12,7 +12,7 @@ class PhasesSingleEventNoBracket extends AbstractScenario
     /**
      * @var string
      */
-    protected $defaultPhaseGroupsName = 'Round Robin Pool';
+    protected $defaultPhaseName = 'Round Robin Pools';
 
     /**
      * @return void

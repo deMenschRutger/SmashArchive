@@ -17,6 +17,11 @@ class PhaseGroup
 {
     use TimestampableTrait;
 
+    const TYPE_SINGLE_ELIMINATION = 1;
+    const TYPE_DOUBLE_ELIMINATION = 2;
+    const TYPE_ROUND_ROBIN        = 3;
+    const TYPE_SWISS              = 4;
+
     /**
      * @var int
      *

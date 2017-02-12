@@ -126,7 +126,7 @@ class SmashRankingImportCommand extends ContainerAwareCommand
             'NoPhasesMultipleEvents'       => false, // Cleared (273 tournaments)
             'NoPhasesSingleEventBracket'   => false, // Cleared (1057 tournaments)
             'NoPhasesSingleEventNoBracket' => false, // Cleared (11 tournaments)
-            'PhasesMultipleEvents'         => true, // Cleared (114 tournaments)
+            'PhasesMultipleEvents'         => false, // Cleared (114 tournaments)
             'PhasesSingleEventBracket'     => true,  // Cleared (75 tournaments)
             'PhasesSingleEventNoBracket'   => false, // Cleared (1 tournament)
         ];
