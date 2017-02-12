@@ -126,11 +126,11 @@ class SmashRankingImportCommand extends ContainerAwareCommand
         // Please note that if you don't import all scenarios at once, duplicate player profiles will be created. The
         // 'disable' functionality only exists for testing purposes.
         $scenarios = [
-            'NoPhasesMultipleEvents'       => false, // Cleared (273 tournaments)
-            'NoPhasesSingleEventBracket'   => true,  // Cleared (1057 tournaments)
+            'NoPhasesMultipleEvents'       => false, // Open (273 tournaments)
+            'NoPhasesSingleEventBracket'   => false, // Cleared (1057 tournaments)
             'NoPhasesSingleEventNoBracket' => false, // Cleared (11 tournaments)
-            'PhasesMultipleEvents'         => false, // Cleared (114 tournaments)
-            'PhasesSingleEventBracket'     => true,  // Cleared (75 tournaments)
+            'PhasesMultipleEvents'         => true,  // Open (114 tournaments)
+            'PhasesSingleEventBracket'     => false, // Cleared (75 tournaments)
             'PhasesSingleEventNoBracket'   => false, // Cleared (1 tournament)
         ];
         $players = [];

@@ -136,6 +136,11 @@ abstract class AbstractScenario
     protected $players;
 
     /**
+     * @var array
+     */
+    protected $phaseGroups = [];
+
+    /**
      * @param string        $contentDirPath
      * @param SymfonyStyle  $io
      * @param EntityManager $entityManager
@@ -177,13 +182,13 @@ abstract class AbstractScenario
         $events = $this->getEvents($hasPhases, $hasMultipleEvents, $isBracket);
 
         $this->io->text('Processing events...');
-        $phaseGroups = $this->processEvents($events, $tournaments);
+        $this->processEvents($events, $tournaments);
 
         $this->io->text('Flushing entity manager...');
         $this->entityManager->flush();
 
         $this->io->text('Processing phase groups...');
-        $this->processPhaseGroups($phaseGroups);
+        $this->processPhaseGroups($this->phaseGroups);
 
         $this->entityManager->flush();
     }
@@ -230,23 +235,23 @@ abstract class AbstractScenario
      * @param bool $hasMultipleEvents
      * @param bool $isBracket
      * @return array
+     *
+     * Steps:
+     *
+     * 1 Tournament has phases or no phases?
+     * 1.1 Phases -> 2 (count: 190)
+     * 1.2 No Phases -> 2 (count: 1341)
+     *
+     * 2 No phases: Single event or multiple events?
+     * 2.1 Single event -> 3 (count: 1068 + 76 = 1144)
+     * 2.2 Multiple events -> Can not be completely imported, phases not marked correctly (count: 273 + 114 = 387)
+     *
+     * 3 Single event: is it a bracket (type 4, 5 or 6)?
+     * 3.1 No -> Round robin pools, can be imported, but placings are determined differently (count: 11 + 1)
+     * 3.2 Yes -> Can be imported (count: 1057 + 75)
      */
     protected function getEvents(bool $hasPhases, bool $hasMultipleEvents, bool $isBracket)
     {
-        /*
-         * 1 Tournament has phases or no phases?
-         * 1.1 Phases -> 2 (count: 190)
-         * 1.2 No Phases -> 2 (count: 1341)
-         *
-         * 2 No phases: Single event or multiple events?
-         * 2.1 Single event -> 3 (count: 1068 + 76 = 1144)
-         * 2.2 Multiple events -> Can not be completely imported, phases not marked correctly (count: 273 + 114 = 387)
-         *
-         * 3 Single event: is it a bracket (type 4, 5 or 6)?
-         * 3.1 No -> Round robin pools, can be imported, but placings are determined differently (count: 11 + 1)
-         * 3.2 Yes -> Can be imported (count: 1057 + 75)
-         */
-
         $events = $this->getContentFromJson('event');
         $eventsPerTournament = [];
 
@@ -315,24 +320,22 @@ abstract class AbstractScenario
     /**
      * @param array $events
      * @param array $tournaments
-     * @return array
+     *
+     * Assumptions:
+     *
+     * - If there is a 'name_bracket', it is the name of a phase (top 64 etc.). This phase will have only on phase group (a bracket).
+     * - If the event is of type 5 or 6 it is a different event (intermediate and amateur brackets respectively).
+     * - Intermediate and amateur brackets never have more than one phase.
+     * - If the event has a truthy value in the 'pool' field, it is a phase group part of a phase preceding a bracket or subsequent pool phase.
+     * - If the event is a pool, it will not have a value in the 'name_bracket' field, and the name of the pool will be in the 'pool' field.
      */
     protected function processEvents(array $events, array $tournaments)
     {
-        /*
-         * Assumptions:
-         *
-         * - If there is a 'name_bracket', it is the name of a phase (top 64 etc.). This phase will have only on phase group (a bracket).
-         * - If the event is of type 5 or 6 it is a different event (intermediate and amateur brackets respectively).
-         * - Intermediate and amateur brackets never have more than one phase.
-         * - If the event has a truthy value in the 'pool' field, it is a phase group part of a phase preceding a bracket or subsequent pool phase.
-         * - If the event is a pool, it will not have a value in the 'name_bracket' field, and the name of the pool will be in the 'pool' field.
-         */
-
-        $phaseGroups = [];
-
         foreach ($events as $tournamentId => $tournament) {
+            /** @var Tournament $tournamentEntity */
             $tournamentEntity = $tournaments[$tournamentId];
+
+            $this->io->comment($tournamentEntity->getName());
 
             foreach ($tournament['events'] as $eventId => $event) {
                 $eventName = $this->eventTypes[$event['type']]['eventName'];
@@ -370,11 +373,9 @@ abstract class AbstractScenario
 
                 $this->entityManager->persist($phaseGroup);
 
-                $phaseGroups[$eventId] = $phaseGroup;
+                $this->phaseGroups[$eventId] = $phaseGroup;
             }
         }
-
-        return $phaseGroups;
     }
 
     /**
