@@ -361,7 +361,6 @@ abstract class AbstractScenario
                 $this->entityManager->persist($phase);
 
                 $resultsUrl = $event['result_page'] ? $event['result_page'] : null;
-                $smashRankingInfo = \GuzzleHttp\json_encode($event, JSON_PRETTY_PRINT);
                 $phaseGroupType = $this->eventTypes[$event['type']]['newTypeId'];
 
                 $phaseGroup = new PhaseGroup();
@@ -369,7 +368,6 @@ abstract class AbstractScenario
                 $phaseGroup->setType($phaseGroupType);
                 $phaseGroup->setPhase($phase);
                 $phaseGroup->setResultsUrl($resultsUrl);
-                $phaseGroup->setSmashRankingInfo($smashRankingInfo);
 
                 $this->entityManager->persist($phaseGroup);
 

@@ -60,7 +60,7 @@ class PhasesMultipleEvents extends AbstractScenario
 
                 continue;
             } else {
-                $this->io->text('Processing this tournament using the two events method...');
+                $this->io->text('Processing this tournament using the pools with bracket method...');
 
                 $this->processTournamentWithPoolsAndBracket($tournament, $tournamentEntity);
             }
@@ -74,34 +74,54 @@ class PhasesMultipleEvents extends AbstractScenario
      */
     protected function filterIntermediateAndAmateurBrackets(array $events, Tournament $tournament)
     {
-        return array_filter($events, function ($event) use ($tournament) {
-            $name = '';
-
-            if ($event['type'] === 5) {
-                $name = $this->eventTypes[5]['eventName'];
-            } elseif ($event['type'] === 6) {
-                $name = $this->eventTypes[6]['eventName'];
-            }
-
-            if ($name) {
-                $this->processAmateurBracketEvent($name, $tournament);
+        return array_filter($events, function ($event, $eventId) use ($tournament) {
+            if ($event['type'] === 5 || $event['type'] === 6) {
+                $this->processAmateurBracketEvent($eventId, $event, $tournament);
 
                 return false;
             }
 
             return true;
-        });
+        }, ARRAY_FILTER_USE_BOTH);
     }
 
     /**
-     * @param string     $name
+     * @param mixed      $eventId
+     * @param array      $event
      * @param Tournament $tournamentEntity
-     *
-     * @TODO Implement this method.
      */
-    protected function processAmateurBracketEvent(string $name, Tournament $tournamentEntity)
+    protected function processAmateurBracketEvent($eventId, array $event, Tournament $tournamentEntity)
     {
+        $name = 'Melee Singles Amateur Bracket';
 
+        if ($event['type'] === 5) {
+            $name = 'Melee Singles Intermediate Bracket';
+        }
+
+        $eventEntity = new Event();
+        $eventEntity->setName($name);
+        $eventEntity->setGame($this->melee);
+        $eventEntity->setTournament($tournamentEntity);
+
+        $phase = new Phase();
+        $phase->setName('Bracket');
+        $phase->setEvent($eventEntity);
+        $phase->setPhaseOrder(1);
+
+        $typeId = $this->eventTypes[$event['type']]['newTypeId'];
+        $resultsUrl = $event['result_page'] ? $event['result_page'] : null;
+
+        $phaseGroup = new PhaseGroup();
+        $phaseGroup->setName($name);
+        $phaseGroup->setType($typeId);
+        $phaseGroup->setPhase($phase);
+        $phaseGroup->setResultsUrl($resultsUrl);
+
+        $this->entityManager->persist($eventEntity);
+        $this->entityManager->persist($phase);
+        $this->entityManager->persist($phaseGroup);
+
+        $this->phaseGroups[$eventId] = $phaseGroup;
     }
 
     /**
@@ -118,22 +138,20 @@ class PhasesMultipleEvents extends AbstractScenario
     /**
      * @param array $tournament
      * @param Tournament $tournamentEntity
-     *
-     * @TODO Implement this method.
      */
     protected function processTournamentWithPoolsAndBracket(array $tournament, Tournament $tournamentEntity)
     {
-        $event = new Event();
-        $event->setName('Melee Singles');
-        $event->setGame($this->melee);
-        $event->setTournament($tournamentEntity);
+        $eventEntity = new Event();
+        $eventEntity->setName('Melee Singles');
+        $eventEntity->setGame($this->melee);
+        $eventEntity->setTournament($tournamentEntity);
 
-        $this->entityManager->persist($event);
+        $this->entityManager->persist($eventEntity);
 
         // Create the pool related entities.
         $poolsPhase = new Phase();
         $poolsPhase->setName('Pools');
-        $poolsPhase->setEvent($event);
+        $poolsPhase->setEvent($eventEntity);
         $poolsPhase->setPhaseOrder(1);
 
         $this->entityManager->persist($poolsPhase);
@@ -151,14 +169,12 @@ class PhasesMultipleEvents extends AbstractScenario
 
             $typeId = $this->eventTypes[$event['type']]['newTypeId'];
             $resultsUrl = $event['result_page'] ? $event['result_page'] : null;
-            $smashRankingInfo = \GuzzleHttp\json_encode($event, JSON_PRETTY_PRINT);
 
             $phaseGroup = new PhaseGroup();
             $phaseGroup->setName($name);
             $phaseGroup->setType($typeId);
             $phaseGroup->setPhase($poolsPhase);
             $phaseGroup->setResultsUrl($resultsUrl);
-            $phaseGroup->setSmashRankingInfo($smashRankingInfo);
 
             $this->entityManager->persist($phaseGroup);
 
@@ -179,21 +195,19 @@ class PhasesMultipleEvents extends AbstractScenario
 
         $bracketPhase = new Phase();
         $bracketPhase->setName($name);
-        $bracketPhase->setEvent($event);
+        $bracketPhase->setEvent($eventEntity);
         $bracketPhase->setPhaseOrder(2);
 
         $this->entityManager->persist($bracketPhase);
 
         $typeId = $this->eventTypes[$bracketEvent['type']]['newTypeId'];
         $resultsUrl = $bracketEvent['result_page'] ? $bracketEvent['result_page'] : null;
-        $smashRankingInfo = \GuzzleHttp\json_encode($bracketEvent, JSON_PRETTY_PRINT);
 
         $phaseGroup = new PhaseGroup();
         $phaseGroup->setName($name);
         $phaseGroup->setType($typeId);
         $phaseGroup->setPhase($bracketPhase);
         $phaseGroup->setResultsUrl($resultsUrl);
-        $phaseGroup->setSmashRankingInfo($smashRankingInfo);
 
         $this->entityManager->persist($phaseGroup);
 
