@@ -122,9 +122,12 @@ class SmashRankingImportCommand extends ContainerAwareCommand
         $contentDirPath = realpath($rootDir.'/../var/tmp/smashranking/');
 
         $this->io->title('Importing data from the smashranking.eu database...');
+
+        // Please note that if you don't import all scenarios at once, duplicate player profiles will be created. The
+        // 'disable' functionality only exists for testing purposes.
         $scenarios = [
             'NoPhasesMultipleEvents'       => false, // Cleared (273 tournaments)
-            'NoPhasesSingleEventBracket'   => false, // Cleared (1057 tournaments)
+            'NoPhasesSingleEventBracket'   => true,  // Cleared (1057 tournaments)
             'NoPhasesSingleEventNoBracket' => false, // Cleared (11 tournaments)
             'PhasesMultipleEvents'         => false, // Cleared (114 tournaments)
             'PhasesSingleEventBracket'     => true,  // Cleared (75 tournaments)

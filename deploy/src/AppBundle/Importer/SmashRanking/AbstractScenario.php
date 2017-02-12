@@ -50,12 +50,12 @@ abstract class AbstractScenario
         ],
         5 => [
             'originalName' => 'Intermediate Bracket',
-            'eventName' => 'Melee Singles',
+            'eventName' => 'Melee Singles Intermediate Bracket',
             'newTypeId' => PhaseGroup::TYPE_SINGLE_ELIMINATION,
         ],
         6 => [
             'originalName' => 'Amateur Bracket',
-            'eventName' => 'Melee Singles',
+            'eventName' => 'Melee Singles Amateur Bracket',
             'newTypeId' => PhaseGroup::TYPE_SINGLE_ELIMINATION,
         ],
     ];
@@ -86,16 +86,16 @@ abstract class AbstractScenario
         20 => -11, // 'L12'
         21 => -12, // 'L13'
         22 => -13, // 'L14'
-        23 => 'R1',
-        24 => 'R2',
-        25 => 'R3',
-        26 => 'R4',
-        27 => 'R5',
-        28 => 'R6',
-        29 => 'R7',
-        30 => 'R8',
-        31 => 'R9',
-        32 => 'R10',
+        23 => 1, // 'R1',
+        24 => 2, // 'R2',
+        25 => 3, // 'R3',
+        26 => 4, // 'R4',
+        27 => 5, // 'R5',
+        28 => 6, // 'R6',
+        29 => 7, // 'R7',
+        30 => 8, // 'R8',
+        31 => 9, // 'R9',
+        32 => 10, // 'R10',
         33 => 10, // 'GF1'
         34 => 11, // 'GF2'
     ];
@@ -179,13 +179,13 @@ abstract class AbstractScenario
         $this->io->text('Processing events...');
         $phaseGroups = $this->processEvents($events, $tournaments);
 
-//        $this->io->text('Flushing entity manager...');
-//        $this->entityManager->flush();
-//
-//        $this->io->text('Processing phase groups...');
-//        $this->processPhaseGroups($phaseGroups);
-//
-//        $this->entityManager->flush();
+        $this->io->text('Flushing entity manager...');
+        $this->entityManager->flush();
+
+        $this->io->text('Processing phase groups...');
+        $this->processPhaseGroups($phaseGroups);
+
+        $this->entityManager->flush();
     }
 
     /**
@@ -407,16 +407,16 @@ abstract class AbstractScenario
 
             if ($round === null) {
                 $round = 1;
-            } elseif ($round > 8 && $phaseGroup->getType() === PhaseGroup::TYPE_SINGLE_ELIMINATION) {
+            } elseif ($round > 8 && $round < 23 && $phaseGroup->getType() === PhaseGroup::TYPE_SINGLE_ELIMINATION) {
                 // If the round goes above 8 it means we have a match in the losers bracket, therefore this is a double
                 // elimination bracket.
                 $phaseGroup->setType(PhaseGroup::TYPE_DOUBLE_ELIMINATION);
-
             }
+
+            $round = $this->rounds[$round];
 
             $set = new Set();
             $set->setPhaseGroup($phaseGroup);
-            // TODO Map rounds to the way smash.gg uses them.
             $set->setRound($round);
             $set->setEntrantOne($entrantOne);
             $set->setEntrantTwo($entrantTwo);
