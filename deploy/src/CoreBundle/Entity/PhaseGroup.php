@@ -41,6 +41,20 @@ class PhaseGroup
     private $name;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="results_url", type="text", nullable=true)
+     */
+    private $resultsUrl;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="smash_ranking_info", type="text", nullable=true)
+     */
+    private $smashRankingInfo;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="type", type="smallint")
@@ -87,6 +101,38 @@ class PhaseGroup
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResultsUrl()
+    {
+        return $this->resultsUrl;
+    }
+
+    /**
+     * @param string $resultsUrl
+     */
+    public function setResultsUrl($resultsUrl)
+    {
+        $this->resultsUrl = $resultsUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSmashRankingInfo()
+    {
+        return $this->smashRankingInfo;
+    }
+
+    /**
+     * @param string $smashRankingInfo
+     */
+    public function setSmashRankingInfo($smashRankingInfo)
+    {
+        $this->smashRankingInfo = $smashRankingInfo;
     }
 
     /**

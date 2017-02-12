@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AppBundle\Command;
 
 use AppBundle\Importer\SmashRanking\AbstractScenario;
-use AppBundle\Importer\SmashRanking\SmashRankingImporter;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -116,6 +115,8 @@ class SmashRankingImportCommand extends ContainerAwareCommand
 
     /**
      * @return void
+     *
+     * @TODO Players are not shared between importers.
      */
     protected function import()
     {
@@ -124,11 +125,11 @@ class SmashRankingImportCommand extends ContainerAwareCommand
 
         $this->io->title('Import data from the smashranking.eu database...');
         $scenarios = [
-            'NoPhasesMultipleEvents'       => false, // Open (273 tournaments)
+            'NoPhasesMultipleEvents'       => false, // Cleared (273 tournaments)
             'NoPhasesSingleEventBracket'   => false, // Cleared (1057 tournaments)
             'NoPhasesSingleEventNoBracket' => false, // Cleared (11 tournaments)
-            'PhasesMultipleEvents'         => false, // Open (114 tournaments)
-            'PhasesSingleEventBracket'     => false, // Cleared (75 tournaments)
+            'PhasesMultipleEvents'         => true, // Cleared (114 tournaments)
+            'PhasesSingleEventBracket'     => false,  // Cleared (75 tournaments)
             'PhasesSingleEventNoBracket'   => false, // Cleared (1 tournament)
         ];
 

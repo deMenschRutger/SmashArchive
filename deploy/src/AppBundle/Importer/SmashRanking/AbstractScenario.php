@@ -179,6 +179,8 @@ abstract class AbstractScenario
         foreach ($tournaments as $tournamentId => &$tournament) {
             $entity = new Tournament();
             $entity->setName($tournament['name']);
+            $entity->setIsComplete(true);
+            $entity->setIsActive(true);
 
             $this->entityManager->persist($entity);
 
@@ -198,20 +200,16 @@ abstract class AbstractScenario
     {
         /*
          * 1 Tournament has phases or no phases?
-         * 1.1 Phases -> Can be imported (count: 190)
+         * 1.1 Phases -> 2 (count: 190)
          * 1.2 No Phases -> 2 (count: 1341)
          *
          * 2 No phases: Single event or multiple events?
-         * 2.1 Single event -> 3 (count: 1068)
-         * 2.2 Multiple events -> 4 (count: 273)
+         * 2.1 Single event -> 3 (count: 1068 + 76 = 1144)
+         * 2.2 Multiple events -> Can not be completely imported, phases not marked correctly (count: 273 + 114 = 387)
          *
          * 3 Single event: is it a bracket (type 4, 5 or 6)?
-         * 3.1 Yes -> Import them all (count: 1057)
-         * 3.2 No -> Possible, but placings need to be determined in a different way (count: 11)
-         *
-         * 4 Multiple events: are they all brackets (type 4, 5 or 6)?
-         * 4.1 Yes -> They must be separate events somehow (maybe singles and doubles)?
-         * 4.2 No -> We probably have phases that weren't marked as phases.
+         * 3.1 No -> Round robin pools, can be imported, but placings are determined differently (count: 11 + 1)
+         * 3.2 Yes -> Can be imported (count: 1057 + 75)
          */
 
         $events = $this->getContentFromJson('event');
@@ -307,10 +305,15 @@ abstract class AbstractScenario
 
                 $this->entityManager->persist($phase);
 
+                $resultsUrl = $event['result_page'] ? $event['result_page'] : null;
+                $smashRankingInfo = \GuzzleHttp\json_encode($event, JSON_PRETTY_PRINT);
+
                 $phaseGroup = new PhaseGroup();
                 $phaseGroup->setName($this->defaultPhaseGroupsName);
                 $phaseGroup->setType(2);
                 $phaseGroup->setPhase($phase);
+                $phaseGroup->setResultsUrl($resultsUrl);
+                $phaseGroup->setSmashRankingInfo($smashRankingInfo);
 
                 $this->entityManager->persist($phaseGroup);
 

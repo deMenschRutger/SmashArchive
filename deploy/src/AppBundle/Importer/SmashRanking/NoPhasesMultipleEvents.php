@@ -7,7 +7,7 @@ namespace AppBundle\Importer\SmashRanking;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class NoPhasesMultipleEvents extends AbstractScenario
+class NoPhasesMultipleEvents extends PhasesMultipleEvents
 {
     /**
      * @return void

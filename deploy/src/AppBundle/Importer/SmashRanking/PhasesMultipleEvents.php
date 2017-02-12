@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace AppBundle\Importer\SmashRanking;
 
+use CoreBundle\Entity\Event;
+use CoreBundle\Entity\Phase;
+use CoreBundle\Entity\PhaseGroup;
+use CoreBundle\Entity\Tournament;
+
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
@@ -18,31 +23,59 @@ class PhasesMultipleEvents extends AbstractScenario
     }
 
     /**
-     * @param bool $hasPhases
-     * @param bool $hasMultipleEvents
-     * @param bool $isBracket
+     * @param array $events
+     * @param array $tournaments
      * @return array
      */
-    /*protected function getEvents(bool $hasPhases, bool $hasMultipleEvents, bool $isBracket)
+    protected function processEvents(array $events, array $tournaments)
     {
-        $events = parent::getEvents($hasPhases, $hasMultipleEvents, $isBracket);
+        $phaseGroups = [];
 
-        foreach ($events as $tournamentName => $tournament) {
-            $types = [];
+        foreach ($events as $tournamentId => $tournament) {
+            /** @var Tournament $tournamentEntity */
+            $tournamentEntity = $tournaments[$tournamentId];
+            $tournamentEntity->setIsComplete(false);
+            $tournamentEntity->setIsActive(false);
 
-            foreach ($tournament['events'] as $event) {
-                if (!in_array($event['type'], $types)) {
-                    $types[] = $event['type'];
+            $entity = new Event();
+            $entity->setName('Unidentified event');
+            $entity->setGame($this->melee);
+            $entity->setTournament($tournamentEntity);
+
+            $this->entityManager->persist($entity);
+
+            $phase = new Phase();
+            $phase->setName('Unidentified phase');
+            $phase->setEvent($entity);
+            $phase->setPhaseOrder(0);
+
+            $this->entityManager->persist($phase);
+
+            foreach ($tournament['events'] as $eventId => $event) {
+                $name = 'Unidentified phase group';
+
+                if ($event['name_bracket']) {
+                    $name = $event['name_bracket'];
+                } elseif ($event['pool']) {
+                    $name = $event['pool'];
                 }
+
+                $resultsUrl = $event['result_page'] ? $event['result_page'] : null;
+                $smashRankingInfo = \GuzzleHttp\json_encode($event, JSON_PRETTY_PRINT);
+
+                $phaseGroup = new PhaseGroup();
+                $phaseGroup->setName($name);
+                $phaseGroup->setType(0);
+                $phaseGroup->setPhase($phase);
+                $phaseGroup->setResultsUrl($resultsUrl);
+                $phaseGroup->setSmashRankingInfo($smashRankingInfo);
+
+                $this->entityManager->persist($phaseGroup);
+
+                $phaseGroups[$eventId] = $phaseGroup;
             }
-
-
-
-
-            var_dump($types); die;
-
-
-
         }
-    }*/
+
+        return $phaseGroups;
+    }
 }

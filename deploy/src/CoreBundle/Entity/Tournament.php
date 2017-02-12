@@ -50,6 +50,20 @@ class Tournament
     private $name;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_complete", type="boolean")
+     */
+    private $isComplete;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_active", type="boolean")
+     */
+    private $isActive;
+
+    /**
      * @ORM\OneToMany(targetEntity="Event", mappedBy="tournament")
      */
     private $events;
@@ -108,6 +122,38 @@ class Tournament
     public function setName(string $name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsComplete()
+    {
+        return $this->isComplete;
+    }
+
+    /**
+     * @param bool $isComplete
+     */
+    public function setIsComplete($isComplete)
+    {
+        $this->isComplete = $isComplete;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param bool $isActive
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
     }
 
     /**
