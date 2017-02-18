@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Importer\SmashRanking;
 
+use AppBundle\Command\SmashRankingImportCommand;
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Game;
@@ -14,6 +15,7 @@ use CoreBundle\Entity\Set;
 use CoreBundle\Entity\Tournament;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Webmozart\Assert\Assert;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -106,9 +108,9 @@ abstract class AbstractScenario
     protected $defaultPhaseName = 'Bracket';
 
     /**
-     * @var string
+     * @var SmashRankingImportCommand
      */
-    protected $contentDirPath;
+    protected $importer;
 
     /**
      * @var SymfonyStyle
@@ -128,12 +130,7 @@ abstract class AbstractScenario
     /**
      * @var array
      */
-    protected $entrants;
-
-    /**
-     * @var array
-     */
-    protected $players;
+    protected $eventsPerTournament;
 
     /**
      * @var array
@@ -141,17 +138,19 @@ abstract class AbstractScenario
     protected $phaseGroups = [];
 
     /**
-     * @param string        $contentDirPath
+     * @var array
+     */
+    protected $entrants;
+
+    /**
+     * @param Importer      $importer
      * @param SymfonyStyle  $io
      * @param EntityManager $entityManager
-     * @param array         $players
      */
-    public function __construct(string $contentDirPath, SymfonyStyle $io, EntityManager $entityManager, array $players)
-    {
-        $this->contentDirPath = $contentDirPath;
+    public function __construct(Importer $importer, SymfonyStyle $io, EntityManager $entityManager) {
+        $this->importer = $importer;
         $this->io = $io;
         $this->entityManager = $entityManager;
-        $this->players = $players;
         $this->melee = $this->entityManager->find('CoreBundle:Game', 1);
     }
 
@@ -161,81 +160,34 @@ abstract class AbstractScenario
     abstract public function importWithConfiguration();
 
     /**
-     * @return array
-     */
-    public function getPlayers(): array
-    {
-        return $this->players;
-    }
-
-    /**
      * @param bool $hasPhases
      * @param bool $hasMultipleEvents
      * @param bool $isBracket
      */
     public function import(bool $hasPhases, bool $hasMultipleEvents, bool $isBracket)
     {
-        $this->io->text('Importing tournaments...');
-        $tournaments = $this->getTournaments();
-
         $this->io->text('Importing events...');
-        $events = $this->getEvents($hasPhases, $hasMultipleEvents, $isBracket);
+        $this->eventsPerTournament = $this->getEventsPerTournament();
+        $this->io->text(
+            sprintf('Found %d tournaments with events before phase filtering.', count($this->eventsPerTournament))
+        );
 
-        $this->io->text('Processing events...');
-        $this->processEvents($events, $tournaments);
+        $this->io->text(sprintf('Filtering events based on scenario...', count($this->eventsPerTournament)));
+        $this->filterEvents($hasPhases, $hasMultipleEvents, $isBracket);
 
-        $this->io->text('Flushing entity manager...');
-        $this->entityManager->flush();
+//        $this->io->text('Processing events...');
+//        $this->processEvents($events);
 
-        $this->io->text('Processing phase groups...');
-        $this->processPhaseGroups($this->phaseGroups);
+//        $this->io->text('Flushing entity manager...');
+//        $this->entityManager->flush();
 
-        $this->entityManager->flush();
+//        $this->io->text('Processing phase groups...');
+//        $this->processPhaseGroups($this->phaseGroups);
+
+//        $this->entityManager->flush();
     }
 
     /**
-     * @param string $contentKey
-     * @return array
-     */
-    public function getContentFromJson(string $contentKey)
-    {
-        $jsonPath = realpath($this->contentDirPath."/ranking.{$contentKey}.json");
-        $json = file_get_contents($jsonPath);
-
-        if (!$json) {
-            throw new \InvalidArgumentException("No JSON file found for key {$contentKey}.");
-        }
-
-        return \GuzzleHttp\json_decode($json, true);
-    }
-
-    /**
-     * @return array
-     */
-    protected function getTournaments()
-    {
-        $tournaments = $this->getContentFromJson('tournament');
-
-        foreach ($tournaments as $tournamentId => &$tournament) {
-            $entity = new Tournament();
-            $entity->setName($tournament['name']);
-            $entity->setIsComplete(true);
-            $entity->setIsActive(true);
-
-            $this->entityManager->persist($entity);
-
-            $tournament = $entity;
-        }
-
-        return $tournaments;
-    }
-
-    /**
-     * @param bool $hasPhases
-     * @param bool $hasMultipleEvents
-     * @param bool $isBracket
-     * @return array
-     *
      * Steps:
      *
      * 1 Tournament has phases or no phases?
@@ -244,19 +196,22 @@ abstract class AbstractScenario
      *
      * 2 No phases: Single event or multiple events?
      * 2.1 Single event -> 3 (count: 1068 + 76 = 1144)
-     * 2.2 Multiple events -> Can not be completely imported, phases not marked correctly (count: 273 + 114 = 387)
+     * 2.2 Multiple events -> Phases not marked correctly, needs more custom importing logic (count: 273 + 114 = 387)
      *
      * 3 Single event: is it a bracket (type 4, 5 or 6)?
      * 3.1 No -> Round robin pools, can be imported, but placings are determined differently (count: 11 + 1)
      * 3.2 Yes -> Can be imported (count: 1057 + 75)
+     *
+     * @return array
      */
-    protected function getEvents(bool $hasPhases, bool $hasMultipleEvents, bool $isBracket)
+    protected function getEventsPerTournament()
     {
-        $events = $this->getContentFromJson('event');
+        $events = $this->importer->getContentFromJson('event');
         $eventsPerTournament = [];
 
         foreach ($events as $eventId => $event) {
             $tournamentId = $event['tournament'];
+            $this->importer->getTournamentById($tournamentId); // Asserts that the tournament exists.
 
             if (!array_key_exists($tournamentId, $eventsPerTournament)) {
                 $eventsPerTournament[$tournamentId] = [
@@ -272,9 +227,18 @@ abstract class AbstractScenario
             }
         }
 
-        $this->io->text(sprintf('Found %d tournaments before phase filtering.', count($eventsPerTournament)));
+        return $eventsPerTournament;
+    }
 
-        $eventsPerTournament = array_filter($eventsPerTournament, function ($tournament) use ($hasPhases) {
+    /**
+     * @param bool $hasPhases
+     * @param bool $hasMultipleEvents
+     * @param bool $isBracket
+     * @return array
+     */
+    protected function filterEvents(bool $hasPhases, bool $hasMultipleEvents, bool $isBracket)
+    {
+        $eventsPerTournament = array_filter($this->eventsPerTournament, function ($tournament) use ($hasPhases) {
             if ($hasPhases) {
                 return $tournament['hasPhases'];
             }
@@ -285,6 +249,8 @@ abstract class AbstractScenario
         $this->io->text(sprintf('Found %d tournaments after phase filtering.', count($eventsPerTournament)));
 
         $eventsPerTournament = array_filter($eventsPerTournament, function ($tournament) use ($hasMultipleEvents) {
+            Assert::greaterThan(count($tournament['events']), 0);
+
             if ($hasMultipleEvents) {
                 return count($tournament['events']) > 1;
             }
@@ -303,6 +269,9 @@ abstract class AbstractScenario
                 }
 
                 foreach ($tournament['events'] as $eventId => $event) {
+                    Assert::greaterThanEq($event['type'], 1);
+                    Assert::lessThanEq($event['type'], 6);
+
                     if (!in_array($event['type'], $eventTypes)) {
                         return false;
                     }

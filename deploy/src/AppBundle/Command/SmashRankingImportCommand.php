@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Command;
 
-use AppBundle\Importer\SmashRanking\AbstractScenario;
-use AppBundle\Importer\SmashRanking\NoPhasesMultipleEvents;
+use AppBundle\Importer\SmashRanking\Importer;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,6 +29,11 @@ class SmashRankingImportCommand extends ContainerAwareCommand
     protected $io;
 
     /**
+     * @var Importer
+     */
+    protected $importer;
+
+    /**
      * @param EntityManager $entityManager
      */
     public function __construct(EntityManager $entityManager)
@@ -48,16 +52,16 @@ class SmashRankingImportCommand extends ContainerAwareCommand
             ->setName('app:smashranking:import')
             ->setDescription('Import data from the smashranking.eu database.')
             ->addOption(
-                'categorize-models',
-                'c',
+                'split-models',
+                's',
                 InputOption::VALUE_OPTIONAL,
-                'Split the export of the smashranking.eu database into smaller JSON files.'
+                'Split the export of the smashranking.eu database into smaller JSON files based on model name.'
             )
             ->addOption(
-                'count',
-                'o',
+                'count-model-items',
+                'c',
                 InputOption::VALUE_OPTIONAL,
-                'Count the number of items in one specific table.'
+                'Count the number of items for the specified model.'
             )
             ->addOption(
                 'import',
@@ -76,19 +80,16 @@ class SmashRankingImportCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io = new SymfonyStyle($input, $output);
+        $this->importer = new Importer($this->io, $this->getContentDirPath(), $this->entityManager);
 
-        if ($input->getOption('categorize-models')) {
-            $this->categorizeModels();
+        $modelName = $input->getOption('count-model-items');
+
+        if ($input->getOption('split-models')) {
+            $this->splitModels();
+        } elseif($modelName) {
+            $this->countModels($modelName);
         } elseif($input->getOption('import')) {
-            $this->import();
-        } elseif($input->getOption('count')) {
-            $rootDir = $this->getContainer()->get('kernel')->getRootDir();
-            $contentDirPath = realpath($rootDir.'/../var/tmp/smashranking/');
-
-            $scenario = new NoPhasesMultipleEvents($contentDirPath, $this->io, $this->entityManager, []);
-            $items = $scenario->getContentFromJson('tournament');
-
-            $this->io->text(sprintf('Counted %d items.', count($items)));
+            $this->importer->import();
         }
     }
 
@@ -97,10 +98,10 @@ class SmashRankingImportCommand extends ContainerAwareCommand
      *
      * @return void
      */
-    protected function categorizeModels()
+    protected function splitModels()
     {
-        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
-        $jsonPath = realpath($rootDir.'/../var/tmp/smashranking/db.json');
+        $contentDirPath = $this->getContentDirPath();
+        $jsonPath = realpath($contentDirPath.'/db.json');
         $json = file_get_contents($jsonPath);
         $rows = \GuzzleHttp\json_decode($json, true);
 
@@ -121,74 +122,36 @@ class SmashRankingImportCommand extends ContainerAwareCommand
             ksort($rows);
 
             $contents = \GuzzleHttp\json_encode($rows, JSON_PRETTY_PRINT);
-            $dirPath = realpath($rootDir.'/../var/tmp/smashranking');
-            $filePath = $dirPath."/{$key}.json";
+            $filePath = $contentDirPath."/{$key}.json";
 
             file_put_contents($filePath, $contents);
         }
     }
 
     /**
-     * @return void
+     * @param string $modelName
+     *
+     * Counts so far:
+     *
+     * smasher: 7893
+     * tournament: 1535
+     * event: 3244
+     * match: 94529
      */
-    protected function import()
+    protected function countModels(string $modelName)
     {
-        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
-        $contentDirPath = realpath($rootDir.'/../var/tmp/smashranking/');
+        $count = count($this->importer->getContentFromJson($modelName));
 
-        $this->io->title('Importing data from the smashranking.eu database...');
-
-        // Please note that if you don't import all scenarios at once, duplicate player profiles will be created. The
-        // 'disable' functionality only exists for testing purposes.
-        $scenarios = [
-            'NoPhasesMultipleEvents'       => true, // Cleared (273 tournaments)
-            'NoPhasesSingleEventBracket'   => true, // Cleared (1057 tournaments)
-            'NoPhasesSingleEventNoBracket' => true, // Cleared (11 tournaments)
-            'PhasesMultipleEvents'         => true, // Cleared (114 tournaments)
-            'PhasesSingleEventBracket'     => true, // Cleared (75 tournaments)
-            'PhasesSingleEventNoBracket'   => true, // Cleared (1 tournament)
-        ];
-        $players = [];
-
-        foreach ($scenarios as $scenario => $active) {
-            if (!$active) {
-                continue;
-            }
-
-            $this->io->section("Importing tournaments for scenario '{$scenario}'...");
-            $class = 'AppBundle\Importer\SmashRanking\\'.$scenario;
-
-            /** @var AbstractScenario $scenario */
-            $scenario = new $class($contentDirPath, $this->io, $this->entityManager, $players);
-            $scenario->importWithConfiguration();
-            $players = $scenario->getPlayers();
-        }
-
-        $this->io->success('Successfully imported the data from smashranking.eu!');
+        $this->io->text(sprintf("Counted %d items for model name '%s'.", $count, $modelName));
     }
 
     /**
-     * @return array
-     * @deprecated
+     * @return string|bool
      */
-    protected function getSmashggIds()
+    protected function getContentDirPath()
     {
-        $tournaments = array_filter($this->getContentFromJson('tournament'), function ($tournament) {
-            if (array_key_exists('smashgg_page', $tournament) &&
-                mb_strlen($tournament['smashgg_page']) > 0
-            ) {
-                return true;
-            }
+        $rootDir = $this->getContainer()->get('kernel')->getRootDir();
 
-            if (array_key_exists('result_page', $tournament) &&
-                strpos($tournament['result_page'], 'smash.gg') !== false
-            ) {
-                return true;
-            }
-
-            return false;
-        });
-
-        return array_keys($tournaments);
+        return realpath($rootDir.'/../var/tmp/smashranking/');
     }
 }
