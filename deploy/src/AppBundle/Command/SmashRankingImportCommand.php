@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AppBundle\Command;
 
 use AppBundle\Importer\SmashRanking\AbstractScenario;
+use AppBundle\Importer\SmashRanking\NoPhasesMultipleEvents;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -53,6 +54,12 @@ class SmashRankingImportCommand extends ContainerAwareCommand
                 'Split the export of the smashranking.eu database into smaller JSON files.'
             )
             ->addOption(
+                'count',
+                'o',
+                InputOption::VALUE_OPTIONAL,
+                'Count the number of items in one specific table.'
+            )
+            ->addOption(
                 'import',
                 'i',
                 InputOption::VALUE_OPTIONAL,
@@ -74,6 +81,14 @@ class SmashRankingImportCommand extends ContainerAwareCommand
             $this->categorizeModels();
         } elseif($input->getOption('import')) {
             $this->import();
+        } elseif($input->getOption('count')) {
+            $rootDir = $this->getContainer()->get('kernel')->getRootDir();
+            $contentDirPath = realpath($rootDir.'/../var/tmp/smashranking/');
+
+            $scenario = new NoPhasesMultipleEvents($contentDirPath, $this->io, $this->entityManager, []);
+            $items = $scenario->getContentFromJson('tournament');
+
+            $this->io->text(sprintf('Counted %d items.', count($items)));
         }
     }
 
@@ -126,12 +141,12 @@ class SmashRankingImportCommand extends ContainerAwareCommand
         // Please note that if you don't import all scenarios at once, duplicate player profiles will be created. The
         // 'disable' functionality only exists for testing purposes.
         $scenarios = [
-            'NoPhasesMultipleEvents'       => false, // Open (273 tournaments)
-            'NoPhasesSingleEventBracket'   => false, // Cleared (1057 tournaments)
-            'NoPhasesSingleEventNoBracket' => false, // Cleared (11 tournaments)
-            'PhasesMultipleEvents'         => true,  // Open (114 tournaments)
-            'PhasesSingleEventBracket'     => false, // Cleared (75 tournaments)
-            'PhasesSingleEventNoBracket'   => false, // Cleared (1 tournament)
+            'NoPhasesMultipleEvents'       => true, // Cleared (273 tournaments)
+            'NoPhasesSingleEventBracket'   => true, // Cleared (1057 tournaments)
+            'NoPhasesSingleEventNoBracket' => true, // Cleared (11 tournaments)
+            'PhasesMultipleEvents'         => true, // Cleared (114 tournaments)
+            'PhasesSingleEventBracket'     => true, // Cleared (75 tournaments)
+            'PhasesSingleEventNoBracket'   => true, // Cleared (1 tournament)
         ];
         $players = [];
 

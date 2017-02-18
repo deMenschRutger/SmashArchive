@@ -197,7 +197,7 @@ abstract class AbstractScenario
      * @param string $contentKey
      * @return array
      */
-    protected function getContentFromJson(string $contentKey)
+    public function getContentFromJson(string $contentKey)
     {
         $jsonPath = realpath($this->contentDirPath."/ranking.{$contentKey}.json");
         $json = file_get_contents($jsonPath);
