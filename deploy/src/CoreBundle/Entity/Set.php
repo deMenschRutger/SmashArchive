@@ -39,6 +39,34 @@ class Set
     private $round;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="winner_score", type="integer", nullable=true)
+     */
+    private $winnerScore;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="loser_score", type="integer", nullable=true)
+     */
+    private $loserScore;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_forfeit", type="boolean")
+     */
+    private $isForfeit = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_ranked", type="boolean")
+     */
+    private $isRanked = true;
+
+    /**
      * @var PhaseGroup
      *
      * @ORM\ManyToOne(targetEntity="PhaseGroup", inversedBy="sets")
@@ -111,6 +139,70 @@ class Set
     public function setRound(int $round)
     {
         $this->round = $round;
+    }
+
+    /**
+     * @return int
+     */
+    public function getWinnerScore()
+    {
+        return $this->winnerScore;
+    }
+
+    /**
+     * @param int $winnerScore
+     */
+    public function setWinnerScore($winnerScore)
+    {
+        $this->winnerScore = $winnerScore;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLoserScore()
+    {
+        return $this->loserScore;
+    }
+
+    /**
+     * @param int $loserScore
+     */
+    public function setLoserScore($loserScore)
+    {
+        $this->loserScore = $loserScore;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsForfeit(): bool
+    {
+        return $this->isForfeit;
+    }
+
+    /**
+     * @param bool $isForfeit
+     */
+    public function setIsForfeit(bool $isForfeit)
+    {
+        $this->isForfeit = $isForfeit;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsRanked(): bool
+    {
+        return $this->isRanked;
+    }
+
+    /**
+     * @param bool $isRanked
+     */
+    public function setIsRanked(bool $isRanked)
+    {
+        $this->isRanked = $isRanked;
     }
 
     /**

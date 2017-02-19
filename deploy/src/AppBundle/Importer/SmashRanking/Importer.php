@@ -320,7 +320,11 @@ class Importer
             $set->setEntrantOne($entrantOne);
             $set->setEntrantTwo($entrantTwo);
             $set->setWinner($entrantOne);
+            $set->setWinnerScore($match['games_winner']);
             $set->setLoser($entrantTwo);
+            $set->setLoserScore($match['games_loser']);
+            $set->setIsForfeit($match['forfeit']);
+            $set->setIsRanked($match['publish']);
 
             $this->entityManager->persist($set);
 
