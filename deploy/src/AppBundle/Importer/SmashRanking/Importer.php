@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace AppBundle\Importer\SmashRanking;
 
+use CoreBundle\Entity\Entrant;
+use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Player;
+use CoreBundle\Entity\Set;
 use CoreBundle\Entity\Tournament;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -15,6 +18,46 @@ use Webmozart\Assert\Assert;
  */
 class Importer
 {
+    /**
+     * @var array
+     */
+    protected $rounds = [
+        1 => 1, // 'W1'
+        2 => 2, // 'W2'
+        3 => 3, // 'W3'
+        4 => 4, // 'W4'
+        5 => 5, // 'W5'
+        6 => 6, // 'W6'
+        7 => 7, // 'W7'
+        8 => 8, // 'W8'
+        9 => 9, // 'L1'
+        10 => -1, // 'L2'
+        11 => -2, // 'L3'
+        12 => -3, // 'L4'
+        13 => -4, // 'L5'
+        14 => -5, // 'L6'
+        15 => -6, // 'L7'
+        16 => -7, // 'L8'
+        17 => -8, // 'L9'
+        18 => -9, // 'L10'
+        19 => -10, // 'L11'
+        20 => -11, // 'L12'
+        21 => -12, // 'L13'
+        22 => -13, // 'L14'
+        23 => 1, // 'R1',
+        24 => 2, // 'R2',
+        25 => 3, // 'R3',
+        26 => 4, // 'R4',
+        27 => 5, // 'R5',
+        28 => 6, // 'R6',
+        29 => 7, // 'R7',
+        30 => 8, // 'R8',
+        31 => 9, // 'R9',
+        32 => 10, // 'R10',
+        33 => 10, // 'GF1'
+        34 => 11, // 'GF2'
+    ];
+
     /**
      * @var SymfonyStyle
      */
@@ -39,6 +82,16 @@ class Importer
      * @var array
      */
     protected $tournaments = [];
+
+    /**
+     * @var array
+     */
+    protected $phaseGroups = [];
+
+    /**
+     * @var array
+     */
+    protected $entrants = [];
 
     /**
      * Please note that if you don't import all scenarios at once, duplicate player profiles will be created. The
@@ -99,6 +152,14 @@ class Importer
             $scenario->importWithConfiguration();
         }
 
+        $this->io->text(sprintf('Created %d phase groups...', count($this->phaseGroups)));
+
+        $this->io->text('Processing matches...');
+        $this->processMatches();
+
+        $this->io->text('Flushing entity manager...');
+        $this->entityManager->flush();
+
         $this->io->success('Successfully imported the data from smashranking.eu!');
     }
 
@@ -143,6 +204,23 @@ class Importer
     }
 
     /**
+     * @param int $playerId
+     * @return Player
+     */
+    public function getPlayerById($playerId)
+    {
+        if (!array_key_exists($playerId, $this->players)) {
+            throw new \InvalidArgumentException("Player #{$playerId} could not be found.");
+        }
+
+        $player = $this->players[$playerId];
+
+        Assert::isInstanceOf($player, 'CoreBundle\Entity\Player');
+
+        return $player;
+    }
+
+    /**
      * @return array
      *
      * @TODO Gather more data about the tournaments from the SmashRanking database export.
@@ -183,5 +261,92 @@ class Importer
         Assert::isInstanceOf($tournament, 'CoreBundle\Entity\Tournament');
 
         return $tournament;
+    }
+
+    /**
+     * @param int        $originalEventId
+     * @param PhaseGroup $phaseGroup
+     */
+    public function addPhaseGroup($originalEventId, PhaseGroup $phaseGroup)
+    {
+        $this->phaseGroups[$originalEventId] = $phaseGroup;
+    }
+
+    /**
+     * @return void
+     */
+    protected function processMatches()
+    {
+        $matches = $this->getContentFromJson('match');
+        $counter = 0;
+
+        foreach ($matches as $matchId => $match) {
+            $eventId = $match['event'];
+
+            if (!array_key_exists($eventId, $this->phaseGroups)) {
+                continue;
+            }
+
+            /** @var PhaseGroup $phaseGroup */
+            $phaseGroup = $this->phaseGroups[$eventId];
+            $event = $phaseGroup->getPhase()->getEvent();
+            $tournament = $event->getTournament();
+            $tournamentId = array_search($tournament, $this->tournaments);
+
+            $entrantOne = $this->getEntrant($match['winner'], $tournamentId);
+            $entrantTwo = $this->getEntrant($match['loser'], $tournamentId);
+            $round = $match['round'];
+
+            if ($round === null) {
+                $round = 1;
+            }
+
+            if ($round > 8 && $round < 23 && $phaseGroup->getType() === PhaseGroup::TYPE_SINGLE_ELIMINATION) {
+                // If the round goes above 8 it means we have a match in the losers bracket, therefore this is a double
+                // elimination bracket.
+                $phaseGroup->setType(PhaseGroup::TYPE_DOUBLE_ELIMINATION);
+            }
+
+            $round = $this->rounds[$round];
+
+            $set = new Set();
+            $set->setPhaseGroup($phaseGroup);
+            $set->setRound($round);
+            $set->setEntrantOne($entrantOne);
+            $set->setEntrantTwo($entrantTwo);
+            $set->setWinner($entrantOne);
+            $set->setLoser($entrantTwo);
+
+            $this->entityManager->persist($set);
+
+            $counter++;
+        }
+
+        $this->io->text("Counted {$counter} matches (sets).");
+    }
+
+    /**
+     * @param integer $playerId
+     * @param integer $tournamentId
+     * @return Entrant|bool
+     */
+    protected function getEntrant($playerId, $tournamentId)
+    {
+        if (isset($this->entrants[$tournamentId][$playerId])) {
+            return $this->entrants[$tournamentId][$playerId];
+        }
+
+        $player = $this->getPlayerById($playerId);
+
+        $entrant = new Entrant();
+        $entrant->setName($player->getGamerTag());
+        $entrant->addPlayer($player);
+        $player->addEntrant($entrant);
+
+        $this->entityManager->persist($entrant);
+
+        $this->entrants[$tournamentId][$playerId] = $entrant;
+
+        return $entrant;
     }
 }

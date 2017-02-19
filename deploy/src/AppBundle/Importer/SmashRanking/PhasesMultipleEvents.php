@@ -48,21 +48,22 @@ class PhasesMultipleEvents extends AbstractScenario
      */
     protected function filterIntermediateAndAmateurBrackets(array $events)
     {
-        return array_filter($events, function ($event) {
+        return array_filter($events, function ($event, $eventId) {
             if ($event['type'] === 5 || $event['type'] === 6) {
-                $this->processAmateurBracketEvent($event);
+                $this->processAmateurBracketEvent($eventId, $event);
 
                 return false;
             }
 
             return true;
-        });
+        }, ARRAY_FILTER_USE_BOTH);
     }
 
     /**
-     * @param array $event
+     * @param string $eventId
+     * @param array  $event
      */
-    protected function processAmateurBracketEvent(array $event)
+    protected function processAmateurBracketEvent($eventId, array $event)
     {
         $name = 'Melee Singles Amateur Bracket';
 
@@ -74,7 +75,7 @@ class PhasesMultipleEvents extends AbstractScenario
 
         $phase = $this->createPhase('Bracket', 1, $eventEntity);
 
-        $this->createPhaseGroup($name, $phase, $event);
+        $this->createPhaseGroup($name, $phase, $eventId, $event);
     }
 
     /**
@@ -92,7 +93,9 @@ class PhasesMultipleEvents extends AbstractScenario
         });
 
         $otherEvent = current($tournament['events']);
+        $otherEventId = key($tournament['events']);
         $bracketEvent = next($tournament['events']);
+        $bracketEventId = key($tournament['events']);
 
         // Process the bracket.
         $bracketEventEntity = $this->createEventEntity('Melee Singles', $tournamentId);
@@ -103,13 +106,13 @@ class PhasesMultipleEvents extends AbstractScenario
         };
 
         $phase = $this->createPhase($phaseName, 1, $bracketEventEntity);
-        $this->createPhaseGroup($phaseName, $phase, $bracketEvent);
+        $this->createPhaseGroup($phaseName, $phase, $bracketEventId, $bracketEvent);
 
         // Process the other event.
         if ($otherEvent['type'] === 2) {
             // This is secretly an amateur bracket.
             $otherEvent['type'] = 6;
-            $this->processAmateurBracketEvent($otherEvent);
+            $this->processAmateurBracketEvent($otherEventId, $otherEvent);
         } else {
             // This is a Swiss bracket.
             $otherEventEntity = $this->createEventEntity('Melee Singles Swiss', $tournamentId);
@@ -120,7 +123,7 @@ class PhasesMultipleEvents extends AbstractScenario
             };
 
             $phase = $this->createPhase($phaseName, 1, $otherEventEntity);
-            $this->createPhaseGroup($phaseName, $phase, $otherEvent);
+            $this->createPhaseGroup($phaseName, $phase, $otherEventId, $otherEvent);
         }
     }
 
@@ -146,13 +149,14 @@ class PhasesMultipleEvents extends AbstractScenario
                 $poolName = $event['pool'];
             }
 
-            $this->createPhaseGroup($poolName, $poolsPhase, $event);
+            $this->createPhaseGroup($poolName, $poolsPhase, $eventId, $event);
         }
 
         // Create the bracket related entities.
         $bracketEvent = current(array_filter($tournament['events'], function ($event) {
             return $event['type'] === 4;
         }));
+        $bracketEventId = array_search($bracketEvent, $tournament['events']);
 
         $bracketName = 'Bracket';
 
@@ -161,6 +165,6 @@ class PhasesMultipleEvents extends AbstractScenario
         };
 
         $bracketPhase = $this->createPhase($bracketName, 2, $eventEntity);
-        $this->createPhaseGroup($bracketName, $bracketPhase, $bracketEvent);
+        $this->createPhaseGroup($bracketName, $bracketPhase, $bracketEventId, $bracketEvent);
     }
 }

@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace AppBundle\Importer\SmashRanking;
 
 use AppBundle\Command\SmashRankingImportCommand;
-use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Game;
 use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\PhaseGroup;
-use CoreBundle\Entity\Player;
-use CoreBundle\Entity\Set;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Webmozart\Assert\Assert;
@@ -62,46 +59,6 @@ abstract class AbstractScenario
     ];
 
     /**
-     * @var array
-     */
-    protected $rounds = [
-        1 => 1, // 'W1'
-        2 => 2, // 'W2'
-        3 => 3, // 'W3'
-        4 => 4, // 'W4'
-        5 => 5, // 'W5'
-        6 => 6, // 'W6'
-        7 => 7, // 'W7'
-        8 => 8, // 'W8'
-        9 => 9, // 'L1'
-        10 => -1, // 'L2'
-        11 => -2, // 'L3'
-        12 => -3, // 'L4'
-        13 => -4, // 'L5'
-        14 => -5, // 'L6'
-        15 => -6, // 'L7'
-        16 => -7, // 'L8'
-        17 => -8, // 'L9'
-        18 => -9, // 'L10'
-        19 => -10, // 'L11'
-        20 => -11, // 'L12'
-        21 => -12, // 'L13'
-        22 => -13, // 'L14'
-        23 => 1, // 'R1',
-        24 => 2, // 'R2',
-        25 => 3, // 'R3',
-        26 => 4, // 'R4',
-        27 => 5, // 'R5',
-        28 => 6, // 'R6',
-        29 => 7, // 'R7',
-        30 => 8, // 'R8',
-        31 => 9, // 'R9',
-        32 => 10, // 'R10',
-        33 => 10, // 'GF1'
-        34 => 11, // 'GF2'
-    ];
-
-    /**
      * @var string
      */
     protected $defaultPhaseName = 'Bracket';
@@ -129,17 +86,7 @@ abstract class AbstractScenario
     /**
      * @var array
      */
-    protected $eventsPerTournament;
-
-    /**
-     * @var array
-     */
-    protected $phaseGroups = [];
-
-    /**
-     * @var array
-     */
-    protected $entrants;
+    protected $eventsPerTournament = [];
 
     /**
      * @param Importer      $importer
@@ -176,14 +123,6 @@ abstract class AbstractScenario
 
         $this->io->text('Processing events...');
         $this->processEvents();
-
-//        $this->io->text('Flushing entity manager...');
-//        $this->entityManager->flush();
-
-//        $this->io->text('Processing phase groups...');
-//        $this->processPhaseGroups($this->phaseGroups);
-
-//        $this->entityManager->flush();
     }
 
     /**
@@ -315,7 +254,7 @@ abstract class AbstractScenario
 
                 $phase = $this->createPhase($phaseName, 1, $eventEntity);
 
-                $this->createPhaseGroup($phaseName, $phase, $event);
+                $this->createPhaseGroup($phaseName, $phase, $eventId, $event);
             }
         }
     }
@@ -359,10 +298,11 @@ abstract class AbstractScenario
 
     /**
      * @param string $name
+     * @param int    $eventId
      * @param Phase  $phase
      * @param array  $eventData The original data from the SmashRanking database.
      */
-    protected function createPhaseGroup(string $name, Phase $phase, array $eventData)
+    protected function createPhaseGroup(string $name, Phase $phase, $eventId, array $eventData)
     {
         $phaseGroupType = $this->eventTypes[$eventData['type']]['newTypeId'];
         $resultsUrl = $eventData['result_page'] ? $eventData['result_page'] : null;
@@ -375,116 +315,6 @@ abstract class AbstractScenario
 
         $this->entityManager->persist($phaseGroup);
 
-        $this->phaseGroups[] = $phaseGroup;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * @param array $phaseGroups
-     */
-    protected function processPhaseGroups(array $phaseGroups)
-    {
-        if (count($this->players) === 0) {
-            $this->players = $this->getContentFromJson('smasher');
-        }
-
-        $matches = $this->getContentFromJson('match');
-        $counter = 0;
-
-        foreach ($matches as $matchId => $match) {
-            $eventId = $match['event'];
-
-            if (!array_key_exists($eventId, $phaseGroups)) {
-                continue;
-            }
-
-            /** @var PhaseGroup $phaseGroup */
-            $phaseGroup = $phaseGroups[$eventId];
-            $event = $phaseGroup->getPhase()->getEvent();
-            $tournamentId = $event->getTournament()->getId();
-            $entrantOne = $this->getEntrant($match['winner'], $tournamentId);
-            $entrantTwo = $this->getEntrant($match['loser'], $tournamentId);
-
-            $round = $match['round'];
-
-            if ($round === null) {
-                $round = 1;
-            } elseif ($round > 8 && $round < 23 && $phaseGroup->getType() === PhaseGroup::TYPE_SINGLE_ELIMINATION) {
-                // If the round goes above 8 it means we have a match in the losers bracket, therefore this is a double
-                // elimination bracket.
-                $phaseGroup->setType(PhaseGroup::TYPE_DOUBLE_ELIMINATION);
-            }
-
-            $round = $this->rounds[$round];
-
-            $set = new Set();
-            $set->setPhaseGroup($phaseGroup);
-            $set->setRound($round);
-            $set->setEntrantOne($entrantOne);
-            $set->setEntrantTwo($entrantTwo);
-            $set->setWinner($entrantOne);
-            $set->setLoser($entrantTwo);
-
-            $this->entityManager->persist($set);
-
-            $counter++;
-        }
-
-        $this->io->text("Counted {$counter} sets.");
-    }
-
-    /**
-     * @param integer $playerId
-     * @param integer $tournamentId
-     * @return Entrant|bool
-     */
-    protected function getEntrant($playerId, $tournamentId)
-    {
-        if (isset($this->entrants[$tournamentId][$playerId])) {
-            return $this->entrants[$tournamentId][$playerId];
-        }
-
-        if (!array_key_exists($playerId, $this->players)) {
-            return false;
-        }
-
-        if (array_key_exists('entity', $this->players[$playerId])) {
-            $player = $this->players[$playerId]['entity'];
-        } else {
-            $tag = $this->players[$playerId]['tag'];
-            $player = new Player();
-            $player->setGamerTag($tag);
-
-            $this->entityManager->persist($player);
-
-            $this->players[$playerId]['entity'] = $player;
-        }
-
-        $entrant = new Entrant();
-        $entrant->setName($player->getGamerTag());
-        $entrant->addPlayer($player);
-        $player->addEntrant($entrant);
-
-        $this->entityManager->persist($entrant);
-
-        $this->entrants[$tournamentId][$playerId] = $entrant;
-
-        return $entrant;
+        $this->importer->addPhaseGroup($eventId, $phaseGroup);
     }
 }
