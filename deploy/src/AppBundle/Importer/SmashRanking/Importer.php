@@ -101,8 +101,8 @@ class Importer
      */
     protected $scenarios = [
         'NoPhasesMultipleEvents'       => false, // Cleared (273 tournaments)
-        'NoPhasesSingleEventBracket'   => false, // Cleared (1057 tournaments)
-        'NoPhasesSingleEventNoBracket' => true, // Cleared (11 tournaments)
+        'NoPhasesSingleEventBracket'   => true, // Cleared (1057 tournaments)
+        'NoPhasesSingleEventNoBracket' => false, // Cleared (11 tournaments)
         'PhasesMultipleEvents'         => false, // Cleared (114 tournaments)
         'PhasesSingleEventBracket'     => false, // Cleared (75 tournaments)
         'PhasesSingleEventNoBracket'   => false, // Cleared (1 tournament)
@@ -243,6 +243,7 @@ class Importer
             $entity = new Tournament();
             $entity->setOriginalId($tournamentId);
             $entity->setName($tournament['name']);
+            $entity->setResultsPage($tournament['result_page']);
             $entity->setIsComplete(true);
             $entity->setIsActive(true);
 

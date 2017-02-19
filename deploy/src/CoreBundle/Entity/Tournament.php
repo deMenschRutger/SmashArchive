@@ -59,6 +59,13 @@ class Tournament
     private $name;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="results_page", type="text", nullable=true)
+     */
+    private $resultsPage;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="is_complete", type="boolean")
@@ -147,6 +154,22 @@ class Tournament
     public function setName(string $name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResultsPage()
+    {
+        return $this->resultsPage;
+    }
+
+    /**
+     * @param string $resultsPage
+     */
+    public function setResultsPage($resultsPage)
+    {
+        $this->resultsPage = $resultsPage;
     }
 
     /**
