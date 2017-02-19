@@ -12,7 +12,6 @@ use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Player;
 use CoreBundle\Entity\Set;
-use CoreBundle\Entity\Tournament;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Webmozart\Assert\Assert;
@@ -175,8 +174,8 @@ abstract class AbstractScenario
         $this->io->text(sprintf('Filtering events based on scenario...', count($this->eventsPerTournament)));
         $this->filterEvents($hasPhases, $hasMultipleEvents, $isBracket);
 
-//        $this->io->text('Processing events...');
-//        $this->processEvents($events);
+        $this->io->text('Processing events...');
+        $this->processEvents();
 
 //        $this->io->text('Flushing entity manager...');
 //        $this->entityManager->flush();
@@ -287,34 +286,26 @@ abstract class AbstractScenario
     }
 
     /**
-     * @param array $events
-     * @param array $tournaments
-     *
      * Assumptions:
      *
-     * - If there is a 'name_bracket', it is the name of a phase (top 64 etc.). This phase will have only on phase group (a bracket).
+     * - If there is a 'name_bracket', it is the name of a phase (top 64 etc.). This phase will have only one phase group (a bracket).
      * - If the event is of type 5 or 6 it is a different event (intermediate and amateur brackets respectively).
      * - Intermediate and amateur brackets never have more than one phase.
      * - If the event has a truthy value in the 'pool' field, it is a phase group part of a phase preceding a bracket or subsequent pool phase.
      * - If the event is a pool, it will not have a value in the 'name_bracket' field, and the name of the pool will be in the 'pool' field.
+     *
+     * @param array $tournaments
      */
-    protected function processEvents(array $events, array $tournaments)
+    protected function processEvents($tournaments = null)
     {
-        foreach ($events as $tournamentId => $tournament) {
-            /** @var Tournament $tournamentEntity */
-            $tournamentEntity = $tournaments[$tournamentId];
+        if ($tournaments === null) {
+            $tournaments = $this->eventsPerTournament;
+        }
 
-            $this->io->comment($tournamentEntity->getName());
-
+        foreach ($tournaments as $tournamentId => $tournament) {
             foreach ($tournament['events'] as $eventId => $event) {
                 $eventName = $this->eventTypes[$event['type']]['eventName'];
-
-                $entity = new Event();
-                $entity->setName($eventName);
-                $entity->setGame($this->melee);
-                $entity->setTournament($tournamentEntity);
-
-                $this->entityManager->persist($entity);
+                $eventEntity = $this->createEventEntity($eventName, $tournamentId);
 
                 $phaseName = $this->defaultPhaseName;
 
@@ -322,28 +313,87 @@ abstract class AbstractScenario
                     $phaseName = $event['name_bracket'];
                 }
 
-                $phase = new Phase();
-                $phase->setName($phaseName);
-                $phase->setEvent($entity);
-                $phase->setPhaseOrder(1);
+                $phase = $this->createPhase($phaseName, 1, $eventEntity);
 
-                $this->entityManager->persist($phase);
-
-                $resultsUrl = $event['result_page'] ? $event['result_page'] : null;
-                $phaseGroupType = $this->eventTypes[$event['type']]['newTypeId'];
-
-                $phaseGroup = new PhaseGroup();
-                $phaseGroup->setName($phaseName);
-                $phaseGroup->setType($phaseGroupType);
-                $phaseGroup->setPhase($phase);
-                $phaseGroup->setResultsUrl($resultsUrl);
-
-                $this->entityManager->persist($phaseGroup);
-
-                $this->phaseGroups[$eventId] = $phaseGroup;
+                $this->createPhaseGroup($phaseName, $phase, $event);
             }
         }
     }
+
+    /**
+     * @param string $name
+     * @param int    $tournamentId
+     * @return Event
+     */
+    protected function createEventEntity(string $name, $tournamentId)
+    {
+        $tournament = $this->importer->getTournamentById($tournamentId);
+
+        $entity = new Event();
+        $entity->setName($name);
+        $entity->setGame($this->melee);
+        $entity->setTournament($tournament);
+
+        $this->entityManager->persist($entity);
+
+        return $entity;
+    }
+
+    /**
+     * @param string $name
+     * @param int    $order
+     * @param Event  $event
+     * @return Phase
+     */
+    protected function createPhase(string $name, $order, Event $event)
+    {
+        $phase = new Phase();
+        $phase->setName($name);
+        $phase->setEvent($event);
+        $phase->setPhaseOrder($order);
+
+        $this->entityManager->persist($phase);
+
+        return $phase;
+    }
+
+    /**
+     * @param string $name
+     * @param Phase  $phase
+     * @param array  $eventData The original data from the SmashRanking database.
+     */
+    protected function createPhaseGroup(string $name, Phase $phase, array $eventData)
+    {
+        $phaseGroupType = $this->eventTypes[$eventData['type']]['newTypeId'];
+        $resultsUrl = $eventData['result_page'] ? $eventData['result_page'] : null;
+
+        $phaseGroup = new PhaseGroup();
+        $phaseGroup->setName($name);
+        $phaseGroup->setType($phaseGroupType);
+        $phaseGroup->setResultsUrl($resultsUrl);
+        $phaseGroup->setPhase($phase);
+
+        $this->entityManager->persist($phaseGroup);
+
+        $this->phaseGroups[] = $phaseGroup;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * @param array $phaseGroups

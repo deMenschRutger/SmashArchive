@@ -33,12 +33,12 @@ class Importer
     /**
      * @var array
      */
-    protected $players;
+    protected $players = [];
 
     /**
      * @var array
      */
-    protected $tournaments;
+    protected $tournaments = [];
 
     /**
      * Please note that if you don't import all scenarios at once, duplicate player profiles will be created. The
