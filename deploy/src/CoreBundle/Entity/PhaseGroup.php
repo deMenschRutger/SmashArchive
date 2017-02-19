@@ -57,9 +57,9 @@ class PhaseGroup
     /**
      * @var string
      *
-     * @ORM\Column(name="results_url", type="text", nullable=true)
+     * @ORM\Column(name="results_page", type="text", nullable=true)
      */
-    private $resultsUrl;
+    private $resultsPage;
 
     /**
      * @var string
@@ -136,17 +136,17 @@ class PhaseGroup
     /**
      * @return string
      */
-    public function getResultsUrl()
+    public function getResultsPage()
     {
-        return $this->resultsUrl;
+        return $this->resultsPage;
     }
 
     /**
-     * @param string $resultsUrl
+     * @param string $resultsPage
      */
-    public function setResultsUrl($resultsUrl)
+    public function setResultsPage($resultsPage)
     {
-        $this->resultsUrl = $resultsUrl;
+        $this->resultsPage = $resultsPage;
     }
 
     /**

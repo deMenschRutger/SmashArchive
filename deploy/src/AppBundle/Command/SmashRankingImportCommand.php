@@ -168,7 +168,7 @@ class SmashRankingImportCommand extends ContainerAwareCommand
             ->leftJoin('e.phases', 'p')
             ->leftJoin('p.phaseGroups', 'pg')
             ->where("t.resultsPage LIKE '%smash.gg%'")
-            ->orWhere("pg.resultsUrl LIKE '%smash.gg%'")
+            ->orWhere("pg.resultsPage LIKE '%smash.gg%'")
             ->getQuery()
             ->getResult()
         ;

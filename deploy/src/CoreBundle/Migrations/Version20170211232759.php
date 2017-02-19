@@ -19,7 +19,7 @@ class Version20170211232759 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE phase_group ADD results_url LONGTEXT DEFAULT NULL, ADD smash_ranking_info LONGTEXT DEFAULT NULL');
+        $this->addSql('ALTER TABLE phase_group ADD results_page LONGTEXT DEFAULT NULL, ADD smash_ranking_info LONGTEXT DEFAULT NULL');
         $this->addSql('ALTER TABLE tournament ADD is_complete TINYINT(1) NOT NULL, ADD is_active TINYINT(1) NOT NULL');
     }
 
@@ -30,7 +30,7 @@ class Version20170211232759 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE phase_group DROP results_url, DROP smash_ranking_info');
+        $this->addSql('ALTER TABLE phase_group DROP results_page, DROP smash_ranking_info');
         $this->addSql('ALTER TABLE tournament DROP is_complete, DROP is_active');
     }
 }

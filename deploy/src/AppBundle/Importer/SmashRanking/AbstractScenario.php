@@ -15,8 +15,6 @@ use Webmozart\Assert\Assert;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
- *
- * @TODO Take into account 'forfeit' and 'publish' on the match model.
  */
 abstract class AbstractScenario
 {
@@ -304,13 +302,13 @@ abstract class AbstractScenario
     protected function createPhaseGroup(string $name, Phase $phase, $eventId, array $eventData)
     {
         $phaseGroupType = $this->eventTypes[$eventData['type']]['newTypeId'];
-        $resultsUrl = $eventData['result_page'] ? $eventData['result_page'] : null;
+        $resultsPage = $eventData['result_page'] ? $eventData['result_page'] : null;
 
         $phaseGroup = new PhaseGroup();
         $phaseGroup->setOriginalId($eventId);
         $phaseGroup->setName($name);
         $phaseGroup->setType($phaseGroupType);
-        $phaseGroup->setResultsUrl($resultsUrl);
+        $phaseGroup->setResultsPage($resultsPage);
         $phaseGroup->setPhase($phase);
 
         $this->entityManager->persist($phaseGroup);
