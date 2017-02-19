@@ -45,9 +45,44 @@ class Player
     /**
      * @var string
      *
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
+     */
+    private $name;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="gamer_tag", type="string")
      */
     private $gamerTag;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="region", type="string", length=255, nullable=true)
+     */
+    private $region;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="city", type="string", length=255, nullable=true)
+     */
+    private $city;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="is_competing", type="boolean")
+     */
+    private $isCompeting = true;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="is_active", type="boolean")
+     */
+    private $isActive = true;
 
     /**
      * @ORM\ManyToMany(targetEntity="Entrant", mappedBy="players")
@@ -97,6 +132,22 @@ class Player
     /**
      * @return string
      */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
     public function getGamerTag(): string
     {
         return $this->gamerTag;
@@ -108,6 +159,70 @@ class Player
     public function setGamerTag(string $gamerTag)
     {
         $this->gamerTag = $gamerTag;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRegion()
+    {
+        return $this->region;
+    }
+
+    /**
+     * @param string $region
+     */
+    public function setRegion($region)
+    {
+        $this->region = $region;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * @param string $city
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsCompeting()
+    {
+        return $this->isCompeting;
+    }
+
+    /**
+     * @param bool $isCompeting
+     */
+    public function setIsCompeting($isCompeting)
+    {
+        $this->isCompeting = $isCompeting;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param bool $isActive
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
     }
 
     /**

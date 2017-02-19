@@ -172,7 +172,6 @@ abstract class AbstractScenario
      * @param bool $hasPhases
      * @param bool $hasMultipleEvents
      * @param bool $isBracket
-     * @return array
      */
     protected function filterEvents(bool $hasPhases, bool $hasMultipleEvents, bool $isBracket)
     {
@@ -221,7 +220,7 @@ abstract class AbstractScenario
             $this->io->text(sprintf('Found %d tournaments after event type filtering.', count($eventsPerTournament)));
         }
 
-        return $eventsPerTournament;
+        $this->eventsPerTournament = $eventsPerTournament;
     }
 
     /**

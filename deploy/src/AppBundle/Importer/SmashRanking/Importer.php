@@ -100,12 +100,12 @@ class Importer
      * @var array
      */
     protected $scenarios = [
-        'NoPhasesMultipleEvents'       => true, // Cleared (273 tournaments)
-        'NoPhasesSingleEventBracket'   => true, // Cleared (1057 tournaments)
+        'NoPhasesMultipleEvents'       => false, // Cleared (273 tournaments)
+        'NoPhasesSingleEventBracket'   => false, // Cleared (1057 tournaments)
         'NoPhasesSingleEventNoBracket' => true, // Cleared (11 tournaments)
-        'PhasesMultipleEvents'         => true, // Cleared (114 tournaments)
-        'PhasesSingleEventBracket'     => true, // Cleared (75 tournaments)
-        'PhasesSingleEventNoBracket'   => true, // Cleared (1 tournament)
+        'PhasesMultipleEvents'         => false, // Cleared (114 tournaments)
+        'PhasesSingleEventBracket'     => false, // Cleared (75 tournaments)
+        'PhasesSingleEventNoBracket'   => false, // Cleared (1 tournament)
     ];
 
     /**
@@ -152,6 +152,7 @@ class Importer
             $scenario->importWithConfiguration();
         }
 
+        $this->io->newLine();
         $this->io->text(sprintf('Created %d phase groups...', count($this->phaseGroups)));
 
         $this->io->text('Processing matches...');
@@ -194,7 +195,11 @@ class Importer
 
         foreach ($players as $playerId => &$player) {
             $entity = new Player();
+            $entity->setName($player['name'] ? $player['name'] : null);
             $entity->setGamerTag($player['tag']);
+            $entity->setRegion($player['region']);
+            $entity->setCity($player['city']);
+            $entity->setIsCompeting($player['active']);
 
             $this->entityManager->persist($entity);
             $player = $entity;
