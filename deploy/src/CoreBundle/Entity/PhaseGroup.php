@@ -32,6 +32,15 @@ class PhaseGroup
     private $id;
 
     /**
+     * The original event ID from the SmashRanking database.
+     *
+     * @var int
+     *
+     * @ORM\Column(name="original_id", type="integer")
+     */
+    private $originalId;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="smashgg_id", type="integer", nullable=true)
@@ -82,6 +91,22 @@ class PhaseGroup
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOriginalId()
+    {
+        return $this->originalId;
+    }
+
+    /**
+     * @param int $originalId
+     */
+    public function setOriginalId($originalId)
+    {
+        $this->originalId = $originalId;
     }
 
     /**

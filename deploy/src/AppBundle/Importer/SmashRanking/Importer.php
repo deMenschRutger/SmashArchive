@@ -195,6 +195,7 @@ class Importer
 
         foreach ($players as $playerId => &$player) {
             $entity = new Player();
+            $entity->setOriginalId($playerId);
             $entity->setName($player['name'] ? $player['name'] : null);
             $entity->setGamerTag($player['tag']);
             $entity->setRegion($player['region']);
@@ -240,6 +241,7 @@ class Importer
 
         foreach ($tournaments as $tournamentId => &$tournament) {
             $entity = new Tournament();
+            $entity->setOriginalId($tournamentId);
             $entity->setName($tournament['name']);
             $entity->setIsComplete(true);
             $entity->setIsActive(true);
@@ -315,6 +317,7 @@ class Importer
             $round = $this->rounds[$round];
 
             $set = new Set();
+            $set->setOriginalId($matchId);
             $set->setPhaseGroup($phaseGroup);
             $set->setRound($round);
             $set->setEntrantOne($entrantOne);

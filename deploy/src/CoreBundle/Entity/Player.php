@@ -28,6 +28,15 @@ class Player
     private $id;
 
     /**
+     * The original ID from the SmashRanking database.
+     *
+     * @var int
+     *
+     * @ORM\Column(name="original_id", type="integer")
+     */
+    private $originalId;
+
+    /**
      * @var string
      *
      * @Gedmo\Slug(fields={"gamerTag"})
@@ -103,6 +112,22 @@ class Player
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOriginalId()
+    {
+        return $this->originalId;
+    }
+
+    /**
+     * @param int $originalId
+     */
+    public function setOriginalId($originalId)
+    {
+        $this->originalId = $originalId;
     }
 
     /**
