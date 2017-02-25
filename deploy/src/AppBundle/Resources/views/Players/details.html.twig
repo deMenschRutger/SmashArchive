@@ -2,6 +2,14 @@
 
 {% block body %}
 
+<div class="row">
+    <div class="col-md-3 well">
+
+test
+
+    </div>
+    <div class="col-md-9 ">
+
     {% for tournament, events in setsByTournament %}
 
         {{ tournament }}
@@ -39,5 +47,8 @@
         <br>
 
     {% endfor %}
+
+    </div>
+</div>
 
 {% endblock %}
