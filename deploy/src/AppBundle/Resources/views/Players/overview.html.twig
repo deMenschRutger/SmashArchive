@@ -18,8 +18,8 @@
 
         <tr>
             <td>{{ player.gamerTag }}</td>
-            <td>{{ player.name }}</td>
-            <td>{{ player.region }}</td>
+            <td></td>
+            <td></td>
             <td>
                 <a href="{{ url('player_details', { 'slug': player.slug }) }}">Profile</a>
             </td>
@@ -27,7 +27,11 @@
 
     {% endfor %}
 
-        </table>
+            </table>
+            <div>
+                {{ knp_pagination_render(pagination) }}
+            </div>
+        </div>
     </div>
 
 {% endblock %}

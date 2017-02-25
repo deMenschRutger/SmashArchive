@@ -20,7 +20,7 @@ class SetDTO
     public $id;
 
     /**
-     * @var string
+     * @var int
      *
      * @Serializer\Type("integer")
      */

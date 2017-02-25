@@ -1,4 +1,13 @@
 services:
+    bus.handler.player.overview:
+        class: Domain\Handler\Player\OverviewHandler
+        arguments:
+            - '@knp_paginator'
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Player\OverviewCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
     bus.handler.player.results:
         class: Domain\Handler\Player\ResultsHandler
         tags:

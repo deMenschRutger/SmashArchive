@@ -7,7 +7,9 @@ namespace AppBundle\Controller;
 use CoreBundle\Controller\AbstractDefaultController;
 use CoreBundle\Repository\PlayerRepository;
 use Domain\Command\Player\HeadToHeadCommand;
+use Domain\Command\Player\OverviewCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -18,20 +20,20 @@ use Symfony\Component\HttpFoundation\Response;
 class PlayerController extends AbstractDefaultController
 {
     /**
+     * @param Request $request
+     * @return Response
+     *
      * @Route("/", name="players_overview")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
-        $players = $this
-            ->getDoctrine()
-            ->getManager()
-            ->getRepository('CoreBundle:Player')
-            ->findBy([], null, 50)
-        ;
+        $tag = $request->get('tag');
+        $page = $request->get('page');
 
-        return $this->render('AppBundle:Players:overview.html.twig', [
-            'players' => $players,
-        ]);
+        $command = new OverviewCommand($tag, $page);
+        $result = $this->commandBus->handle($command);
+
+        return $this->render('AppBundle:Players:overview.html.twig', $result);
     }
 
     /**

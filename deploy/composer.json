@@ -35,7 +35,8 @@
         "jms/serializer-bundle": "^1.1",
         "league/tactician-bundle": "~0.4",
         "stof/doctrine-extensions-bundle": "^1.2",
-        "webmozart/assert": "^1.2"
+        "webmozart/assert": "^1.2",
+        "knplabs/knp-paginator-bundle": "^2.5"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
