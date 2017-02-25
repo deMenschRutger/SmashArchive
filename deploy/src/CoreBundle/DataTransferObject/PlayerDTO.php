@@ -14,24 +14,23 @@ class PlayerDTO
 {
     /**
      * @var integer
-     *
-     * @Serializer\Type("integer")
      */
     public $id;
 
     /**
      * @var string
-     *
-     * @Serializer\Type("string")
      */
     public $slug;
 
     /**
      * @var string
-     *
-     * @Serializer\Type("string")
      */
     public $gamerTag;
+
+    /**
+     * @var string
+     */
+    public $name;
 
     /**
      * @param Player $player
@@ -41,5 +40,6 @@ class PlayerDTO
         $this->id = $player->getId();
         $this->slug = $player->getSlug();
         $this->gamerTag = $player->getGamerTag();
+        $this->name = $player->getName();
     }
 }

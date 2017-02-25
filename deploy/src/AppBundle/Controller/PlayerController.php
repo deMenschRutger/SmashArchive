@@ -6,6 +6,7 @@ namespace AppBundle\Controller;
 
 use CoreBundle\Controller\AbstractDefaultController;
 use CoreBundle\DataTransferObject\SetDTO;
+use Domain\Command\Player\DetailsCommand;
 use Domain\Command\Player\HeadToHeadCommand;
 use Domain\Command\Player\OverviewCommand;
 use Domain\Command\Player\ResultsCommand;
@@ -26,7 +27,7 @@ class PlayerController extends AbstractDefaultController
      *
      * @Route("/", name="players_overview")
      */
-    public function indexAction(Request $request)
+    public function overviewAction(Request $request)
     {
         $tag = $request->get('tag');
         $page = $request->get('page');
@@ -46,10 +47,13 @@ class PlayerController extends AbstractDefaultController
      *
      * @TODO Tournaments aren't sorted by date.
      */
-    public function playerAction($slug)
+    public function detailsAction($slug)
     {
-        $command = new ResultsCommand($slug);
-        $sets =  $this->commandBus->handle($command);
+        $detailsCommand = new DetailsCommand($slug);
+        $player = $this->commandBus->handle($detailsCommand);
+
+        $resultsCommand = new ResultsCommand($slug);
+        $sets = $this->commandBus->handle($resultsCommand);
         $setsByTournament = [];
 
         /** @var SetDTO[] $sets */
@@ -62,7 +66,8 @@ class PlayerController extends AbstractDefaultController
             $setsByTournament[$tournamentName][$eventName][$phaseName][] = $set;
         }
 
-        return $this->render('AppBundle:Players:player.html.twig', [
+        return $this->render('AppBundle:Players:details.html.twig', [
+            'player' => $player,
             'setsByTournament' => $setsByTournament,
         ]);
     }

@@ -5,14 +5,16 @@
 <div class="row">
     <div class="col-md-3 well">
 
-test
+        <h4>{{ player.gamerTag }}</h4>
+
+        {{ player.name }}<br>
 
     </div>
     <div class="col-md-9 ">
 
     {% for tournament, events in setsByTournament %}
 
-        {{ tournament }}
+        <h4>{{ tournament }}</h4>
         <br>
 
         {% for eventName, phases in events %}

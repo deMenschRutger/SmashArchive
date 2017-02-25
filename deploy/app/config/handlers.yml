@@ -8,6 +8,13 @@ services:
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
 
+    bus.handler.player.details:
+        class: Domain\Handler\Player\DetailsHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Player\DetailsCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
     bus.handler.player.results:
         class: Domain\Handler\Player\ResultsHandler
         tags:

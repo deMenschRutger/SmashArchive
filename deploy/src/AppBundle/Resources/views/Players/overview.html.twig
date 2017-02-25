@@ -2,17 +2,17 @@
 
 {% block body %}
 
-    <div class="row">
-        <div class="column-md-12">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Tag</th>
-                        <th>Name</th>
-                        <th>Region</th>
-                        <th></th>
-                    </tr>
-                </thead>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tag</th>
+                    <th>Name</th>
+                    <th>Region</th>
+                    <th></th>
+                </tr>
+            </thead>
 
     {% for player in players %}
 
@@ -27,11 +27,11 @@
 
     {% endfor %}
 
-            </table>
-            <div>
-                {{ knp_pagination_render(pagination) }}
-            </div>
+        </table>
+        <div>
+            {{ knp_pagination_render(pagination) }}
         </div>
     </div>
+</div>
 
 {% endblock %}
