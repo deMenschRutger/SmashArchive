@@ -38,18 +38,14 @@ class PlayerController extends AbstractDefaultController
     }
 
     /**
-     * @param int $playerId
+     * @param string $slug
      * @return array
      *
-     * @Route("/players/{playerId}/results/", requirements={
-     *  "playerId" = "\d+",
-     * })
-     *
-     * @TODO Use slugs instead of IDs
+     * @Route("/{slug}/results/")
      */
-    public function resultsAction($playerId)
+    public function resultsAction($slug)
     {
-        $command = new ResultsCommand($playerId);
+        $command = new ResultsCommand($slug);
 
         return $this->commandBus->handle($command);
     }

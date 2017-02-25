@@ -4,33 +4,29 @@ declare(strict_types=1);
 
 namespace Domain\Command\Player;
 
-use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
 class ResultsCommand
 {
     /**
-     * @var int
-     *
-     * @Assert\Range(min=1)
+     * @var string
      */
-    private $playerId;
+    private $slug;
 
     /**
-     * @param mixed $playerId
+     * @param string $slug
      */
-    public function __construct($playerId)
+    public function __construct($slug)
     {
-        $this->playerId = intval($playerId);
+        $this->slug = $slug;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getPlayerId(): int
+    public function getSlug()
     {
-        return $this->playerId;
+        return $this->slug;
     }
 }

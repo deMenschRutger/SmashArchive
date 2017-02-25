@@ -12,22 +12,31 @@ use Doctrine\ORM\EntityRepository;
 class SetRepository extends EntityRepository
 {
     /**
-     * @param int $playerId
+     * @param string $slug
      * @return array
-     *
-     * @TODO Search by player instead of entrant.
      */
-    public function findByPlayerId(int $playerId)
+    public function findByPlayerSlug(string $slug)
     {
+        /** @var EntrantRepository $singlePlayerEntrants */
+        $entrantRepository = $this->_em->getRepository('CoreBundle:Entrant');
+
+        $singlePlayerEntrantIds = $entrantRepository->findSinglePlayerEntrantIdsBySlug($slug);
+
         return $this
             ->createQueryBuilder('s')
-            ->select('s')
+            ->select('s, pg, ph, ev, t, e1, e2, w, l')
+            ->join('s.phaseGroup', 'pg')
+            ->join('pg.phase', 'ph')
+            ->join('ph.event', 'ev')
+            ->join('ev.tournament', 't')
             ->join('s.entrantOne', 'e1')
             ->join('s.entrantTwo', 'e2')
-            ->where('e1.id = ?1')
-            ->orWhere('e2.id = ?2')
-            ->setParameter(1, $playerId)
-            ->setParameter(2, $playerId)
+            ->join('s.winner', 'w')
+            ->join('s.loser', 'l')
+            ->where('e1.id IN (:ids)')
+            ->orWhere('e2.id IN (:ids)')
+            ->setParameter('ids', $singlePlayerEntrantIds)
+            ->setParameter('ids', $singlePlayerEntrantIds)
             ->getQuery()
             ->getResult()
         ;

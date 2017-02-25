@@ -21,14 +21,12 @@ class ResultsHandler extends AbstractHandler
      */
     public function handle(ResultsCommand $command)
     {
-        $playerId = $command->getPlayerId();
-
-        /** @var SetRepository $entityManager */
-        $repository = $this->getEntityManager()->getRepository('CoreBundle:Set');
-        $results = $repository->findByPlayerId($playerId);
+        /** @var SetRepository $repository */
+        $repository = $this->getRepository('CoreBundle:Set');
+        $sets = $repository->findByPlayerSlug($command->getSlug());
 
         return array_map(function (Set $set) {
             return new SetDTO($set);
-        }, $results);
+        }, $sets);
     }
 }

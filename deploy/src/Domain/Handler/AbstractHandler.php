@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domain\Handler;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -30,5 +31,14 @@ abstract class AbstractHandler
     public function setEntityManager(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @param string $name
+     * @return EntityRepository
+     */
+    public function getRepository(string $name)
+    {
+        return $this->entityManager->getRepository($name);
     }
 }
