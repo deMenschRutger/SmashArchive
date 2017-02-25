@@ -4,3 +4,9 @@ services:
         calls:
             - ['setContainer', ['@service_container']]
             - ['setCommandBus', ['@tactician.commandbus']]
+
+    api.controller.player:
+        class: ApiBundle\Controller\PlayerController
+        calls:
+            - ['setContainer', ['@service_container']]
+            - ['setCommandBus', ['@tactician.commandbus']]

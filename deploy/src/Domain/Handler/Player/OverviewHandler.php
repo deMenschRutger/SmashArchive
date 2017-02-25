@@ -47,7 +47,7 @@ class OverviewHandler extends AbstractHandler
         ;
 
         if ($tag) {
-            $queryBuilder->where('p.gamerTag LIKE :tag')->setParameter('tag', '%Ad%');
+            $queryBuilder->where('p.gamerTag LIKE :tag')->setParameter('tag', "%{$tag}%");
         }
 
         /** @var SlidingPagination $pagination */

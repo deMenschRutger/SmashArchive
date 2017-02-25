@@ -29,7 +29,7 @@ class OverviewCommand
     /**
      * @var int
      *
-     * @Assert\Range(min=1)
+     * @Assert\Range(min=1, max=250)
      */
     private $limit;
 
@@ -37,6 +37,8 @@ class OverviewCommand
      * @param string $tag
      * @param int    $page
      * @param int    $limit
+     *
+     * @TODO Improve the validation for parameters with default values.
      */
     public function __construct(
         $tag = null,
@@ -45,7 +47,7 @@ class OverviewCommand
     ) {
         $this->tag = $tag;
         $this->page = $page ? intval($page) : self::DEFAULT_PAGE;
-        $this->limit = intval($limit);
+        $this->limit = $limit ? intval($limit) : self::DEFAULT_LIMIT;
     }
 
     /**

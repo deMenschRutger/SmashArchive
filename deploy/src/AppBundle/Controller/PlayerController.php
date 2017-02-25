@@ -29,8 +29,9 @@ class PlayerController extends AbstractDefaultController
     {
         $tag = $request->get('tag');
         $page = $request->get('page');
+        $limit = $request->get('limit');
 
-        $command = new OverviewCommand($tag, $page);
+        $command = new OverviewCommand($tag, $page, $limit);
         $result = $this->commandBus->handle($command);
 
         return $this->render('AppBundle:Players:overview.html.twig', $result);
