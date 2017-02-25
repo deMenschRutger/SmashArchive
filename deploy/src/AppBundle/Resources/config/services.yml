@@ -22,3 +22,9 @@ services:
         calls:
             - ['setContainer', ['@service_container']]
             - ['setCommandBus', ['@tactician.commandbus']]
+
+    app.controller.player:
+        class: AppBundle\Controller\PlayerController
+        calls:
+            - ['setContainer', ['@service_container']]
+            - ['setCommandBus', ['@tactician.commandbus']]
