@@ -51,20 +51,15 @@ class PlayerController extends AbstractDefaultController
     }
 
     /**
-     * @param int $playerOneId
-     * @param int $playerTwoId
+     * @param string $playerOneSlug
+     * @param string $playerTwoSlug
      * @return array
      *
-     * @Route("/players/head-to-head/{playerOneId}/{playerTwoId}/", requirements={
-     *  "playerOneId" = "\d+",
-     *  "playerTwoId" = "\d+"
-     * })
-     *
-     * @TODO Use slugs instead of IDs
+     * @Route("/head-to-head/{playerOneSlug}/{playerTwoSlug}/")
      */
-    public function headToHeadAction($playerOneId, $playerTwoId)
+    public function headToHeadAction($playerOneSlug, $playerTwoSlug)
     {
-        $command = new HeadToHeadCommand($playerOneId, $playerTwoId);
+        $command = new HeadToHeadCommand($playerOneSlug, $playerTwoSlug);
 
         return $this->commandBus->handle($command);
     }

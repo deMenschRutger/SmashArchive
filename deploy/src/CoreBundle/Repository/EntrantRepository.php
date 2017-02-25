@@ -12,11 +12,15 @@ use Doctrine\ORM\EntityRepository;
 class EntrantRepository extends EntityRepository
 {
     /**
-     * @param string $slug
+     * @param string|array $slugs
      * @return array
      */
-    public function findSinglePlayerEntrantIdsBySlug(string $slug)
+    public function findSinglePlayerEntrantIdsBySlug($slugs)
     {
+        if (!is_array($slugs)) {
+            $slugs = [$slugs];
+        }
+
         $entrantIdsQuery = $this
             ->getEntityManager()
             ->createQueryBuilder()
@@ -24,7 +28,7 @@ class EntrantRepository extends EntityRepository
             ->from('CoreBundle:Entrant', 'e')
             ->leftJoin('e.players', 'p')
             ->groupBy('e.id')
-            ->where('p.slug IN (:slug)')
+            ->where('p.slug IN (:slugs)')
         ;
 
         $queryBuilder = $this->_em->createQueryBuilder();
@@ -36,7 +40,7 @@ class EntrantRepository extends EntityRepository
             ->where(
                 $queryBuilder->expr()->in('e2.id', $entrantIdsQuery->getDQL())
             )
-            ->setParameter('slug', $slug)
+            ->setParameter('slugs', $slugs)
             ->groupBy('e2.id')
             ->having('COUNT(p2.id) = 1')
             ->getQuery()

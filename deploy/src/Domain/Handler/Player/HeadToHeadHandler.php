@@ -20,12 +20,12 @@ class HeadToHeadHandler extends AbstractHandler
      */
     public function handle(HeadToHeadCommand $command)
     {
-        $playerOneId = $command->getPlayerOneId();
-        $playerTwoId = $command->getPlayerTwoId();
+        $playerOneSlug = $command->getPlayerOneSlug();
+        $playerTwoSlug = $command->getPlayerTwoSlug();
 
         /** @var SetRepository $repository */
-        $repository = $this->getEntityManager()->getRepository('CoreBundle:Set');
-        $sets = $repository->findHeadToHeadSets($playerOneId, $playerTwoId);
+        $repository = $this->getRepository('CoreBundle:Set');
+        $sets = $repository->findHeadToHeadSets($playerOneSlug, $playerTwoSlug);
 
         $playerOneScore = 0;
         $playerTwoScore = 0;
@@ -38,18 +38,18 @@ class HeadToHeadHandler extends AbstractHandler
                 continue;
             }
 
-            $winnerId = $set->getWinner()->getPlayers()->first()->getId();
+            $winnerSlug = $set->getWinner()->getPlayers()->first()->getSlug();
 
-            if ($winnerId == $playerOneId) {
+            if ($winnerSlug == $playerOneSlug) {
                 $playerOneScore += 1;
-            } elseif ($winnerId == $playerTwoId) {
+            } elseif ($winnerSlug == $playerTwoSlug) {
                 $playerTwoScore += 1;
             }
         }
 
         return [
-            $playerOneId => $playerOneScore,
-            $playerTwoId => $playerTwoScore,
+            $playerOneSlug => $playerOneScore,
+            $playerTwoSlug => $playerTwoScore,
         ];
     }
 }

@@ -66,26 +66,4 @@ class PlayerController extends AbstractDefaultController
             'setsByTournament' => $setsByTournament,
         ]);
     }
-
-    /**
-     * @param int $playerOneId
-     * @param int $playerTwoId
-     * @return Response
-     *
-     * @Route("/head-to-head/{playerOneId}/{playerTwoId}/", requirements={
-     *  "playerOneId" = "\d+",
-     *  "playerTwoId" = "\d+"
-     * })
-     *
-     * @TODO Use slugs instead of IDs
-     */
-    public function headToHeadAction($playerOneId, $playerTwoId)
-    {
-        $command = new HeadToHeadCommand($playerOneId, $playerTwoId);
-        $record = $this->commandBus->handle($command);
-
-        return $this->render('AppBundle:Players:head-to-head.html.twig', [
-            'record' => $record,
-        ]);
-    }
 }

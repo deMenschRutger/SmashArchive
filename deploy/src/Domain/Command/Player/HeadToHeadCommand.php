@@ -12,42 +12,38 @@ use Symfony\Component\Validator\Constraints as Assert;
 class HeadToHeadCommand
 {
     /**
-     * @var int
-     *
-     * @Assert\Range(min=1)
+     * @var string
      */
-    private $playerOneId;
+    private $playerOneSlug;
 
     /**
-     * @var int
-     *
-     * @Assert\Range(min=1)
+     * @var string
      */
-    private $playerTwoId;
+    private $playerTwoSlug;
 
     /**
-     * @param mixed $playerOneId
-     * @param mixed $playerTwoId
+     * @param string $playerOneSlug
+     * @param string $playerTwoSlug
      */
-    public function __construct($playerOneId, $playerTwoId)
+    public function __construct(string $playerOneSlug, string $playerTwoSlug)
     {
-        $this->playerOneId = intval($playerOneId);
-        $this->playerTwoId = intval($playerTwoId);
+        $this->playerOneSlug = $playerOneSlug;
+        $this->playerTwoSlug = $playerTwoSlug;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getPlayerOneId(): int
+    public function getPlayerOneSlug(): string
     {
-        return $this->playerOneId;
+        return $this->playerOneSlug;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getPlayerTwoId(): int
+    public function getPlayerTwoSlug(): string
     {
-        return $this->playerTwoId;
+        return $this->playerTwoSlug;
     }
 }

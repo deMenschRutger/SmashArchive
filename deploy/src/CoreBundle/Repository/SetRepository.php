@@ -12,17 +12,16 @@ use Doctrine\ORM\EntityRepository;
 class SetRepository extends EntityRepository
 {
     /**
-     * @param string $slug
+     * @param string|array $slugs
      * @return array
      *
      * @TODO When ordering the sets by round, it doesn't take into account that losers bracket matches happen after winners bracket matches.
      */
-    public function findByPlayerSlug(string $slug)
+    public function findByPlayerSlug($slugs)
     {
         /** @var EntrantRepository $singlePlayerEntrants */
         $entrantRepository = $this->_em->getRepository('CoreBundle:Entrant');
-
-        $singlePlayerEntrantIds = $entrantRepository->findSinglePlayerEntrantIdsBySlug($slug);
+        $singlePlayerEntrantIds = $entrantRepository->findSinglePlayerEntrantIdsBySlug($slugs);
 
         return $this
             ->createQueryBuilder('s')
@@ -38,7 +37,6 @@ class SetRepository extends EntityRepository
             ->where('e1.id IN (:ids)')
             ->orWhere('e2.id IN (:ids)')
             ->setParameter('ids', $singlePlayerEntrantIds)
-            ->setParameter('ids', $singlePlayerEntrantIds)
             ->orderBy('t.id, ev.id, ph.phaseOrder, s.round')
             ->getQuery()
             ->getResult()
@@ -46,55 +44,31 @@ class SetRepository extends EntityRepository
     }
 
     /**
-     * @param int $playerOneId
-     * @param int $playerTwoId
+     * @param string $playerOneSlug
+     * @param string $playerTwoSlug
      * @return array
      */
-    public function findHeadToHeadSets(int $playerOneId, int $playerTwoId)
+    public function findHeadToHeadSets(string $playerOneSlug, string $playerTwoSlug)
     {
-        $entrants = [$playerOneId, $playerTwoId];
-
-        $entrantsIdsQuery = $this
-            ->getEntityManager()
-            ->createQueryBuilder()
-            ->select('e.id')
-            ->from('CoreBundle:Entrant', 'e')
-            ->join('e.players', 'p')
-            ->where('p.id IN (?1)')
+        /** @var EntrantRepository $singlePlayerEntrants */
+        $entrantRepository = $this->_em->getRepository('CoreBundle:Entrant');
+        $singlePlayerEntrantIds = $entrantRepository
+            ->findSinglePlayerEntrantIdsBySlug([$playerOneSlug, $playerTwoSlug])
         ;
-
-        $queryBuilder = $this
-            ->getEntityManager()
-            ->createQueryBuilder()
-        ;
-
-        $entrantsSinglePlayerIds = $queryBuilder
-            ->select('e2.id')
-            ->from('CoreBundle:Entrant', 'e2')
-            ->join('e2.players', 'p2')
-            ->where(
-                $queryBuilder->expr()->in('e2.id', $entrantsIdsQuery->getDQL())
-            )
-            ->groupBy('e2.id')
-            ->having('COUNT(p2.id) = 1')
-            ->setParameter(1, $entrants)
-            ->getQuery()
-            ->getResult()
-        ;
-
-        $entrantsSinglePlayerIds = array_map(function ($value) {
-            return $value['id'];
-        }, $entrantsSinglePlayerIds);
 
         return $this
             ->createQueryBuilder('s')
-            ->select('s')
+            ->select('s, e1, e2, w, l, p1, p2')
             ->join('s.entrantOne', 'e1')
             ->join('s.entrantTwo', 'e2')
+            ->join('s.winner', 'w')
+            ->join('s.loser', 'l')
+            ->join('e1.players', 'p1')
+            ->join('e2.players', 'p2')
             ->where('e1.id IN (?1)')
             ->andWhere('e2.id IN (?2)')
-            ->setParameter(1, $entrantsSinglePlayerIds)
-            ->setParameter(2, $entrantsSinglePlayerIds)
+            ->setParameter(1, $singlePlayerEntrantIds)
+            ->setParameter(2, $singlePlayerEntrantIds)
             ->getQuery()
             ->getResult()
         ;
