@@ -14,6 +14,8 @@ class SetRepository extends EntityRepository
     /**
      * @param string $slug
      * @return array
+     *
+     * @TODO When ordering the sets by round, it doesn't take into account that losers bracket matches happen after winners bracket matches.
      */
     public function findByPlayerSlug(string $slug)
     {
@@ -37,6 +39,7 @@ class SetRepository extends EntityRepository
             ->orWhere('e2.id IN (:ids)')
             ->setParameter('ids', $singlePlayerEntrantIds)
             ->setParameter('ids', $singlePlayerEntrantIds)
+            ->orderBy('t.id, ev.id, ph.phaseOrder, s.round')
             ->getQuery()
             ->getResult()
         ;

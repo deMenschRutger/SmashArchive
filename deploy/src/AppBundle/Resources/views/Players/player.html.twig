@@ -2,20 +2,40 @@
 
 {% block body %}
 
-    {% for tournamentName, sets in setsByTournament %}
+    {% for tournament, events in setsByTournament %}
 
-        {{ tournamentName }}<br>
+        {{ tournament }}
+        <br>
 
-        {% for set in sets %}
+        {% for eventName, phases in events %}
 
-            {{ set.entrantOneName }} ({{ set.entrantOneId }})
-            vs.
-            {{ set.entrantTwoName }} ({{ set.entrantTwoId }})
-            (winner: {{ set.winnerId }})
+            {{ eventName }}
             <br>
+
+            {% for phaseName, sets in phases %}
+
+                {{ phaseName }}
+                <br>
+                <br>
+
+                {% for set in sets %}
+
+                    <strong>{{ set.winner.name }}</strong>
+                    vs.
+                    {{ set.loser.name }}:
+
+                    {{ set.winnerScore }} - {{ set.loserScore }}
+
+                    (round {{ set.round }})
+                    <br>
+
+                {% endfor %}
+
+            {% endfor %}
 
         {% endfor %}
 
+        <br>
         <br>
 
     {% endfor %}

@@ -71,6 +71,11 @@ class SetDTO
     public $isRanked;
 
     /**
+     * @var PhaseGroupDTO
+     */
+    public $phaseGroup;
+
+    /**
      * @param Set $set
      *
      * @TODO The serializer doesn't serialize null values.
@@ -87,5 +92,6 @@ class SetDTO
         $this->loserScore = $set->getLoserScore();
         $this->isForfeit = $set->getIsForfeit();
         $this->isRanked = $set->getIsRanked();
+        $this->phaseGroup = new PhaseGroupDTO($set->getPhaseGroup());
     }
 }

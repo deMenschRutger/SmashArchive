@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace AppBundle\Controller;
 
 use CoreBundle\Controller\AbstractDefaultController;
-use CoreBundle\Repository\PlayerRepository;
+use CoreBundle\DataTransferObject\SetDTO;
 use Domain\Command\Player\HeadToHeadCommand;
 use Domain\Command\Player\OverviewCommand;
+use Domain\Command\Player\ResultsCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,17 +43,23 @@ class PlayerController extends AbstractDefaultController
      * @return Response
      *
      * @Route("/{slug}/", name="player_details")
+     *
+     * @TODO Tournaments aren't sorted by date.
      */
     public function playerAction($slug)
     {
-        /** @var PlayerRepository $playerRepository */
-        $playerRepository = $this->getDoctrine()->getManager()->getRepository('CoreBundle:Player');
-
-        $sets = $playerRepository->findSetsBySlug($slug);
+        $command = new ResultsCommand($slug);
+        $sets =  $this->commandBus->handle($command);
         $setsByTournament = [];
 
+        /** @var SetDTO[] $sets */
         foreach ($sets as $set) {
-            $setsByTournament[$set['tournamentName']][] = $set;
+            $phase = $set->phaseGroup->phase;
+            $phaseName = $phase->name;
+            $eventName = $phase->event->name;
+            $tournamentName = $phase->event->tournament->name;
+
+            $setsByTournament[$tournamentName][$eventName][$phaseName][] = $set;
         }
 
         return $this->render('AppBundle:Players:player.html.twig', [
