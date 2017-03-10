@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AppBundle\Controller;
 
 use CoreBundle\Controller\AbstractDefaultController;
+use Domain\Command\Tournament\DetailsCommand;
 use Domain\Command\Tournament\OverviewCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,13 +37,18 @@ class TournamentController extends AbstractDefaultController
     }
 
     /**
-     * @param Request $request
+     * @param string $slug
      * @return Response
      *
      * @Route("/{slug}", name="tournaments_details")
      */
-    public function detailsAction(Request $request)
+    public function detailsAction($slug)
     {
-//        return $this->render('AppBundle:Tournaments:overview.html.twig', $result);
+        $command = new DetailsCommand($slug);
+        $tournament = $this->commandBus->handle($command);
+
+        return $this->render('AppBundle:Tournaments:details.html.twig', [
+            'tournament' => $tournament,
+        ]);
     }
 }

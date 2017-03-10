@@ -9,8 +9,6 @@
                 <tr>
                     <th>Name</th>
                     <th></th>
-                    <th></th>
-                    <th></th>
                 </tr>
             </thead>
 
@@ -18,10 +16,8 @@
 
         <tr>
             <td>{{ tournament.name }}</td>
-            <td></td>
-            <td></td>
             <td>
-                {#<a href="{{ url('tournament_details', { 'slug': tournament.slug }) }}">Details</a>#}
+                <a href="{{ url('tournaments_details', { 'slug': tournament.slug }) }}">Details</a>
             </td>
         </tr>
 

@@ -7,7 +7,6 @@ namespace AppBundle\Controller;
 use CoreBundle\Controller\AbstractDefaultController;
 use CoreBundle\DataTransferObject\SetDTO;
 use Domain\Command\Player\DetailsCommand;
-use Domain\Command\Player\HeadToHeadCommand;
 use Domain\Command\Player\OverviewCommand;
 use Domain\Command\Player\ResultsCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
