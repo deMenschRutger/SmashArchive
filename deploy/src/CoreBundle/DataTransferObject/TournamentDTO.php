@@ -20,6 +20,11 @@ class TournamentDTO
     /**
      * @var string
      */
+    public $slug;
+
+    /**
+     * @var string
+     */
     public $name;
 
     /**
@@ -28,6 +33,7 @@ class TournamentDTO
     public function __construct(Tournament $tournament)
     {
         $this->id = $tournament->getId();
+        $this->slug = $tournament->getSlug();
         $this->name = $tournament->getName();
     }
 }

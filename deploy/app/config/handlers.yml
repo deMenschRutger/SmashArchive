@@ -28,3 +28,12 @@ services:
             - { name: "tactician.handler", command: Domain\Command\Player\HeadToHeadCommand }
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    bus.handler.tournament.overview:
+        class: Domain\Handler\Tournament\OverviewHandler
+        arguments:
+            - '@knp_paginator'
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Tournament\OverviewCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]

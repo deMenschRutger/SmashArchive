@@ -33,6 +33,11 @@ class PlayerDTO
     public $name;
 
     /**
+     * @var string
+     */
+    public $region;
+
+    /**
      * @param Player $player
      */
     public function __construct(Player $player)
@@ -41,5 +46,6 @@ class PlayerDTO
         $this->slug = $player->getSlug();
         $this->gamerTag = $player->getGamerTag();
         $this->name = $player->getName();
+        $this->region = $player->getRegion();
     }
 }

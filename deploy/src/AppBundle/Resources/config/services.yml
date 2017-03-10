@@ -28,3 +28,9 @@ services:
         calls:
             - ['setContainer', ['@service_container']]
             - ['setCommandBus', ['@tactician.commandbus']]
+
+    app.controller.tournament:
+        class: AppBundle\Controller\TournamentController
+        calls:
+            - ['setContainer', ['@service_container']]
+            - ['setCommandBus', ['@tactician.commandbus']]
