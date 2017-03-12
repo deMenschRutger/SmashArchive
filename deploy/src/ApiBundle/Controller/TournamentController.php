@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace ApiBundle\Controller;
 
 use CoreBundle\Controller\AbstractDefaultController;
+use Domain\Command\Tournament\DetailsCommand;
 use Domain\Command\Tournament\OverviewCommand;
+use Domain\Command\Tournament\ResultsCommand;
 use MediaMonks\RestApiBundle\Response\PaginatedResponseInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,13 +39,29 @@ class TournamentController extends AbstractDefaultController
 
     /**
      * @param string $slug
-     * @param int    $eventId
      * @return array
      *
-     * @Route("/{slug}/event/{eventId}/results/")
+     * @Route("/{slug}", name="api_tournaments_details")
      */
-    public function resultsAction($slug, $eventId)
+    public function detailsAction($slug)
     {
-        return [];
+        $command = new DetailsCommand($slug);
+        $tournament = $this->commandBus->handle($command);
+
+        return $this->buildResponse($tournament, 'tournaments_details');
+    }
+
+    /**
+     * @param int $eventId
+     * @return array
+     *
+     * @Route("/event/{eventId}/results/")
+     */
+    public function resultsAction($eventId)
+    {
+        $command = new ResultsCommand($eventId);
+        $tournament = $this->commandBus->handle($command);
+
+        return $this->buildResponse($tournament, 'tournaments_results');
     }
 }

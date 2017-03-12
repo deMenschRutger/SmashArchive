@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace CoreBundle\Entity;
 
 use CoreBundle\Entity\Traits\TimestampableTrait;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="phase_group")
@@ -28,6 +28,8 @@ class PhaseGroup
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Serializer\Groups({"tournaments_details"})
      */
     private $id;
 
@@ -51,6 +53,8 @@ class PhaseGroup
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     *
+     * @Serializer\Groups({"tournaments_details"})
      */
     private $name;
 
@@ -58,6 +62,8 @@ class PhaseGroup
      * @var string
      *
      * @ORM\Column(name="results_page", type="text", nullable=true)
+     *
+     * @Serializer\Groups({"tournaments_details"})
      */
     private $resultsPage;
 
@@ -72,6 +78,8 @@ class PhaseGroup
      * @var int
      *
      * @ORM\Column(name="type", type="smallint")
+     *
+     * @Serializer\Groups({"tournaments_details"})
      */
     private $type;
 

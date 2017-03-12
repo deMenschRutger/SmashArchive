@@ -10,11 +10,11 @@
     </div>
     <div class="col-md-9 ">
 
-        The results<br><br>
+        <h2>Results</h2>
 
         {% for event in tournament.events %}
 
-            <h2>{{ event.name }}</h2>
+            <h3>{{ event.name }}</h3>
 
             {% for result in event.results %}
 

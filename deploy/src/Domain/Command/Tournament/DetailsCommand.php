@@ -15,18 +15,33 @@ class DetailsCommand
     private $slug;
 
     /**
-     * @param string $slug
+     * @var bool
      */
-    public function __construct($slug)
+    private $includeResults;
+
+    /**
+     * @param string $slug
+     * @param bool   $includeResults
+     */
+    public function __construct($slug, $includeResults = false)
     {
         $this->slug = $slug;
+        $this->includeResults = (bool) $includeResults;
     }
 
     /**
      * @return string
      */
-    public function getSlug()
+    public function getSlug(): string
     {
         return $this->slug;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIncludeResults(): bool
+    {
+        return $this->includeResults;
     }
 }

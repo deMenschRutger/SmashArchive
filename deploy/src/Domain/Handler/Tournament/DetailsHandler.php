@@ -20,20 +20,31 @@ class DetailsHandler extends AbstractHandler
      */
     public function handle(DetailsCommand $command)
     {
-        $tournament = $this
+        // TODO This is a relatively heavy query and a candidate for caching.
+        $queryBuilder = $this
             ->entityManager
             ->createQueryBuilder()
-            ->select('t, e, r, en')
+            ->select('t, e, g, p, pg')
             ->from('CoreBundle:Tournament', 't')
             ->join('t.events', 'e')
-            ->leftJoin('e.results', 'r')
-            ->leftJoin('r.entrant', 'en')
+            ->join('e.game', 'g')
+            ->join('e.phases', 'p')
+            ->join('p.phaseGroups', 'pg')
             ->where('t.slug = :slug')
             ->setParameter('slug', $command->getSlug())
-            ->orderBy('e.name, r.rank, en.name')
-            ->getQuery()
-            ->getOneOrNullResult()
+            ->orderBy('e.name, p.phaseOrder')
         ;
+
+        if ($command->getIncludeResults()) {
+            $queryBuilder
+                ->addSelect('r, en')
+                ->leftJoin('e.results', 'r')
+                ->leftJoin('r.entrant', 'en')
+                ->addOrderBy('r.rank, en.name')
+            ;
+        }
+
+        $tournament = $queryBuilder->getQuery()->getOneOrNullResult();
 
         if (!$tournament instanceof Tournament) {
             throw new NotFoundHttpException('The tournament could not be found.');

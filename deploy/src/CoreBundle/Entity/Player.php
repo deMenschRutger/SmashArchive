@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="player")
@@ -41,6 +42,8 @@ class Player
      *
      * @Gedmo\Slug(fields={"gamerTag"})
      * @ORM\Column(name="slug", type="string", length=255, unique=true)
+     *
+     * @Serializer\Groups({"tournaments_results"})
      */
     private $slug;
 
@@ -62,6 +65,8 @@ class Player
      * @var string
      *
      * @ORM\Column(name="gamer_tag", type="string")
+     *
+     * @Serializer\Groups({"tournaments_results"})
      */
     private $gamerTag;
 

@@ -8,6 +8,7 @@ use CoreBundle\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="game")
@@ -23,6 +24,8 @@ class Game
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Serializer\Groups({"tournaments_details"})
      */
     private $id;
 
@@ -37,6 +40,8 @@ class Game
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     *
+     * @Serializer\Groups({"tournaments_details"})
      */
     private $name;
 
@@ -44,6 +49,8 @@ class Game
      * @var string
      *
      * @ORM\Column(name="display_name", type="string", length=255)
+     *
+     * @Serializer\Groups({"tournaments_details"})
      */
     private $displayName;
 

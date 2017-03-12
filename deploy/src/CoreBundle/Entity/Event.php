@@ -25,7 +25,7 @@ class Event
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Serializer\Groups({"tournaments_overview"})
+     * @Serializer\Groups({"tournaments_details"})
      */
     private $id;
 
@@ -41,7 +41,7 @@ class Event
      *
      * @ORM\Column(name="name", type="string", length=255)
      *
-     * @Serializer\Groups({"tournaments_overview"})
+     * @Serializer\Groups({"tournaments_details"})
      */
     private $name;
 
@@ -50,7 +50,7 @@ class Event
      *
      * @ORM\Column(name="description", type="text", nullable=true)
      *
-     * @Serializer\Groups({"tournaments_overview"})
+     * @Serializer\Groups({"tournaments_details"})
      */
     private $description;
 
@@ -61,11 +61,15 @@ class Event
 
     /**
      * @ORM\ManyToOne(targetEntity="Game", inversedBy="events")
+     *
+     * @Serializer\Groups({"tournaments_details"})
      */
     private $game;
 
     /**
      * @ORM\OneToMany(targetEntity="Phase", mappedBy="event")
+     *
+     * @Serializer\Groups({"tournaments_details"})
      */
     private $phases;
 

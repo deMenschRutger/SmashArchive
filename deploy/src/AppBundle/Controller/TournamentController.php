@@ -46,7 +46,7 @@ class TournamentController extends AbstractDefaultController
      */
     public function detailsAction($slug)
     {
-        $command = new DetailsCommand($slug);
+        $command = new DetailsCommand($slug, true);
         $tournament = $this->commandBus->handle($command);
 
         return $this->render('AppBundle:Tournaments:details.html.twig', [
