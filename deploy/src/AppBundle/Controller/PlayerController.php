@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AppBundle\Controller;
 
 use CoreBundle\Controller\AbstractDefaultController;
-use CoreBundle\DataTransferObject\SetDTO;
+use CoreBundle\Entity\Set;
 use Domain\Command\Player\DetailsCommand;
 use Domain\Command\Player\OverviewCommand;
 use Domain\Command\Player\ResultsCommand;
@@ -33,9 +33,11 @@ class PlayerController extends AbstractDefaultController
         $limit = $request->get('limit');
 
         $command = new OverviewCommand($tag, $page, $limit);
-        $result = $this->commandBus->handle($command);
+        $pagination = $this->commandBus->handle($command);
 
-        return $this->render('AppBundle:Players:overview.html.twig', $result);
+        return $this->render('AppBundle:Players:overview.html.twig', [
+            'pagination' => $pagination,
+        ]);
     }
 
     /**
@@ -55,12 +57,12 @@ class PlayerController extends AbstractDefaultController
         $sets = $this->commandBus->handle($resultsCommand);
         $setsByTournament = [];
 
-        /** @var SetDTO[] $sets */
+        /** @var Set[] $sets */
         foreach ($sets as $set) {
-            $phase = $set->phaseGroup->phase;
-            $phaseName = $phase->name;
-            $eventName = $phase->event->name;
-            $tournamentName = $phase->event->tournament->name;
+            $phase = $set->getPhaseGroup()->getPhase();
+            $phaseName = $phase->getName();
+            $eventName = $phase->getEvent()->getName();
+            $tournamentName = $phase->getEvent()->getTournament()->getName();
 
             $setsByTournament[$tournamentName][$eventName][$phaseName][] = $set;
         }

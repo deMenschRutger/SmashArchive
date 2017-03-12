@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Domain\Handler\Player;
 
-use CoreBundle\DataTransferObject\PlayerDTO;
 use CoreBundle\Entity\Player;
 use Domain\Command\Player\DetailsCommand;
 use Domain\Handler\AbstractHandler;
@@ -17,7 +16,7 @@ class DetailsHandler extends AbstractHandler
 {
     /**
      * @param DetailsCommand $command
-     * @return PlayerDTO
+     * @return Player
      */
     public function handle(DetailsCommand $command)
     {
@@ -29,6 +28,6 @@ class DetailsHandler extends AbstractHandler
             throw new NotFoundHttpException();
         }
 
-        return new PlayerDTO($player);
+        return $player;
     }
 }
