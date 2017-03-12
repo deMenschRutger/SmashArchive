@@ -32,9 +32,9 @@ class PlayerController extends AbstractDefaultController
         $limit = $request->get('limit');
 
         $command = new OverviewCommand($tag, $page, $limit);
-        $result = $this->commandBus->handle($command);
+        $pagination = $this->commandBus->handle($command);
 
-        return $this->buildPaginatedResponse($result['players'], $result['pagination']);
+        return $this->buildPaginatedResponse($pagination, 'players_overview');
     }
 
     /**
@@ -46,8 +46,9 @@ class PlayerController extends AbstractDefaultController
     public function resultsAction($slug)
     {
         $command = new ResultsCommand($slug);
+        $results = $this->commandBus->handle($command);
 
-        return $this->commandBus->handle($command);
+        return $this->buildResponse($results, 'players_results');
     }
 
     /**

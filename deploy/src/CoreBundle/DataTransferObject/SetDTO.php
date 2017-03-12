@@ -77,8 +77,6 @@ class SetDTO
 
     /**
      * @param Set $set
-     *
-     * @TODO The serializer doesn't serialize null values.
      */
     public function __construct(Set $set)
     {

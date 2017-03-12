@@ -29,7 +29,7 @@ class PhaseGroup
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Serializer\Groups({"tournaments_details"})
+     * @Serializer\Groups({"players_results", "tournaments_details"})
      */
     private $id;
 
@@ -54,7 +54,7 @@ class PhaseGroup
      *
      * @ORM\Column(name="name", type="string", length=255)
      *
-     * @Serializer\Groups({"tournaments_details"})
+     * @Serializer\Groups({"players_results", "tournaments_details"})
      */
     private $name;
 
@@ -85,6 +85,8 @@ class PhaseGroup
 
     /**
      * @ORM\ManyToOne(targetEntity="Phase", inversedBy="phaseGroups")
+     *
+     * @Serializer\Groups({"players_results"})
      */
     private $phase;
 

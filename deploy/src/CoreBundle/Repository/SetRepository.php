@@ -25,10 +25,11 @@ class SetRepository extends EntityRepository
 
         return $this
             ->createQueryBuilder('s')
-            ->select('s, pg, ph, ev, t, e1, e2, w, l')
+            ->select('s, pg, ph, ev, g, t, e1, e2, w, l')
             ->join('s.phaseGroup', 'pg')
             ->join('pg.phase', 'ph')
             ->join('ph.event', 'ev')
+            ->join('ev.game', 'g')
             ->join('ev.tournament', 't')
             ->join('s.entrantOne', 'e1')
             ->join('s.entrantTwo', 'e2')

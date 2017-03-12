@@ -25,6 +25,8 @@ class Player
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Serializer\Groups({"players_overview"})
      */
     private $id;
 
@@ -43,7 +45,7 @@ class Player
      * @Gedmo\Slug(fields={"gamerTag"})
      * @ORM\Column(name="slug", type="string", length=255, unique=true)
      *
-     * @Serializer\Groups({"tournaments_results"})
+     * @Serializer\Groups({"players_overview", "tournaments_results"})
      */
     private $slug;
 
@@ -58,6 +60,10 @@ class Player
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
+     *
+     * @Serializer\Groups({"players_overview"})
+     *
+     * @TODO The serializer doesn't serialize null values.
      */
     private $name;
 
@@ -66,7 +72,7 @@ class Player
      *
      * @ORM\Column(name="gamer_tag", type="string")
      *
-     * @Serializer\Groups({"tournaments_results"})
+     * @Serializer\Groups({"players_overview", "tournaments_results"})
      */
     private $gamerTag;
 
@@ -74,6 +80,8 @@ class Player
      * @var string
      *
      * @ORM\Column(name="region", type="string", length=255, nullable=true)
+     *
+     * @Serializer\Groups({"players_overview"})
      */
     private $region;
 
@@ -81,6 +89,8 @@ class Player
      * @var string
      *
      * @ORM\Column(name="city", type="string", length=255, nullable=true)
+     *
+     * @Serializer\Groups({"players_overview"})
      */
     private $city;
 
@@ -88,13 +98,15 @@ class Player
      * @var string
      *
      * @ORM\Column(name="is_competing", type="boolean")
+     *
+     * @Serializer\Groups({"players_overview"})
      */
     private $isCompeting = true;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="is_active", type="boolean")
+     * @Serializer\Groups({"players_overview"})
      */
     private $isActive = true;
 

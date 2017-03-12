@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Domain\Handler\Player;
 
-use CoreBundle\DataTransferObject\PlayerDTO;
 use Domain\Command\Player\OverviewCommand;
 use Domain\Handler\AbstractHandler;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\Paginator;
 
 /**
@@ -30,7 +29,7 @@ class OverviewHandler extends AbstractHandler
 
     /**
      * @param OverviewCommand $command
-     * @return array
+     * @return PaginationInterface
      */
     public function handle(OverviewCommand $command)
     {
@@ -50,17 +49,6 @@ class OverviewHandler extends AbstractHandler
             $queryBuilder->where('p.gamerTag LIKE :tag')->setParameter('tag', "%{$tag}%");
         }
 
-        /** @var SlidingPagination $pagination */
-        $pagination = $this->paginator->paginate($queryBuilder->getQuery(), $page, $limit);
-        $players = [];
-
-        foreach ($pagination as $player) {
-            $players[] = new PlayerDTO($player);
-        }
-
-        return [
-            'pagination' => $pagination,
-            'players' => $players,
-        ];
+        return $this->paginator->paginate($queryBuilder->getQuery(), $page, $limit);
     }
 }

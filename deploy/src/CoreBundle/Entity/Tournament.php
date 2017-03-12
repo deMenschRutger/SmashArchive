@@ -26,7 +26,7 @@ class Tournament
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     * @Serializer\Groups({"players_results", "tournaments_overview", "tournaments_details"})
      */
     private $id;
 
@@ -45,7 +45,7 @@ class Tournament
      * @Gedmo\Slug(fields={"name"})
      * @ORM\Column(name="slug", type="string", length=255, unique=true)
      *
-     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     * @Serializer\Groups({"players_results", "tournaments_overview", "tournaments_details"})
      */
     private $slug;
 
@@ -61,7 +61,7 @@ class Tournament
      *
      * @ORM\Column(name="name", type="string", length=255)
      *
-     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     * @Serializer\Groups({"players_results", "tournaments_overview", "tournaments_details"})
      */
     private $name;
 

@@ -6,6 +6,7 @@ namespace CoreBundle\Entity;
 
 use CoreBundle\Entity\Traits\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="phase_group_set")
@@ -21,6 +22,8 @@ class Set
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Serializer\Groups({"players_results"})
      */
     private $id;
 
@@ -44,6 +47,8 @@ class Set
      * @var int
      *
      * @ORM\Column(name="round", type="integer")
+     *
+     * @Serializer\Groups({"players_results"})
      */
     private $round;
 
@@ -51,6 +56,8 @@ class Set
      * @var int
      *
      * @ORM\Column(name="winner_score", type="integer", nullable=true)
+     *
+     * @Serializer\Groups({"players_results"})
      */
     private $winnerScore;
 
@@ -58,6 +65,8 @@ class Set
      * @var int
      *
      * @ORM\Column(name="loser_score", type="integer", nullable=true)
+     *
+     * @Serializer\Groups({"players_results"})
      */
     private $loserScore;
 
@@ -65,6 +74,8 @@ class Set
      * @var bool
      *
      * @ORM\Column(name="is_forfeit", type="boolean")
+     *
+     * @Serializer\Groups({"players_results"})
      */
     private $isForfeit = false;
 
@@ -72,6 +83,8 @@ class Set
      * @var bool
      *
      * @ORM\Column(name="is_ranked", type="boolean")
+     *
+     * @Serializer\Groups({"players_results"})
      */
     private $isRanked = true;
 
@@ -79,6 +92,8 @@ class Set
      * @var PhaseGroup
      *
      * @ORM\ManyToOne(targetEntity="PhaseGroup", inversedBy="sets")
+     *
+     * @Serializer\Groups({"players_results"})
      */
     private $phaseGroup;
 
@@ -86,6 +101,8 @@ class Set
      * @var Entrant
      *
      * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="entrantOneSets")
+     *
+     * @Serializer\Groups({"players_results"})
      */
     private $entrantOne;
 
@@ -93,6 +110,8 @@ class Set
      * @var Entrant
      *
      * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="entrantTwoSets")
+     *
+     * @Serializer\Groups({"players_results"})
      */
     private $entrantTwo;
 
@@ -287,6 +306,18 @@ class Set
     }
 
     /**
+     * @return string
+     *
+     * @Serializer\Groups({"players_results"})
+     * @Serializer\SerializedName("winner")
+     * @Serializer\VirtualProperty()
+     */
+    public function getWinnerId()
+    {
+        return $this->winner->getId();
+    }
+
+    /**
      * @param Entrant $winner
      */
     public function setWinner(Entrant $winner = null)
@@ -300,6 +331,18 @@ class Set
     public function getLoser()
     {
         return $this->loser;
+    }
+
+    /**
+     * @return string
+     *
+     * @Serializer\Groups({"players_results"})
+     * @Serializer\SerializedName("loser")
+     * @Serializer\VirtualProperty()
+     */
+    public function getLoserId()
+    {
+        return $this->loser->getId();
     }
 
     /**
