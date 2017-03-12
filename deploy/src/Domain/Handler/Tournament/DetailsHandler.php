@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Domain\Handler\Tournament;
 
-use CoreBundle\DataTransferObject\TournamentDTO;
 use CoreBundle\Entity\Tournament;
 use Domain\Command\Tournament\DetailsCommand;
 use Domain\Handler\AbstractHandler;
@@ -17,18 +16,29 @@ class DetailsHandler extends AbstractHandler
 {
     /**
      * @param DetailsCommand $command
-     * @return TournamentDTO
+     * @return Tournament
      */
     public function handle(DetailsCommand $command)
     {
-        $tournament = $this->getRepository('CoreBundle:Tournament')->findOneBy([
-            'slug' => $command->getSlug(),
-        ]);
+        $tournament = $this
+            ->entityManager
+            ->createQueryBuilder()
+            ->select('t, e, r, en')
+            ->from('CoreBundle:Tournament', 't')
+            ->join('t.events', 'e')
+            ->leftJoin('e.results', 'r')
+            ->leftJoin('r.entrant', 'en')
+            ->where('t.slug = :slug')
+            ->setParameter('slug', $command->getSlug())
+            ->orderBy('e.name, r.rank, en.name')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
 
         if (!$tournament instanceof Tournament) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException('The tournament could not be found.');
         }
 
-        return new TournamentDTO($tournament);
+        return $tournament;
     }
 }

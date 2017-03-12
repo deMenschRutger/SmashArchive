@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="tournament")
@@ -24,6 +25,8 @@ class Tournament
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Serializer\Groups({"tournaments_overview"})
      */
     private $id;
 
@@ -41,6 +44,8 @@ class Tournament
      *
      * @Gedmo\Slug(fields={"name"})
      * @ORM\Column(name="slug", type="string", length=255, unique=true)
+     *
+     * @Serializer\Groups({"tournaments_overview"})
      */
     private $slug;
 
@@ -55,6 +60,8 @@ class Tournament
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     *
+     * @Serializer\Groups({"tournaments_overview"})
      */
     private $name;
 
@@ -69,6 +76,8 @@ class Tournament
      * @var bool
      *
      * @ORM\Column(name="is_complete", type="boolean")
+     *
+     * @Serializer\Groups({"tournaments_overview"})
      */
     private $isComplete;
 
@@ -81,6 +90,8 @@ class Tournament
 
     /**
      * @ORM\OneToMany(targetEntity="Event", mappedBy="tournament")
+     *
+     * @Serializer\Groups({"tournaments_overview"})
      */
     private $events;
 

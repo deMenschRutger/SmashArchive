@@ -10,7 +10,19 @@
     </div>
     <div class="col-md-9 ">
 
-        The results
+        The results<br><br>
+
+        {% for event in tournament.events %}
+
+            <h2>{{ event.name }}</h2>
+
+            {% for result in event.results %}
+
+                {{ result.rank }} : {{ result.entrant.name }} <br>
+
+            {% endfor %}
+
+        {% endfor %}
 
     </div>
 </div>

@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Domain\Handler\Tournament;
 
-use CoreBundle\DataTransferObject\TournamentDTO;
 use Domain\Command\Tournament\OverviewCommand;
 use Domain\Handler\AbstractHandler;
-use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\Paginator;
 
 /**
@@ -30,7 +29,7 @@ class OverviewHandler extends AbstractHandler
 
     /**
      * @param OverviewCommand $command
-     * @return array
+     * @return PaginationInterface
      */
     public function handle(OverviewCommand $command)
     {
@@ -41,26 +40,18 @@ class OverviewHandler extends AbstractHandler
         $queryBuilder = $this
             ->getEntityManager()
             ->createQueryBuilder()
-            ->select('t')
+            ->select('t, e')
             ->from('CoreBundle:Tournament', 't')
+            ->join('t.events', 'e')
+            ->where('t.isActive = :isActive')
             ->orderBy('t.name')
+            ->setParameter('isActive', true)
         ;
 
         if ($name) {
-            $queryBuilder->where('t.name LIKE :name')->setParameter('name', "%{$name}%");
+            $queryBuilder->andWhere('t.name LIKE :name')->setParameter('name', "%{$name}%");
         }
 
-        /** @var SlidingPagination $pagination */
-        $pagination = $this->paginator->paginate($queryBuilder->getQuery(), $page, $limit);
-        $tournaments = [];
-
-        foreach ($pagination as $tournament) {
-            $tournaments[] = new TournamentDTO($tournament);
-        }
-
-        return [
-            'pagination' => $pagination,
-            'tournaments' => $tournaments,
-        ];
+        return $this->paginator->paginate($queryBuilder->getQuery(), $page, $limit);
     }
 }

@@ -61,7 +61,7 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
     {
         $this->io = new SymfonyStyle($input, $output);
 
-        $eventId = 1058;
+        $eventId = 1061;
 
         /** @var Phase[] $phases */
         $phases = $this

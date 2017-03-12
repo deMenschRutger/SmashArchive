@@ -8,6 +8,7 @@ use CoreBundle\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="event")
@@ -23,6 +24,8 @@ class Event
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Serializer\Groups({"tournaments_overview"})
      */
     private $id;
 
@@ -37,6 +40,8 @@ class Event
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     *
+     * @Serializer\Groups({"tournaments_overview"})
      */
     private $name;
 
@@ -44,6 +49,8 @@ class Event
      * @var string
      *
      * @ORM\Column(name="description", type="text", nullable=true)
+     *
+     * @Serializer\Groups({"tournaments_overview"})
      */
     private $description;
 
@@ -170,6 +177,14 @@ class Event
     public function getPhases(): Collection
     {
         return $this->phases;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getResults()
+    {
+        return $this->results;
     }
 }
 
