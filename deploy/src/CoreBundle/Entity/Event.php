@@ -63,11 +63,17 @@ class Event
     private $phases;
 
     /**
+     * @ORM\OneToMany(targetEntity="Result", mappedBy="event")
+     */
+    private $results;
+
+    /**
      *
      */
     public function __construct()
     {
         $this->phases = new ArrayCollection();
+        $this->results = new ArrayCollection();
     }
 
     /**

@@ -36,7 +36,7 @@ class PhaseGroup
      *
      * @var int
      *
-     * @ORM\Column(name="original_id", type="integer")
+     * @ORM\Column(name="original_id", type="integer", nullable=true)
      */
     private $originalId;
 

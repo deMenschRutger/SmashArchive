@@ -92,6 +92,9 @@ class TournamentImportCommand extends ContainerAwareCommand
 
         $tournament = $this->findTournament($slug);
         $tournament->setName($tournamentData['name']);
+        $tournament->setIsActive(true);
+        // TODO Check with smash.gg if the tournament is actually complete.
+        $tournament->setIsComplete(true);
 
         $this->io->comment('Starting import...');
 

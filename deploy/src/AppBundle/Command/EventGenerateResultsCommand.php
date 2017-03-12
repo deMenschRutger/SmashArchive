@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace AppBundle\Command;
 
 use CoreBundle\Entity\Entrant;
+use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\PhaseGroup;
+use CoreBundle\Entity\Result;
 use CoreBundle\Entity\Set;
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Internal\Hydration\ArrayHydrator;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -56,14 +56,12 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return void
-     *
-     * @TODO Take into account multiple phases and phase groups.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io = new SymfonyStyle($input, $output);
 
-        $eventId = 3;
+        $eventId = 1058;
 
         /** @var Phase[] $phases */
         $phases = $this
@@ -82,28 +80,40 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
             ->getResult()
         ;
 
+        $startRank = 0;
+
         foreach ($phases as $phase) {
+            $phaseGroupEntrantCount = 0;
+
             /** @var PhaseGroup $phaseGroup */
             foreach ($phase->getPhaseGroups() as $phaseGroup) {
-                $this->processPhaseGroup($phaseGroup);
+                $phaseGroupEntrantCount += $this->processPhaseGroup($phaseGroup, $startRank);
             }
+
+            $startRank += $phaseGroupEntrantCount;
         }
+
+        $this->entityManager->flush();
     }
 
     /**
      * @param PhaseGroup $phaseGroup
+     * @param int        $rank
+     * @return int The number of entrants in the phase group.
      */
-    protected function processPhaseGroup(PhaseGroup $phaseGroup)
+    protected function processPhaseGroup(PhaseGroup $phaseGroup, $rank)
     {
+        $event = $phaseGroup->getPhase()->getEvent();
         $sets = $phaseGroup->getSets()->getValues();
 
         if (count($sets) === 0) {
             $this->io->writeln('No sets found.');
 
-            return;
+            return 0;
         }
 
         $setsByRound = [];
+        $totalResults = 0;
 
         /** @var Set $set */
         foreach ($sets as $set) {
@@ -125,25 +135,51 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
         $grandFinalsLoser = $grandFinals->getLoser();
 
         if ($grandFinalsWinner instanceof Entrant) {
-            $this->io->writeln('1: '.$grandFinals->getWinner()->getName());
+            $totalResults += 1;
+            $rank += 1;
+            $this->addResult($event, $grandFinalsWinner, $rank);
         }
 
         if ($grandFinalsLoser instanceof Entrant) {
-            $this->io->writeln('2: '.$grandFinals->getLoser()->getName());
+            $totalResults += 1;
+            $rank += 1;
+            $this->addResult($event, $grandFinalsLoser, $rank);
         }
 
-        $ranking = 3;
+        $rank += 1;
 
         foreach ($setsByRound as $round => $roundSets) {
+            $roundSetCount = 0;
+
             foreach ($roundSets as $set) {
                 $loser = $set->getLoser();
 
                 if ($loser instanceof Entrant) {
-                    $this->io->writeln($ranking.': '.$loser->getName());
+                    $totalResults += 1;
+                    $roundSetCount += 1;
+                    $this->addResult($event, $loser, $rank);
                 }
             }
 
-            $ranking += count($roundSets);
+            $rank += $roundSetCount;
         }
+
+        return $totalResults;
+    }
+
+    /**
+     * @param Event   $event
+     * @param Entrant $entrant
+     * @param int     $rank
+     */
+    protected function addResult(Event $event, Entrant $entrant, int $rank)
+    {
+        $result = new Result();
+        $result->setEntrant($entrant);
+        $result->setEvent($event);
+        $result->setRank($rank);
+
+        $this->entityManager->persist($result);
+        $this->io->writeln($rank.': '.$entrant->getName());
     }
 }

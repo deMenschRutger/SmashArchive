@@ -57,6 +57,11 @@ class Entrant
     private $players;
 
     /**
+     * @ORM\OneToMany(targetEntity="Result", mappedBy="entrant")
+     */
+    private $results;
+
+    /**
      *
      */
     public function __construct()
@@ -64,6 +69,7 @@ class Entrant
         $this->entrantOneSets = new ArrayCollection();
         $this->entrantTwoSets = new ArrayCollection();
         $this->players = new ArrayCollection();
+        $this->results = new ArrayCollection();
     }
 
     /**
