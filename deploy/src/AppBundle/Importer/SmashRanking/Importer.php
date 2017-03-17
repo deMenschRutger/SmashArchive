@@ -137,9 +137,9 @@ class Importer
     {
         $this->io->title('Importing data from the smashranking.eu database...');
 
-        $this->io->text('Retrieving players...');
-        $this->players = $this->getPlayers();
-        $this->io->text(sprintf('Retrieved %s players.', count($this->players)));
+//        $this->io->text('Retrieving players...');
+//        $this->players = $this->getPlayers();
+//        $this->io->text(sprintf('Retrieved %s players.', count($this->players)));
 
         $this->io->text('Retrieving tournaments...');
         $this->tournaments = $this->getTournaments();
@@ -261,6 +261,8 @@ class Importer
             $entity->setOriginalId($tournamentId);
             $entity->setName($tournament['name']);
             $entity->setCountry($country);
+            $entity->setRegion($tournament['region']);
+            $entity->setCity($tournament['city']);
             $entity->setResultsPage($tournament['result_page']);
             $entity->setIsComplete(true);
             $entity->setIsActive(true);

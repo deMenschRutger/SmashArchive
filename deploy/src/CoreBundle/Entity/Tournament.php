@@ -70,9 +70,27 @@ class Tournament
      *
      * @ORM\ManyToOne(targetEntity="Country", inversedBy="tournaments")
      *
-     * @Serializer\Groups({"tournaments_overview"})
+     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $country;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="region", type="string", length=255, nullable=true)
+     *
+     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     */
+    private $region;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="city", type="string", length=255, nullable=true)
+     *
+     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     */
+    private $city;
 
     /**
      * @var string
@@ -190,6 +208,55 @@ class Tournament
     public function setCountry(Country $country)
     {
         $this->country = $country;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRegion()
+    {
+        return $this->region;
+    }
+
+    /**
+     * @param string $region
+     */
+    public function setRegion($region)
+    {
+        $this->region = $region;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * @param string $city
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocation()
+    {
+        $location = [
+            $this->getCity(),
+            $this->getRegion(),
+        ];
+
+        if ($this->country instanceof Country) {
+            $location[] = $this->getCountry()->getName();
+        }
+
+        return join(', ', array_filter($location));
     }
 
     /**
