@@ -289,6 +289,10 @@ class Player
 
     /**
      * @return string
+     *
+     * @Serializer\Groups({"players_overview"})
+     * @Serializer\SerializedName("location")
+     * @Serializer\VirtualProperty()
      */
     public function getLocation()
     {

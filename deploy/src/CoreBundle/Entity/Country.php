@@ -6,6 +6,7 @@ namespace CoreBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="country")
@@ -19,6 +20,8 @@ class Country
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Serializer\Groups({"players_overview", "tournaments_overview", "tournaments_details"})
      */
     private $id;
 
@@ -26,6 +29,8 @@ class Country
      * @var string
      *
      * @ORM\Column(name="code", type="string", length=255, unique=true)
+     *
+     * @Serializer\Groups({"players_overview", "tournaments_overview", "tournaments_details"})
      */
     private $code;
 
@@ -33,6 +38,8 @@ class Country
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     *
+     * @Serializer\Groups({"players_overview", "tournaments_overview", "tournaments_details"})
      */
     private $name;
 

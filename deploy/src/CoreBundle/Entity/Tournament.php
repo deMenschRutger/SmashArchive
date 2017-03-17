@@ -271,6 +271,10 @@ class Tournament
 
     /**
      * @return string
+     *
+     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     * @Serializer\SerializedName("location")
+     * @Serializer\VirtualProperty()
      */
     public function getLocation()
     {
