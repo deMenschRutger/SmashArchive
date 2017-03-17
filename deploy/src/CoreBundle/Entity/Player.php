@@ -106,6 +106,8 @@ class Player
     /**
      * @var string
      *
+     * @ORM\Column(name="is_active", type="boolean")
+     *
      * @Serializer\Groups({"players_overview"})
      */
     private $isActive = true;
