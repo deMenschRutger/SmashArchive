@@ -10,6 +10,7 @@
                     <th>Tag</th>
                     <th>Name</th>
                     <th>Location</th>
+                    <th>Nationality</th>
                     <th></th>
                 </tr>
             </thead>
@@ -20,6 +21,7 @@
             <td>{{ player.gamerTag }}</td>
             <td>{{ player.name }}</td>
             <td>{{ player.location }}</td>
+            <td>{{ player.nationality }}</td>
             <td>
                 <a href="{{ url('player_details', { 'slug': player.slug }) }}">Profile</a>
             </td>

@@ -66,6 +66,15 @@ class Tournament
     private $name;
 
     /**
+     * @var Country
+     *
+     * @ORM\ManyToOne(targetEntity="Country", inversedBy="tournaments")
+     *
+     * @Serializer\Groups({"tournaments_overview"})
+     */
+    private $country;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="results_page", type="text", nullable=true)
@@ -165,6 +174,22 @@ class Tournament
     public function setName(string $name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return Country
+     */
+    public function getCountry(): Country
+    {
+        return $this->country;
+    }
+
+    /**
+     * @param Country $country
+     */
+    public function setCountry(Country $country)
+    {
+        $this->country = $country;
     }
 
     /**

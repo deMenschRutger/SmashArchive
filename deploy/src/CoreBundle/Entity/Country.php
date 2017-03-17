@@ -39,16 +39,40 @@ class Country
     /**
      * @var ArrayCollection
      *
+     * @ORM\OneToMany(targetEntity="Player", mappedBy="nationality")
+     */
+    private $playersNationalities;
+
+    /**
+     * @var ArrayCollection
+     *
      * @ORM\OneToMany(targetEntity="Player", mappedBy="country")
      */
-    private $players;
+    private $playersCountries;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Tournament", mappedBy="country")
+     */
+    private $tournaments;
 
     /**
      *
      */
     public function __construct()
     {
-        $this->players = new ArrayCollection();
+        $this->playersNationalities = new ArrayCollection();
+        $this->playersCountries = new ArrayCollection();
+        $this->tournaments = new ArrayCollection();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->name ? $this->getName() : '';
     }
 
     /**
@@ -94,8 +118,24 @@ class Country
     /**
      * @return ArrayCollection
      */
-    public function getPlayers(): ArrayCollection
+    public function getPlayersNationalities(): ArrayCollection
     {
-        return $this->players;
+        return $this->playersNationalities;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getPlayersCountries(): ArrayCollection
+    {
+        return $this->playersCountries;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getTournaments(): ArrayCollection
+    {
+        return $this->tournaments;
     }
 }

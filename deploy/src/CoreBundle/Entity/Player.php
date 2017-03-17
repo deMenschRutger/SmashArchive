@@ -83,6 +83,15 @@ class Player
      *
      * @Serializer\Groups({"players_overview"})
      */
+    private $nationality;
+
+    /**
+     * @var Country
+     *
+     * @ORM\ManyToOne(targetEntity="Country", inversedBy="players")
+     *
+     * @Serializer\Groups({"players_overview"})
+     */
     private $country;
 
     /**
@@ -217,7 +226,23 @@ class Player
     /**
      * @return Country
      */
-    public function getCountry(): Country
+    public function getNationality()
+    {
+        return $this->nationality;
+    }
+
+    /**
+     * @param Country $nationality
+     */
+    public function setNationality($nationality)
+    {
+        $this->nationality = $nationality;
+    }
+
+    /**
+     * @return Country
+     */
+    public function getCountry()
     {
         return $this->country;
     }
@@ -270,8 +295,11 @@ class Player
         $location = [
             $this->getCity(),
             $this->getRegion(),
-            $this->getCountry()->getName(),
         ];
+
+        if ($this->country instanceof Country) {
+            $location[] = $this->getCountry()->getName();
+        }
 
         return join(', ', array_filter($location));
     }

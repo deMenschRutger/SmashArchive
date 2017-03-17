@@ -145,24 +145,24 @@ class Importer
         $this->tournaments = $this->getTournaments();
         $this->io->text(sprintf('Retrieved %s tournaments.', count($this->tournaments)));
 
-        foreach ($this->scenarios as $scenario => $active) {
-            if (!$active) {
-                continue;
-            }
-
-            $this->io->section("Importing tournaments for scenario '{$scenario}'...");
-            $class = 'AppBundle\Importer\SmashRanking\\'.$scenario;
-
-            /** @var AbstractScenario $scenario */
-            $scenario = new $class($this, $this->io, $this->entityManager);
-            $scenario->importWithConfiguration();
-        }
-
-        $this->io->newLine();
-        $this->io->text(sprintf('Created %d phase groups...', count($this->phaseGroups)));
-
-        $this->io->text('Processing matches...');
-        $this->processMatches();
+//        foreach ($this->scenarios as $scenario => $active) {
+//            if (!$active) {
+//                continue;
+//            }
+//
+//            $this->io->section("Importing tournaments for scenario '{$scenario}'...");
+//            $class = 'AppBundle\Importer\SmashRanking\\'.$scenario;
+//
+//            /** @var AbstractScenario $scenario */
+//            $scenario = new $class($this, $this->io, $this->entityManager);
+//            $scenario->importWithConfiguration();
+//        }
+//
+//        $this->io->newLine();
+//        $this->io->text(sprintf('Created %d phase groups...', count($this->phaseGroups)));
+//
+//        $this->io->text('Processing matches...');
+//        $this->processMatches();
 
         $this->io->text('Flushing entity manager...');
         $this->entityManager->flush();
@@ -201,11 +201,17 @@ class Importer
 
         foreach ($players as $playerId => &$player) {
             $country = $this->getCountryBySmashRankingId($player['country']);
+            $nationality = $this->getCountryBySmashRankingId($player['nationality']);
+
+            if ($nationality === null && $country instanceof Country) {
+                $nationality = $country;
+            }
 
             $entity = new Player();
             $entity->setOriginalId($playerId);
             $entity->setName($player['name'] ? $player['name'] : null);
             $entity->setGamerTag($player['tag']);
+            $entity->setNationality($nationality);
             $entity->setCountry($country);
             $entity->setRegion($player['region']);
             $entity->setCity($player['city']);
@@ -254,6 +260,7 @@ class Importer
             $entity = new Tournament();
             $entity->setOriginalId($tournamentId);
             $entity->setName($tournament['name']);
+            $entity->setCountry($country);
             $entity->setResultsPage($tournament['result_page']);
             $entity->setIsComplete(true);
             $entity->setIsActive(true);
