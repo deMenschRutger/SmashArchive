@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Importer\SmashRanking;
 
+use CoreBundle\Entity\Country;
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Player;
@@ -72,6 +73,11 @@ class Importer
      * @var EntityManager
      */
     protected $entityManager;
+
+    /**
+     * @var array
+     */
+    protected $countries = [];
 
     /**
      * @var array
@@ -194,10 +200,13 @@ class Importer
         $players = $this->getContentFromJson('smasher');
 
         foreach ($players as $playerId => &$player) {
+            $country = $this->getCountryBySmashRankingId($player['country']);
+
             $entity = new Player();
             $entity->setOriginalId($playerId);
             $entity->setName($player['name'] ? $player['name'] : null);
             $entity->setGamerTag($player['tag']);
+            $entity->setCountry($country);
             $entity->setRegion($player['region']);
             $entity->setCity($player['city']);
             $entity->setIsCompeting($player['active']);
@@ -240,6 +249,8 @@ class Importer
         $tournaments = $this->getContentFromJson('tournament');
 
         foreach ($tournaments as $tournamentId => &$tournament) {
+            $country = $this->getCountryBySmashRankingId($tournament['country']);
+
             $entity = new Tournament();
             $entity->setOriginalId($tournamentId);
             $entity->setName($tournament['name']);
@@ -278,6 +289,27 @@ class Importer
     public function addPhaseGroup($originalEventId, PhaseGroup $phaseGroup)
     {
         $this->phaseGroups[$originalEventId] = $phaseGroup;
+    }
+
+    /**
+     * @param int $id
+     * @return Country|null
+     */
+    protected function getCountryBySmashRankingId($id)
+    {
+        if (count($this->countries) === 0 ) {
+            $this->countries = $this->getContentFromJson('country');
+        }
+
+        foreach ($this->countries as $countryId => $country) {
+            if ($countryId == $id) {
+                return $this->entityManager->getRepository('CoreBundle:Country')->findOneBy([
+                    'code' => $country['short'],
+                ]);
+            }
+        }
+
+        return null;
     }
 
     /**

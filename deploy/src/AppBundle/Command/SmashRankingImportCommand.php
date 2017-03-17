@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AppBundle\Command;
 
 use AppBundle\Importer\SmashRanking\Importer;
-use CoreBundle\Entity\Tournament;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;

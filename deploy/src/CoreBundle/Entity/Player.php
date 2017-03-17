@@ -77,6 +77,15 @@ class Player
     private $gamerTag;
 
     /**
+     * @var Country
+     *
+     * @ORM\ManyToOne(targetEntity="Country", inversedBy="players")
+     *
+     * @Serializer\Groups({"players_overview"})
+     */
+    private $country;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="region", type="string", length=255, nullable=true)
@@ -206,6 +215,22 @@ class Player
     }
 
     /**
+     * @return Country
+     */
+    public function getCountry(): Country
+    {
+        return $this->country;
+    }
+
+    /**
+     * @param Country $country
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+    }
+
+    /**
      * @return string
      */
     public function getRegion()
@@ -235,6 +260,20 @@ class Player
     public function setCity($city)
     {
         $this->city = $city;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocation()
+    {
+        $location = [
+            $this->getCity(),
+            $this->getRegion(),
+            $this->getCountry()->getName(),
+        ];
+
+        return join(', ', array_filter($location));
     }
 
     /**
