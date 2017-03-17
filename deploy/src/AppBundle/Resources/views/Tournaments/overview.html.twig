@@ -9,6 +9,7 @@
                 <tr>
                     <th>Name</th>
                     <th>Location</th>
+                    <th>Date</th>
                     <th></th>
                 </tr>
             </thead>
@@ -18,6 +19,7 @@
         <tr>
             <td>{{ tournament.name }}</td>
             <td>{{ tournament.location }}</td>
+            <td>{{ tournament.dateStart|date('Y-m-d') }}</td>
             <td>
                 <a href="{{ url('tournaments_details', { 'slug': tournament.slug }) }}">Details</a>
             </td>

@@ -79,7 +79,7 @@ class Player
     /**
      * @var Country
      *
-     * @ORM\ManyToOne(targetEntity="Country", inversedBy="players")
+     * @ORM\ManyToOne(targetEntity="Country", inversedBy="playersNationalities")
      *
      * @Serializer\Groups({"players_overview"})
      */
@@ -88,7 +88,7 @@ class Player
     /**
      * @var Country
      *
-     * @ORM\ManyToOne(targetEntity="Country", inversedBy="players")
+     * @ORM\ManyToOne(targetEntity="Country", inversedBy="playersCountries")
      *
      * @Serializer\Groups({"players_overview"})
      */

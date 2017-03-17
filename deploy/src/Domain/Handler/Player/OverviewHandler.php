@@ -40,8 +40,9 @@ class OverviewHandler extends AbstractHandler
         $queryBuilder = $this
             ->getEntityManager()
             ->createQueryBuilder()
-            ->select('p')
+            ->select('p, c')
             ->from('CoreBundle:Player', 'p')
+            ->leftJoin('p.country', 'c')
             ->orderBy('p.gamerTag')
         ;
 

@@ -40,10 +40,11 @@ class OverviewHandler extends AbstractHandler
         $queryBuilder = $this
             ->getEntityManager()
             ->createQueryBuilder()
-            ->select('t')
+            ->select('t, c')
             ->from('CoreBundle:Tournament', 't')
+            ->leftJoin('t.country', 'c')
             ->where('t.isActive = :isActive')
-            ->orderBy('t.name')
+            ->orderBy('t.'.$command->getSort(), $command->getOrder())
             ->setParameter('isActive', true)
         ;
 

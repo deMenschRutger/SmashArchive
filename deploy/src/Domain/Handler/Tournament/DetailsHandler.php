@@ -24,8 +24,9 @@ class DetailsHandler extends AbstractHandler
         $queryBuilder = $this
             ->entityManager
             ->createQueryBuilder()
-            ->select('t, e, g, p, pg')
+            ->select('t, c, e, g, p, pg')
             ->from('CoreBundle:Tournament', 't')
+            ->leftJoin('t.country', 'c')
             ->leftJoin('t.events', 'e')
             ->leftJoin('e.game', 'g')
             ->leftJoin('e.phases', 'p')

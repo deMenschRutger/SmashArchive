@@ -137,32 +137,32 @@ class Importer
     {
         $this->io->title('Importing data from the smashranking.eu database...');
 
-//        $this->io->text('Retrieving players...');
-//        $this->players = $this->getPlayers();
-//        $this->io->text(sprintf('Retrieved %s players.', count($this->players)));
+        $this->io->text('Retrieving players...');
+        $this->players = $this->getPlayers();
+        $this->io->text(sprintf('Retrieved %s players.', count($this->players)));
 
         $this->io->text('Retrieving tournaments...');
         $this->tournaments = $this->getTournaments();
         $this->io->text(sprintf('Retrieved %s tournaments.', count($this->tournaments)));
 
-//        foreach ($this->scenarios as $scenario => $active) {
-//            if (!$active) {
-//                continue;
-//            }
-//
-//            $this->io->section("Importing tournaments for scenario '{$scenario}'...");
-//            $class = 'AppBundle\Importer\SmashRanking\\'.$scenario;
-//
-//            /** @var AbstractScenario $scenario */
-//            $scenario = new $class($this, $this->io, $this->entityManager);
-//            $scenario->importWithConfiguration();
-//        }
-//
-//        $this->io->newLine();
-//        $this->io->text(sprintf('Created %d phase groups...', count($this->phaseGroups)));
-//
-//        $this->io->text('Processing matches...');
-//        $this->processMatches();
+        foreach ($this->scenarios as $scenario => $active) {
+            if (!$active) {
+                continue;
+            }
+
+            $this->io->section("Importing tournaments for scenario '{$scenario}'...");
+            $class = 'AppBundle\Importer\SmashRanking\\'.$scenario;
+
+            /** @var AbstractScenario $scenario */
+            $scenario = new $class($this, $this->io, $this->entityManager);
+            $scenario->importWithConfiguration();
+        }
+
+        $this->io->newLine();
+        $this->io->text(sprintf('Created %d phase groups...', count($this->phaseGroups)));
+
+        $this->io->text('Processing matches...');
+        $this->processMatches();
 
         $this->io->text('Flushing entity manager...');
         $this->entityManager->flush();
@@ -260,6 +260,7 @@ class Importer
             $entity = new Tournament();
             $entity->setOriginalId($tournamentId);
             $entity->setName($tournament['name']);
+            $entity->setDateStart(new \DateTime($tournament['date']));
             $entity->setCountry($country);
             $entity->setRegion($tournament['region']);
             $entity->setCity($tournament['city']);

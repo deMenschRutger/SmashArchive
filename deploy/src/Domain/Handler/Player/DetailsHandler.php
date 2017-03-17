@@ -20,9 +20,17 @@ class DetailsHandler extends AbstractHandler
      */
     public function handle(DetailsCommand $command)
     {
-        $player = $this->getRepository('CoreBundle:Player')->findOneBy([
-            'slug' => $command->getSlug(),
-        ]);
+        $player = $this
+            ->getEntityManager()
+            ->createQueryBuilder()
+            ->select('p, c')
+            ->from('CoreBundle:Player', 'p')
+            ->leftJoin('p.country', 'c')
+            ->where('p.slug = :slug')
+            ->setParameter('slug', $command->getSlug())
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
 
         if (!$player instanceof Player) {
             throw new NotFoundHttpException();

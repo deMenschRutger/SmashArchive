@@ -93,6 +93,17 @@ class Tournament
     private $city;
 
     /**
+     * The first (and possibly only) day of the tournament
+     *
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_start", type="date", nullable=true)
+     *
+     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     */
+    private $dateStart;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="results_page", type="text", nullable=true)
@@ -240,6 +251,22 @@ class Tournament
     public function setCity($city)
     {
         $this->city = $city;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateStart()
+    {
+        return $this->dateStart;
+    }
+
+    /**
+     * @param \DateTime $dateStart
+     */
+    public function setDateStart($dateStart)
+    {
+        $this->dateStart = $dateStart;
     }
 
     /**
