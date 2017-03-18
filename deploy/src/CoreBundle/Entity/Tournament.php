@@ -254,10 +254,15 @@ class Tournament
     }
 
     /**
-     * @return \DateTime
+     * @param string $format
+     * @return \DateTime|string
      */
-    public function getDateStart()
+    public function getDateStart($format = null)
     {
+        if ($this->dateStart instanceof \DateTime && $format) {
+            return $this->dateStart->format($format);
+        }
+
         return $this->dateStart;
     }
 

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace AppBundle\Controller;
 
 use CoreBundle\Controller\AbstractDefaultController;
+use CoreBundle\Entity\Event;
+use CoreBundle\Entity\Result;
+use CoreBundle\Entity\Set;
 use Domain\Command\Player\DetailsCommand;
 use Domain\Command\Player\OverviewCommand;
 use Domain\Command\Player\ResultsCommand;
@@ -57,10 +60,48 @@ class PlayerController extends AbstractDefaultController
         $resultsCommand = new ResultsCommand($slug);
         $results = $this->commandBus->handle($resultsCommand);
 
+        // TODO Move this to its own command.
+        $combinedResults = [];
+
+        /** @var Result $result */
+        foreach ($results as $result) {
+            $tournament = $result->getEvent()->getTournament();
+            $name = $tournament->getName();
+            $date = $tournament->getDateStart('Ymd');
+            $resultSets = null;
+
+            if (array_key_exists($name, $sets)) {
+                $resultSets = $sets[$name];
+            }
+
+            $combinedResults[] = [
+                'name'   => $name,
+                'date'   => $date,
+                'result' => $result,
+                'sets'   => $resultSets,
+            ];
+
+            unset($sets[$name]);
+        }
+
+        /** @var Event[] $events */
+        foreach ($sets as $tournamentId => $events) {
+            $tournament = current($events)->getTournament();
+            $name = $tournament->getName();
+            $date = $tournament->getDateStart('Ymd');
+
+            $combinedResults[] = [
+                'name'   => $name,
+                'date'   => $date,
+                'result' => null,
+                'sets'   => $events,
+            ];
+        }
+
         return $this->render('AppBundle:Players:details.html.twig', [
             'player'  => $player,
             'sets'    => $sets,
-            'results' => $results,
+            'results' => $combinedResults,
         ]);
     }
 }

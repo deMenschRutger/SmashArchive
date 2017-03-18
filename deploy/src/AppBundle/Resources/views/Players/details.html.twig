@@ -14,44 +14,54 @@
     </div>
     <div class="col-md-9 ">
 
-    {% for tournament, events in sets %}
+    {% set counter = 0 %}
 
-        <h4>{{ tournament }}</h4>
-        <br>
+    {% for result in results %}
 
-        {% for eventName, phases in events %}
+        {% for eventName, phases in result.sets %}
+            {% set counter = counter + 1 %}
 
-            {{ eventName }}
-            <br>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a href="#collapse-{{ counter }}" data-toggle="collapse">
+                    {{ result.name }}: {{ eventName }}
+                </a>
+                <div class="pull-right">
+                    <strong>{{ result.result.rank }}</strong>
+                </div>
+            </div>
+            <div id="collapse-{{ counter }}" class="collapse">
+                <div class="panel-body">
 
             {% for phaseName, sets in phases %}
 
-                {{ phaseName }}
-                <br>
-                <br>
+                <h4>{{ phaseName }}</h4>
+
                 <table class="table">
                     <tbody>
 
-                {% for set in sort_player_sets(sets) %}
+                    {% for set in sort_player_sets(sets) %}
 
-                    <tr>
-                        <td>
-                            <strong>{{ set.winner.name }}</strong>
-                        </td>
-                        <td>{{ set.winnerScore }}</td>
-                        <td>
-                            {{ set.loser.name }}
-                        </td>
-                        <td>{{ set.loserScore }}</td>
-                        <td>Round {{ set.round }}</td>
-                    </tr>
+                        <tr>
+                            <td>
+                                <strong>{{ set.winner.name }}</strong>
+                            </td>
+                            <td>{{ set.winnerScore }}</td>
+                            <td>{{ set.loser.name }}</td>
+                            <td>{{ set.loserScore }}</td>
+                            <td>Round {{ set.round }}</td>
+                        </tr>
 
-                {% endfor %}
+                    {% endfor %}
 
                     </tbody>
                 </table>
 
             {% endfor %}
+
+                </div>
+            </div>
+        </div>
 
         {% endfor %}
 

@@ -31,7 +31,7 @@ class TournamentController extends AbstractDefaultController
         $page = $request->get('page');
         $limit = $request->get('limit');
 
-        $command = new OverviewCommand($name, $page, $limit);
+        $command = new OverviewCommand($name, $page, $limit, 'dateStart', 'DESC');
         $pagination = $this->commandBus->handle($command);
 
         return $this->buildPaginatedResponse($pagination, 'tournaments_overview');
