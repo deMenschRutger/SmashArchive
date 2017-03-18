@@ -25,7 +25,7 @@ class Entrant
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Serializer\Groups({"players_results"})
+     * @Serializer\Groups({"players_sets"})
      */
     private $id;
 
@@ -41,7 +41,7 @@ class Entrant
      *
      * @ORM\Column(name="name", type="string", length=255)
      *
-     * @Serializer\Groups({"players_results"})
+     * @Serializer\Groups({"players_sets"})
      */
     private $name;
 

@@ -23,7 +23,7 @@ class Set
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
-     * @Serializer\Groups({"players_results"})
+     * @Serializer\Groups({"players_sets"})
      */
     private $id;
 
@@ -48,7 +48,7 @@ class Set
      *
      * @ORM\Column(name="round", type="integer")
      *
-     * @Serializer\Groups({"players_results"})
+     * @Serializer\Groups({"players_sets"})
      */
     private $round;
 
@@ -57,7 +57,7 @@ class Set
      *
      * @ORM\Column(name="winner_score", type="integer", nullable=true)
      *
-     * @Serializer\Groups({"players_results"})
+     * @Serializer\Groups({"players_sets"})
      */
     private $winnerScore;
 
@@ -66,7 +66,7 @@ class Set
      *
      * @ORM\Column(name="loser_score", type="integer", nullable=true)
      *
-     * @Serializer\Groups({"players_results"})
+     * @Serializer\Groups({"players_sets"})
      */
     private $loserScore;
 
@@ -75,7 +75,7 @@ class Set
      *
      * @ORM\Column(name="is_forfeit", type="boolean")
      *
-     * @Serializer\Groups({"players_results"})
+     * @Serializer\Groups({"players_sets"})
      */
     private $isForfeit = false;
 
@@ -84,7 +84,7 @@ class Set
      *
      * @ORM\Column(name="is_ranked", type="boolean")
      *
-     * @Serializer\Groups({"players_results"})
+     * @Serializer\Groups({"players_sets"})
      */
     private $isRanked = true;
 
@@ -93,7 +93,7 @@ class Set
      *
      * @ORM\ManyToOne(targetEntity="PhaseGroup", inversedBy="sets")
      *
-     * @Serializer\Groups({"players_results"})
+     * @Serializer\Groups({"players_sets"})
      */
     private $phaseGroup;
 
@@ -102,7 +102,7 @@ class Set
      *
      * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="entrantOneSets")
      *
-     * @Serializer\Groups({"players_results"})
+     * @Serializer\Groups({"players_sets"})
      */
     private $entrantOne;
 
@@ -111,7 +111,7 @@ class Set
      *
      * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="entrantTwoSets")
      *
-     * @Serializer\Groups({"players_results"})
+     * @Serializer\Groups({"players_sets"})
      */
     private $entrantTwo;
 
@@ -308,7 +308,7 @@ class Set
     /**
      * @return string
      *
-     * @Serializer\Groups({"players_results"})
+     * @Serializer\Groups({"players_sets"})
      * @Serializer\SerializedName("winner")
      * @Serializer\VirtualProperty()
      */
@@ -336,7 +336,7 @@ class Set
     /**
      * @return string
      *
-     * @Serializer\Groups({"players_results"})
+     * @Serializer\Groups({"players_sets"})
      * @Serializer\SerializedName("loser")
      * @Serializer\VirtualProperty()
      */

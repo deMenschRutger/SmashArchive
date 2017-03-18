@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace AppBundle\Controller;
 
 use CoreBundle\Controller\AbstractDefaultController;
-use CoreBundle\Entity\Set;
 use Domain\Command\Player\DetailsCommand;
 use Domain\Command\Player\OverviewCommand;
 use Domain\Command\Player\ResultsCommand;
+use Domain\Command\Player\SetsCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,23 +51,16 @@ class PlayerController extends AbstractDefaultController
         $detailsCommand = new DetailsCommand($slug);
         $player = $this->commandBus->handle($detailsCommand);
 
+        $setCommand = new SetsCommand($slug, 'tournament');
+        $sets = $this->commandBus->handle($setCommand);
+
         $resultsCommand = new ResultsCommand($slug);
-        $sets = $this->commandBus->handle($resultsCommand);
-        $setsByTournament = [];
-
-        /** @var Set[] $sets */
-        foreach ($sets as $set) {
-            $phase = $set->getPhaseGroup()->getPhase();
-            $phaseName = $phase->getName();
-            $eventName = $phase->getEvent()->getName();
-            $tournamentName = $phase->getEvent()->getTournament()->getName();
-
-            $setsByTournament[$tournamentName][$eventName][$phaseName][$set->getRound()] = $set;
-        }
+        $results = $this->commandBus->handle($resultsCommand);
 
         return $this->render('AppBundle:Players:details.html.twig', [
-            'player' => $player,
-            'setsByTournament' => $setsByTournament,
+            'player'  => $player,
+            'sets'    => $sets,
+            'results' => $results,
         ]);
     }
 }

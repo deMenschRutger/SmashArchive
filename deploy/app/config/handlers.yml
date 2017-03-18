@@ -15,6 +15,13 @@ services:
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
 
+    bus.handler.player.sets:
+        class: Domain\Handler\Player\SetsHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Player\SetsCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
     bus.handler.player.results:
         class: Domain\Handler\Player\ResultsHandler
         tags:

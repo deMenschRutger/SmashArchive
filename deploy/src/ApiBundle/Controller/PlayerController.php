@@ -7,7 +7,7 @@ namespace ApiBundle\Controller;
 use CoreBundle\Controller\AbstractDefaultController;
 use Domain\Command\Player\HeadToHeadCommand;
 use Domain\Command\Player\OverviewCommand;
-use Domain\Command\Player\ResultsCommand;
+use Domain\Command\Player\SetsCommand;
 use MediaMonks\RestApiBundle\Response\PaginatedResponseInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,14 +41,14 @@ class PlayerController extends AbstractDefaultController
      * @param string $slug
      * @return array
      *
-     * @Route("/{slug}/results/", name="api_players_results")
+     * @Route("/{slug}/sets/", name="api_players_sets")
      */
-    public function resultsAction($slug)
+    public function setsAction($slug)
     {
-        $command = new ResultsCommand($slug);
-        $results = $this->commandBus->handle($command);
+        $command = new SetsCommand($slug);
+        $sets = $this->commandBus->handle($command);
 
-        return $this->buildResponse($results, 'players_results');
+        return $this->buildResponse($sets, 'players_sets');
     }
 
     /**
