@@ -2,6 +2,76 @@
 
 {% block body %}
 
-    Hello world!
+    <p>
+        Hello smasher!
+    </p>
+    <p>
+        If you're reading this it means you have access to an early version of the SmashRanking Reboot project. The
+        purpose of this early version is to confirm that the data from the previous SmashRanking project has been
+        imported correctly. Most additional functionality is not yet in place, and the UI is just a basic Bootstrap
+        UI so far.
+    </p>
+    <p>
+        That being said, most of the data can already be accessed through an API. This is also just a concept, but it
+        can serve as a starting point for discussing what data the API actually needs to expose and in what format.
+        Below you will find some examples of API URLs.
+    </p>
+    <br>
+    <p>
+        <strong>Player overview</strong>
+        <br>
+        <a href="{{ url('api_players_overview') }}">
+            /api/v0.1/players/
+        </a>
+    </p>
+    <p>
+        <strong>Player overview (with pagination)</strong>
+        <br>
+        <a href="{{ url('api_players_overview', { 'page': 2 }) }}">
+            /api/v0.1/players/?page=2
+        </a>
+    </p>
+    <p>
+        <strong>Player results (could be slow, needs pagination and/or caching)</strong>
+        <br>
+        <a href="{{ url('api_players_results', { 'slug': 'armada' }) }}">
+            /api/v0.1/players/:slug/results/
+        </a>
+    </p>
+    <p>
+        <strong>Players head-to-head</strong>
+        <br>
+        <a href="{{ url('api_players_head_to_head', { 'playerOneSlug': 'amsah', 'playerTwoSlug': 'zgetto' }) }}">
+            /api/v0.1/players/head-to-head/:player-one-slug/:player-two-slug
+        </a>
+    </p>
+    <p>
+        <strong>Tournament overview</strong>
+        <br>
+        <a href="{{ url('api_tournaments_overview') }}">
+            /api/v0.1/tournaments/
+        </a>
+    </p>
+    <p>
+        <strong>Tournament overview (with name filtering)</strong>
+        <br>
+        <a href="{{ url('api_tournaments_overview', { 'name': 'avalon' }) }}">
+            /api/v0.1/tournaments/?name=avalon
+        </a>
+    </p>
+    <p>
+        <strong>Tournament details</strong>
+        <br>
+        <a href="{{ url('api_tournaments_details', { 'slug': 'avalon-iii' }) }}">
+            /api/v0.1/tournaments/avalon-iii/
+        </a>
+    </p>
+    <p>
+        <strong>Tournament results</strong>
+        <br>
+        <a href="{{ url('api_tournaments_results', { 'eventId': 1 }) }}">
+            /api/v0.1/tournaments/events/:event-id/results/
+        </a>
+    </p>
 
 {% endblock %}

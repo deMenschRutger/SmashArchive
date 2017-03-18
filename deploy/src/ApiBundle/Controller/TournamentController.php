@@ -55,7 +55,7 @@ class TournamentController extends AbstractDefaultController
      * @param int $eventId
      * @return array
      *
-     * @Route("/event/{eventId}/results/")
+     * @Route("/events/{eventId}/results/", name="api_tournaments_results")
      */
     public function resultsAction($eventId)
     {
