@@ -38,7 +38,7 @@ class SetRepository extends EntityRepository
             ->where('e1.id IN (:ids)')
             ->orWhere('e2.id IN (:ids)')
             ->setParameter('ids', $singlePlayerEntrantIds)
-            ->orderBy('t.id, ev.id, ph.phaseOrder, s.round')
+            ->orderBy('t.dateStart DESC, ev.id, ph.phaseOrder, s.round')
             ->getQuery()
             ->getResult()
         ;

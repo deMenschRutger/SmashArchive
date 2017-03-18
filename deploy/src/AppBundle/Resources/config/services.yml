@@ -34,3 +34,9 @@ services:
         calls:
             - ['setContainer', ['@service_container']]
             - ['setCommandBus', ['@tactician.commandbus']]
+
+    app.twig.extension.sort_players_sets:
+        class: AppBundle\Twig\SortPlayerSetsExtension
+        public: false
+        tags:
+            - { name: twig.extension }

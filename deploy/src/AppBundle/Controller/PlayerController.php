@@ -45,8 +45,6 @@ class PlayerController extends AbstractDefaultController
      * @return Response
      *
      * @Route("/{slug}/", name="player_details")
-     *
-     * @TODO Tournaments aren't sorted by date.
      */
     public function detailsAction($slug)
     {
@@ -64,7 +62,7 @@ class PlayerController extends AbstractDefaultController
             $eventName = $phase->getEvent()->getName();
             $tournamentName = $phase->getEvent()->getTournament()->getName();
 
-            $setsByTournament[$tournamentName][$eventName][$phaseName][] = $set;
+            $setsByTournament[$tournamentName][$eventName][$phaseName][$set->getRound()] = $set;
         }
 
         return $this->render('AppBundle:Players:details.html.twig', [

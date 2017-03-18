@@ -29,26 +29,31 @@
                 {{ phaseName }}
                 <br>
                 <br>
+                <table class="table">
+                    <tbody>
 
-                {% for set in sets %}
+                {% for set in sort_player_sets(sets) %}
 
-                    <strong>{{ set.winner.name }}</strong>
-                    vs.
-                    {{ set.loser.name }}:
-
-                    {{ set.winnerScore }} - {{ set.loserScore }}
-
-                    (round {{ set.round }})
-                    <br>
+                    <tr>
+                        <td>
+                            <strong>{{ set.winner.name }}</strong>
+                        </td>
+                        <td>{{ set.winnerScore }}</td>
+                        <td>
+                            {{ set.loser.name }}
+                        </td>
+                        <td>{{ set.loserScore }}</td>
+                        <td>Round {{ set.round }}</td>
+                    </tr>
 
                 {% endfor %}
+
+                    </tbody>
+                </table>
 
             {% endfor %}
 
         {% endfor %}
-
-        <br>
-        <br>
 
     {% endfor %}
 
