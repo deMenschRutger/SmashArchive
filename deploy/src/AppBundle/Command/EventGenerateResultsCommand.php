@@ -32,6 +32,11 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
     protected $io;
 
     /**
+     * @var bool
+     */
+    protected $verbose;
+
+    /**
      * @param EntityManager $entityManager
      */
     public function __construct(EntityManager $entityManager)
@@ -60,9 +65,36 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io = new SymfonyStyle($input, $output);
+        $this->verbose = $input->getOption('verbose');
 
-        $eventId = 1061;
+        $events = $this->entityManager->getRepository('CoreBundle:Event')->findAll();
 
+        if (!$this->verbose) {
+            $this->io->progressStart(count($events));
+        }
+
+        foreach ($events as $event) {
+//            if ($event->getId() !== 4) {
+//                continue;
+//            }
+
+            $this->processEvent($event->getId());
+
+            if (!$this->verbose) {
+                $this->io->progressAdvance(1);
+            }
+        }
+
+        if (!$this->verbose) {
+            $this->io->progressFinish();
+        }
+    }
+
+    /**
+     * @param int $eventId
+     */
+    protected function processEvent(int $eventId)
+    {
         /** @var Phase[] $phases */
         $phases = $this
             ->entityManager
@@ -84,6 +116,11 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
 
         foreach ($phases as $phase) {
             $phaseGroupEntrantCount = 0;
+
+            // TODO Remove this once pool phases can be properly processed.
+            if (count($phase->getPhaseGroups()) > 1) {
+                return;
+            }
 
             /** @var PhaseGroup $phaseGroup */
             foreach ($phase->getPhaseGroups() as $phaseGroup) {
@@ -107,7 +144,9 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
         $sets = $phaseGroup->getSets()->getValues();
 
         if (count($sets) === 0) {
-            $this->io->writeln('No sets found.');
+            if ($this->verbose) {
+                $this->io->writeln('No sets found.');
+            }
 
             return 0;
         }
@@ -174,12 +213,23 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
      */
     protected function addResult(Event $event, Entrant $entrant, int $rank)
     {
-        $result = new Result();
+        $result = $this->entityManager->getRepository('CoreBundle:Result')->findOneBy([
+            'event'   => $event,
+            'entrant' => $entrant,
+        ]);
+
+        if (!$result instanceof Result) {
+            $result = new Result();
+        }
+
         $result->setEntrant($entrant);
         $result->setEvent($event);
         $result->setRank($rank);
 
         $this->entityManager->persist($result);
-        $this->io->writeln($rank.': '.$entrant->getName());
+
+        if ($this->verbose) {
+            $this->io->writeln($rank.': '.$entrant->getName());
+        }
     }
 }

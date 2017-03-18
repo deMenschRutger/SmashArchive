@@ -38,9 +38,10 @@ class DetailsHandler extends AbstractHandler
 
         if ($command->getIncludeResults()) {
             $queryBuilder
-                ->addSelect('r, en')
+                ->addSelect('r, en, pl')
                 ->leftJoin('e.results', 'r')
                 ->leftJoin('r.entrant', 'en')
+                ->leftJoin('en.players', 'pl')
                 ->addOrderBy('r.rank, en.name')
             ;
         }

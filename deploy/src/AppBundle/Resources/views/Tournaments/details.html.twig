@@ -30,9 +30,9 @@
             </ul>
             <div class="tab-content">
 
-                {% for event in tournament.events %}
+                {% for index, event in tournament.events %}
 
-                <div role="tabpanel" class="tab-pane" id="event-{{ event.id }}">
+                <div role="tabpanel" class="tab-pane  {{ index == 0 ? 'active' : '' }}" id="event-{{ event.id }}">
                     <br>
 
                     {% if event.results|length > 0 %}
@@ -44,7 +44,17 @@
 
                             <tr>
                                 <td>{{ result.rank }}</td>
-                                <td>{{ result.entrant.name }}</td>
+                                <td>
+
+                                    {% for player in result.players %}
+
+                                        <a href="{{ url('player_details', { 'slug': player.slug }) }}">
+                                            {{ player.gamerTag }}
+                                        </a>
+
+                                    {% endfor %}
+
+                                </td>
                             </tr>
 
                         {% endfor %}
