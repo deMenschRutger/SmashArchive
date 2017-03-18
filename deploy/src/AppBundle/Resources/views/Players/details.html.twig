@@ -14,33 +14,30 @@
     </div>
     <div class="col-md-9 ">
 
-    {% set counter = 0 %}
-
-    {% for result in results %}
-
-        {% for eventName, phases in result.sets %}
-            {% set counter = counter + 1 %}
+    {% for eventId, result in results %}
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <a href="#collapse-{{ counter }}" data-toggle="collapse">
-                    {{ result.name }}: {{ eventName }}
+                <a href="#collapse-{{ eventId }}" data-toggle="collapse">
+
+                    {{ result.tournament.name }}: {{ result.event.name }}
+
                 </a>
                 <div class="pull-right">
-                    <strong>{{ result.result.rank }}</strong>
+                    <strong>{{ result.rank }}</strong>
                 </div>
             </div>
-            <div id="collapse-{{ counter }}" class="collapse">
+            <div id="collapse-{{ eventId }}" class="collapse">
                 <div class="panel-body">
 
-            {% for phaseName, sets in phases %}
+            {% for phase in result.sets.phases %}
 
-                <h4>{{ phaseName }}</h4>
+                <h4>{{ phase.name }}</h4>
 
                 <table class="table">
                     <tbody>
 
-                    {% for set in sort_player_sets(sets) %}
+                    {% for set in sort_player_sets(phase.sets) %}
 
                         <tr>
                             <td>
@@ -62,8 +59,6 @@
                 </div>
             </div>
         </div>
-
-        {% endfor %}
 
     {% endfor %}
 

@@ -15,11 +15,18 @@ class ResultsCommand
     private $slug;
 
     /**
-     * @param string $slug
+     * @var array
      */
-    public function __construct($slug)
+    private $sets;
+
+    /**
+     * @param string $slug
+     * @param array  $sets
+     */
+    public function __construct($slug, $sets = null)
     {
         $this->slug = $slug;
+        $this->sets = $sets;
     }
 
     /**
@@ -28,5 +35,13 @@ class ResultsCommand
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSets()
+    {
+        return $this->sets;
     }
 }

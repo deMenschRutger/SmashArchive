@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Domain\Handler\Player;
 
-use CoreBundle\Entity\Set;
 use CoreBundle\Repository\SetRepository;
 use Domain\Command\Player\SetsCommand;
 use Domain\Handler\AbstractHandler;
@@ -24,33 +23,7 @@ class SetsHandler extends AbstractHandler
     {
         /** @var SetRepository $repository */
         $repository = $this->getRepository('CoreBundle:Set');
-        $sets = $repository->findByPlayerSlug($command->getSlug());
 
-        if ($command->getFormat() === 'tournament') {
-            return $this->formatSetsByTournament($sets);
-        }
-
-        return $sets;
-    }
-
-    /**
-     * @param array $sets
-     * @return array
-     */
-    protected function formatSetsByTournament(array $sets)
-    {
-        $setsByTournament = [];
-
-        /** @var Set[] $sets */
-        foreach ($sets as $set) {
-            $phase = $set->getPhaseGroup()->getPhase();
-            $phaseName = $phase->getName();
-            $eventName = $phase->getEvent()->getName();
-            $tournamentName = $phase->getEvent()->getTournament()->getName();
-
-            $setsByTournament[$tournamentName][$eventName][$phaseName][] = $set;
-        }
-
-        return $setsByTournament;
+         return $repository->findByPlayerSlug($command->getSlug());
     }
 }

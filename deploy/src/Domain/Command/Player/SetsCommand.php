@@ -15,18 +15,11 @@ class SetsCommand
     private $slug;
 
     /**
-     * @var string
-     */
-    private $format;
-
-    /**
      * @param string $slug
-     * @param string $format
      */
-    public function __construct(string $slug, string $format = 'flat')
+    public function __construct(string $slug)
     {
         $this->slug = $slug;
-        $this->format = $format;
     }
 
     /**
@@ -35,13 +28,5 @@ class SetsCommand
     public function getSlug(): string
     {
         return $this->slug;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFormat(): string
-    {
-        return $this->format;
     }
 }
