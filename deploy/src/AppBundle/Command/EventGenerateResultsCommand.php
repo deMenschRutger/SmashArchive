@@ -72,23 +72,37 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
         $this->io = new SymfonyStyle($input, $output);
         $this->verbose = $input->getOption('verbose');
 
-        $events = $this->entityManager->getRepository('CoreBundle:Event')->findAll();
+        $events = $this
+            ->entityManager
+            ->createQueryBuilder()
+            ->select('e')
+            ->from('CoreBundle:Event', 'e')
+            ->getQuery()
+            ->getResult()
+        ;
 
         if (!$this->verbose) {
             $this->io->progressStart(count($events));
         }
 
+        /** @var Event $event */
         foreach ($events as $event) {
             $this->processEvent($event->getId());
 
             if (!$this->verbose) {
                 $this->io->progressAdvance(1);
             }
+
+            $this->results = [];
         }
 
         if (!$this->verbose) {
             $this->io->progressFinish();
         }
+
+        $this->io->writeln('Flushing the entity manager...');
+        $this->entityManager->flush();
+        $this->io->writeln('The results were succesfully imported.');
     }
 
     /**
@@ -130,8 +144,6 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
 
             $startRank += $phaseGroupEntrantCount;
         }
-
-        $this->entityManager->flush();
     }
 
     /**
