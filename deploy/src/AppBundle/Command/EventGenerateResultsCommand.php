@@ -37,6 +37,11 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
     protected $verbose;
 
     /**
+     * @var array
+     */
+    protected $results = [];
+
+    /**
      * @param EntityManager $entityManager
      */
     public function __construct(EntityManager $entityManager)
@@ -74,10 +79,6 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
         }
 
         foreach ($events as $event) {
-//            if ($event->getId() !== 4) {
-//                continue;
-//            }
-
             $this->processEvent($event->getId());
 
             if (!$this->verbose) {
@@ -213,20 +214,24 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
      */
     protected function addResult(Event $event, Entrant $entrant, int $rank)
     {
-        $result = $this->entityManager->getRepository('CoreBundle:Result')->findOneBy([
-            'event'   => $event,
-            'entrant' => $entrant,
-        ]);
+        $resultId = $event->getId().'-'.$entrant->getId();
 
-        if (!$result instanceof Result) {
-            $result = new Result();
+        if (array_key_exists($resultId, $this->results)) {
+            /** @var Result $result */
+            $result = $this->results[$resultId];
+
+            if ($result->getRank() <= $rank) {
+                return;
+            }
         }
 
+        $result = new Result();
         $result->setEntrant($entrant);
         $result->setEvent($event);
         $result->setRank($rank);
 
         $this->entityManager->persist($result);
+        $this->results[$resultId] = $result;
 
         if ($this->verbose) {
             $this->io->writeln($rank.': '.$entrant->getName());
