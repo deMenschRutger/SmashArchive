@@ -41,10 +41,10 @@
 
                         <tr>
                             <td>
-                                <strong>{{ set.winner.name }}</strong>
+                                <strong>{{ include('entrant.html.twig', { 'entrant': set.winner }) }}</strong>
                             </td>
                             <td>{{ set.winnerScore }}</td>
-                            <td>{{ set.loser.name }}</td>
+                            <td>{{ include('entrant.html.twig', { 'entrant': set.loser }) }}</td>
                             <td>{{ set.loserScore }}</td>
                             <td>Round {{ set.round }}</td>
                         </tr>

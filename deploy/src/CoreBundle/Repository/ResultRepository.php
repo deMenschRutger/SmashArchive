@@ -24,11 +24,12 @@ class ResultRepository extends EntityRepository
         return $this
             ->_em
             ->createQueryBuilder()
-            ->select('r')
+            ->select('r, en, p')
             ->from('CoreBundle:Result', 'r')
-            ->join('r.event', 'ev')
-            ->join('ev.tournament', 't')
-            ->join('r.entrant', 'en')
+            ->leftJoin('r.event', 'ev')
+            ->leftJoin('ev.tournament', 't')
+            ->leftJoin('r.entrant', 'en')
+            ->leftJoin('en.players', 'p')
             ->where('en.id IN (:ids)')
             ->orderBy('t.dateStart', 'DESC')
             ->setParameter('ids', $singlePlayerEntrantIds)
