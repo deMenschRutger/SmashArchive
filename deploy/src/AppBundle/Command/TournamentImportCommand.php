@@ -155,10 +155,6 @@ class TournamentImportCommand extends ContainerAwareCommand
         $this->entityManager->flush();
 
         foreach ($toBeUpdatedPhaseGroups as $phaseGroup) {
-            if ($phaseGroup->getId() !== 10) {
-                continue;
-            }
-
             $this->updatePhaseGroup($phaseGroup);
         }
 
@@ -172,10 +168,6 @@ class TournamentImportCommand extends ContainerAwareCommand
      */
     protected function processPhaseGroup(int $id, PhaseGroup $phaseGroup)
     {
-        if ($id !== 133374) {
-            return;
-        }
-
         $client = new Client();
         $response = $client->get('https://api.smash.gg/phase_group/'.$id, [
             'query' => [
@@ -244,10 +236,14 @@ class TournamentImportCommand extends ContainerAwareCommand
 
             if ($setData['winnerId'] && $setData['winnerId'] == $setData['entrant1Id']) {
                 $set->setWinner($entrantOne);
+                $set->setWinnerScore($setData['entrant1Score']);
                 $set->setLoser($entrantTwo);
+                $set->setLoserScore($setData['entrant2Score']);
             } elseif ($setData['winnerId'] && $setData['winnerId'] == $setData['entrant2Id']) {
                 $set->setWinner($entrantTwo);
+                $set->setWinnerScore($setData['entrant2Score']);
                 $set->setLoser($entrantOne);
+                $set->setLoserScore($setData['entrant1Score']);
             }
 
             $this->io->progressAdvance(1);

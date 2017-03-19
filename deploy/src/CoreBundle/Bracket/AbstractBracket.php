@@ -21,12 +21,7 @@ abstract class AbstractBracket
     /**
      * @var array
      */
-    protected $setsByRound = [];
-
-    /**
-     * @var array
-     */
-    protected $entrants = [];
+    protected $rounds = [];
 
     /**
      * @param PhaseGroup $phaseGroup
@@ -34,19 +29,36 @@ abstract class AbstractBracket
     public function __construct(PhaseGroup $phaseGroup)
     {
         $this->phaseGroup = $phaseGroup;
-
         $this->init();
     }
 
     /**
      * @param Set $set
      */
-    abstract public function determineRoundName(Set $set);
+    public function determineRoundName(Set $set)
+    {
+        $mappedRound = $this->getMappedRound($set);
+
+        if (!$mappedRound) {
+            return;
+        }
+
+        $set->setRoundName($mappedRound['name']);
+    }
 
     /**
      * @param Set $set
      */
-    abstract public function determineIsGrandFinals(Set $set);
+    public function determineIsGrandFinals(Set $set)
+    {
+        $mappedRound = $this->getMappedRound($set);
+
+        if (!$mappedRound) {
+            return;
+        }
+
+        $set->setIsGrandFinals($mappedRound['isGrandFinals']);
+    }
 
     /**
      * @return void
@@ -55,25 +67,14 @@ abstract class AbstractBracket
     {
         /** @var Set $set */
         foreach ($this->phaseGroup->getSets() as $set) {
-            $this->addEntrant($set->getEntrantOne());
-            $this->addEntrant($set->getEntrantTwo());
+            if (!$set->getEntrantOne() instanceof Entrant ||
+                !$set->getEntrantTwo() instanceof Entrant
+            ) {
+                continue;
+            }
 
             $round = $set->getRound();
-            $this->setsByRound[$round][] = $set;
-        }
-    }
-
-    /**
-     * @param Entrant $entrant
-     */
-    protected function addEntrant($entrant)
-    {
-        if (!$entrant instanceof Entrant) {
-            return;
-        }
-
-        if (!in_array($entrant, $this->entrants, true)) {
-            $this->entrants[] = $entrant;
+            $this->rounds[$round] = $round;
         }
     }
 
@@ -81,11 +82,5 @@ abstract class AbstractBracket
      * @param Set $set
      * @return int
      */
-    protected function getReverseIndex(Set $set)
-    {
-        $entrantCount = count($this->entrants);
-        $totalRounds = ceil(log($entrantCount, 2));
-
-        return intval($totalRounds) - $set->getRound();
-    }
+    abstract protected function getMappedRound(Set $set);
 }

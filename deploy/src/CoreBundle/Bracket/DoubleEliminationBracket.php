@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CoreBundle\Bracket;
 
 use CoreBundle\Entity\Set;
+use Webmozart\Assert\Assert;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -14,112 +15,153 @@ class DoubleEliminationBracket extends AbstractBracket
     /**
      * @var array
      */
-    protected $winnersBracketSets;
+    protected $winnersBracketRoundMapping;
 
     /**
      * @var array
      */
-    protected $losersBracketSets;
+    protected $losersBracketRoundMapping;
 
     /**
      * @return void
      */
     protected function init()
     {
-        /** @var Set $set */
-        foreach ($this->phaseGroup->getSets() as $set) {
-            $this->addEntrant($set->getEntrantOne());
-            $this->addEntrant($set->getEntrantTwo());
+        parent::init();
 
-            $round = $set->getRound();
-            $this->setsByRound[$round][] = $set;
-        }
-
-        $this->winnersBracketSets = $this->getWinnersBracketSetsByRound();
-        $this->losersBracketSets = $this->getLosersBracketSetsByRound();
+        $this->determineWinnersBracketRoundMapping();
+        $this->determineLosersBracketRoundMapping();
     }
 
     /**
-     * @param Set $set
+     * @return void
      */
-    public function determineRoundName(Set $set)
+    protected function determineWinnersBracketRoundMapping()
     {
-        $entrantCount = count($this->entrants);
-        $totalWinnersRounds = ceil(log($entrantCount, 2));
-        $totalLosersRounds = ($totalWinnersRounds - 1) * 2;
+        $this->winnersBracketRoundMapping = $this->getRoundMapping('winners');
+        $lastRound = max(array_values($this->winnersBracketRoundMapping));
 
-        $name = null;
-        $round = $set->getRound();
+        foreach ($this->winnersBracketRoundMapping as $round => &$mappedRound) {
+            $name = 'Winners round '.$mappedRound;
+            $isGrandFinals = false;
 
-        if ($round > 0) {
-            $reverseIndex = $this->getReverseIndex($set);
-
-            switch ($reverseIndex) {
+            switch ($lastRound - $mappedRound) {
                 case 0:
-                    $name = 'Winners finals';
+                    $name = 'Grand finals';
+                    $isGrandFinals = true;
                     break;
 
                 case 1:
-                    $name = 'Winners semifinals';
+                    $name = 'Winners finals';
                     break;
 
                 case 2:
+                    $name = 'Winners semifinals';
+                    break;
+
+                case 3:
                     $name = 'Winners quarterfinals';
                     break;
-
-                case ($round > $totalWinnersRounds):
-                    $name = 'Grand finals';
-                    break;
-
-                default:
-                    $name = 'Winners round '.$set->getRound();
-                    break;
             }
-        } elseif ($round < 0) {
-            // TODO Determine the name of the losers round here.
+
+            $mappedRound = [
+                'mappedRound'   => $mappedRound,
+                'name'          => $name,
+                'isGrandFinals' => $isGrandFinals,
+            ];
+        }
+    }
+    /**
+     * @return void
+     */
+    protected function determineLosersBracketRoundMapping()
+    {
+        $this->losersBracketRoundMapping = $this->getRoundMapping('losers');
+
+        if (count($this->losersBracketRoundMapping) === 0) {
+            // This can happen for example if the tournament hasn't started yet.
+            return;
         }
 
-        $set->setRoundName($name);
+        $lastRound = max(array_values($this->losersBracketRoundMapping));
+
+        foreach ($this->losersBracketRoundMapping as $round => &$mappedRound) {
+            $name = 'Losers round '.$mappedRound;
+
+            switch ($lastRound - $mappedRound) {
+                case 0:
+                    $name = 'Losers finals';
+                    break;
+
+                case 1:
+                    $name = 'Losers semifinals';
+                    break;
+
+                case 2:
+                    $name = 'Losers quarterfinals';
+                    break;
+            }
+
+            $mappedRound = [
+                'mappedRound'   => $mappedRound,
+                'name'          => $name,
+                'isGrandFinals' => false,
+            ];
+        }
+    }
+
+    /**
+     * @param string $bracketPart
+     * @return array
+     */
+    protected function getRoundMapping($bracketPart)
+    {
+        Assert::oneOf($bracketPart, ['winners', 'losers']);
+
+        $mapping = [];
+
+        foreach ($this->rounds as $round) {
+            $addRound = false;
+
+            if ($bracketPart === 'winners') {
+                $addRound = $round > 0;
+            } elseif ($bracketPart === 'losers') {
+                $addRound = $round < 0;
+            }
+
+            if ($addRound) {
+                $mapping[$round] = $round;
+            }
+        }
+
+        ksort($mapping, SORT_STRING);
+        $counter = 1;
+
+        foreach ($mapping as &$round) {
+            $round = $counter;
+            $counter += 1;
+        }
+
+        return $mapping;
     }
 
     /**
      * @param Set $set
+     * @return int
      */
-    public function determineIsGrandFinals(Set $set)
+    protected function getMappedRound(Set $set)
     {
-        // TODO Implement this method.
-    }
+        $round = $set->getRound();
+        $mapping = $this->winnersBracketRoundMapping;
 
-    /**
-     * @return array
-     */
-    protected function getWinnersBracketSetsByRound()
-    {
-        $setsByRound = [];
-
-        foreach ($this->setsByRound as $round => $sets) {
-            if ($round > 0) {
-                $setsByRound[$round] = $sets;
-            }
+        if ($round < 0) {
+            $mapping = $this->losersBracketRoundMapping;
         }
 
-        ksort($setsByRound);
-
-        return $setsByRound;
-    }
-    /**
-     * @return array
-     */
-    protected function getLosersBracketSetsByRound()
-    {
-        $setsByRound = [];
-
-        foreach ($this->setsByRound as $round => $sets) {
-            if ($round < 0) {
-                $setsByRound[$round] = $sets;
-            }
+        if (array_key_exists($round, $mapping)) {
+            return $mapping[$round];
         }
 
-        return $setsByRound;
+        return null;
     }
 }

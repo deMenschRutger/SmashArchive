@@ -12,38 +12,19 @@ use CoreBundle\Entity\Set;
 class SingleEliminationBracket extends AbstractBracket
 {
     /**
-     * @param Set $set
+     * @var array
      */
-    public function determineRoundName(Set $set)
-    {
-        $reverseIndex = $this->getReverseIndex($set);
-
-        switch ($reverseIndex) {
-            case 0:
-                $name = 'Finals';
-                break;
-            case 1:
-                $name = 'Semifinals';
-                break;
-            case 2:
-                $name = 'Quarterfinals';
-                break;
-            default:
-                $name = 'Round '.$set->getRound();
-                break;
-        }
-
-        $set->setRoundName($name);
-    }
+    protected $roundMapping;
 
     /**
+     * A single elimination bracket can never have grand finals.
+     *
      * @param Set $set
+     * @return void
      */
     public function determineIsGrandFinals(Set $set)
     {
-        if ($this->getReverseIndex($set) === 0) {
-            $set->setIsGrandFinals(true);
-        }
+        return;
     }
 
     /**
@@ -53,10 +34,66 @@ class SingleEliminationBracket extends AbstractBracket
     {
         parent::init();
 
-        // Make sure the rounds are in the right order.
-        ksort($this->setsByRound);
+        $this->roundMapping = $this->getRoundMapping();
+        $lastRound = max(array_values($this->roundMapping));
 
-        // Reset the indexes in case certain round numbers were skipped for some reason.
-        $this->setsByRound = array_values($this->setsByRound);
+        foreach ($this->roundMapping as $round => &$mappedRound) {
+            $name = 'Round '.$mappedRound;
+
+            switch ($lastRound - $mappedRound) {
+                case 0:
+                    $name = 'Finals';
+                    break;
+                case 1:
+                    $name = 'Semifinals';
+                    break;
+                case 2:
+                    $name = 'Quarterfinals';
+                    break;
+            }
+
+            $mappedRound = [
+                'mappedRound'   => $mappedRound,
+                'name'          => $name,
+                'isGrandFinals' => false,
+            ];
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getRoundMapping()
+    {
+        $mapping = [];
+
+        foreach ($this->rounds as $round) {
+            $mapping[$round] = $round;
+        }
+
+        ksort($mapping, SORT_STRING);
+        $counter = 1;
+
+        foreach ($mapping as &$round) {
+            $round = $counter;
+            $counter += 1;
+        }
+
+        return $mapping;
+    }
+
+    /**
+     * @param Set $set
+     * @return int
+     */
+    protected function getMappedRound(Set $set)
+    {
+        $round = $set->getRound();
+
+        if (array_key_exists($round, $this->roundMapping)) {
+            return $this->roundMapping[$round];
+        }
+
+        return null;
     }
 }
