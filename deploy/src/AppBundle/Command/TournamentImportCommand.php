@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Command;
 
+use CoreBundle\Bracket\DoubleEliminationBracket;
 use CoreBundle\Bracket\SingleEliminationBracket;
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Event;
@@ -154,6 +155,10 @@ class TournamentImportCommand extends ContainerAwareCommand
         $this->entityManager->flush();
 
         foreach ($toBeUpdatedPhaseGroups as $phaseGroup) {
+            if ($phaseGroup->getId() !== 10) {
+                continue;
+            }
+
             $this->updatePhaseGroup($phaseGroup);
         }
 
@@ -167,6 +172,10 @@ class TournamentImportCommand extends ContainerAwareCommand
      */
     protected function processPhaseGroup(int $id, PhaseGroup $phaseGroup)
     {
+        if ($id !== 133374) {
+            return;
+        }
+
         $client = new Client();
         $response = $client->get('https://api.smash.gg/phase_group/'.$id, [
             'query' => [
@@ -252,9 +261,19 @@ class TournamentImportCommand extends ContainerAwareCommand
      */
     protected function updatePhaseGroup($phaseGroup)
     {
-        if ($phaseGroup->getType() === PhaseGroup::TYPE_SINGLE_ELIMINATION) {
-            $bracket = new SingleEliminationBracket($phaseGroup);
+        $bracket = null;
 
+        switch ($phaseGroup->getType()) {
+            case PhaseGroup::TYPE_SINGLE_ELIMINATION;
+                $bracket = new SingleEliminationBracket($phaseGroup);
+                break;
+
+            case PhaseGroup::TYPE_DOUBLE_ELIMINATION;
+                $bracket = new DoubleEliminationBracket($phaseGroup);
+                break;
+        }
+
+        if ($bracket) {
             foreach ($phaseGroup->getSets() as $set) {
                 $bracket->determineRoundName($set);
                 $bracket->determineIsGrandFinals($set);

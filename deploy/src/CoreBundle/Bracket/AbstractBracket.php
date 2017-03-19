@@ -35,6 +35,24 @@ abstract class AbstractBracket
     {
         $this->phaseGroup = $phaseGroup;
 
+        $this->init();
+    }
+
+    /**
+     * @param Set $set
+     */
+    abstract public function determineRoundName(Set $set);
+
+    /**
+     * @param Set $set
+     */
+    abstract public function determineIsGrandFinals(Set $set);
+
+    /**
+     * @return void
+     */
+    protected function init()
+    {
         /** @var Set $set */
         foreach ($this->phaseGroup->getSets() as $set) {
             $this->addEntrant($set->getEntrantOne());
@@ -43,12 +61,6 @@ abstract class AbstractBracket
             $round = $set->getRound();
             $this->setsByRound[$round][] = $set;
         }
-
-        // Make sure the rounds are in the right order.
-        ksort($this->setsByRound);
-
-        // Reset the indexes in case certain round numbers were skipped for some reason.
-        $this->setsByRound = array_values($this->setsByRound);
     }
 
     /**
@@ -76,14 +88,4 @@ abstract class AbstractBracket
 
         return intval($totalRounds) - $set->getRound();
     }
-
-    /**
-     * @param Set $set
-     */
-    abstract protected function determineRoundName(Set $set);
-
-    /**
-     * @param Set $set
-     */
-    abstract protected function determineIsGrandFinals(Set $set);
 }
