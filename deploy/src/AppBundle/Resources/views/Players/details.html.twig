@@ -19,9 +19,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <a href="#collapse-{{ eventId }}" data-toggle="collapse">
-
                     {{ result.tournament.name }}: {{ result.event.name }}
-
                 </a>
                 <div class="pull-right">
                     <strong>{{ result.rank }}</strong>
@@ -43,9 +41,13 @@
                             <td>
                                 <strong>{{ include('entrant.html.twig', { 'entrant': set.winner }) }}</strong>
                             </td>
-                            <td>{{ set.winnerScore }}</td>
+                            <td>
+                                {{ set.isForfeit ? '' : set.winnerScore }}
+                            </td>
                             <td>{{ include('entrant.html.twig', { 'entrant': set.loser }) }}</td>
-                            <td>{{ set.loserScore }}</td>
+                            <td>
+                                {{ set.isForfeit ? 'DQ' : set.loserScore }}
+                            </td>
                             <td>{{ set.roundName }}</td>
                         </tr>
 

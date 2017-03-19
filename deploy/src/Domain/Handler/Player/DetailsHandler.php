@@ -33,7 +33,7 @@ class DetailsHandler extends AbstractHandler
         ;
 
         if (!$player instanceof Player) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException('The player could not be found.');
         }
 
         return $player;

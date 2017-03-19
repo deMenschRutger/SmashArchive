@@ -73,6 +73,8 @@ class Set
     /**
      * @var bool
      *
+     * @TODO This needs to become a 'status' field that can have values like 'forfeit' and 'DQ'.
+     *
      * @ORM\Column(name="is_forfeit", type="boolean")
      *
      * @Serializer\Groups({"players_sets"})

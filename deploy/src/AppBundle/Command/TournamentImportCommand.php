@@ -246,6 +246,10 @@ class TournamentImportCommand extends ContainerAwareCommand
                 $set->setLoserScore($setData['entrant1Score']);
             }
 
+            if ($set->getLoserScore() === -1) {
+                $set->setIsForfeit(true);
+            }
+
             $this->io->progressAdvance(1);
         }
 

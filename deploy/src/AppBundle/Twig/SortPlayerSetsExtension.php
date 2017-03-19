@@ -25,13 +25,12 @@ class SortPlayerSetsExtension extends \Twig_Extension
     /**
      * @param array $sets
      * @return array
-     *
-     * @TODO This won't return grand finals in the right order.
      */
     public function sortPlayerSets($sets)
     {
         $winnersBracketSets = [];
         $losersBracketSets = [];
+        $grandFinals = [];
 
         /** @var Set $set */
         foreach ($sets as $set) {
@@ -42,7 +41,9 @@ class SortPlayerSetsExtension extends \Twig_Extension
                 continue;
             }
 
-            if ($set->getRound() > 0) {
+            if ($set->getIsGrandFinals()) {
+                $grandFinals[] = $set;
+            } elseif ($set->getRound() > 0) {
                 $winnersBracketSets[] = $set;
             } elseif ($set->getRound() < 0) {
                 $losersBracketSets[] = $set;
@@ -57,6 +58,6 @@ class SortPlayerSetsExtension extends \Twig_Extension
             return $setA->getRound() < $setB->getRound();
         });
 
-        return array_merge($winnersBracketSets, $losersBracketSets);
+        return array_merge($winnersBracketSets, $losersBracketSets, $grandFinals);
     }
 }
