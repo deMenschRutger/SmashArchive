@@ -122,6 +122,11 @@ class Entrant
      */
     public function getPlayers(): Collection
     {
+        // This is a workaround for confusing behaviour in Doctrine where it loads certain associations multiple times.
+        if (count($this->players) === 2 && $this->players[0] === $this->players[1]) {
+            $this->players->remove(1);
+        }
+
         return $this->players;
     }
 
