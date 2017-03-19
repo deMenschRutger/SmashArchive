@@ -135,6 +135,11 @@ class Set
     private $isGrandFinals = false;
 
     /**
+     * @var string
+     */
+    private $roundName;
+
+    /**
      * @return int
      */
     public function getId()
@@ -372,6 +377,22 @@ class Set
     public function setIsGrandFinals(bool $isGrandFinals)
     {
         $this->isGrandFinals = $isGrandFinals;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRoundName()
+    {
+        return $this->roundName;
+    }
+
+    /**
+     * @param string $roundName
+     */
+    public function setRoundName($roundName)
+    {
+        $this->roundName = $roundName;
     }
 }
 

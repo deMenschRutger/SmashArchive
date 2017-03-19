@@ -339,7 +339,7 @@ class TournamentImportCommand extends ContainerAwareCommand
      * @param int $smashGgId
      * @return Set
      */
-    protected function findSet(int $smashGgId): Set
+    protected function findSet($smashGgId): Set
     {
         $set = $this->getRepository('CoreBundle:Set')->findOneBy([
             'smashggId' => $smashGgId,

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Domain\Handler\Player;
 
+use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Result;
 use CoreBundle\Entity\Set;
+use CoreBundle\Entity\Tournament;
 use CoreBundle\Repository\ResultRepository;
 use Domain\Command\Player\ResultsCommand;
 use Domain\Handler\AbstractHandler;
@@ -16,10 +18,18 @@ use Domain\Handler\AbstractHandler;
 class ResultsHandler extends AbstractHandler
 {
     /**
+     * @var array
+     */
+    protected $events = [];
+
+    /**
+     * @var array
+     */
+    protected $setsByEventId = [];
+
+    /**
      * @param ResultsCommand $command
      * @return array
-     *
-     * @TODO If there are sets without a result (for example because the tournament hasn't finished yet), they won't be returned here.
      */
     public function handle(ResultsCommand $command)
     {
@@ -32,30 +42,12 @@ class ResultsHandler extends AbstractHandler
             return $results;
         }
 
-        $setsByEventId = $this->getSetsByEventId($sets);
-        $resultsByEvent = [];
+        $this->setsByEventId = $this->getSetsByEventId($sets);
 
-        /** @var Result $result */
-        foreach ($results as $result) {
-            $event = $result->getEvent();
-            $eventId = $event->getId();
+        $resultsByEvent = $this->processResults($results);
+        $remainingResults = $this->processSetsWithoutResult();
 
-            $tournament = $event->getTournament();
-            $eventSets = null;
-
-            if (array_key_exists($eventId, $setsByEventId)) {
-                $eventSets = $setsByEventId[$eventId];
-            }
-
-            $resultsByEvent[$eventId] = [
-                'tournament' => $tournament,
-                'event'      => $event,
-                'rank'       => $result->getRank(),
-                'sets'       => $eventSets,
-            ];
-        }
-
-        return $resultsByEvent;
+        return array_merge($resultsByEvent, $remainingResults);
     }
 
     /**
@@ -64,30 +56,116 @@ class ResultsHandler extends AbstractHandler
      */
     protected function getSetsByEventId(array $sets)
     {
-        $events = [];
+        $setsByEventId = [];
 
         /** @var Set[] $sets */
         foreach ($sets as $set) {
-            $phase = $set->getPhaseGroup()->getPhase();
+            $phaseGroup = $set->getPhaseGroup();
+
+            $phase = $phaseGroup->getPhase();
             $phaseId = $phase->getId();
 
             $event = $phase->getEvent();
             $eventId = $event->getId();
+            $this->events[$eventId] = $event;
 
-            if (!array_key_exists($eventId, $events)) {
-                $events[$eventId]['phases'] = [];
+            if (!array_key_exists($eventId, $setsByEventId)) {
+                $setsByEventId[$eventId] = [];
             }
 
-            if (!array_key_exists($phaseId, $events[$eventId]['phases'])) {
-                $events[$eventId]['phases'][$phaseId] = [
+            if (!array_key_exists($phaseId, $setsByEventId[$eventId])) {
+                $setsByEventId[$eventId][$phaseId] = [
                     'name' => $phase->getName(),
                     'sets'  => [],
                 ];
             }
 
-            $events[$eventId]['phases'][$phaseId]['sets'][] = $set;
+            $setsByEventId[$eventId][$phaseId]['sets'][] = $set;
         }
 
-        return $events;
+        return $setsByEventId;
+    }
+
+    /**
+     * @param array $results
+     * @return array
+     */
+    protected function processResults($results)
+    {
+        $resultsByEvent = [];
+
+        /** @var Result $result */
+        foreach ($results as $result) {
+            $event = $result->getEvent();
+            $eventId = $event->getId();
+
+            $tournament = $event->getTournament();
+            $setsByPhase = null;
+
+            if (array_key_exists($eventId, $this->setsByEventId)) {
+                $setsByPhase = $this->setsByEventId[$eventId];
+
+                unset($this->setsByEventId[$eventId]);
+            }
+
+            $resultsByEvent[$eventId] = [
+                'tournament'  => $tournament,
+                'event'       => $event,
+                'rank'        => $result->getRank(),
+                'setsByPhase' => $setsByPhase,
+            ];
+        }
+
+        return $resultsByEvent;
+    }
+
+    /**
+     * @return array
+     */
+    protected function processSetsWithoutResult()
+    {
+        $resultsByEvent = [];
+
+        foreach ($this->setsByEventId as $eventId => $setsByPhase) {
+            $tournament = $this->getTournamentByEventId($eventId);
+            $event = $this->getEventById($eventId);
+
+            $resultsByEvent[$eventId] = [
+                'tournament'  => $tournament,
+                'event'       => $event,
+                'rank'        => null,
+                'setsByPhase' => $setsByPhase,
+            ];
+        }
+
+        return $resultsByEvent;
+    }
+
+    /**
+     * @param int $eventId
+     * @return Event|null
+     */
+    protected function getEventById($eventId)
+    {
+        if (array_key_exists($eventId, $this->events)) {
+            return $this->events[$eventId];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param int $eventId
+     * @return Tournament|null
+     */
+    protected function getTournamentByEventId($eventId)
+    {
+        $event = $this->getEventById($eventId);
+
+        if ($event instanceof Event) {
+            return $event->getTournament();
+        }
+
+        return null;
     }
 }

@@ -59,6 +59,9 @@ class SingleEliminationBracket extends AbstractBracket
 
         if (in_array($set, $lastRoundSets)) {
             $set->setIsGrandFinals(true);
+            $set->setRoundName('Grand Finals');
+        } else {
+            $set->setRoundName('Not Grand Finals');
         }
     }
 }
