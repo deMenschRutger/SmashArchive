@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CoreBundle\Entity;
 
 use CoreBundle\Entity\Traits\TimestampableTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
@@ -94,6 +95,14 @@ class PhaseGroup
      * @ORM\OneToMany(targetEntity="Set", mappedBy="phaseGroup")
      */
     private $sets;
+
+    /**
+     *
+     */
+    public function __construct()
+    {
+        $this->sets = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -221,6 +230,14 @@ class PhaseGroup
     public function getSets(): Collection
     {
         return $this->sets;
+    }
+
+    /**
+     * @param Set $set
+     */
+    public function addSet(Set $set)
+    {
+        $this->sets[] = $set;
     }
 }
 

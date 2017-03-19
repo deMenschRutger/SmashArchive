@@ -1,7 +1,9 @@
-{% for player in entrant.players %}
+{% if entrant %}
+    {% for player in entrant.players %}
 
     <a href="{{ url('player_details', { 'slug': player.slug }) }}">
         {{ entrant.name }}
     </a>
 
-{% endfor %}
+    {% endfor %}
+{% endif %}

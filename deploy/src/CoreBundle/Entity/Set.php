@@ -39,7 +39,7 @@ class Set
     /**
      * @var string
      *
-     * @ORM\Column(name="smashgg_id", type="integer", nullable=true)
+     * @ORM\Column(name="smashgg_id", type="string", length=255, nullable=true)
      */
     private $smashggId;
 
@@ -130,14 +130,18 @@ class Set
     private $loser;
 
     /**
-     * @var bool
-     */
-    private $isGrandFinals = false;
-
-    /**
      * @var string
+     *
+     * @ORM\Column(name="round_name", type="string", length=255, nullable=true)
      */
     private $roundName;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_grand_finals", type="boolean")
+     */
+    private $isGrandFinals = false;
 
     /**
      * @return int
@@ -172,7 +176,7 @@ class Set
     }
 
     /**
-     * @param int $smashggId
+     * @param string $smashggId
      */
     public function setSmashggId($smashggId)
     {
@@ -273,12 +277,13 @@ class Set
     public function setPhaseGroup(PhaseGroup $phaseGroup)
     {
         $this->phaseGroup = $phaseGroup;
+        $phaseGroup->addSet($this);
     }
 
     /**
      * @return Entrant
      */
-    public function getEntrantOne(): Entrant
+    public function getEntrantOne()
     {
         return $this->entrantOne;
     }
@@ -294,7 +299,7 @@ class Set
     /**
      * @return Entrant
      */
-    public function getEntrantTwo(): Entrant
+    public function getEntrantTwo()
     {
         return $this->entrantTwo;
     }
@@ -364,22 +369,6 @@ class Set
     }
 
     /**
-     * @return bool
-     */
-    public function getIsGrandFinals(): bool
-    {
-        return $this->isGrandFinals;
-    }
-
-    /**
-     * @param bool $isGrandFinals
-     */
-    public function setIsGrandFinals(bool $isGrandFinals)
-    {
-        $this->isGrandFinals = $isGrandFinals;
-    }
-
-    /**
      * @return string
      */
     public function getRoundName()
@@ -394,5 +383,20 @@ class Set
     {
         $this->roundName = $roundName;
     }
-}
 
+    /**
+     * @return bool
+     */
+    public function getIsGrandFinals(): bool
+    {
+        return $this->isGrandFinals;
+    }
+
+    /**
+     * @param bool $isGrandFinals
+     */
+    public function setIsGrandFinals(bool $isGrandFinals)
+    {
+        $this->isGrandFinals = $isGrandFinals;
+    }
+}

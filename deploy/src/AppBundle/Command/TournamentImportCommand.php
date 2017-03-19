@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Command;
 
+use CoreBundle\Bracket\SingleEliminationBracket;
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Game;
@@ -23,6 +24,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
+ *
+ * @TODO Refactor this command, it's a mess.
  */
 class TournamentImportCommand extends ContainerAwareCommand
 {
@@ -132,6 +135,8 @@ class TournamentImportCommand extends ContainerAwareCommand
             $phases[$phaseId] = $phase;
         }
 
+        $toBeUpdatedPhaseGroups = [];
+
         foreach ($apiData['entities']['groups'] as $phaseGroupData) {
             $phaseGroupId = $phaseGroupData['id'];
             $phaseGroup = $this->findPhaseGroup($phaseGroupId);
@@ -142,6 +147,14 @@ class TournamentImportCommand extends ContainerAwareCommand
             $phaseGroup->setPhase($phase);
 
             $this->processPhaseGroup($phaseGroupId, $phaseGroup);
+            $toBeUpdatedPhaseGroups[] = $phaseGroup;
+        }
+
+        $this->io->writeln('Flushing the entity manager...');
+        $this->entityManager->flush();
+
+        foreach ($toBeUpdatedPhaseGroups as $phaseGroup) {
+            $this->updatePhaseGroup($phaseGroup);
         }
 
         $this->entityManager->flush();
@@ -196,6 +209,7 @@ class TournamentImportCommand extends ContainerAwareCommand
         }
 
         $setCount = count($apiData['entities']['sets']);
+
         $this->io->comment("Importing sets for phase group #{$id}.");
         $this->io->progressStart($setCount);
 
@@ -231,6 +245,21 @@ class TournamentImportCommand extends ContainerAwareCommand
         }
 
         $this->io->progressFinish();
+    }
+
+    /**
+     * @param PhaseGroup $phaseGroup
+     */
+    protected function updatePhaseGroup($phaseGroup)
+    {
+        if ($phaseGroup->getType() === PhaseGroup::TYPE_SINGLE_ELIMINATION) {
+            $bracket = new SingleEliminationBracket($phaseGroup);
+
+            foreach ($phaseGroup->getSets() as $set) {
+                $bracket->determineRoundName($set);
+                $bracket->determineIsGrandFinals($set);
+            }
+        }
     }
 
     /**

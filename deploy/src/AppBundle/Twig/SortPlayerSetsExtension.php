@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Twig;
 
+use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Set;
 
 /**
@@ -34,6 +35,13 @@ class SortPlayerSetsExtension extends \Twig_Extension
 
         /** @var Set $set */
         foreach ($sets as $set) {
+            // This happens if at least one of the entrants is a bye, or if the set hasn't finished yet.
+            if (!$set->getEntrantOne() instanceof Entrant ||
+                !$set->getEntrantTwo() instanceof Entrant
+            ) {
+                continue;
+            }
+
             if ($set->getRound() > 0) {
                 $winnersBracketSets[] = $set;
             } elseif ($set->getRound() < 0) {
