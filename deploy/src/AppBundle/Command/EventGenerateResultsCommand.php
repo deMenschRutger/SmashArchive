@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Command;
 
+use CoreBundle\Bracket\SingleEliminationBracket;
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Phase;
@@ -87,6 +88,10 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
 
         /** @var Event $event */
         foreach ($events as $event) {
+            if ($event->getId() !== 1495) {
+                continue;
+            }
+
             $this->processEvent($event->getId());
 
             if (!$this->verbose) {
@@ -100,8 +105,8 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
             $this->io->progressFinish();
         }
 
-        $this->io->writeln('Flushing the entity manager...');
-        $this->entityManager->flush();
+//        $this->io->writeln('Flushing the entity manager...');
+//        $this->entityManager->flush();
         $this->io->writeln('The results were succesfully imported.');
     }
 
@@ -139,6 +144,7 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
 
             /** @var PhaseGroup $phaseGroup */
             foreach ($phase->getPhaseGroups() as $phaseGroup) {
+                $bracket = new SingleEliminationBracket($phaseGroup);
                 $phaseGroupEntrantCount += $this->processPhaseGroup($phaseGroup, $startRank);
             }
 

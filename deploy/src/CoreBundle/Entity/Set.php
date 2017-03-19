@@ -130,6 +130,11 @@ class Set
     private $loser;
 
     /**
+     * @var bool
+     */
+    private $isGrandFinals = false;
+
+    /**
      * @return int
      */
     public function getId()
@@ -351,6 +356,22 @@ class Set
     public function setLoser(Entrant $loser = null)
     {
         $this->loser = $loser;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsGrandFinals(): bool
+    {
+        return $this->isGrandFinals;
+    }
+
+    /**
+     * @param bool $isGrandFinals
+     */
+    public function setIsGrandFinals(bool $isGrandFinals)
+    {
+        $this->isGrandFinals = $isGrandFinals;
     }
 }
 
