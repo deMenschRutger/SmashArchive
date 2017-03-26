@@ -9,7 +9,9 @@
         If you're reading this it means you have access to an early version of the SmashRanking Reboot project. The
         purpose of this early version is to confirm that the data from the previous SmashRanking project has been
         imported correctly. Most additional functionality is not yet in place, and the UI is just a basic Bootstrap
-        UI so far.
+        UI so far. There's no need to report minor issues right now, since I'm already aware of many of them. That
+        being said, if you encounter some major bugs like pages not functioning at all, or results being completely
+        wrong, please let me know.
     </p>
     <p>
         That being said, most of the data can already be accessed through an API. This is also just a concept, but it
@@ -77,12 +79,20 @@
     <h4>Current issues</h4>
     <ul>
         <li>
+            The rankings will most likely not be correct for events that aren't one phase single or double elimination
+            brackets. Events with multiple phases, for example because of pools, probably have incorrect rankings.
+            Round robin pools and events using the swiss-system probably have incorrect rankings as well.
+        </li>
+        <li>
             The rankings are not correct for tournaments that consider regular singles bracket and amateur brackets
             as part of the same event. This often seems to be the case for tournaments imported from smash.gg. This
             needs to be fixed manually.
         </li>
         <li>
             The player details page sometimes shows sets that haven't actually been played.
+        </li>
+        <li>
+            Some pages could be slow. This will be improved later by adding pagination and/or caching.
         </li>
     </ul>
 
