@@ -15,3 +15,15 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    # A secret key used to encrypt data.
+    encryption_key:    ThisTokenIsNotSoSecretChangeIt
+    encryption_salt:   ThisTokenIsNotSoSecretChangeIt
+
+    # Facebook app credentials
+    facebook_app_id:     facebook_app_id
+    facebook_app_secret: facebook_app_secret
+
+    # Twitter app credentials
+    twitter_app_id:      twitter_app_id
+    twitter_app_secret:  twitter_app_secret

@@ -1,0 +1,42 @@
+services:
+    command.tournament.import:
+        class: AppBundle\Command\TournamentImportCommand
+        arguments: ["@doctrine.orm.default_entity_manager"]
+        tags:
+            - { name: console.command }
+
+    command.event.results.generate:
+        class: AppBundle\Command\EventGenerateResultsCommand
+        arguments: ["@doctrine.orm.default_entity_manager"]
+        tags:
+            - { name: console.command }
+
+    command.smashranking.import:
+        class: AppBundle\Command\SmashRankingImportCommand
+        arguments: ["@doctrine.orm.default_entity_manager"]
+        tags:
+            - { name: console.command }
+
+    app.controller.default:
+        class: AppBundle\Controller\DefaultController
+        calls:
+            - ['setContainer', ['@service_container']]
+            - ['setCommandBus', ['@tactician.commandbus']]
+
+    app.controller.player:
+        class: AppBundle\Controller\PlayerController
+        calls:
+            - ['setContainer', ['@service_container']]
+            - ['setCommandBus', ['@tactician.commandbus']]
+
+    app.controller.tournament:
+        class: AppBundle\Controller\TournamentController
+        calls:
+            - ['setContainer', ['@service_container']]
+            - ['setCommandBus', ['@tactician.commandbus']]
+
+    app.twig.extension.sort_players_sets:
+        class: AppBundle\Twig\SortPlayerSetsExtension
+        public: false
+        tags:
+            - { name: twig.extension }

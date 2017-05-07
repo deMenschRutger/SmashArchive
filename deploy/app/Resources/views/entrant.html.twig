@@ -1,0 +1,25 @@
+{% if entrant %}
+
+    {% if entrant.players|length > 1 %}
+
+        {{ entrant.name }} (
+
+        {% for player in entrant.players %}
+
+            <a href="{{ url('player_details', { 'slug': player.slug }) }}">
+                {{ player.gamerTag }}
+            </a>
+
+        {% endfor %}
+
+        )
+
+    {% else %}
+
+        <a href="{{ url('player_details', { 'slug': entrant.players[0].slug }) }}">
+            {{ entrant.name }}
+        </a>
+
+    {% endif %}
+
+{% endif %}

@@ -1,0 +1,70 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-md-3 well">
+
+        <h4>{{ tournament.name }}</h4>
+
+        Location: {{ tournament.location }}<br>
+        Date: {{ tournament.dateStart|date('Y-m-d') }}<br>
+
+    </div>
+    <div class="col-md-9 ">
+        <h2>Results</h2>
+        <div>
+            <ul class="nav nav-tabs" role="tablist">
+
+                {% for index, event in tournament.events %}
+
+                <li role="presentation" {{ index == 0 ? 'class="active"' : '' }}>
+                    <a href="#event-{{ event.id }}" aria-controls="event-{{ event.id }}" role="tab"
+                        data-toggle="tab">
+                        {{ event.name }}
+                    </a>
+                </li>
+
+                {% endfor %}
+
+            </ul>
+            <div class="tab-content">
+
+                {% for index, event in tournament.events %}
+
+                <div role="tabpanel" class="tab-pane  {{ index == 0 ? 'active' : '' }}" id="event-{{ event.id }}">
+                    <br>
+
+                    {% if event.results|length > 0 %}
+
+                    <table class="table">
+                        <tbody>
+
+                        {% for result in event.results %}
+
+                        <tr>
+                            <td>{{ result.rank }}</td>
+                            <td>{{ include('entrant.html.twig', { 'entrant': result.entrant }) }}</td>
+                        </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+
+                    {% else %}
+
+                        No results found.
+
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

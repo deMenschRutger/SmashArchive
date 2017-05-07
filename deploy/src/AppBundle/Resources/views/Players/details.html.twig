@@ -1,0 +1,70 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-md-3 well">
+
+        <h4>{{ player.gamerTag }}</h4>
+
+        Full name: {{ player.name }}<br>
+        Location: {{ player.location }}<br>
+        Nationality: {{ player.nationality }}<br>
+
+    </div>
+    <div class="col-md-9 ">
+
+    {% for eventId, result in results %}
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a href="#collapse-{{ eventId }}" data-toggle="collapse">
+                    {{ result.tournament.name }}: {{ result.event.name }}
+                </a>
+                <div class="pull-right">
+                    <strong>{{ result.rank }}</strong>
+                </div>
+            </div>
+            <div id="collapse-{{ eventId }}" class="collapse">
+                <div class="panel-body">
+
+            {% for phase in result.setsByPhase %}
+
+                <h4>{{ phase.name }}</h4>
+
+                <table class="table">
+                    <tbody>
+
+                    {% for set in sort_player_sets(phase.sets) %}
+
+                        <tr>
+                            <td>
+                                <strong>{{ include('entrant.html.twig', { 'entrant': set.winner }) }}</strong>
+                            </td>
+                            <td>
+                                {{ set.isForfeit ? '' : set.winnerScore }}
+                            </td>
+                            <td>{{ include('entrant.html.twig', { 'entrant': set.loser }) }}</td>
+                            <td>
+                                {{ set.isForfeit ? 'DQ' : set.loserScore }}
+                            </td>
+                            <td>{{ set.roundName }}</td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+
+            {% endfor %}
+
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}
