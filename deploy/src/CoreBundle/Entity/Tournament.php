@@ -12,7 +12,14 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
- * @ORM\Table(name="tournament")
+ * @ORM\Table(name="tournament", indexes={
+ *     @ORM\Index(name="smashgg_slug_index", columns={"smashgg_slug"}),
+ *     @ORM\Index(name="name_index", columns={"name"}),
+ *     @ORM\Index(name="region_index", columns={"region"}),
+ *     @ORM\Index(name="city_index", columns={"city"}),
+ *     @ORM\Index(name="date_start_index", columns={"date_start"}),
+ *     @ORM\Index(name="is_active_index", columns={"is_active"})
+ * })
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\TournamentRepository")
  */
 class Tournament
