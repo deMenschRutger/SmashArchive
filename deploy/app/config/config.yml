@@ -136,3 +136,9 @@ sonata_admin:
                 on_top: true
                 items:
                     - admin.tournament
+            admin.user:
+                label: Users
+                icon: '<i class="fa fa-user"></i>'
+                on_top: true
+                items:
+                    - admin.user

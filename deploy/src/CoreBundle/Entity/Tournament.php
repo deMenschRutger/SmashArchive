@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace CoreBundle\Entity;
 
@@ -139,6 +139,14 @@ class Tournament
     public function __construct()
     {
         $this->events = new ArrayCollection();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getName();
     }
 
     /**
@@ -351,4 +359,3 @@ class Tournament
         return $this->events;
     }
 }
-
