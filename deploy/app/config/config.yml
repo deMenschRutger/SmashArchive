@@ -2,18 +2,17 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: "@AdminBundle/Resources/config/services.yml" }
     - { resource: "@ApiBundle/Resources/config/services.yml" }
     - { resource: "@AppBundle/Resources/config/services.yml" }
     - { resource: "@CoreBundle/Resources/config/services.yml" }
 
-# Put parameters here that don't need to change on each machine where the app is deployed
-# http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
 
 framework:
     #esi:             ~
-    #translator:      { fallbacks: ["%locale%"] }
+    translator:      { fallbacks: ["%locale%"] }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -52,6 +51,10 @@ doctrine:
         user:     "%database_user%"
         password: "%database_password%"
         charset:  "utf8mb4"
+        types:
+            encrypted: CoreBundle\Doctrine\DBAL\Types\Encrypted
+        mapping_types:
+            encrypted: encrypted
 
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
@@ -66,6 +69,12 @@ doctrine_migrations:
     table_name: migration_versions
     name: Application Migrations
 
+stof_doctrine_extensions:
+    orm:
+        default:
+            timestampable: true
+            sluggable: true
+
 # Swiftmailer Configuration
 swiftmailer:
     transport: "%mailer_transport%"
@@ -74,8 +83,56 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
-stof_doctrine_extensions:
-    orm:
+# Command bus
+tactician:
+    commandbus:
         default:
-            timestampable: true
-            sluggable: true
+            middleware:
+                - tactician.middleware.validator
+                - tactician.middleware.command_handler
+
+# FoSUserBundle
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: CoreBundle\Entity\User
+    from_email:
+        address: "none"
+        sender_name: "none"
+
+# HWIOAuth
+hwi_oauth:
+    firewall_names: [ main ]
+    resource_owners:
+        facebook:
+            type: facebook
+            client_id: "%facebook_app_id%"
+            client_secret: "%facebook_app_secret%"
+            scope: "public_profile"
+        twitter:
+            type: twitter
+            client_id: "%twitter_app_id%"
+            client_secret: "%twitter_app_secret%"
+
+# Sonata
+sonata_block:
+    default_contexts: [cms]
+    blocks:
+        sonata.admin.block.admin_list:
+            contexts: [admin]
+
+sonata_admin:
+    title: SmashRanking
+    security:
+        handler: sonata.admin.security.handler.role
+    options:
+        title_mode: single_text
+    show_mosaic_button: false
+    dashboard:
+        groups:
+            admin.tournament:
+                label: Tournaments
+                icon: '<i class="fa fa-calendar"></i>'
+                on_top: true
+                items:
+                    - admin.tournament

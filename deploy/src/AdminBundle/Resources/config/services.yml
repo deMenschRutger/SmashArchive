@@ -1,0 +1,6 @@
+services:
+    admin.tournament:
+        class: AdminBundle\Admin\TournamentAdmin
+        arguments: [~, CoreBundle\Entity\Tournament, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Tournaments }

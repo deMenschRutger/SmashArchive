@@ -32,11 +32,28 @@
                             <a href="{{ url('homepage') }}">Home</a>
                         </li>
                         <li>
-                            <a href="/tournaments">Tournaments</a>
+                            <a href="{{ url('tournaments_overview') }}">Tournaments</a>
                         </li>
                         <li>
                             <a href="{{ url('players_overview') }}">Players</a>
                         </li>
+
+                    {% if is_granted('ROLE_ADMIN') %}
+
+                        <li>
+                            <a href="{{ url('sonata_admin_dashboard') }}">Admin</a>
+                        </li>
+
+                    {% endif %}
+
+                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+
+                        <li>
+                            <a href="{{ url('logout') }}">Logout</a>
+                        </li>
+
+                    {% endif %}
+
                     </ul>
                 </div>
             </div>
