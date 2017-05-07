@@ -5,6 +5,12 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, label: Tournaments }
 
+    admin.event:
+        class: AdminBundle\Admin\EventAdmin
+        arguments: [~, CoreBundle\Entity\Event, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Event }
+
     admin.user:
         class: AdminBundle\Admin\UserAdmin
         arguments: [~, CoreBundle\Entity\User, ~]
