@@ -130,6 +130,12 @@ sonata_admin:
     show_mosaic_button: false
     dashboard:
         groups:
+            admin.country:
+                label: Countries
+                icon: '<i class="fa fa-globe"></i>'
+                on_top: true
+                items:
+                    - admin.country
             admin.tournament:
                 label: Tournaments
                 icon: '<i class="fa fa-calendar"></i>'
