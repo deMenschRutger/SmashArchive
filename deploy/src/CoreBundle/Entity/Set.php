@@ -100,6 +100,7 @@ class Set
      * @var PhaseGroup
      *
      * @ORM\ManyToOne(targetEntity="PhaseGroup", inversedBy="sets")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      *
      * @Serializer\Groups({"players_sets"})
      */
@@ -109,6 +110,7 @@ class Set
      * @var Entrant
      *
      * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="entrantOneSets")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      *
      * @Serializer\Groups({"players_sets"})
      */
@@ -118,6 +120,7 @@ class Set
      * @var Entrant
      *
      * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="entrantTwoSets")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      *
      * @Serializer\Groups({"players_sets"})
      */
@@ -127,6 +130,7 @@ class Set
      * @var Entrant
      *
      * @ORM\ManyToOne(targetEntity="Entrant")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $winner;
 
@@ -134,6 +138,7 @@ class Set
      * @var Entrant
      *
      * @ORM\ManyToOne(targetEntity="Entrant")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $loser;
 

@@ -92,6 +92,7 @@ class PhaseGroup
 
     /**
      * @ORM\ManyToOne(targetEntity="Phase", inversedBy="phaseGroups")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      *
      * @Serializer\Groups({"players_sets"})
      */

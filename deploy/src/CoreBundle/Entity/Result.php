@@ -19,16 +19,18 @@ class Result
     /**
      * @var Event
      *
-     * @ORM\ManyToOne(targetEntity="Event", inversedBy="results")
      * @ORM\Id
+     * @ORM\ManyToOne(targetEntity="Event", inversedBy="results")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $event;
 
     /**
      * @var Entrant
      *
-     * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="results")
      * @ORM\Id
+     * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="results")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $entrant;
 

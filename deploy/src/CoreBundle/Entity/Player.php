@@ -91,6 +91,7 @@ class Player
      * @var Country
      *
      * @ORM\ManyToOne(targetEntity="Country", inversedBy="playersNationalities")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      *
      * @Serializer\Groups({"players_overview"})
      */
@@ -100,6 +101,7 @@ class Player
      * @var Country
      *
      * @ORM\ManyToOne(targetEntity="Country", inversedBy="playersCountries")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      *
      * @Serializer\Groups({"players_overview"})
      */

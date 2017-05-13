@@ -61,6 +61,7 @@ class Event
 
     /**
      * @ORM\ManyToOne(targetEntity="Tournament", inversedBy="events")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      *
      * @Serializer\Groups({"players_sets"})
      */
@@ -68,6 +69,7 @@ class Event
 
     /**
      * @ORM\ManyToOne(targetEntity="Game", inversedBy="events")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      *
      * @Serializer\Groups({"players_sets", "tournaments_details"})
      */

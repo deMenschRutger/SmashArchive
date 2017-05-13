@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace CoreBundle\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Auto-generated Migration: Please modify to your needs!
+ * @author Rutger Mensch <rutger@rutgermensch.com>
  */
 class Version20170513145645 extends AbstractMigration
 {
@@ -15,7 +17,6 @@ class Version20170513145645 extends AbstractMigration
      */
     public function up(Schema $schema)
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE INDEX rank_index ON result (rank)');
@@ -65,7 +66,6 @@ class Version20170513145645 extends AbstractMigration
      */
     public function down(Schema $schema)
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DROP INDEX name_index ON country');

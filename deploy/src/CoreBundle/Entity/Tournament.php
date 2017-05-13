@@ -75,6 +75,7 @@ class Tournament
      * @var Country
      *
      * @ORM\ManyToOne(targetEntity="Country", inversedBy="tournaments")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      *
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
