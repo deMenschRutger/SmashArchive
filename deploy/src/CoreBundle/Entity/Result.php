@@ -1,9 +1,10 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace CoreBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -65,6 +66,8 @@ class Result
     }
 
     /**
+     * @return string
+     *
      * @Serializer\Groups({"tournaments_results"})
      * @Serializer\SerializedName("entrant")
      * @Serializer\VirtualProperty()
@@ -75,6 +78,8 @@ class Result
     }
 
     /**
+     * @return Collection
+     *
      * @Serializer\Groups({"tournaments_results"})
      * @Serializer\VirtualProperty()
      */
@@ -107,4 +112,3 @@ class Result
         $this->rank = $rank;
     }
 }
-

@@ -6,7 +6,6 @@ namespace CoreBundle\Entity;
 
 use CoreBundle\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
@@ -134,7 +133,9 @@ class Tournament
     private $isActive;
 
     /**
-     * @ORM\OneToMany(targetEntity="Event", mappedBy="tournament")
+     * @var Event[]
+     *
+     * @ORM\OneToMany(targetEntity="Event", mappedBy="tournament", cascade={"persist"}, orphanRemoval=true)
      *
      * @Serializer\Groups({"tournaments_details"})
      */
@@ -207,7 +208,7 @@ class Tournament
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }
@@ -223,7 +224,7 @@ class Tournament
     /**
      * @return Country
      */
-    public function getCountry(): Country
+    public function getCountry()
     {
         return $this->country;
     }
@@ -359,10 +360,29 @@ class Tournament
     }
 
     /**
-     * @return Collection
+     * @return Event[]
      */
-    public function getEvents(): Collection
+    public function getEvents()
     {
         return $this->events;
+    }
+
+    /**
+     * @param Event $event
+     */
+    public function addEvent(Event $event)
+    {
+        $this->events->add($event);
+        $event->setTournament($this);
+    }
+
+    /**
+     * @param Event[] $events
+     */
+    public function setEvents($events)
+    {
+        foreach ($events as $event) {
+            $this->addEvent($event);
+        }
     }
 }

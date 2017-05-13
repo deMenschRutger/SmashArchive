@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace CoreBundle\Entity;
 
@@ -90,6 +90,14 @@ class Event
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getName();
+    }
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -116,7 +124,7 @@ class Event
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }
@@ -148,7 +156,7 @@ class Event
     /**
      * @return Tournament
      */
-    public function getTournament(): Tournament
+    public function getTournament()
     {
         return $this->tournament;
     }
@@ -164,7 +172,7 @@ class Event
     /**
      * @return Game
      */
-    public function getGame(): Game
+    public function getGame()
     {
         return $this->game;
     }
@@ -193,4 +201,3 @@ class Event
         return $this->results;
     }
 }
-

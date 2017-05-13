@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Admin;
 
+use CoreBundle\Entity\Tournament;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -29,6 +30,22 @@ class TournamentAdmin extends AbstractAdmin
     ];
 
     /**
+     * @param Tournament $tournament
+     */
+    public function prePersist($tournament)
+    {
+        $tournament->setEvents($tournament->getEvents());
+    }
+
+    /**
+     * @param Tournament $tournament
+     */
+    public function preUpdate($tournament)
+    {
+        $tournament->setEvents($tournament->getEvents());
+    }
+
+    /**
      * @param FormMapper $formMapper
      */
     protected function configureFormFields(FormMapper $formMapper)
@@ -43,11 +60,19 @@ class TournamentAdmin extends AbstractAdmin
             ->add('resultsPage')
             ->add('isActive')
             ->end()
+            ->end()
             ->with('Events')
-            ->add('events', 'sonata_type_collection', [], [
-                'edit' => 'inline',
-                'inline' => 'table',
-            ])
+            ->add(
+                'events',
+                'sonata_type_collection',
+                [
+                    'label' => false,
+                ],
+                [
+                    'edit' => 'inline',
+                    'inline' => 'table',
+                ]
+            )
             ->end()
         ;
     }

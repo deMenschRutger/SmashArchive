@@ -21,7 +21,11 @@ class EventAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
+            ->with('Basics')
             ->add('name')
+            ->add('description')
+            ->add('game')
+            ->end()
         ;
     }
 
