@@ -9,7 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
- * @ORM\Table(name="country")
+ * @ORM\Table(name="country", indexes={
+ *     @ORM\Index(name="name_index", columns={"name"}),
+ * })
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\CountryRepository")
  */
 class Country

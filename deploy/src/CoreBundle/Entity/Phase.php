@@ -10,7 +10,13 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
- * @ORM\Table(name="phase")
+ * @ORM\Table(name="phase", indexes={
+ *     @ORM\Index(name="smashgg_index", columns={"smashgg_id"}),
+ *     @ORM\Index(name="name_index", columns={"name"}),
+ *     @ORM\Index(name="phase_order_index", columns={"phase_order"}),
+ *     @ORM\Index(name="created_at_index", columns={"created_at"}),
+ *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
+ * })
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\PhaseRepository")
  */
 class Phase
@@ -47,7 +53,7 @@ class Phase
     /**
      * @var int
      *
-     * @ORM\Column(name="phaseOrder", type="integer")
+     * @ORM\Column(name="phase_order", type="integer")
      *
      * @Serializer\Groups({"tournaments_details"})
      */

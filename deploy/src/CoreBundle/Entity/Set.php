@@ -9,7 +9,13 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
- * @ORM\Table(name="phase_group_set")
+ * @ORM\Table(name="phase_group_set", indexes={
+ *     @ORM\Index(name="smashgg_index", columns={"smashgg_id"}),
+ *     @ORM\Index(name="round_index", columns={"round"}),
+ *     @ORM\Index(name="is_ranked_index", columns={"is_ranked"}),
+ *     @ORM\Index(name="created_at_index", columns={"created_at"}),
+ *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
+ * })
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\SetRepository")
  */
 class Set

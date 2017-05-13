@@ -9,10 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
- * @ORM\Table(name="result")
+ * @ORM\Table(name="result", indexes={
+ *     @ORM\Index(name="rank_index", columns={"rank"}),
+ * })
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\ResultRepository")
- *
- * @TODO Add an index for the rank field.
  */
 class Result
 {

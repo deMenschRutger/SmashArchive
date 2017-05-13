@@ -12,7 +12,18 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
- * @ORM\Table(name="player")
+ * @ORM\Table(name="player", indexes={
+ *     @ORM\Index(name="smashgg_index", columns={"smashgg_id"}),
+ *     @ORM\Index(name="slug_index", columns={"slug"}),
+ *     @ORM\Index(name="gamer_tag_index", columns={"gamer_tag"}),
+ *     @ORM\Index(name="name_index", columns={"name"}),
+ *     @ORM\Index(name="region_index", columns={"region"}),
+ *     @ORM\Index(name="city_index", columns={"city"}),
+ *     @ORM\Index(name="is_competing_index", columns={"is_competing"}),
+ *     @ORM\Index(name="is_active_index", columns={"is_active"}),
+ *     @ORM\Index(name="created_at_index", columns={"created_at"}),
+ *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
+ * })
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\PlayerRepository")
  */
 class Player
@@ -364,4 +375,3 @@ class Player
         $this->entrants[] = $entrant;
     }
 }
-
