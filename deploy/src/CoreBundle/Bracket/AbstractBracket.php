@@ -24,12 +24,38 @@ abstract class AbstractBracket
     protected $rounds = [];
 
     /**
+     * @var array
+     */
+    protected $setsByRound = [];
+
+    /**
      * @param PhaseGroup $phaseGroup
      */
     public function __construct(PhaseGroup $phaseGroup)
     {
         $this->phaseGroup = $phaseGroup;
         $this->init();
+    }
+
+    /**
+     * @return array
+     */
+    public function getRounds()
+    {
+        return array_values($this->rounds);
+    }
+
+    /**
+     * @param int $round
+     * @return array
+     */
+    public function getSetsByRound($round)
+    {
+        if (!array_key_exists($round, $this->setsByRound)) {
+            throw new \InvalidArgumentException("Round number {$round} does not exist in this bracket.");
+        }
+
+        return $this->setsByRound[$round];
     }
 
     /**
@@ -75,6 +101,12 @@ abstract class AbstractBracket
 
             $round = $set->getRound();
             $this->rounds[$round] = $round;
+
+            if (!array_key_exists($round, $this->setsByRound)) {
+                $this->setsByRound[$round] = [];
+            }
+
+            $this->setsByRound[$round][] = $set;
         }
     }
 

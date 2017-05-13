@@ -1,0 +1,45 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-md-12" style="width: 2000px;">
+        <h2>Brackets</h2>
+
+            {% for round in bracket.rounds %}
+
+            <div class="pull-left">
+
+                {% for set in bracket.getSetsByRound(round) %}
+
+                <div class="bracket-set">
+                    <div class="bracket-set-entrant-one">
+
+                        {% if set.isWinner(set.entrantOne) %}
+                            <strong>{{ set.entrantOneName }} ({{ set.winnerScore }})</strong>
+                        {% else %}
+                            {{ set.entrantOneName }} ({{ set.loserScore }})
+                        {% endif %}
+
+                    </div>
+                    <div class="bracket-set-entrant-two">
+
+                        {% if set.isWinner(set.entrantTwo) %}
+                            <strong>{{ set.entrantTwoName }} ({{ set.winnerScore }})</strong>
+                        {% else %}
+                            {{ set.entrantTwoName }} ({{ set.loserScore }})
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}

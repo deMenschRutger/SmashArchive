@@ -4,7 +4,10 @@ declare(strict_types = 1);
 
 namespace AppBundle\Controller;
 
+use CoreBundle\Bracket\SingleEliminationBracket;
 use CoreBundle\Controller\AbstractDefaultController;
+use CoreBundle\Entity\Set;
+use CoreBundle\Entity\Tournament;
 use Domain\Command\Tournament\DetailsCommand;
 use Domain\Command\Tournament\OverviewCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -50,6 +53,34 @@ class TournamentController extends AbstractDefaultController
         $tournament = $this->commandBus->handle($command);
 
         return $this->render('AppBundle:Tournaments:details.html.twig', [
+            'tournament' => $tournament,
+        ]);
+    }
+
+    /**
+     * @param string $slug
+     * @return Response
+     *
+     * @Route("/{slug}/brackets", name="tournaments_brackets")
+     */
+    public function bracketAction($slug)
+    {
+        $command = new DetailsCommand($slug, true);
+        /** @var Tournament $tournament */
+        $tournament = $this->commandBus->handle($command);
+
+
+
+
+        $phaseGroup = $this->getDoctrine()->getManager()->getRepository('CoreBundle:PhaseGroup')->find(11);
+        $bracket = new SingleEliminationBracket($phaseGroup);
+        $bracket->orderAllRounds();
+
+
+
+
+        return $this->render('AppBundle:Tournaments:brackets.html.twig', [
+            'bracket'    => $bracket,
             'tournament' => $tournament,
         ]);
     }

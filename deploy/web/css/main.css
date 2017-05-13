@@ -1,3 +1,20 @@
 body {
     padding-top: 80px;
 }
+
+.bracket-set {
+    border: 1px solid #000;
+    margin: 0 5px 5px 0;
+    width: 200px;
+}
+
+.bracket-set-entrant-one {
+    border-bottom: 1px solid #000;
+}
+
+.bracket-set-entrant-one,
+.bracket-set-entrant-two {
+    max-height: 28px;
+    padding: 4px;
+    overflow: hidden;
+}

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Bracket;
 
+use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Set;
 
 /**
@@ -15,6 +16,92 @@ class SingleEliminationBracket extends AbstractBracket
      * @var array
      */
     protected $roundMapping;
+
+    /**
+     * @return void
+     */
+    public function orderAllRounds()
+    {
+        $rounds = $this->rounds;
+        $round = array_pop($rounds);
+
+        $sets = $this->getSetsByRound($round);
+        $orderedSets = [];
+
+        /** @var Set $set */
+        foreach ($sets as $index => $set) {
+            $orderedSets[$index + 1] = $set;
+        }
+
+        $this->setsByRound[$round] = $orderedSets;
+
+        $nextOrder = [];
+        $position = 1;
+
+        /** @var Set $set */
+        foreach ($sets as $set) {
+            $nextOrder[$position] = $set->getEntrantOne();
+            $position++;
+
+            $nextOrder[$position] = $set->getEntrantTwo();
+            $position++;
+        }
+
+        $this->orderRound($rounds, $nextOrder);
+    }
+
+    /**
+     * @param array $rounds
+     * @param array $order
+     * @return void
+     */
+    public function orderRound($rounds, $order)
+    {
+        if (count($rounds) === 0) {
+            return;
+        }
+
+        $round = array_pop($rounds);
+        $sets = $this->getSetsByRound($round);
+
+        /** @var Entrant $entrant */
+        foreach ($order as $position => $entrant) {
+            $set = array_reduce($sets, function ($carry, $item) use ($entrant) {
+                if ($carry instanceof Set) {
+                    return $carry;
+                }
+
+                if ($item instanceof Set && $item->hasEntrant($entrant)) {
+                    return $item;
+                }
+
+                return null;
+            });
+
+            if (!$set instanceof Set) {
+                // TODO Fake set required.
+                unset($order[$position]);
+            } else {
+                $order[$position] = $set;
+            }
+        }
+
+        $this->setsByRound[$round] = $order;
+
+        $nextOrder = [];
+        $position = 1;
+
+        /** @var Set $set */
+        foreach ($order as $index => $set) {
+            $nextOrder[$position] = $set->getEntrantOne();
+            $position++;
+
+            $nextOrder[$position] = $set->getEntrantTwo();
+            $position++;
+        }
+
+        $this->orderRound($rounds, $nextOrder);
+    }
 
     /**
      * A single elimination bracket can never have grand finals.

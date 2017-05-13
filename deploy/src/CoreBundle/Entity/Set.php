@@ -157,6 +157,14 @@ class Set
     private $isGrandFinals = false;
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return sprintf('%s vs %s (%s)', $this->getEntrantOneName(), $this->getEntrantTwoName(), $this->getRoundName());
+    }
+
+    /**
      * @return int
      */
     public function getId()
@@ -310,6 +318,30 @@ class Set
     }
 
     /**
+     * @return string
+     */
+    public function getEntrantOneName()
+    {
+        if ($this->entrantOne instanceof Entrant) {
+            return $this->entrantOne->getName();
+        }
+
+        return 'bye';
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntrantOneScore()
+    {
+        if ($this->entrantOne instanceof Entrant && $this->entrantOne === $this->winner) {
+            return $this->getWinnerScore();
+        }
+
+        return $this->getLoserScore();
+    }
+
+    /**
      * @return Entrant
      */
     public function getEntrantTwo()
@@ -323,6 +355,57 @@ class Set
     public function setEntrantTwo(Entrant $entrantTwo)
     {
         $this->entrantTwo = $entrantTwo;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntrantTwoName()
+    {
+        if ($this->entrantTwo instanceof Entrant) {
+            return $this->entrantTwo->getName();
+        }
+
+        return 'bye';
+    }
+
+    /**
+     * @return string
+     */
+    public function getEntrantTwoScore()
+    {
+        if ($this->entrantTwo instanceof Entrant && $this->entrantTwo === $this->winner) {
+            return $this->getWinnerScore();
+        }
+
+        return $this->getLoserScore();
+    }
+
+    /**
+     * @param Entrant $entrant
+     * @return bool
+     */
+    public function hasEntrant(Entrant $entrant)
+    {
+        return $entrant === $this->entrantOne || $entrant === $this->entrantTwo;
+    }
+
+    /**
+     * @param Entrant $entrant
+     * @return bool
+     */
+    public function isWinner(Entrant $entrant)
+    {
+        return $entrant === $this->winner;
+    }
+
+    /**
+     * @param Entrant $entrant
+     * @return bool
+     */
+    public function isLoser(Entrant $entrant)
+    {
+        return $entrant === $this->loser;
     }
 
     /**
