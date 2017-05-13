@@ -14,11 +14,15 @@
 
         )
 
-    {% else %}
+    {% elseif entrant.players|length == 1 %}
 
         <a href="{{ url('player_details', { 'slug': entrant.players[0].slug }) }}">
             {{ entrant.name }}
         </a>
+
+    {% else %}
+
+        {{ entrant.name }}
 
     {% endif %}
 
