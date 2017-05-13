@@ -1,4 +1,10 @@
 services:
+    admin.player:
+        class: AdminBundle\Admin\PlayerAdmin
+        arguments: [~, CoreBundle\Entity\Player, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Players }
+
     admin.tournament:
         class: AdminBundle\Admin\TournamentAdmin
         arguments: [~, CoreBundle\Entity\Tournament, ~]

@@ -144,6 +144,14 @@ class Player
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getGamerTag();
+    }
+
+    /**
      * @return int
      */
     public function getId()

@@ -130,6 +130,12 @@ sonata_admin:
     show_mosaic_button: false
     dashboard:
         groups:
+            admin.player:
+                label: Players
+                icon: '<i class="fa fa-gamepad"></i>'
+                on_top: true
+                items:
+                    - admin.player
             admin.country:
                 label: Countries
                 icon: '<i class="fa fa-globe"></i>'
