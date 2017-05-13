@@ -11,6 +11,8 @@ use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Result;
 use CoreBundle\Entity\Set;
 use Doctrine\ORM\EntityManager;
+use Domain\Command\Event\GenerateResultsCommand;
+use League\Tactician\CommandBus;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,6 +23,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class EventGenerateResultsCommand extends ContainerAwareCommand
 {
+    /**
+     * @var CommandBus
+     */
+    protected $commandBus;
+
     /**
      * @var EntityManager
      */
@@ -42,11 +49,11 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
     protected $results = [];
 
     /**
-     * @param EntityManager $entityManager
+     * @param CommandBus $commandBus
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(CommandBus $commandBus)
     {
-        $this->entityManager = $entityManager;
+        $this->commandBus = $commandBus;
 
         parent::__construct();
     }
@@ -72,37 +79,8 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
         $this->io = new SymfonyStyle($input, $output);
         $this->verbose = $input->getOption('verbose');
 
-        $events = $this
-            ->entityManager
-            ->createQueryBuilder()
-            ->select('e')
-            ->from('CoreBundle:Event', 'e')
-            ->getQuery()
-            ->getResult()
-        ;
-
-        if (!$this->verbose) {
-            $this->io->progressStart(count($events));
-        }
-
-        /** @var Event $event */
-        foreach ($events as $event) {
-            $this->processEvent($event->getId());
-
-            if (!$this->verbose) {
-                $this->io->progressAdvance(1);
-            }
-
-            $this->results = [];
-        }
-
-        if (!$this->verbose) {
-            $this->io->progressFinish();
-        }
-
-        $this->io->writeln('Flushing the entity manager...');
-        $this->entityManager->flush();
-        $this->io->writeln('The results were succesfully imported.');
+        $command = new GenerateResultsCommand(2, $this->io);
+        $this->commandBus->handle($command);
     }
 
     /**

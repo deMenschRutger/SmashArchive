@@ -92,11 +92,11 @@ class SmashRankingImportCommand extends ContainerAwareCommand
 
         if ($input->getOption('split-models')) {
             $this->splitModels();
-        } elseif($modelName) {
+        } elseif ($modelName) {
             $this->countModels($modelName);
-        } elseif($input->getOption('import')) {
+        } elseif ($input->getOption('import')) {
             $this->importer->import();
-        } elseif($input->getOption('match-smashgg-ids')) {
+        } elseif ($input->getOption('match-smashgg-ids')) {
             $this->matchSmashggIds();
         }
     }

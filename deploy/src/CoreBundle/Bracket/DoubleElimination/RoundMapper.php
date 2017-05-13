@@ -2,15 +2,16 @@
 
 declare(strict_types = 1);
 
-namespace CoreBundle\Bracket;
+namespace CoreBundle\Bracket\DoubleElimination;
 
+use CoreBundle\Bracket\AbstractRoundMapper;
 use CoreBundle\Entity\Set;
 use Webmozart\Assert\Assert;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class DoubleEliminationBracket extends AbstractBracket
+class RoundMapper extends AbstractRoundMapper
 {
     /**
      * @var array
@@ -23,14 +24,19 @@ class DoubleEliminationBracket extends AbstractBracket
     protected $losersBracketRoundMapping;
 
     /**
+     * @var bool
+     */
+    protected $isLoaded = false;
+
+    /**
      * @return void
      */
-    protected function init()
+    protected function load()
     {
-        parent::init();
-
         $this->determineWinnersBracketRoundMapping();
         $this->determineLosersBracketRoundMapping();
+
+        $this->isLoaded = true;
     }
 
     /**
@@ -120,7 +126,7 @@ class DoubleEliminationBracket extends AbstractBracket
 
         $mapping = [];
 
-        foreach ($this->rounds as $round) {
+        foreach ($this->bracket->getRounds() as $round) {
             $addRound = false;
 
             if ($bracketPart === 'winners') {
@@ -151,6 +157,10 @@ class DoubleEliminationBracket extends AbstractBracket
      */
     protected function getMappedRound(Set $set)
     {
+        if (!$this->isLoaded) {
+            $this->load();
+        }
+
         $round = $set->getRound();
         $mapping = $this->winnersBracketRoundMapping;
 

@@ -7,7 +7,7 @@ services:
 
     command.event.results.generate:
         class: AppBundle\Command\EventGenerateResultsCommand
-        arguments: ["@doctrine.orm.default_entity_manager"]
+        arguments: ["@tactician.commandbus"]
         tags:
             - { name: console.command }
 

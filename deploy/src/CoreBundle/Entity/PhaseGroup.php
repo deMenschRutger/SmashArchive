@@ -247,4 +247,3 @@ class PhaseGroup
         $this->sets[] = $set;
     }
 }
-

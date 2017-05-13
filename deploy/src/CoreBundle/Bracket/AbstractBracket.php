@@ -59,34 +59,6 @@ abstract class AbstractBracket
     }
 
     /**
-     * @param Set $set
-     */
-    public function determineRoundName(Set $set)
-    {
-        $mappedRound = $this->getMappedRound($set);
-
-        if (!$mappedRound) {
-            return;
-        }
-
-        $set->setRoundName($mappedRound['name']);
-    }
-
-    /**
-     * @param Set $set
-     */
-    public function determineIsGrandFinals(Set $set)
-    {
-        $mappedRound = $this->getMappedRound($set);
-
-        if (!$mappedRound) {
-            return;
-        }
-
-        $set->setIsGrandFinals($mappedRound['isGrandFinals']);
-    }
-
-    /**
      * @return void
      */
     protected function init()
@@ -109,10 +81,4 @@ abstract class AbstractBracket
             $this->setsByRound[$round][] = $set;
         }
     }
-
-    /**
-     * @param Set $set
-     * @return int
-     */
-    abstract protected function getMappedRound(Set $set);
 }

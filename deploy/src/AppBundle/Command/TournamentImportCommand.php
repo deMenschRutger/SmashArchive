@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace AppBundle\Command;
 
-use CoreBundle\Bracket\DoubleEliminationBracket;
-use CoreBundle\Bracket\SingleEliminationBracket;
+use CoreBundle\Bracket\Bracket;
+use CoreBundle\Bracket\Bracket;
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Game;
@@ -264,12 +264,12 @@ class TournamentImportCommand extends ContainerAwareCommand
         $bracket = null;
 
         switch ($phaseGroup->getType()) {
-            case PhaseGroup::TYPE_SINGLE_ELIMINATION;
-                $bracket = new SingleEliminationBracket($phaseGroup);
+            case PhaseGroup::TYPE_SINGLE_ELIMINATION:
+                $bracket = new Bracket($phaseGroup);
                 break;
 
-            case PhaseGroup::TYPE_DOUBLE_ELIMINATION;
-                $bracket = new DoubleEliminationBracket($phaseGroup);
+            case PhaseGroup::TYPE_DOUBLE_ELIMINATION:
+                $bracket = new Bracket($phaseGroup);
                 break;
         }
 

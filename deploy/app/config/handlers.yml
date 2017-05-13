@@ -58,3 +58,10 @@ services:
             - { name: "tactician.handler", command: Domain\Command\Tournament\ResultsCommand }
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    bus.handler.tournament.event.generate_results:
+        class: Domain\Handler\Event\GenerateResultsHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Event\GenerateResultsCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
