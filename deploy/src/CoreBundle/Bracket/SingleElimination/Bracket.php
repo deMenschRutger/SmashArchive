@@ -88,7 +88,7 @@ class Bracket extends AbstractBracket
 
             if (!$set instanceof Set) {
                 // TODO Fake set required?
-                unset($order[$position]);
+                //unset($order[$position]);
             } else {
                 $order[$position] = $set;
             }
