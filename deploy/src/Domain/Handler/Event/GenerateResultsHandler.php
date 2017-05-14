@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace Domain\Handler\Event;
 
-use CoreBundle\Bracket\SingleElimination\ResultsGenerator as SingleEliminationResultsGenerator;
-use CoreBundle\Bracket\DoubleElimination\ResultsGenerator as DoubleEliminationResultsGenerator;
+use CoreBundle\Bracket\SingleElimination\Bracket as SingleEliminationBracket;
+use CoreBundle\Bracket\DoubleElimination\Bracket as DoubleEliminationBracket;
 use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Repository\EventRepository;
@@ -31,18 +31,22 @@ class GenerateResultsHandler extends AbstractHandler
 
         /** @var PhaseGroup $phaseGroup */
         foreach ($phase->getPhaseGroups() as $phaseGroup) {
+            $bracket = null;
+
             switch ($phaseGroup->getType()) {
                 case PhaseGroup::TYPE_SINGLE_ELIMINATION:
-                    $resultsGenerator = new SingleEliminationResultsGenerator($phaseGroup);
+                    $bracket = new SingleEliminationBracket($phaseGroup);
                     break;
 
                 case PhaseGroup::TYPE_DOUBLE_ELIMINATION:
-                    $resultsGenerator = new DoubleEliminationResultsGenerator($phaseGroup);
+                    $bracket = new DoubleEliminationBracket($phaseGroup);
                     break;
 
                 default:
                     continue;
             }
+
+            $bracket->getResults();
         }
     }
 }

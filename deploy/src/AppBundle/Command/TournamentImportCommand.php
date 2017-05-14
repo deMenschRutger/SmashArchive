@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace AppBundle\Command;
 
-use CoreBundle\Bracket\Bracket;
-use CoreBundle\Bracket\Bracket;
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Game;

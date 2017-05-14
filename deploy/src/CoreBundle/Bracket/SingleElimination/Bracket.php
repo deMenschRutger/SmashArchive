@@ -14,14 +14,26 @@ use CoreBundle\Entity\Set;
 class Bracket extends AbstractBracket
 {
     /**
+     * @return ResultsGenerator
+     */
+    public function getResultsGenerator()
+    {
+        if (!$this->resultsGenerator instanceof ResultsGenerator) {
+            $this->resultsGenerator = new ResultsGenerator($this);
+        }
+
+        return $this->resultsGenerator;
+    }
+
+    /**
      * @return void
      */
-    public function orderAllRounds()
+    protected function generateBracket()
     {
-        $rounds = $this->rounds;
+        $rounds = $this->getRounds();
         $round = array_pop($rounds);
 
-        $sets = $this->getSetsByRound($round);
+        $sets = $this->getSetsForRound($round);
         $orderedSets = [];
 
         /** @var Set $set */
@@ -43,7 +55,7 @@ class Bracket extends AbstractBracket
             $position++;
         }
 
-        $this->orderRound($rounds, $nextOrder);
+        $this->generateRound($rounds, $nextOrder);
     }
 
     /**
@@ -51,14 +63,14 @@ class Bracket extends AbstractBracket
      * @param array $order
      * @return void
      */
-    protected function orderRound($rounds, $order)
+    protected function generateRound($rounds, $order)
     {
         if (count($rounds) === 0) {
             return;
         }
 
         $round = array_pop($rounds);
-        $sets = $this->getSetsByRound($round);
+        $sets = $this->getSetsForRound($round);
 
         /** @var Entrant $entrant */
         foreach ($order as $position => $entrant) {
@@ -75,7 +87,7 @@ class Bracket extends AbstractBracket
             });
 
             if (!$set instanceof Set) {
-                // TODO Fake set required.
+                // TODO Fake set required?
                 unset($order[$position]);
             } else {
                 $order[$position] = $set;
@@ -96,6 +108,6 @@ class Bracket extends AbstractBracket
             $position++;
         }
 
-        $this->orderRound($rounds, $nextOrder);
+        $this->generateRound($rounds, $nextOrder);
     }
 }

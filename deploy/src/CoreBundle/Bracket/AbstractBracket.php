@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Bracket;
 
-use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\PhaseGroup;
+use CoreBundle\Entity\Result;
 use CoreBundle\Entity\Set;
 
 /**
@@ -19,9 +19,9 @@ abstract class AbstractBracket
     protected $phaseGroup;
 
     /**
-     * @var array
+     * @var AbstractResultsGenerator
      */
-    protected $rounds = [];
+    protected $resultsGenerator;
 
     /**
      * @var array
@@ -34,22 +34,28 @@ abstract class AbstractBracket
     public function __construct(PhaseGroup $phaseGroup)
     {
         $this->phaseGroup = $phaseGroup;
-        $this->init();
+        $this->processSets();
+        $this->generateBracket();
     }
+
+    /**
+     * @return AbstractResultsGenerator
+     */
+    abstract public function getResultsGenerator();
 
     /**
      * @return array
      */
     public function getRounds()
     {
-        return array_values($this->rounds);
+        return array_keys($this->setsByRound);
     }
 
     /**
      * @param int $round
      * @return array
      */
-    public function getSetsByRound($round)
+    public function getSetsForRound($round)
     {
         if (!array_key_exists($round, $this->setsByRound)) {
             throw new \InvalidArgumentException("Round number {$round} does not exist in this bracket.");
@@ -59,20 +65,21 @@ abstract class AbstractBracket
     }
 
     /**
+     * @return Result[]
+     */
+    public function getResults()
+    {
+        return $this->getResultsGenerator()->getResults();
+    }
+
+    /**
      * @return void
      */
-    protected function init()
+    protected function processSets()
     {
         /** @var Set $set */
         foreach ($this->phaseGroup->getSets() as $set) {
-            if (!$set->getEntrantOne() instanceof Entrant ||
-                !$set->getEntrantTwo() instanceof Entrant
-            ) {
-                continue;
-            }
-
             $round = $set->getRound();
-            $this->rounds[$round] = $round;
 
             if (!array_key_exists($round, $this->setsByRound)) {
                 $this->setsByRound[$round] = [];
@@ -80,5 +87,12 @@ abstract class AbstractBracket
 
             $this->setsByRound[$round][] = $set;
         }
+
+        ksort($this->setsByRound);
     }
+
+    /**
+     * @return void
+     */
+    abstract protected function generateBracket();
 }
