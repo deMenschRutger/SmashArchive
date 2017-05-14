@@ -19,6 +19,8 @@ class GenerateResultsHandler extends AbstractHandler
 {
     /**
      * @param GenerateResultsCommand $command
+     *
+     * @TODO Add the combined results of all phases and phase groups and determine the final results.
      */
     public function handle(GenerateResultsCommand $command)
     {

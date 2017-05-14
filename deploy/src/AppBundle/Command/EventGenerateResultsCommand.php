@@ -4,12 +4,7 @@ declare(strict_types = 1);
 
 namespace AppBundle\Command;
 
-use CoreBundle\Entity\Entrant;
-use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Phase;
-use CoreBundle\Entity\PhaseGroup;
-use CoreBundle\Entity\Result;
-use CoreBundle\Entity\Set;
 use Doctrine\ORM\EntityManager;
 use Domain\Command\Event\GenerateResultsCommand;
 use League\Tactician\CommandBus;
@@ -39,16 +34,6 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
     protected $io;
 
     /**
-     * @var bool
-     */
-    protected $verbose;
-
-    /**
-     * @var array
-     */
-    protected $results = [];
-
-    /**
      * @param CommandBus $commandBus
      */
     public function __construct(CommandBus $commandBus)
@@ -73,11 +58,13 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return void
+     *
+     * @TODO Add option to input event ID on the cli.
+     * @TODO Add option to generate results for all events at once.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io = new SymfonyStyle($input, $output);
-        $this->verbose = $input->getOption('verbose');
 
         $command = new GenerateResultsCommand(2, $this->io);
         $this->commandBus->handle($command);
@@ -86,7 +73,7 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
     /**
      * @param int $eventId
      */
-    protected function processEvent(int $eventId)
+    protected function processAllEvent(int $eventId)
     {
         /** @var Phase[] $phases */
         $phases = $this
@@ -97,134 +84,9 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
             ->join('p.phaseGroups', 'pg')
             ->join('pg.sets', 's')
             ->join('p.event', 'e')
-            ->where('e.id = ?1')
-            ->setParameter(1, $eventId)
-            ->orderBy('p.phaseOrder', 'DESC')
             ->addOrderBy('s.round')
             ->getQuery()
             ->getResult()
         ;
-
-        $startRank = 0;
-
-        foreach ($phases as $phase) {
-            $phaseGroupEntrantCount = 0;
-
-            // TODO Remove this once pool phases can be properly processed.
-            if (count($phase->getPhaseGroups()) > 1) {
-                return;
-            }
-
-            /** @var PhaseGroup $phaseGroup */
-            foreach ($phase->getPhaseGroups() as $phaseGroup) {
-                $phaseGroupEntrantCount += $this->processPhaseGroup($phaseGroup, $startRank);
-            }
-
-            $startRank += $phaseGroupEntrantCount;
-        }
-    }
-
-    /**
-     * @param PhaseGroup $phaseGroup
-     * @param int        $rank
-     * @return int The number of entrants in the phase group.
-     */
-    protected function processPhaseGroup(PhaseGroup $phaseGroup, $rank)
-    {
-        $event = $phaseGroup->getPhase()->getEvent();
-        $sets = $phaseGroup->getSets()->getValues();
-
-        if (count($sets) === 0) {
-            if ($this->verbose) {
-                $this->io->writeln('No sets found.');
-            }
-
-            return 0;
-        }
-
-        $setsByRound = [];
-        $totalResults = 0;
-
-        /** @var Set $set */
-        foreach ($sets as $set) {
-            $round = $set->getRound();
-
-            if ($round < 0) {
-                $setsByRound[$round][] = $set;
-            }
-        }
-
-        /** @var Set $grandFinals */
-        $grandFinals = array_pop($sets);
-
-        if (!$grandFinals->getWinner() instanceof Entrant) {
-            $grandFinals = array_pop($sets);
-        }
-
-        $grandFinalsWinner = $grandFinals->getWinner();
-        $grandFinalsLoser = $grandFinals->getLoser();
-
-        if ($grandFinalsWinner instanceof Entrant) {
-            $totalResults += 1;
-            $rank += 1;
-            $this->addResult($event, $grandFinalsWinner, $rank);
-        }
-
-        if ($grandFinalsLoser instanceof Entrant) {
-            $totalResults += 1;
-            $rank += 1;
-            $this->addResult($event, $grandFinalsLoser, $rank);
-        }
-
-        $rank += 1;
-
-        foreach ($setsByRound as $round => $roundSets) {
-            $roundSetCount = 0;
-
-            foreach ($roundSets as $set) {
-                $loser = $set->getLoser();
-
-                if ($loser instanceof Entrant) {
-                    $totalResults += 1;
-                    $roundSetCount += 1;
-                    $this->addResult($event, $loser, $rank);
-                }
-            }
-
-            $rank += $roundSetCount;
-        }
-
-        return $totalResults;
-    }
-
-    /**
-     * @param Event   $event
-     * @param Entrant $entrant
-     * @param int     $rank
-     */
-    protected function addResult(Event $event, Entrant $entrant, int $rank)
-    {
-        $resultId = $event->getId().'-'.$entrant->getId();
-
-        if (array_key_exists($resultId, $this->results)) {
-            /** @var Result $result */
-            $result = $this->results[$resultId];
-
-            if ($result->getRank() <= $rank) {
-                return;
-            }
-        }
-
-        $result = new Result();
-        $result->setEntrant($entrant);
-        $result->setEvent($event);
-        $result->setRank($rank);
-
-        $this->entityManager->persist($result);
-        $this->results[$resultId] = $result;
-
-        if ($this->verbose) {
-            $this->io->writeln($rank.': '.$entrant->getName());
-        }
     }
 }

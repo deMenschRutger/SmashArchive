@@ -58,6 +58,6 @@ abstract class AbstractResultsGenerator
      */
     protected function addResult(Entrant $entrant)
     {
-        $this->results[$this->currentRank][] = $entrant->getName();
+        $this->results[$this->currentRank][] = $entrant;
     }
 }
