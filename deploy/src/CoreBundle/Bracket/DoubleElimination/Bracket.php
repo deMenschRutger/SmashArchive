@@ -42,9 +42,25 @@ class Bracket extends AbstractBracket
     /**
      * @return array
      */
+    public function getWinnersBracketRounds()
+    {
+        return array_keys($this->winnersBracketSetsByRound);
+    }
+
+    /**
+     * @return array
+     */
     public function getWinnersBracketSetsByRound()
     {
         return $this->winnersBracketSetsByRound;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLosersBracketRounds()
+    {
+        return array_keys($this->losersBracketSetsByRound);
     }
 
     /**
@@ -58,9 +74,19 @@ class Bracket extends AbstractBracket
     /**
      * @return array
      */
-    public function getGrandFinals()
+    public function getGrandFinalsRounds()
     {
-        return $this->grandFinals;
+        return array_keys($this->grandFinals);
+    }
+
+    /**
+     * @return Set
+     */
+    public function getGrandFinalsSet()
+    {
+        $lastRound = end($this->grandFinals);
+
+        return end($lastRound);
     }
 
     /**

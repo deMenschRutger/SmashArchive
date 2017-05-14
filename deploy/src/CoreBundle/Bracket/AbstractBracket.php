@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Bracket;
 
+use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Result;
 use CoreBundle\Entity\Set;
@@ -79,6 +80,12 @@ abstract class AbstractBracket
     {
         /** @var Set $set */
         foreach ($this->phaseGroup->getSets() as $set) {
+            if (!$set->getEntrantOne() instanceof Entrant &&
+                !$set->getEntrantTwo() instanceof Entrant
+            ) {
+                continue;
+            }
+
             $round = $set->getRound();
 
             if (!array_key_exists($round, $this->setsByRound)) {

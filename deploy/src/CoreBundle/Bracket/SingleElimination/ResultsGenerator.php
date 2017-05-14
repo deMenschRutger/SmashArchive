@@ -14,16 +14,6 @@ use CoreBundle\Entity\Set;
 class ResultsGenerator extends AbstractResultsGenerator
 {
     /**
-     * @var array
-     */
-    protected $results = [];
-
-    /**
-     * @var int
-     */
-    protected $currentRank = 1;
-
-    /**
      * @return array
      */
     public function getResults()
@@ -51,20 +41,7 @@ class ResultsGenerator extends AbstractResultsGenerator
 
         $this->processNextRound($rounds);
 
-        return $this->results;
-    }
-
-    /**
-     * @return void
-     */
-    protected function moveRound()
-    {
-        if (count($this->results) === 0) {
-            $this->results[1] = [];
-        } else {
-            $this->currentRank += count($this->results[$this->currentRank]);
-            $this->results[$this->currentRank] = [];
-        }
+        return array_filter($this->results);
     }
 
     /**
@@ -98,13 +75,5 @@ class ResultsGenerator extends AbstractResultsGenerator
         }
 
         $this->processNextRound($rounds);
-    }
-
-    /**
-     * @param Entrant $entrant
-     */
-    protected function addResult(Entrant $entrant)
-    {
-        $this->results[$this->currentRank][] = $entrant;
     }
 }
