@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace CoreBundle\Bracket;
 
 use CoreBundle\Entity\Entrant;
+use CoreBundle\Entity\Event;
+use CoreBundle\Entity\Result;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -22,12 +24,6 @@ abstract class AbstractResultsGenerator
     protected $results = [];
 
     /**
-     * @var int
-     */
-    protected $currentRank = 1;
-
-
-    /**
      * @param AbstractBracket $bracket
      */
     public function __construct(AbstractBracket $bracket)
@@ -36,28 +32,37 @@ abstract class AbstractResultsGenerator
     }
 
     /**
+     * @param Event $event
      * @return array
      */
-    abstract public function getResults();
+    abstract public function getResults(Event $event);
+
+    /**
+     * @param Event   $event
+     * @param Entrant $entrant
+     * @param int     $rank
+     */
+    protected function addResult(Event $event, Entrant $entrant, $rank)
+    {
+        $result = new Result();
+        $result->setEvent($event);
+        $result->setEntrant($entrant);
+        $result->setRank($rank);
+
+        $this->results[$entrant->getId()] = $result;
+    }
 
     /**
      * @return void
      */
-    protected function moveRound()
+    protected function sortResults()
     {
-        if (count($this->results) === 0) {
-            $this->results[1] = [];
-        } else {
-            $this->currentRank += count($this->results[$this->currentRank]);
-            $this->results[$this->currentRank] = [];
-        }
-    }
+        usort($this->results, function (Result $a, Result $b) {
+            if ($a->getRank() === $b->getRank()) {
+                return 0;
+            }
 
-    /**
-     * @param Entrant $entrant
-     */
-    protected function addResult(Entrant $entrant)
-    {
-        $this->results[$this->currentRank][] = $entrant;
+            return $a->getRank() > $b->getRank();
+        });
     }
 }

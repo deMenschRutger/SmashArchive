@@ -6,6 +6,7 @@ namespace Domain\Handler\Event;
 
 use CoreBundle\Bracket\SingleElimination\Bracket as SingleEliminationBracket;
 use CoreBundle\Bracket\DoubleElimination\Bracket as DoubleEliminationBracket;
+use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Repository\EventRepository;
@@ -26,10 +27,12 @@ class GenerateResultsHandler extends AbstractHandler
     {
         /** @var EventRepository $eventRepository */
         $eventRepository = $this->getRepository('CoreBundle:Event');
+        /** @var Event $event */
+        $event = $eventRepository->find($command->getEventId());
         $phases = $eventRepository->getOrderedPhases($command->getEventId());
 
         /** @var Phase $phase */
-        $phase = $phases[1];
+        $phase = $phases[2];
 
         /** @var PhaseGroup $phaseGroup */
         foreach ($phase->getPhaseGroups() as $phaseGroup) {
@@ -48,7 +51,7 @@ class GenerateResultsHandler extends AbstractHandler
                     continue;
             }
 
-            $results = $bracket->getIterableLosersBracket();
+            $results = $bracket->getResults($event);
         }
     }
 }

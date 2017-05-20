@@ -500,7 +500,7 @@ class Set
      */
     public function setLoserRank($loserRank)
     {
-        $this->loserRank = $loserRank;
+        $this->loserRank = intval($loserRank);
     }
 
     /**

@@ -6,6 +6,7 @@ namespace CoreBundle\Bracket\SingleElimination;
 
 use CoreBundle\Bracket\AbstractResultsGenerator;
 use CoreBundle\Entity\Entrant;
+use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Set;
 
 /**
@@ -14,68 +15,46 @@ use CoreBundle\Entity\Set;
 class ResultsGenerator extends AbstractResultsGenerator
 {
     /**
+     * @param Event $event
      * @return array
      */
-    public function getResults()
+    public function getResults(Event $event)
     {
-        return [];
-
-        $rounds = $this->bracket->getRounds();
-        $round = max($rounds);
-        $sets = $this->bracket->getSetsForRound($round);
-
-        if (count($sets) === 0) {
-            return [];
+        if (count($this->results) > 0) {
+            return $this->results;
         }
 
-        $this->moveRound();
+        $bracket = $this->bracket->getIterableBracket();
 
-        /** @var Set $set */
-        foreach ($sets as $set) {
-            $winner = $set->getWinner();
+        foreach ($bracket as $round => $sets) {
+            /** @var Set $set */
+            foreach ($sets as $set) {
+                $entrantOne = $set->getEntrantOne();
+                $entrantTwo = $set->getEntrantTwo();
+                $rank = $set->getLoserRank();
 
-            if (!$winner instanceof Entrant) {
-                continue;
+                if ($entrantOne instanceof Entrant) {
+                    $this->addResult($event, $entrantOne, $rank);
+                }
+
+                if ($entrantTwo instanceof Entrant) {
+                    $this->addResult($event, $entrantTwo, $rank);
+                }
+
+                if (!$set->getIsGrandFinals()) {
+                    continue;
+                }
+
+                $winner = $set->getWinner();
+
+                if ($winner instanceof Entrant) {
+                    $this->addResult($event, $winner, 1);
+                }
             }
-
-            $this->addResult($winner);
         }
 
-        $this->processNextRound($rounds);
+        $this->sortResults();
 
-        return array_filter($this->results);
-    }
-
-    /**
-     * @param array $rounds
-     */
-    protected function processNextRound(array $rounds)
-    {
-        $round = array_pop($rounds);
-
-        if ($round === null) {
-            return;
-        }
-
-        $sets = $this->bracket->getSetsForRound($round);
-
-        if (count($sets) === 0) {
-            return;
-        }
-
-        $this->moveRound();
-
-        /** @var Set $set */
-        foreach ($sets as $set) {
-            $loser = $set->getLoser();
-
-            if (!$loser instanceof Entrant) {
-                continue;
-            }
-
-            $this->addResult($loser);
-        }
-
-        $this->processNextRound($rounds);
+        return $this->results;
     }
 }

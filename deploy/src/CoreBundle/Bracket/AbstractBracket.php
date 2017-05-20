@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace CoreBundle\Bracket;
 
 use CoreBundle\Entity\Entrant;
+use CoreBundle\Entity\Event;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Result;
 use CoreBundle\Entity\Set;
@@ -107,11 +108,12 @@ abstract class AbstractBracket
     }
 
     /**
+     * @param Event $event
      * @return Result[]
      */
-    public function getResults()
+    public function getResults(Event $event)
     {
-        return $this->getResultsGenerator()->getResults();
+        return $this->getResultsGenerator()->getResults($event);
     }
 
     /**

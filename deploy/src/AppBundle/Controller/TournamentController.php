@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace AppBundle\Controller;
 
-use CoreBundle\Bracket\DoubleElimination\Bracket;
+use CoreBundle\Bracket\SingleElimination\Bracket;
 use CoreBundle\Controller\AbstractDefaultController;
 use CoreBundle\Entity\Tournament;
 use Domain\Command\Tournament\DetailsCommand;
@@ -71,10 +71,10 @@ class TournamentController extends AbstractDefaultController
         /** @var Tournament $tournament */
         $tournament = $this->commandBus->handle($command);
 
-        $phaseGroup = $this->getDoctrine()->getManager()->getRepository('CoreBundle:PhaseGroup')->find(2);
+        $phaseGroup = $this->getDoctrine()->getManager()->getRepository('CoreBundle:PhaseGroup')->find(11);
         $bracket = new Bracket($phaseGroup);
 
-        return $this->render('AppBundle:Tournaments/brackets:double-elimination.html.twig', [
+        return $this->render('AppBundle:Tournaments/brackets:single-elimination.html.twig', [
             'bracket'    => $bracket,
             'tournament' => $tournament,
         ]);
