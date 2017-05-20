@@ -18,18 +18,7 @@ class ResultsGenerator extends AbstractResultsGenerator
      */
     public function getResults()
     {
-
-
-
-
-
-
-
-        var_dump($this->bracket->generateVirtualBracket());
-        die;
-
-
-
+        return [];
 
         $rounds = $this->bracket->getRounds();
         $round = max($rounds);

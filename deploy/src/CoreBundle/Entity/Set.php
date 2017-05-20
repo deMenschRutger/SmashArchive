@@ -150,9 +150,16 @@ class Set
     private $roundName;
 
     /**
+     * @var int
+     */
+    private $loserRank;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="is_grand_finals", type="boolean")
+     *
+     * @TODO Change to simply 'isFinals'.
      */
     private $isGrandFinals = false;
 
@@ -478,6 +485,22 @@ class Set
     public function setRoundName($roundName)
     {
         $this->roundName = $roundName;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLoserRank()
+    {
+        return $this->loserRank;
+    }
+
+    /**
+     * @param int $loserRank
+     */
+    public function setLoserRank($loserRank)
+    {
+        $this->loserRank = $loserRank;
     }
 
     /**

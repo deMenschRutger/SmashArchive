@@ -25,15 +25,30 @@ class Bracket extends AbstractBracket
         return $this->resultsGenerator;
     }
 
+    /**
+     * @return array
+     */
+    public function getIterableBracket()
+    {
+        $bracket = $this->generateVirtualBracket();
+        $roundsRequired = $this->getRoundsRequired();
 
+        foreach ($this->getRounds() as $index => $roundNumber) {
+            $sets = $this->getSetsForRound($roundNumber);
+            $bracket = $this->matchSetsForRound($bracket, $index + 1, $sets);
 
+            if ($index + 1 >= $roundsRequired) {
+                break;
+            }
+        }
 
-
+        return $bracket;
+    }
 
     /**
      * @return array
      */
-    public function generateVirtualBracket()
+    protected function generateVirtualBracket()
     {
         $rounds = $this->getRoundsRequired();
         $bracket = [];
@@ -85,6 +100,39 @@ class Bracket extends AbstractBracket
 
         return 'Round '.$roundNumber;
     }
+
+    /**
+     * @param array $bracket
+     * @param int   $roundNumber
+     * @param Set[] $sets
+     * @return array
+     */
+    protected function matchSetsForRound($bracket, $roundNumber, $sets)
+    {
+        foreach ($bracket[$roundNumber] as &$set) {
+            if (count($sets) > 0) {
+                $newSet = array_shift($sets);
+            } else {
+                $newSet = array_shift($sets);
+            }
+
+            $newSet->setRoundName($set['roundName']);
+            $newSet->setLoserRank($set['loserRank']);
+            $newSet->setIsGrandFinals($set['isFinals']);
+
+            $set = $newSet;
+        }
+
+        if (count($sets) > 0) {
+            // TODO Mark sets that weren't processed as orphans.
+            assert(count($sets) === 0);
+        }
+
+        return $bracket;
+    }
+
+
+
 
 
 

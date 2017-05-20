@@ -81,12 +81,6 @@ abstract class AbstractBracket
         return pow(2, $this->getRoundsRequired());
     }
 
-
-
-
-
-
-
     /**
      * @return array
      */

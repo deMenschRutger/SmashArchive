@@ -5,11 +5,11 @@
     <div class="col-md-12" style="width: 2000px;">
         <h3>Winners</h3>
 
-        {% for round in bracket.rounds %}
+        {% for round, sets in bracket.iterableBracket %}
 
             <div class="pull-left">
 
-            {% for set in bracket.getSetsForRound(round) %}
+            {% for set in sets %}
 
                 <div class="bracket-set">
                     <div class="bracket-set-entrant-one">

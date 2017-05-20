@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace AppBundle\Controller;
 
-use CoreBundle\Bracket\DoubleElimination\Bracket;
+use CoreBundle\Bracket\SingleElimination\Bracket;
 use CoreBundle\Controller\AbstractDefaultController;
 use CoreBundle\Entity\Tournament;
 use Domain\Command\Tournament\DetailsCommand;
