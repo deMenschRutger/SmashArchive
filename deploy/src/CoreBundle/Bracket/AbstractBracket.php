@@ -20,6 +20,11 @@ abstract class AbstractBracket
     protected $phaseGroup;
 
     /**
+     * @var int
+     */
+    protected $roundsRequired;
+
+    /**
      * @var AbstractResultsGenerator
      */
     protected $resultsGenerator;
@@ -43,6 +48,44 @@ abstract class AbstractBracket
      * @return AbstractResultsGenerator
      */
     abstract public function getResultsGenerator();
+
+    /**
+     * @return int
+     */
+    public function countEntrants()
+    {
+        $entrants = $this->phaseGroup->getEntrants();
+
+        return count($entrants);
+    }
+
+    /**
+     * @return float
+     */
+    public function getRoundsRequired()
+    {
+        if (!$this->roundsRequired) {
+            $this->roundsRequired = ceil(log($this->countEntrants(), 2));
+        }
+
+        return $this->roundsRequired;
+    }
+
+    /**
+     * Only applies to single and double elimination brackets. Should be overwritten by other bracket types.
+     *
+     * @return float
+     */
+    public function getBracketSize()
+    {
+        return pow(2, $this->getRoundsRequired());
+    }
+
+
+
+
+
+
 
     /**
      * @return array

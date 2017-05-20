@@ -246,4 +246,20 @@ class PhaseGroup
     {
         $this->sets[] = $set;
     }
+
+    /**
+     * @return array
+     */
+    public function getEntrants()
+    {
+        $entrants = [];
+
+        /** @var Set $set */
+        foreach ($this->getSets() as $set) {
+            $entrants[] = $set->getEntrantOne();
+            $entrants[] = $set->getEntrantTwo();
+        }
+
+        return array_unique(array_filter($entrants));
+    }
 }

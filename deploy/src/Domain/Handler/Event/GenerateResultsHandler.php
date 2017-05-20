@@ -29,7 +29,7 @@ class GenerateResultsHandler extends AbstractHandler
         $phases = $eventRepository->getOrderedPhases($command->getEventId());
 
         /** @var Phase $phase */
-        $phase = $phases[0];
+        $phase = $phases[2];
 
         /** @var PhaseGroup $phaseGroup */
         foreach ($phase->getPhaseGroups() as $phaseGroup) {

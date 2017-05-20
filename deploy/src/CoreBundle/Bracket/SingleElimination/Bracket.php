@@ -25,6 +25,75 @@ class Bracket extends AbstractBracket
         return $this->resultsGenerator;
     }
 
+
+
+
+
+
+    /**
+     * @return array
+     */
+    public function generateVirtualBracket()
+    {
+        $rounds = $this->getRoundsRequired();
+        $bracket = [];
+
+        for ($round = 1; $round <= $rounds; $round++) {
+            $bracket[$round] = $this->generateVirtualRound($round);
+        }
+
+        return $bracket;
+    }
+
+    /**
+     * @param int $roundNumber
+     * @return array
+     */
+    protected function generateVirtualRound($roundNumber)
+    {
+        $setCount = $this->getBracketSize() / pow(2, $roundNumber);
+        $round = [];
+
+        for ($i = 1; $i <= $setCount; $i++) {
+            $round[] = [
+                'number' => $i,
+                'roundName' => $this->getRoundName($roundNumber),
+                'loserRank' => $setCount + 1,
+                'isFinals' => $setCount == 1,
+            ];
+        }
+
+        return $round;
+    }
+
+    /**
+     * @param int $roundNumber
+     * @return string
+     */
+    protected function getRoundName($roundNumber)
+    {
+        $roundsBeforeEnd = $this->getRoundsRequired() - $roundNumber;
+
+        switch ($roundsBeforeEnd) {
+            case 0:
+                return 'Finals';
+            case 1:
+                return 'Semifinals';
+            case 2:
+                return 'Quarterfinals';
+        }
+
+        return 'Round '.$roundNumber;
+    }
+
+
+
+
+
+
+
+
+
     /**
      * @return void
      */
