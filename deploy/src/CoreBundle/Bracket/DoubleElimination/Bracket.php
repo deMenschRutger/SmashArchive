@@ -4,13 +4,13 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Bracket\DoubleElimination;
 
-use CoreBundle\Bracket\AbstractBracket;
+use CoreBundle\Bracket\SingleElimination\Bracket as SingleEliminationBracket;
 use CoreBundle\Entity\Set;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class Bracket extends AbstractBracket
+class Bracket extends SingleEliminationBracket
 {
     /**
      * @var array
@@ -72,21 +72,70 @@ class Bracket extends AbstractBracket
     }
 
     /**
-     * @return array
+     * @return Set[]
      */
-    public function getGrandFinalsRounds()
+    public function getGrandFinalsSets()
     {
-        return array_keys($this->grandFinals);
+        return $this->grandFinals;
     }
 
     /**
-     * @return Set
+     * @return array
      */
-    public function getGrandFinalsSet()
+    public function getIterableLosersBracket()
     {
-        $lastRound = end($this->grandFinals);
+        $bracket = $this->generateVirtualLosersBracket();
+        $roundsRequired = ($this->getRoundsRequired() * 2) - 2;
 
-        return end($lastRound);
+        foreach ($this->getLosersBracketRounds() as $index => $roundNumber) {
+            $sets = $this->getSetsForRound($roundNumber);
+            $bracket = $this->matchSetsForRound($bracket, 0 - $roundsRequired + $index, $sets);
+
+            if ($index + 1 >= $roundsRequired) {
+                break;
+            }
+        }
+
+        return $bracket;
+    }
+
+    /**
+     * @return array
+     */
+    protected function generateVirtualLosersBracket()
+    {
+        $roundsRequired = ($this->getRoundsRequired() * 2) - 2;
+        $bracket = [];
+
+        for ($round = 1; $round <= $roundsRequired; $round++) {
+            $roundNumber = 0 - $round;
+            $bracket[$roundNumber] = $this->generateVirtualLosersRound($round);
+        }
+
+        return $bracket;
+    }
+
+    /**
+     * @param int $roundNumber
+     * @return array
+     */
+    protected function generateVirtualLosersRound($roundNumber)
+    {
+        $bracketSize = $this->getBracketSize() / 2;
+        $roundNumber = ceil($roundNumber / 2);
+        $setCount = $bracketSize / pow(2, $roundNumber);
+        $round = [];
+
+        for ($i = 1; $i <= $setCount; $i++) {
+            $set = new Set();
+            $set->setRoundName(''); // TODO Determine the round name.
+            $set->setLoserRank(1); // TODO Determine the rank of the loser.
+            $set->setIsGrandFinals(false); // TODO Determine if this set is a final.
+
+            $round[] = $set;
+        }
+
+        return $round;
     }
 
     /**
@@ -96,29 +145,14 @@ class Bracket extends AbstractBracket
     {
         parent::processSets();
 
+        $this->grandFinals = array_pop($this->setsByRound);
+
         foreach ($this->setsByRound as $round => $sets) {
             if ($round < 0) {
                 $this->losersBracketSetsByRound[$round] = $sets;
             } else {
-                /** @var Set $firstSet */
-                $firstSet = current($sets);
-
-                if ($firstSet->getIsGrandFinals()) {
-                    // If the first set is the grand finals, it is assumed that all sets in this round are grand finals.
-                    $this->grandFinals[$round] = $sets;
-                } else {
-                    $this->winnersBracketSetsByRound[$round] = $sets;
-                }
+                $this->winnersBracketSetsByRound[$round] = $sets;
             }
         }
-    }
-
-    /**
-     * @return void
-     *
-     * @TODO Implement this method.
-     */
-    protected function generateBracket()
-    {
     }
 }

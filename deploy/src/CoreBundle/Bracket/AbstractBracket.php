@@ -44,7 +44,7 @@ abstract class AbstractBracket
     }
 
     /**
-     * @return void
+     * @return array
      */
     abstract public function getIterableBracket();
 
@@ -140,7 +140,7 @@ abstract class AbstractBracket
     }
 
     /**
-     * @return void
+     * @return array
      */
     abstract protected function generateVirtualBracket();
 }

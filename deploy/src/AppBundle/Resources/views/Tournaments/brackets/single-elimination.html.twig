@@ -5,39 +5,38 @@
     <div class="col-md-12" style="width: 2000px;">
         <h3>Winners</h3>
 
-        {% for round, sets in bracket.iterableBracket %}
+        {% for sets in bracket.winnersBracketSetsByRound %}
 
             <div class="pull-left">
 
-            {% for set in sets %}
+                {% for set in sets %}
 
-                <div class="bracket-set">
-                    <div class="bracket-set-entrant-one">
+                    <div class="bracket-set">
+                        <div class="bracket-set-entrant-one">
 
-                    {% if set.entrantOne and set.isWinner(set.entrantOne) %}
-                        <strong>{{ set.entrantOneName }} ({{ set.winnerScore }})</strong>
-                    {% else %}
-                        {{ set.entrantOneName }} ({{ set.loserScore }})
-                    {% endif %}
+                            {% if set.entrantOne and set.isWinner(set.entrantOne) %}
+                                <strong>{{ set.entrantOneName }} ({{ set.winnerScore }})</strong>
+                            {% else %}
+                                {{ set.entrantOneName }} ({{ set.loserScore }})
+                            {% endif %}
 
+                        </div>
+                        <div class="bracket-set-entrant-two">
+
+                            {% if set.entrantTwo and set.isWinner(set.entrantTwo) %}
+                                <strong>{{ set.entrantTwoName }} ({{ set.winnerScore }})</strong>
+                            {% else %}
+                                {{ set.entrantTwoName }} ({{ set.loserScore }})
+                            {% endif %}
+
+                        </div>
                     </div>
-                    <div class="bracket-set-entrant-two">
 
-                    {% if set.entrantTwo and set.isWinner(set.entrantTwo) %}
-                        <strong>{{ set.entrantTwoName }} ({{ set.winnerScore }})</strong>
-                    {% else %}
-                        {{ set.entrantTwoName }} ({{ set.loserScore }})
-                    {% endif %}
-
-                    </div>
-                </div>
-
-            {% endfor %}
+                {% endfor %}
 
             </div>
 
-    {% endfor %}
-
+        {% endfor %}
     </div>
 
 {% endblock %}

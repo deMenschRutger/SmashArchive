@@ -32,9 +32,9 @@ class Bracket extends AbstractBracket
         $bracket = $this->generateVirtualBracket();
         $roundsRequired = $this->getRoundsRequired();
 
-        foreach ($this->getRounds() as $index => $roundNumber) {
+        foreach (array_reverse($this->getRounds()) as $index => $roundNumber) {
             $sets = $this->getSetsForRound($roundNumber);
-            $bracket = $this->matchSetsForRound($bracket, $index + 1, $sets);
+            $bracket = $this->matchSetsForRound($bracket, $roundsRequired - $index, $sets);
 
             if ($index + 1 >= $roundsRequired) {
                 break;
@@ -49,10 +49,10 @@ class Bracket extends AbstractBracket
      */
     protected function generateVirtualBracket()
     {
-        $rounds = $this->getRoundsRequired();
+        $roundsRequired = $this->getRoundsRequired();
         $bracket = [];
 
-        for ($round = 1; $round <= $rounds; $round++) {
+        for ($round = 1; $round <= $roundsRequired; $round++) {
             $bracket[$round] = $this->generateVirtualRound($round);
         }
 
@@ -69,12 +69,12 @@ class Bracket extends AbstractBracket
         $round = [];
 
         for ($i = 1; $i <= $setCount; $i++) {
-            $round[] = [
-                'number' => $i,
-                'roundName' => $this->getRoundName($roundNumber),
-                'loserRank' => $setCount + 1,
-                'isFinals' => $setCount == 1,
-            ];
+            $set = new Set();
+            $set->setRoundName($this->getRoundName($roundNumber));
+            $set->setLoserRank($setCount + 1);
+            $set->setIsGrandFinals($setCount == 1);
+
+            $round[] = $set;
         }
 
         return $round;
@@ -108,18 +108,16 @@ class Bracket extends AbstractBracket
      */
     protected function matchSetsForRound($bracket, $roundNumber, $sets)
     {
+        /** @var Set $set */
         foreach ($bracket[$roundNumber] as &$set) {
             if (count($sets) > 0) {
                 $newSet = array_shift($sets);
-            } else {
-                $newSet = new Set();
+                $newSet->setRoundName($set->getRoundName());
+                $newSet->setLoserRank($set->getLoserRank());
+                $newSet->setIsGrandFinals($set->getIsGrandFinals());
+
+                $set = $newSet;
             }
-
-            $newSet->setRoundName($set['roundName']);
-            $newSet->setLoserRank($set['loserRank']);
-            $newSet->setIsGrandFinals($set['isFinals']);
-
-            $set = $newSet;
         }
 
         if (count($sets) > 0) {
