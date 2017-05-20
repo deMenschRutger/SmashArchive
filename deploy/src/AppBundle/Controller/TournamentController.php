@@ -61,6 +61,9 @@ class TournamentController extends AbstractDefaultController
      * @return Response
      *
      * @Route("/{slug}/brackets", name="tournaments_brackets")
+     *
+     * @TODO Make the bracket loading dynamic based on phase group id.
+     * @TODO Optimize the database queries.
      */
     public function bracketAction($slug)
     {

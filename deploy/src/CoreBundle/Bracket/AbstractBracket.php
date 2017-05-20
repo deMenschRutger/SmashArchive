@@ -41,8 +41,12 @@ abstract class AbstractBracket
     {
         $this->phaseGroup = $phaseGroup;
         $this->processSets();
-        $this->generateBracket();
     }
+
+    /**
+     * @return void
+     */
+    abstract public function getIterableBracket();
 
     /**
      * @return AbstractResultsGenerator
@@ -138,5 +142,5 @@ abstract class AbstractBracket
     /**
      * @return void
      */
-    abstract protected function generateBracket();
+    abstract protected function generateVirtualBracket();
 }
