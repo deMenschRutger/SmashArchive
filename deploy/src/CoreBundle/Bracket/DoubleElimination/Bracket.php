@@ -109,28 +109,36 @@ class Bracket extends SingleEliminationBracket
 
         for ($round = 1; $round <= $roundsRequired; $round++) {
             $roundNumber = 0 - $round;
-            $bracket[$roundNumber] = $this->generateVirtualLosersRound($round);
+            $bracket[$roundNumber] = $this->generateVirtualLosersRound($round, $round == $roundsRequired);
         }
 
         return $bracket;
     }
 
     /**
-     * @param int $roundNumber
+     * @param int  $roundNumber
+     * @param bool $isFinals
      * @return array
      */
-    protected function generateVirtualLosersRound($roundNumber)
+    protected function generateVirtualLosersRound($roundNumber, $isFinals)
     {
+        $roundIsOdd = $roundNumber % 2 !== 0;
         $bracketSize = $this->getBracketSize() / 2;
         $roundNumber = ceil($roundNumber / 2);
         $setCount = $bracketSize / pow(2, $roundNumber);
         $round = [];
 
+        $loserRank = $setCount * 2 + 1;
+
+        if ($roundIsOdd) {
+            $loserRank += $setCount;
+        }
+
         for ($i = 1; $i <= $setCount; $i++) {
             $set = new Set();
             $set->setRoundName(''); // TODO Determine the round name.
-            $set->setLoserRank(1); // TODO Determine the rank of the loser.
-            $set->setIsGrandFinals(false); // TODO Determine if this set is a final.
+            $set->setLoserRank($loserRank);
+            $set->setIsGrandFinals($isFinals);
 
             $round[] = $set;
         }

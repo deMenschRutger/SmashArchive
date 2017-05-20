@@ -26,6 +26,18 @@ class ResultsGenerator extends AbstractResultsGenerator
 
         $bracket = $this->bracket->getIterableBracket();
 
+        $this->processBracket($event, $bracket);
+        $this->sortResults();
+
+        return $this->results;
+    }
+
+    /**
+     * @param Event $event
+     * @param array $bracket
+     */
+    protected function processBracket(Event $event, array $bracket)
+    {
         foreach ($bracket as $round => $sets) {
             /** @var Set $set */
             foreach ($sets as $set) {
@@ -52,9 +64,5 @@ class ResultsGenerator extends AbstractResultsGenerator
                 }
             }
         }
-
-        $this->sortResults();
-
-        return $this->results;
     }
 }

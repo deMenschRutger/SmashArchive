@@ -68,11 +68,14 @@ class Bracket extends AbstractBracket
         $setCount = $this->getBracketSize() / pow(2, $roundNumber);
         $round = [];
 
+        $loserRank = $setCount + 1;
+        $isFinals = $setCount == 1;
+
         for ($i = 1; $i <= $setCount; $i++) {
             $set = new Set();
             $set->setRoundName($this->getRoundName($roundNumber));
-            $set->setLoserRank($setCount + 1);
-            $set->setIsGrandFinals($setCount == 1);
+            $set->setLoserRank($loserRank);
+            $set->setIsGrandFinals($isFinals);
 
             $round[] = $set;
         }

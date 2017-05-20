@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace CoreBundle\Bracket\DoubleElimination;
 
 use CoreBundle\Bracket\SingleElimination\ResultsGenerator as SingleEliminationResultsGenerator;
-use CoreBundle\Entity\Entrant;
+use CoreBundle\Entity\Event;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -18,25 +18,24 @@ class ResultsGenerator extends SingleEliminationResultsGenerator
     protected $bracket;
 
     /**
+     * @param Event $event
      * @return array
+     *
+     * @TODO Process the grand finals.
      */
-    public function getResults()
+    public function getResults(Event $event)
     {
-        $grandFinals = $this->bracket->getGrandFinalsSet();
-
-        if ($grandFinals->getWinner() instanceof Entrant) {
-            $this->addResult($grandFinals->getWinner());
-            $this->moveRound();
-            $this->addResult($grandFinals->getLoser());
-        } else {
-            $this->addResult($grandFinals->getEntrantOne());
-            $this->addResult($grandFinals->getEntrantTwo());
+        if (count($this->results) > 0) {
+            return $this->results;
         }
 
-        $rounds = array_reverse($this->bracket->getLosersBracketRounds());
+        $winnersBracket = $this->bracket->getIterableBracket();
+        $losersBracket = $this->bracket->getIterableLosersBracket();
 
-        $this->processNextRound($rounds);
+        $this->processBracket($event, $winnersBracket);
+        $this->processBracket($event, $losersBracket);
+        $this->sortResults();
 
-        return array_filter($this->results);
+        return $this->results;
     }
 }
