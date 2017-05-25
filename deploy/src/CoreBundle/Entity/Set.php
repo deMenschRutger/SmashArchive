@@ -157,9 +157,14 @@ class Set
     /**
      * @var bool
      *
-     * @ORM\Column(name="is_grand_finals", type="boolean")
+     * @ORM\Column(name="is_finals", type="boolean")
+     */
+    private $isFinals = false;
+
+    /**
+     * @var bool
      *
-     * @TODO Change to simply 'isFinals'.
+     * @ORM\Column(name="is_grand_finals", type="boolean")
      */
     private $isGrandFinals = false;
 
@@ -506,7 +511,23 @@ class Set
     /**
      * @return bool
      */
-    public function getIsGrandFinals(): bool
+    public function isFinals(): bool
+    {
+        return $this->isFinals;
+    }
+
+    /**
+     * @param bool $isFinals
+     */
+    public function setIsFinals(bool $isFinals)
+    {
+        $this->isFinals = $isFinals;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGrandFinals(): bool
     {
         return $this->isGrandFinals;
     }

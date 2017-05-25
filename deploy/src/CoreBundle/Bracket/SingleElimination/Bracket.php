@@ -75,7 +75,7 @@ class Bracket extends AbstractBracket
             $set = new Set();
             $set->setRoundName($this->getRoundName($roundNumber));
             $set->setLoserRank($loserRank);
-            $set->setIsGrandFinals($isFinals);
+            $set->setIsFinals($isFinals);
 
             $round[] = $set;
         }
@@ -117,7 +117,7 @@ class Bracket extends AbstractBracket
                 $newSet = array_shift($sets);
                 $newSet->setRoundName($set->getRoundName());
                 $newSet->setLoserRank($set->getLoserRank());
-                $newSet->setIsGrandFinals($set->getIsGrandFinals());
+                $newSet->setIsFinals($set->isFinals());
 
                 $set = $newSet;
             }

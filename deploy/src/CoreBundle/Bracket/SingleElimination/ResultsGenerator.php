@@ -15,6 +15,11 @@ use CoreBundle\Entity\Set;
 class ResultsGenerator extends AbstractResultsGenerator
 {
     /**
+     * @var int
+     */
+    protected $winnerRank = 1;
+
+    /**
      * @param Event $event
      * @return array
      */
@@ -53,14 +58,14 @@ class ResultsGenerator extends AbstractResultsGenerator
                     $this->addResult($event, $entrantTwo, $rank);
                 }
 
-                if (!$set->getIsGrandFinals()) {
+                if (!$set->isFinals()) {
                     continue;
                 }
 
                 $winner = $set->getWinner();
 
                 if ($winner instanceof Entrant) {
-                    $this->addResult($event, $winner, 1);
+                    $this->addResult($event, $winner, $this->winnerRank);
                 }
             }
         }

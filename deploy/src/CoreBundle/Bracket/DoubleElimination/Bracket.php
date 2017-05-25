@@ -13,17 +13,17 @@ use CoreBundle\Entity\Set;
 class Bracket extends SingleEliminationBracket
 {
     /**
-     * @var array
+     * @var Set[]
      */
     protected $winnersBracketSetsByRound = [];
 
     /**
-     * @var array
+     * @var Set[]
      */
     protected $losersBracketSetsByRound = [];
 
     /**
-     * @var array
+     * @var Set[]
      */
     protected $grandFinals = [];
 
@@ -138,7 +138,7 @@ class Bracket extends SingleEliminationBracket
             $set = new Set();
             $set->setRoundName($this->getLoserRoundName($initialRoundNumber));
             $set->setLoserRank($loserRank);
-            $set->setIsGrandFinals($isFinals);
+            $set->setIsFinals($isFinals);
 
             $round[] = $set;
         }
@@ -195,6 +195,10 @@ class Bracket extends SingleEliminationBracket
         parent::processSets();
 
         $this->grandFinals = array_pop($this->setsByRound);
+
+        foreach ($this->grandFinals as $set) {
+            $set->setIsGrandFinals(true);
+        }
 
         foreach ($this->setsByRound as $round => $sets) {
             if ($round < 0) {

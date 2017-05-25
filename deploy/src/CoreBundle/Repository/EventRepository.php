@@ -31,7 +31,7 @@ class EventRepository extends EntityRepository
             ->join('p.event', 'e')
             ->where('e.id = ?1')
             ->setParameter(1, $eventId)
-            ->addOrderBy('s.round')
+            ->addOrderBy('p.phaseOrder, s.round')
             ->getQuery()
             ->getResult()
         ;
