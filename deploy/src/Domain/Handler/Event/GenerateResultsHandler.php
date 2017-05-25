@@ -52,6 +52,12 @@ class GenerateResultsHandler extends AbstractHandler
             }
 
             $results = $bracket->getResults($event);
+
+            foreach ($results as $result) {
+//                var_dump($result->get(), $result->getRank());
+            }
+
+            die;
         }
     }
 }

@@ -116,15 +116,15 @@ class Bracket extends SingleEliminationBracket
     }
 
     /**
-     * @param int  $roundNumber
+     * @param int  $initialRoundNumber
      * @param bool $isFinals
      * @return array
      */
-    protected function generateVirtualLosersRound($roundNumber, $isFinals)
+    protected function generateVirtualLosersRound($initialRoundNumber, $isFinals)
     {
-        $roundIsOdd = $roundNumber % 2 !== 0;
+        $roundIsOdd = $initialRoundNumber % 2 !== 0;
         $bracketSize = $this->getBracketSize() / 2;
-        $roundNumber = ceil($roundNumber / 2);
+        $roundNumber = ceil($initialRoundNumber / 2);
         $setCount = $bracketSize / pow(2, $roundNumber);
         $round = [];
 
@@ -136,7 +136,7 @@ class Bracket extends SingleEliminationBracket
 
         for ($i = 1; $i <= $setCount; $i++) {
             $set = new Set();
-            $set->setRoundName(''); // TODO Determine the round name.
+            $set->setRoundName($this->getLoserRoundName($initialRoundNumber));
             $set->setLoserRank($loserRank);
             $set->setIsGrandFinals($isFinals);
 
@@ -144,6 +144,47 @@ class Bracket extends SingleEliminationBracket
         }
 
         return $round;
+    }
+
+    /**
+     * @param int $roundNumber
+     * @return string
+     */
+    protected function getRoundName($roundNumber)
+    {
+        $roundsBeforeEnd = $this->getRoundsRequired() - $roundNumber;
+
+        switch ($roundsBeforeEnd) {
+            case 0:
+                return 'Winners Finals';
+            case 1:
+                return 'Winners Semifinals';
+            case 2:
+                return 'Winners Quarterfinals';
+        }
+
+        return 'Winners Round '.$roundNumber;
+    }
+
+    /**
+     * @param int $roundNumber
+     * @return string
+     */
+    protected function getLoserRoundName($roundNumber)
+    {
+        $roundsRequired = ($this->getRoundsRequired() * 2) - 2;
+        $roundsBeforeEnd = $roundsRequired - $roundNumber;
+
+        switch ($roundsBeforeEnd) {
+            case 0:
+                return 'Losers Finals';
+            case 1:
+                return 'Losers Semifinals';
+            case 2:
+                return 'Losers Quarterfinals';
+        }
+
+        return 'Losers Round '.$roundNumber;
     }
 
     /**
