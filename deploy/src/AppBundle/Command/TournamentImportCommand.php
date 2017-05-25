@@ -214,7 +214,7 @@ class TournamentImportCommand extends ContainerAwareCommand
 
         foreach ($apiData['entities']['sets'] as $setData) {
             $set = $this->findSet($setData['id']);
-            $set->setRound($setData['round']);
+            $set->setRound($setData['originalRound']);
             $set->setPhaseGroup($phaseGroup);
 
             $entrantOneId = $setData['entrant1Id'];
@@ -259,24 +259,7 @@ class TournamentImportCommand extends ContainerAwareCommand
      */
     protected function updatePhaseGroup($phaseGroup)
     {
-        $bracket = null;
-
-        switch ($phaseGroup->getType()) {
-            case PhaseGroup::TYPE_SINGLE_ELIMINATION:
-                $bracket = new Bracket($phaseGroup);
-                break;
-
-            case PhaseGroup::TYPE_DOUBLE_ELIMINATION:
-                $bracket = new Bracket($phaseGroup);
-                break;
-        }
-
-        if ($bracket) {
-            foreach ($phaseGroup->getSets() as $set) {
-                $bracket->determineRoundName($set);
-                $bracket->determineIsGrandFinals($set);
-            }
-        }
+        // TODO Remove this method.
     }
 
     /**

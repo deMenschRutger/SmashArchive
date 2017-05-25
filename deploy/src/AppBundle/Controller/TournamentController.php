@@ -71,7 +71,7 @@ class TournamentController extends AbstractDefaultController
         /** @var Tournament $tournament */
         $tournament = $this->commandBus->handle($command);
 
-        $phaseGroup = $this->getDoctrine()->getManager()->getRepository('CoreBundle:PhaseGroup')->find(2);
+        $phaseGroup = $this->getDoctrine()->getManager()->getRepository('CoreBundle:PhaseGroup')->find(5);
         $bracket = new Bracket($phaseGroup);
 
         return $this->render('AppBundle:Tournaments/brackets:double-elimination.html.twig', [
