@@ -13,17 +13,17 @@ use CoreBundle\Entity\Set;
 class Bracket extends SingleEliminationBracket
 {
     /**
-     * @var Set[]
+     * @var array
      */
     protected $winnersBracketSetsByRound = [];
 
     /**
-     * @var Set[]
+     * @var array
      */
     protected $losersBracketSetsByRound = [];
 
     /**
-     * @var Set[]
+     * @var array
      */
     protected $grandFinals = [];
 
@@ -72,14 +72,6 @@ class Bracket extends SingleEliminationBracket
     }
 
     /**
-     * @return Set[]
-     */
-    public function getGrandFinalsSets()
-    {
-        return $this->grandFinals;
-    }
-
-    /**
      * @return array
      */
     public function getIterableLosersBracket()
@@ -97,6 +89,26 @@ class Bracket extends SingleEliminationBracket
         }
 
         return $bracket;
+    }
+
+    /**
+     * @return Set[]
+     */
+    public function getGrandFinalsSets()
+    {
+        $round = intval($this->getRoundsRequired()) + 1;
+        $sets = [];
+
+        for ($i = 0; $i <= 1; $i++) {
+            $set = new Set();
+            $set->setRoundName('Grand Finals');
+            $set->setLoserRank(2);
+            $set->setIsFinals(true);
+
+            $sets[$round][] = $set;
+        }
+
+        return $this->matchSetsForRound($sets, $round, $this->getSetsForRound($round))[$round];
     }
 
     /**
@@ -194,9 +206,12 @@ class Bracket extends SingleEliminationBracket
     {
         parent::processSets();
 
-        $this->grandFinals = array_pop($this->setsByRound);
+        end($this->setsByRound);
+        $round = key($this->setsByRound);
+        $this->grandFinals[$round] = current($this->setsByRound);
 
-        foreach ($this->grandFinals as $set) {
+        /** @var Set $set */
+        foreach ($this->grandFinals[$round] as $set) {
             $set->setIsGrandFinals(true);
         }
 

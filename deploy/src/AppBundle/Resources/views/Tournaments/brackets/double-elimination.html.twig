@@ -1,8 +1,10 @@
 {% extends 'AppBundle:Tournaments/brackets:base.html.twig' %}
 
+{% import '@App/Tournaments/brackets/macros.html.twig' as macros %}
+
 {% block bracket %}
 
-    <div class="col-md-12">
+    <div class="col-md-12" style="width: 2000px;">
         <h3>Winners</h3>
 
         {% for sets in bracket.iterableBracket %}
@@ -11,29 +13,18 @@
 
             {% for set in sets %}
 
-                <div class="bracket-set">
-                    <div class="bracket-set-entrant-one">
-
-                    {% if set.entrantOne and set.isWinner(set.entrantOne) %}
-                        <strong>{{ set.entrantOneName }} ({{ set.winnerScore }})</strong>
-                    {% else %}
-                        {{ set.entrantOneName }} ({{ set.loserScore }})
-                    {% endif %}
-
-                    </div>
-                    <div class="bracket-set-entrant-two">
-
-                    {% if set.entrantTwo and set.isWinner(set.entrantTwo) %}
-                        <strong>{{ set.entrantTwoName }} ({{ set.winnerScore }})</strong>
-                    {% else %}
-                        {{ set.entrantTwoName }} ({{ set.loserScore }})
-                    {% endif %}
-
-                    </div>
-                </div>
+                {{ macros.set(set) }}
 
             {% endfor %}
 
+            </div>
+
+        {% endfor %}
+
+        {% for set in bracket.grandFinalsSets %}
+
+            <div class="pull-left">
+                {{ macros.set(set) }}
             </div>
 
         {% endfor %}
@@ -48,26 +39,7 @@
 
             {% for set in sets %}
 
-                <div class="bracket-set">
-                    <div class="bracket-set-entrant-one">
-
-                    {% if set.entrantOne and set.isWinner(set.entrantOne) %}
-                        <strong>{{ set.entrantOneName }} ({{ set.winnerScore }})</strong>
-                    {% else %}
-                        {{ set.entrantOneName }} ({{ set.loserScore }})
-                    {% endif %}
-
-                    </div>
-                    <div class="bracket-set-entrant-two">
-
-                    {% if set.entrantTwo and set.isWinner(set.entrantTwo) %}
-                        <strong>{{ set.entrantTwoName }} ({{ set.winnerScore }})</strong>
-                    {% else %}
-                        {{ set.entrantTwoName }} ({{ set.loserScore }})
-                    {% endif %}
-
-                    </div>
-                </div>
+                {{ macros.set(set) }}
 
             {% endfor %}
 
