@@ -29,7 +29,7 @@ class Smashgg
     public function getTournamentEntities($slug, array $expand = [])
     {
         $client = $this->getClient();
-        $response = $client->get($slug, [
+        $response = $client->get('tournament/'.$slug, [
             'query' => [
                 'expand' => $expand,
             ],
@@ -105,13 +105,60 @@ class Smashgg
     }
 
     /**
+     * @param int   $id
+     * @param array $expand
+     * @return array
+     */
+    public function getPhaseGroup($id, array $expand = [])
+    {
+        $client = $this->getClient();
+        $response = $client->get('phase_group/'.$id, [
+            'query' => [
+                'expand' => $expand,
+            ],
+        ]);
+
+        $raw = (string) $response->getBody();
+        $body = \GuzzleHttp\json_decode($raw, true);
+
+        return $body['entities'];
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function getPhaseGroupSets($id)
+    {
+        return $this->getPhaseGroup($id, ['sets'])['sets'];
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function getPhaseGroupEntrants($id)
+    {
+        return $this->getPhaseGroup($id, ['entrants'])['entrants'];
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function getPhaseGroupPlayers($id)
+    {
+        return $this->getPhaseGroup($id, ['entrants'])['player'];
+    }
+
+    /**
      * @return Client
      */
     protected function getClient()
     {
         if (!$this->client) {
             $this->client = new Client([
-                'base_uri' => 'https://api.smash.gg/tournament/',
+                'base_uri' => 'https://api.smash.gg',
             ]);
         }
 

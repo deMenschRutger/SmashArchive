@@ -29,11 +29,6 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
     protected $entityManager;
 
     /**
-     * @var SymfonyStyle
-     */
-    protected $io;
-
-    /**
      * @param CommandBus $commandBus
      */
     public function __construct(CommandBus $commandBus)
@@ -64,9 +59,7 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->io = new SymfonyStyle($input, $output);
-
-        $command = new GenerateResultsCommand(4, $this->io);
+        $command = new GenerateResultsCommand(6);
         $this->commandBus->handle($command);
     }
 

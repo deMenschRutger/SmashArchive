@@ -33,9 +33,13 @@ class GenerateResultsHandler extends AbstractHandler
 
         /** @var EventRepository $eventRepository */
         $eventRepository = $this->getRepository('CoreBundle:Event');
-
         /** @var Event $event */
         $event = $eventRepository->find($eventId);
+
+        if (!$event instanceof Event) {
+            throw new \InvalidArgumentException('The event could not be found.');
+        }
+
         $eventRepository->deleteResults($event);
         $phases = $eventRepository->getOrderedPhases($command->getEventId());
 

@@ -4,14 +4,19 @@ declare(strict_types = 1);
 
 namespace Domain\Handler\Tournament\Import;
 
+use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Game;
 use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\PhaseGroup;
+use CoreBundle\Entity\Player;
+use CoreBundle\Entity\Set;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Service\Smashgg\Smashgg;
+use Domain\Command\Event\GenerateResultsCommand;
 use Domain\Command\Tournament\Import\SmashggCommand;
 use Domain\Handler\AbstractHandler;
+use League\Tactician\CommandBus;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -20,6 +25,11 @@ use Domain\Handler\AbstractHandler;
  */
 class SmashggHandler extends AbstractHandler
 {
+    /**
+     * @var CommandBus
+     */
+    protected $commandBus;
+
     /**
      * @var Smashgg
      */
@@ -51,6 +61,16 @@ class SmashggHandler extends AbstractHandler
     protected $phaseGroups = [];
 
     /**
+     * @var array
+     */
+    protected $players = [];
+
+    /**
+     * @var array
+     */
+    protected $entrants = [];
+
+    /**
      * @return Smashgg
      */
     public function getSmashgg()
@@ -64,6 +84,22 @@ class SmashggHandler extends AbstractHandler
     public function setSmashgg(Smashgg $smashgg)
     {
         $this->smashgg = $smashgg;
+    }
+
+    /**
+     * @return CommandBus
+     */
+    public function getCommandBus()
+    {
+        return $this->commandBus;
+    }
+
+    /**
+     * @param CommandBus $commandBus
+     */
+    public function setCommandBus(CommandBus $commandBus)
+    {
+        $this->commandBus = $commandBus;
     }
 
     /**
@@ -90,6 +126,11 @@ class SmashggHandler extends AbstractHandler
         $this->processGroups();
 
         $this->entityManager->flush();
+
+        foreach ($this->tournament->getEvents() as $event) {
+            $command = new GenerateResultsCommand($event->getId());
+            $this->commandBus->handle($command);
+        }
     }
 
     /**
@@ -100,6 +141,7 @@ class SmashggHandler extends AbstractHandler
      */
     protected function getTournament($slug)
     {
+        $smashggTournament = $this->smashgg->getTournament($slug);
         $tournament = $this->getRepository('CoreBundle:Tournament')->findOneBy([
             'smashggSlug' => $slug,
         ]);
@@ -112,6 +154,8 @@ class SmashggHandler extends AbstractHandler
 
             $this->entityManager->persist($tournament);
         }
+
+        $tournament->setName($smashggTournament['name']);
 
         return $tournament;
     }
@@ -244,7 +288,111 @@ class SmashggHandler extends AbstractHandler
 
             $this->entityManager->persist($phaseGroup);
 
-            // TODO Process the phase groups (see TournamentImportCommand).
+            $this->processPhaseGroupPlayers($phaseGroupId);
+            $this->processPhaseGroupEntrants($phaseGroupId);
+            $this->processPhaseGroupSets($phaseGroupId, $phaseGroup);
+        }
+    }
+
+    /**
+     * @param int $id The ID of the PhaseGroup.
+     */
+    protected function processPhaseGroupPlayers(int $id)
+    {
+        $players = $this->smashgg->getPhaseGroupPlayers($id);
+
+        foreach ($players as $playerData) {
+            $playerId = $playerData['id'];
+
+            $player = $this->findPlayer($playerId);
+            $player->setGamerTag($playerData['gamerTag']);
+
+            $this->players[$playerId] = $player;
+        }
+
+        // We need to flush the entity manager here, otherwise the next event won't find new players created in
+        // previous events associated with this tournament.
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @param int $id
+     *
+     * @TODO Also remove players that are no longer part of the entrant.
+     */
+    protected function processPhaseGroupEntrants($id)
+    {
+        $entrants = $this->smashgg->getPhaseGroupEntrants($id);
+
+        foreach ($entrants as $entrantData) {
+            $entrantId = $entrantData['id'];
+
+            $entrant = new Entrant();
+            $entrant->setSmashggId($entrantId);
+            $entrant->setName($entrantData['name']);
+
+            $this->entityManager->persist($entrant);
+
+            foreach ($entrantData['playerIds'] as $playerId) {
+                $player = $this->players[$playerId];
+
+                if (!$entrant->hasPlayer($player)) {
+                    $entrant->addPlayer($player);
+                }
+            }
+
+            $this->entrants[$entrantId] = $entrant;
+        }
+    }
+
+    /**
+     * @param int $id
+     * @param PhaseGroup $phaseGroup
+     */
+    protected function processPhaseGroupSets(int $id, PhaseGroup $phaseGroup)
+    {
+        $sets = $this->smashgg->getPhaseGroupSets($id);
+
+        foreach ($sets as $setData) {
+            $setId = $setData['id'];
+
+            $set = new Set();
+            $set->setSmashggId($setId);
+            $set->setRound($setData['originalRound']);
+            $set->setPhaseGroup($phaseGroup);
+
+            $this->entityManager->persist($set);
+
+            $entrantOneId = $setData['entrant1Id'];
+            $entrantTwoId = $setData['entrant2Id'];
+            $entrantOne = null;
+            $entrantTwo = null;
+
+            if ($entrantOneId) {
+                $entrantOne = $this->entrants[$entrantOneId];
+                $set->setEntrantOne($entrantOne);
+            }
+
+            if ($entrantTwoId) {
+                $entrantTwo = $this->entrants[$entrantTwoId];
+                $set->setEntrantTwo($entrantTwo);
+            }
+
+            if ($setData['winnerId'] && $setData['winnerId'] == $setData['entrant1Id']) {
+                $set->setWinner($entrantOne);
+                $set->setWinnerScore($setData['entrant1Score']);
+                $set->setLoser($entrantTwo);
+                $set->setLoserScore($setData['entrant2Score']);
+            } elseif ($setData['winnerId'] && $setData['winnerId'] == $setData['entrant2Id']) {
+                $set->setWinner($entrantTwo);
+                $set->setWinnerScore($setData['entrant2Score']);
+                $set->setLoser($entrantOne);
+                $set->setLoserScore($setData['entrant1Score']);
+            }
+
+            if ($set->getLoserScore() === -1) {
+                $set->setStatus(Set::STATUS_DQED);
+            }
         }
     }
 
@@ -296,5 +444,41 @@ class SmashggHandler extends AbstractHandler
         }
 
         return null;
+    }
+
+    /**
+     * @param int $smashggId
+     * @return Player
+     */
+    protected function findPlayer(int $smashggId): Player
+    {
+        $player = $this->getRepository('CoreBundle:Player')->findOneBy([
+            'smashggId' => $smashggId,
+        ]);
+
+        if (!$player instanceof Player) {
+            $player = new Player();
+            $player->setSmashggId($smashggId);
+
+            $this->entityManager->persist($player);
+        }
+
+        return $player;
+    }
+
+    /**
+     * @param int $smashggId
+     * @return Entrant
+     */
+    protected function findEntrant(int $smashggId): Entrant
+    {
+        $entrant = $this->getRepository('CoreBundle:Entrant')->findOneBy([
+            'smashggId' => $smashggId,
+        ]);
+
+        if (!$entrant instanceof Entrant) {
+        }
+
+        return $entrant;
     }
 }

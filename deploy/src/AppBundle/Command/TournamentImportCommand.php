@@ -4,11 +4,9 @@ declare(strict_types = 1);
 
 namespace AppBundle\Command;
 
-use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Service\Smashgg\Smashgg;
 use Doctrine\ORM\EntityManager;
 use Domain\Command\Tournament\Import\SmashggCommand;
-use GuzzleHttp\Client;
 use League\Tactician\CommandBus;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -97,7 +95,11 @@ class TournamentImportCommand extends ContainerAwareCommand
             $this->executeSmashgg($force);
         } else {
             $this->io->error('Unfortunately that provider is currently not supported.');
+
+            return;
         }
+
+        $this->io->success('The tournament was successfully imported.');
     }
 
     /**
@@ -127,99 +129,5 @@ class TournamentImportCommand extends ContainerAwareCommand
 
         $command = new SmashggCommand($slug, $selectedEvents, $force);
         $this->commandBus->handle($command);
-    }
-
-    /**
-     * @param int $id The ID of the PhaseGroup.
-     * @param PhaseGroup $phaseGroup
-     */
-    protected function processPhaseGroup(int $id, PhaseGroup $phaseGroup)
-    {
-        $client = new Client();
-        $response = $client->get('https://api.smash.gg/phase_group/'.$id, [
-            'query' => [
-                'expand' => ['sets', 'entrants', 'players'],
-            ],
-        ]);
-
-        $apiData = \GuzzleHttp\json_decode($response->getBody(), true);
-        $entrants = [];
-        $players = [];
-
-        foreach ($apiData['entities']['player'] as $playerData) {
-            $playerId = $playerData['id'];
-            $player = $this->findPlayer($playerId);
-            $player->setGamerTag($playerData['gamerTag']);
-
-            $players[$playerId] = $player;
-        }
-
-        // We need to flush the entity manager here, otherwise the next event won't find new players created in
-        // previous events associated with this tournament.
-        $this->entityManager->flush();
-
-        foreach ($apiData['entities']['entrants'] as $entrantData) {
-            $entrantId = $entrantData['id'];
-            $entrant = $this->findEntrant($entrantId);
-            $entrant->setName($entrantData['name']);
-
-            foreach ($entrantData['playerIds'] as $playerId) {
-                $player = $players[$playerId];
-
-                if (!$entrant->hasPlayer($player)) {
-                    $entrant->addPlayer($player);
-                }
-            }
-
-            // TODO Also remove players that are no longer part of the entrant.
-
-            $entrants[$entrantId] = $entrant;
-        }
-
-        $setCount = count($apiData['entities']['sets']);
-
-        $this->io->comment("Importing sets for phase group #{$id}.");
-        $this->io->progressStart($setCount);
-
-        foreach ($apiData['entities']['sets'] as $setData) {
-            $set = $this->findSet($setData['id']);
-            $set->setRound($setData['originalRound']);
-            $set->setPhaseGroup($phaseGroup);
-
-            $entrantOneId = $setData['entrant1Id'];
-            $entrantTwoId = $setData['entrant2Id'];
-            $entrantOne = null;
-            $entrantTwo = null;
-
-            if ($entrantOneId) {
-                $entrantOne = $entrants[$entrantOneId];
-                $set->setEntrantOne($entrantOne);
-            }
-
-            if ($entrantTwoId) {
-                $entrantTwo = $entrants[$entrantTwoId];
-                $set->setEntrantTwo($entrantTwo);
-            }
-
-            if ($setData['winnerId'] && $setData['winnerId'] == $setData['entrant1Id']) {
-                $set->setWinner($entrantOne);
-                $set->setWinnerScore($setData['entrant1Score']);
-                $set->setLoser($entrantTwo);
-                $set->setLoserScore($setData['entrant2Score']);
-            } elseif ($setData['winnerId'] && $setData['winnerId'] == $setData['entrant2Id']) {
-                $set->setWinner($entrantTwo);
-                $set->setWinnerScore($setData['entrant2Score']);
-                $set->setLoser($entrantOne);
-                $set->setLoserScore($setData['entrant1Score']);
-            }
-
-            if ($set->getLoserScore() === -1) {
-                $set->setIsForfeit(true);
-            }
-
-            $this->io->progressAdvance(1);
-        }
-
-        $this->io->progressFinish();
     }
 }

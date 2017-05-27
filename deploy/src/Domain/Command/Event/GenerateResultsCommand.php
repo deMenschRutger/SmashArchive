@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace Domain\Command\Event;
 
-use Symfony\Component\Console\Style\SymfonyStyle;
-
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
@@ -17,18 +15,11 @@ class GenerateResultsCommand
     private $eventId;
 
     /**
-     * @var SymfonyStyle
+     * @param int $eventId
      */
-    private $io;
-
-    /**
-     * @param int          $eventId
-     * @param SymfonyStyle $io
-     */
-    public function __construct($eventId, SymfonyStyle $io = null)
+    public function __construct($eventId)
     {
         $this->eventId = $eventId;
-        $this->io = $io;
     }
 
     /**
@@ -37,13 +28,5 @@ class GenerateResultsCommand
     public function getEventId(): int
     {
         return $this->eventId;
-    }
-
-    /**
-     * @return SymfonyStyle
-     */
-    public function getIo()
-    {
-        return $this->io;
     }
 }
