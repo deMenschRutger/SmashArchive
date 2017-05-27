@@ -306,8 +306,6 @@ class SmashggHandler extends AbstractHandler
 
             $player = $this->findPlayer($playerId);
             $player->setGamerTag($playerData['gamerTag']);
-
-            $this->players[$playerId] = $player;
         }
 
         // We need to flush the entity manager here, otherwise the next event won't find new players created in
@@ -327,11 +325,8 @@ class SmashggHandler extends AbstractHandler
         foreach ($entrants as $entrantData) {
             $entrantId = $entrantData['id'];
 
-            $entrant = new Entrant();
-            $entrant->setSmashggId($entrantId);
+            $entrant = $this->findEntrant($entrantId);
             $entrant->setName($entrantData['name']);
-
-            $this->entityManager->persist($entrant);
 
             foreach ($entrantData['playerIds'] as $playerId) {
                 $player = $this->players[$playerId];
@@ -340,8 +335,6 @@ class SmashggHandler extends AbstractHandler
                     $entrant->addPlayer($player);
                 }
             }
-
-            $this->entrants[$entrantId] = $entrant;
         }
     }
 
@@ -363,18 +356,14 @@ class SmashggHandler extends AbstractHandler
 
             $this->entityManager->persist($set);
 
-            $entrantOneId = $setData['entrant1Id'];
-            $entrantTwoId = $setData['entrant2Id'];
-            $entrantOne = null;
-            $entrantTwo = null;
+            $entrantOne = $this->findEntrant($setData['entrant1Id']);
+            $entrantTwo = $this->findEntrant($setData['entrant2Id']);
 
-            if ($entrantOneId) {
-                $entrantOne = $this->entrants[$entrantOneId];
+            if ($entrantOne) {
                 $set->setEntrantOne($entrantOne);
             }
 
-            if ($entrantTwoId) {
-                $entrantTwo = $this->entrants[$entrantTwoId];
+            if ($entrantTwo) {
                 $set->setEntrantTwo($entrantTwo);
             }
 
@@ -402,22 +391,23 @@ class SmashggHandler extends AbstractHandler
      */
     protected function findGame(int $smashggId): Game
     {
-        if (array_key_exists($smashggId, $this->games)) {
-            return $this->games[$smashggId];
+        if (!array_key_exists($smashggId, $this->games)) {
+            $game = $this->getRepository('CoreBundle:Game')->findOneBy([
+                'smashggId' => $smashggId,
+            ]);
+
+            if (!$game instanceof Game) {
+                $game = new Game();
+                $game->setSmashggId($smashggId);
+
+                $this->entityManager->persist($game);
+            }
+
+            $this->games[$smashggId] = $game;
         }
 
-        $game = $this->getRepository('CoreBundle:Game')->findOneBy([
-            'smashggId' => $smashggId,
-        ]);
 
-        if (!$game instanceof Game) {
-            $game = new Game();
-            $game->setSmashggId($smashggId);
-
-            $this->entityManager->persist($game);
-        }
-
-        return $game;
+        return $this->games[$smashggId];
     }
 
     /**
@@ -452,33 +442,42 @@ class SmashggHandler extends AbstractHandler
      */
     protected function findPlayer(int $smashggId): Player
     {
-        $player = $this->getRepository('CoreBundle:Player')->findOneBy([
-            'smashggId' => $smashggId,
-        ]);
+        if (!array_key_exists($smashggId, $this->players)) {
+            $player = $this->getRepository('CoreBundle:Player')->findOneBy([
+                'smashggId' => $smashggId,
+            ]);
 
-        if (!$player instanceof Player) {
-            $player = new Player();
-            $player->setSmashggId($smashggId);
+            if (!$player instanceof Player) {
+                $player = new Player();
+                $player->setSmashggId($smashggId);
 
-            $this->entityManager->persist($player);
+                $this->entityManager->persist($player);
+            }
+
+            $this->players[$smashggId] = $player;
         }
 
-        return $player;
+        return $this->players[$smashggId];
     }
 
     /**
      * @param int $smashggId
      * @return Entrant
      */
-    protected function findEntrant(int $smashggId): Entrant
+    protected function findEntrant($smashggId)
     {
-        $entrant = $this->getRepository('CoreBundle:Entrant')->findOneBy([
-            'smashggId' => $smashggId,
-        ]);
-
-        if (!$entrant instanceof Entrant) {
+        if ($smashggId === null) {
+            return null;
         }
 
-        return $entrant;
+        if (!array_key_exists($smashggId, $this->entrants)) {
+            $entrant = new Entrant();
+            $entrant->setSmashggId($smashggId);
+
+            $this->entityManager->persist($entrant);
+            $this->entrants[$smashggId] = $entrant;
+        }
+
+        return $this->entrants[$smashggId];
     }
 }
