@@ -41,7 +41,7 @@ class SortPlayerSetsExtension extends \Twig_Extension
                 continue;
             }
 
-            if ($set->getIsGrandFinals()) {
+            if ($set->isGrandFinals()) {
                 $grandFinals[] = $set;
             } elseif ($set->getRound() > 0) {
                 $winnersBracketSets[] = $set;

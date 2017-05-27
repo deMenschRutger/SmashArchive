@@ -10,6 +10,8 @@
         {% for sets in bracket.iterableBracket %}
 
             <div class="pull-left">
+                <h4>{{ sets|length > 0 ? sets[0].roundName : 'Unknown Round' }}</h4>
+                <br>
 
                 {% for set in sets %}
 

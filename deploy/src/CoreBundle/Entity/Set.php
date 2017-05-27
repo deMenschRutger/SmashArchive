@@ -20,6 +20,11 @@ use JMS\Serializer\Annotation as Serializer;
  */
 class Set
 {
+    const STATUS_PLAYED = 'played';
+    const STATUS_NOT_PLAYED = 'not_played';
+    const STATUS_FORFEITED = 'forfeit';
+    const STATUS_DQED = 'dqed';
+
     use TimestampableTrait;
 
     /**
@@ -59,6 +64,27 @@ class Set
     private $round;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="round_name", type="string", length=255, nullable=true)
+     */
+    private $roundName;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_finals", type="boolean")
+     */
+    private $isFinals = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_grand_finals", type="boolean")
+     */
+    private $isGrandFinals = false;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="winner_score", type="integer", nullable=true)
@@ -79,22 +105,20 @@ class Set
     /**
      * @var bool
      *
-     * @TODO This needs to become a 'status' field that can have values like 'forfeit' and 'DQ'.
-     *
-     * @ORM\Column(name="is_forfeit", type="boolean")
-     *
-     * @Serializer\Groups({"players_sets"})
-     */
-    private $isForfeit = false;
-
-    /**
-     * @var bool
-     *
      * @ORM\Column(name="is_ranked", type="boolean")
      *
      * @Serializer\Groups({"players_sets"})
      */
     private $isRanked = true;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="status", type="string")
+     *
+     * @Serializer\Groups({"players_sets"})
+     */
+    private $status = self::STATUS_PLAYED;
 
     /**
      * @var PhaseGroup
@@ -143,30 +167,9 @@ class Set
     private $loser;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="round_name", type="string", length=255, nullable=true)
-     */
-    private $roundName;
-
-    /**
      * @var int
      */
     private $loserRank;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_finals", type="boolean")
-     */
-    private $isFinals = false;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_grand_finals", type="boolean")
-     */
-    private $isGrandFinals = false;
 
     /**
      * @return string
@@ -233,6 +236,54 @@ class Set
     }
 
     /**
+     * @return string
+     */
+    public function getRoundName()
+    {
+        return $this->roundName;
+    }
+
+    /**
+     * @param string $roundName
+     */
+    public function setRoundName($roundName)
+    {
+        $this->roundName = $roundName;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFinals(): bool
+    {
+        return $this->isFinals;
+    }
+
+    /**
+     * @param bool $isFinals
+     */
+    public function setIsFinals(bool $isFinals)
+    {
+        $this->isFinals = $isFinals;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGrandFinals(): bool
+    {
+        return $this->isGrandFinals;
+    }
+
+    /**
+     * @param bool $isGrandFinals
+     */
+    public function setIsGrandFinals(bool $isGrandFinals)
+    {
+        $this->isGrandFinals = $isGrandFinals;
+    }
+
+    /**
      * @return int
      */
     public function getWinnerScore()
@@ -267,22 +318,6 @@ class Set
     /**
      * @return bool
      */
-    public function getIsForfeit(): bool
-    {
-        return $this->isForfeit;
-    }
-
-    /**
-     * @param bool $isForfeit
-     */
-    public function setIsForfeit(bool $isForfeit)
-    {
-        $this->isForfeit = $isForfeit;
-    }
-
-    /**
-     * @return bool
-     */
     public function getIsRanked(): bool
     {
         return $this->isRanked;
@@ -294,6 +329,22 @@ class Set
     public function setIsRanked(bool $isRanked)
     {
         $this->isRanked = $isRanked;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     */
+    public function setStatus(string $status)
+    {
+        $this->status = $status;
     }
 
     /**
@@ -403,24 +454,6 @@ class Set
     }
 
     /**
-     * @param Entrant $entrant
-     * @return bool
-     */
-    public function isWinner(Entrant $entrant)
-    {
-        return $entrant === $this->winner;
-    }
-
-    /**
-     * @param Entrant $entrant
-     * @return bool
-     */
-    public function isLoser(Entrant $entrant)
-    {
-        return $entrant === $this->loser;
-    }
-
-    /**
      * @return Entrant
      */
     public function getWinner()
@@ -446,6 +479,15 @@ class Set
     public function setWinner(Entrant $winner = null)
     {
         $this->winner = $winner;
+    }
+
+    /**
+     * @param Entrant $entrant
+     * @return bool
+     */
+    public function isWinner(Entrant $entrant)
+    {
+        return $entrant === $this->winner;
     }
 
     /**
@@ -477,19 +519,12 @@ class Set
     }
 
     /**
-     * @return string
+     * @param Entrant $entrant
+     * @return bool
      */
-    public function getRoundName()
+    public function isLoser(Entrant $entrant)
     {
-        return $this->roundName;
-    }
-
-    /**
-     * @param string $roundName
-     */
-    public function setRoundName($roundName)
-    {
-        $this->roundName = $roundName;
+        return $entrant === $this->loser;
     }
 
     /**
@@ -506,37 +541,5 @@ class Set
     public function setLoserRank($loserRank)
     {
         $this->loserRank = intval($loserRank);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isFinals(): bool
-    {
-        return $this->isFinals;
-    }
-
-    /**
-     * @param bool $isFinals
-     */
-    public function setIsFinals(bool $isFinals)
-    {
-        $this->isFinals = $isFinals;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isGrandFinals(): bool
-    {
-        return $this->isGrandFinals;
-    }
-
-    /**
-     * @param bool $isGrandFinals
-     */
-    public function setIsGrandFinals(bool $isGrandFinals)
-    {
-        $this->isGrandFinals = $isGrandFinals;
     }
 }

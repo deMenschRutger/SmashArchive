@@ -10,6 +10,8 @@
         {% for sets in bracket.iterableBracket %}
 
             <div class="pull-left">
+                <h4>{{ sets|length > 0 ? sets[0].roundName : 'Unknown Round' }}</h4>
+                <br>
 
             {% for set in sets %}
 
@@ -24,6 +26,9 @@
         {% for set in bracket.grandFinalsSets %}
 
             <div class="pull-left">
+                <h4>{{ set.roundName }}</h4>
+                <br>
+
                 {{ macros.set(set) }}
             </div>
 
@@ -36,6 +41,8 @@
         {% for sets in bracket.iterableLosersBracket %}
 
             <div class="pull-left">
+                <h4>{{ sets|length > 0 ? sets[0].roundName : 'Unknown Round' }}</h4>
+                <br>
 
             {% for set in sets %}
 

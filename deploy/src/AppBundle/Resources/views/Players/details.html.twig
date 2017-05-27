@@ -32,29 +32,41 @@
 
                 <h4>{{ phase.name }}</h4>
 
-                <table class="table">
-                    <tbody>
+                {% for set in sort_player_sets(phase.sets) %}
+                    {% if set.status == constant('CoreBundle\\Entity\\Set::STATUS_PLAYED') %}
 
-                    {% for set in sort_player_sets(phase.sets) %}
+                <div class="row">
+                    <div class="col-md-3">
 
-                        <tr>
-                            <td>
-                                <strong>{{ include('entrant.html.twig', { 'entrant': set.winner }) }}</strong>
-                            </td>
-                            <td>
-                                {{ set.isForfeit ? '' : set.winnerScore }}
-                            </td>
-                            <td>{{ include('entrant.html.twig', { 'entrant': set.loser }) }}</td>
-                            <td>
-                                {{ set.isForfeit ? 'DQ' : set.loserScore }}
-                            </td>
-                            <td>{{ set.roundName }}</td>
-                        </tr>
+                        {% if set.entrantOne and set.isWinner(set.entrantOne) %}
+                            <strong>{{ include('entrant.html.twig', { 'entrant': set.entrantOne }) }}</strong>
+                        {% else %}
+                            {{ include('entrant.html.twig', { 'entrant': set.entrantOne }) }}
+                        {% endif %}
 
-                    {% endfor %}
+                    </div>
+                    <div class="col-md-1">
+                        {{ set.entrantOneScore }}
+                    </div>
+                    <div class="col-md-3">
 
-                    </tbody>
-                </table>
+                        {% if set.entrantTwo and set.isWinner(set.entrantTwo) %}
+                            <strong>{{ include('entrant.html.twig', { 'entrant': set.entrantTwo }) }}</strong>
+                        {% else %}
+                            {{ include('entrant.html.twig', { 'entrant': set.entrantTwo }) }}
+                        {% endif %}
+
+                    </div>
+                    <div class="col-md-1">
+                        {{ set.entrantTwoScore }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ set.roundName }}
+                    </div>
+                </div>
+
+                    {% endif %}
+                {% endfor %}
 
             {% endfor %}
 
