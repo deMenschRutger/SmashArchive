@@ -59,7 +59,7 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $command = new GenerateResultsCommand(9);
+        $command = new GenerateResultsCommand(5);
         $this->commandBus->handle($command);
     }
 

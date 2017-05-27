@@ -88,7 +88,7 @@ class GenerateResultsHandler extends AbstractHandler
                     break;
 
                 default:
-                    continue;
+                    continue 2;
             }
 
             $results = array_merge($results, $bracket->getResults($event));

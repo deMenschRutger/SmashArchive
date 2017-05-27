@@ -31,20 +31,20 @@ class Importer
         6 => 6, // 'W6'
         7 => 7, // 'W7'
         8 => 8, // 'W8'
-        9 => 9, // 'L1'
-        10 => -1, // 'L2'
-        11 => -2, // 'L3'
-        12 => -3, // 'L4'
-        13 => -4, // 'L5'
-        14 => -5, // 'L6'
-        15 => -6, // 'L7'
-        16 => -7, // 'L8'
-        17 => -8, // 'L9'
-        18 => -9, // 'L10'
-        19 => -10, // 'L11'
-        20 => -11, // 'L12'
-        21 => -12, // 'L13'
-        22 => -13, // 'L14'
+        9 => -1, // 'L1'
+        10 => -2, // 'L2'
+        11 => -3, // 'L3'
+        12 => -4, // 'L4'
+        13 => -5, // 'L5'
+        14 => -6, // 'L6'
+        15 => -7, // 'L7'
+        16 => -8, // 'L8'
+        17 => -9, // 'L9'
+        18 => -10, // 'L10'
+        19 => -11, // 'L11'
+        20 => -12, // 'L12'
+        21 => -13, // 'L13'
+        22 => -14, // 'L14'
         23 => 1, // 'R1',
         24 => 2, // 'R2',
         25 => 3, // 'R3',
@@ -115,8 +115,8 @@ class Importer
     ];
 
     /**
-     * @param SymfonyStyle $io
-     * @param string $contentDirPath
+     * @param SymfonyStyle  $io
+     * @param string        $contentDirPath
      * @param EntityManager $entityManager
      */
     public function __construct(SymfonyStyle $io, string $contentDirPath, EntityManager $entityManager)
@@ -215,7 +215,7 @@ class Importer
             $entity->setCountry($country);
             $entity->setRegion($player['region']);
             $entity->setCity($player['city']);
-            $entity->setIsCompeting($player['active']);
+            $entity->setIsActive(!$player['hide']);
 
             $this->entityManager->persist($entity);
             $player = $entity;
@@ -307,7 +307,7 @@ class Importer
      */
     protected function getCountryBySmashRankingId($id)
     {
-        if (count($this->countries) === 0 ) {
+        if (count($this->countries) === 0) {
             $this->countries = $this->getContentFromJson('country');
         }
 
@@ -369,8 +369,11 @@ class Importer
             $set->setWinnerScore($match['games_winner']);
             $set->setLoser($entrantTwo);
             $set->setLoserScore($match['games_loser']);
-            $set->setIsForfeit($match['forfeit']);
             $set->setIsRanked($match['publish']);
+
+            if ($match['forfeit']) {
+                $set->setStatus(Set::STATUS_FORFEITED);
+            }
 
             $this->entityManager->persist($set);
 

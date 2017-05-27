@@ -91,7 +91,8 @@ abstract class AbstractScenario
      * @param SymfonyStyle  $io
      * @param EntityManager $entityManager
      */
-    public function __construct(Importer $importer, SymfonyStyle $io, EntityManager $entityManager) {
+    public function __construct(Importer $importer, SymfonyStyle $io, EntityManager $entityManager)
+    {
         $this->importer = $importer;
         $this->io = $io;
         $this->entityManager = $entityManager;

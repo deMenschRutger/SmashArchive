@@ -96,7 +96,7 @@ class Bracket extends SingleEliminationBracket
      */
     public function getGrandFinalsSets()
     {
-        $round = intval($this->getRoundsRequired()) + 1;
+        $round = key($this->grandFinals);
         $sets = [];
 
         for ($i = 0; $i <= 1; $i++) {
