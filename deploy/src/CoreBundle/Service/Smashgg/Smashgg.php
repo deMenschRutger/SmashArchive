@@ -29,7 +29,7 @@ class Smashgg
     public function getTournamentEntities($slug, array $expand = [])
     {
         $client = $this->getClient();
-        $response = $client->get('tournament/'.$slug, [
+        $response = $client->get($slug, [
             'query' => [
                 'expand' => $expand,
             ],
@@ -102,7 +102,7 @@ class Smashgg
     {
         if (!$this->client) {
             $this->client = new Client([
-                'base_uri' => 'https://api.smash.gg',
+                'base_uri' => 'https://api.smash.gg/tournament/',
             ]);
         }
 

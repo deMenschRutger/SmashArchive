@@ -17,16 +17,23 @@ class SmashggCommand
     /**
      * @var array
      */
-    private $events;
+    private $eventIds;
+
+    /**
+     * @var bool
+     */
+    private $force;
 
     /**
      * @param string $slug
-     * @param array  $events
+     * @param array  $eventIds
+     * @param bool   $force
      */
-    public function __construct($slug, $events)
+    public function __construct($slug, $eventIds, $force)
     {
         $this->slug = $slug;
-        $this->events = $events;
+        $this->eventIds = $eventIds;
+        $this->force = $force;
     }
 
     /**
@@ -40,8 +47,16 @@ class SmashggCommand
     /**
      * @return array
      */
-    public function getEvents(): array
+    public function getEventIds(): array
     {
-        return $this->events;
+        return $this->eventIds;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getForce(): bool
+    {
+        return $this->force;
     }
 }

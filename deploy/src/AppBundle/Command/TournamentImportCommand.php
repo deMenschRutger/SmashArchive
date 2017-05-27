@@ -20,6 +20,7 @@ use GuzzleHttp\Client;
 use League\Tactician\CommandBus;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -77,6 +78,12 @@ class TournamentImportCommand extends ContainerAwareCommand
         $this
             ->setName('app:tournament:import')
             ->setDescription('Import a tournament from a third-party')
+            ->addOption(
+                'force',
+                'f',
+                InputOption::VALUE_OPTIONAL,
+                'Whether or not existing data should be overwritten or not.'
+            )
         ;
     }
 
@@ -94,34 +101,50 @@ class TournamentImportCommand extends ContainerAwareCommand
             [ self::PROVIDER_SMASHGG, self::PROVIDER_CHALLONGE, self::PROVIDER_TIO ]
         );
         $provider = $this->io->askQuestion($question);
+        $force = (bool) $input->getOption('force');
 
         if ($provider === self::PROVIDER_SMASHGG) {
-            $this->executeSmashgg();
+            $this->executeSmashgg($force);
         } else {
             $this->io->error('Unfortunately that provider is currently not supported.');
         }
     }
 
     /**
+     * @param bool $force
      * @return void
      */
-    protected function executeSmashgg()
+    protected function executeSmashgg($force)
     {
         $slug = $this->io->ask('Please enter the slug of this tournament');
         $events = $this->smashgg->getTournamentEvents($slug, true);
+
+        $ids = [];
         $answers = [];
 
         foreach ($events as $event) {
+            $ids[$event['name']] = $event['id'];
             $answers[] = $event['name'];
         }
 
-        $question = new ChoiceQuestion('Which events would you like to import?', $answers);
+        $question = new ChoiceQuestion('Please select the IDs of the events you would like to import', $answers);
         $question->setMultiselect(true);
         $selectedEvents = (array) $this->io->askQuestion($question);
 
-        $command = new SmashggCommand($slug, $selectedEvents);
+        foreach ($selectedEvents as &$selectedEvent) {
+            $selectedEvent = $ids[$selectedEvent];
+        }
+
+        $command = new SmashggCommand($slug, $selectedEvents, $force);
         $this->commandBus->handle($command);
     }
+
+
+
+
+
+
+
 
     /**
      * @param InputInterface $input
