@@ -66,14 +66,14 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
     {
         $this->io = new SymfonyStyle($input, $output);
 
-        $command = new GenerateResultsCommand(4, $this->io);
+        $command = new GenerateResultsCommand(2, $this->io);
         $this->commandBus->handle($command);
     }
 
     /**
-     * @param int $eventId
+     * @return void
      */
-    protected function processAllEvent(int $eventId)
+    protected function processAllEvent()
     {
         /** @var Phase[] $phases */
         $phases = $this

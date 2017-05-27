@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Repository;
 
+use CoreBundle\Entity\Event;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -35,5 +36,30 @@ class EventRepository extends EntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    /**
+     * @param Event $event
+     */
+    public function deleteResults(Event $event)
+    {
+        $connection = $this->_em->getConnection();
+        $connection->beginTransaction();
+
+        try {
+            $results = $this->_em->getRepository('CoreBundle:Result')->findBy([
+                'event' => $event,
+            ]);
+
+            foreach ($results as $result) {
+                $this->_em->remove($result);
+            }
+
+            $connection->commit();
+            $this->_em->flush();
+        } catch (\Exception $e) {
+            // TODO Log the expection.
+            $connection->rollBack();
+        }
     }
 }

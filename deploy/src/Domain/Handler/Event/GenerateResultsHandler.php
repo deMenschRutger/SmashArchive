@@ -26,15 +26,17 @@ class GenerateResultsHandler extends AbstractHandler
 
     /**
      * @param GenerateResultsCommand $command
-     *
-     * @TODO Add the combined results of all phases and phase groups and determine the final results.
      */
     public function handle(GenerateResultsCommand $command)
     {
+        $eventId = $command->getEventId();
+
         /** @var EventRepository $eventRepository */
         $eventRepository = $this->getRepository('CoreBundle:Event');
+
         /** @var Event $event */
-        $event = $eventRepository->find($command->getEventId());
+        $event = $eventRepository->find($eventId);
+        $eventRepository->deleteResults($event);
         $phases = $eventRepository->getOrderedPhases($command->getEventId());
 
         if (count($phases) === 0) {

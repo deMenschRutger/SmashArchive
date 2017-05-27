@@ -108,7 +108,9 @@ class Bracket extends SingleEliminationBracket
             $sets[$round][] = $set;
         }
 
-        return $this->matchSetsForRound($sets, $round, $this->getSetsForRound($round))[$round];
+        $setsForRound = $this->grandFinals[$round];
+
+        return $this->matchSetsForRound($sets, $round, $setsForRound)[$round];
     }
 
     /**
@@ -208,7 +210,7 @@ class Bracket extends SingleEliminationBracket
 
         end($this->setsByRound);
         $round = key($this->setsByRound);
-        $this->grandFinals[$round] = current($this->setsByRound);
+        $this->grandFinals[$round] = array_pop($this->setsByRound);
 
         /** @var Set $set */
         foreach ($this->grandFinals[$round] as $set) {
