@@ -1,7 +1,10 @@
 services:
     command.tournament.import:
         class: AppBundle\Command\TournamentImportCommand
-        arguments: ["@doctrine.orm.default_entity_manager"]
+        arguments:
+            - "@tactician.commandbus"
+            - "@doctrine.orm.default_entity_manager"
+            - "@core.service.smashgg"
         tags:
             - { name: console.command }
 

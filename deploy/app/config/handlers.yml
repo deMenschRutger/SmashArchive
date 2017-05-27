@@ -65,3 +65,10 @@ services:
             - { name: "tactician.handler", command: Domain\Command\Event\GenerateResultsCommand }
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    bus.handler.tournament.import.smashgg:
+        class: Domain\Handler\Tournament\Import\SmashggHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Tournament\Import\SmashggCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]

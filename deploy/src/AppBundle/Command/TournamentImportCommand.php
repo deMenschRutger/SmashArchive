@@ -12,13 +12,16 @@ use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Player;
 use CoreBundle\Entity\Set;
 use CoreBundle\Entity\Tournament;
+use CoreBundle\Service\Smashgg\Smashgg;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Domain\Command\Tournament\Import\SmashggCommand;
 use GuzzleHttp\Client;
+use League\Tactician\CommandBus;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -28,6 +31,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class TournamentImportCommand extends ContainerAwareCommand
 {
+    const PROVIDER_SMASHGG = 'smash.gg';
+    const PROVIDER_CHALLONGE = 'Challonge';
+    const PROVIDER_TIO = 'TIO';
+
+    /**
+     * @var CommandBus
+     */
+    protected $commandBus;
+
     /**
      * @var EntityManager
      */
@@ -39,11 +51,20 @@ class TournamentImportCommand extends ContainerAwareCommand
     protected $io;
 
     /**
-     * @param EntityManager $entityManager
+     * @var Smashgg
      */
-    public function __construct(EntityManager $entityManager)
+    protected $smashgg;
+
+    /**
+     * @param CommandBus    $commandBus
+     * @param EntityManager $entityManager
+     * @param Smashgg       $smashgg
+     */
+    public function __construct(CommandBus $commandBus, EntityManager $entityManager, Smashgg $smashgg)
     {
+        $this->commandBus = $commandBus;
         $this->entityManager = $entityManager;
+        $this->smashgg = $smashgg;
 
         parent::__construct();
     }
@@ -55,12 +76,7 @@ class TournamentImportCommand extends ContainerAwareCommand
     {
         $this
             ->setName('app:tournament:import')
-            ->setDescription('Import a tournament from a third-party (like smash.gg)')
-            ->addArgument(
-                'slug',
-                InputArgument::REQUIRED,
-                'The slug of the tournament on smash.gg.'
-            )
+            ->setDescription('Import a tournament from a third-party')
         ;
     }
 
@@ -71,6 +87,51 @@ class TournamentImportCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->io = new SymfonyStyle($input, $output);
+
+        $question = new ChoiceQuestion(
+            'Which provider would you like to use?',
+            [ self::PROVIDER_SMASHGG, self::PROVIDER_CHALLONGE, self::PROVIDER_TIO ]
+        );
+        $provider = $this->io->askQuestion($question);
+
+        if ($provider === self::PROVIDER_SMASHGG) {
+            $this->executeSmashgg();
+        } else {
+            $this->io->error('Unfortunately that provider is currently not supported.');
+        }
+    }
+
+    /**
+     * @return void
+     */
+    protected function executeSmashgg()
+    {
+        $slug = $this->io->ask('Please enter the slug of this tournament');
+        $events = $this->smashgg->getTournamentEvents($slug, true);
+        $answers = [];
+
+        foreach ($events as $event) {
+            $answers[] = $event['name'];
+        }
+
+        $question = new ChoiceQuestion('Which events would you like to import?', $answers);
+        $question->setMultiselect(true);
+        $selectedEvents = (array) $this->io->askQuestion($question);
+
+        $command = new SmashggCommand($slug, $selectedEvents);
+        $this->commandBus->handle($command);
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return void
+     */
+    protected function executeOld(InputInterface $input, OutputInterface $output)
+    {
+        die;
+
         $this->io = new SymfonyStyle($input, $output);
         $this->io->title('Import tournament...');
 
@@ -145,18 +206,18 @@ class TournamentImportCommand extends ContainerAwareCommand
             $phase = $phases[$phaseGroupData['phaseId']];
             $phaseGroup->setPhase($phase);
 
-            $this->processPhaseGroup($phaseGroupId, $phaseGroup);
+//            $this->processPhaseGroup($phaseGroupId, $phaseGroup);
             $toBeUpdatedPhaseGroups[] = $phaseGroup;
         }
 
         $this->io->writeln('Flushing the entity manager...');
-        $this->entityManager->flush();
+//        $this->entityManager->flush();
 
         foreach ($toBeUpdatedPhaseGroups as $phaseGroup) {
-            $this->updatePhaseGroup($phaseGroup);
+//            $this->updatePhaseGroup($phaseGroup);
         }
 
-        $this->entityManager->flush();
+//        $this->entityManager->flush();
         $this->io->success('Successfully imported the tournament!');
     }
 
