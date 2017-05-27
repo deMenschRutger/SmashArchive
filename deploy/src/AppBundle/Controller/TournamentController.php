@@ -4,7 +4,8 @@ declare(strict_types = 1);
 
 namespace AppBundle\Controller;
 
-use CoreBundle\Bracket\DoubleElimination\Bracket;
+use CoreBundle\Bracket\SingleElimination\Bracket as SingleEliminationBracket;
+use CoreBundle\Bracket\DoubleElimination\Bracket as DoubleEliminationBracket;
 use CoreBundle\Controller\AbstractDefaultController;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Repository\PhaseGroupRepository;
@@ -85,16 +86,18 @@ class TournamentController extends AbstractDefaultController
             throw new NotFoundHttpException('The phase group could not be found.');
         }
 
-        $bracket = new Bracket($phaseGroup);
         $tournament = $phaseGroup->getPhase()->getEvent()->getTournament();
+        $bracket = null;
         $template = 'not-supported';
 
         switch ($phaseGroup->getType()) {
             case PhaseGroup::TYPE_SINGLE_ELIMINATION:
+                $bracket = new SingleEliminationBracket($phaseGroup);
                 $template = 'single-elimination';
                 break;
 
             case PhaseGroup::TYPE_DOUBLE_ELIMINATION:
+                $bracket = new DoubleEliminationBracket($phaseGroup);
                 $template = 'double-elimination';
                 break;
         }
