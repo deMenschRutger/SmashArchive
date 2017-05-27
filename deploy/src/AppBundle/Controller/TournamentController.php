@@ -67,7 +67,12 @@ class TournamentController extends AbstractDefaultController
      */
     public function bracketsAction($slug)
     {
-        return new Response('This will contain an overview of the brackets for this tournament');
+        $command = new DetailsCommand($slug, true);
+        $tournament = $this->commandBus->handle($command);
+
+        return $this->render('AppBundle:Tournaments:brackets.html.twig', [
+            'tournament' => $tournament,
+        ]);
     }
 
     /**
