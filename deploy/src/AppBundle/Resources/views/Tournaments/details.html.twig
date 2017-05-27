@@ -3,12 +3,23 @@
 {% block body %}
 
 <div class="row">
-    <div class="col-md-3 well">
+    <div class="col-md-3">
 
-        <h4>{{ tournament.name }}</h4>
+        <div class="well">
+            <h4>{{ tournament.name }}</h4>
 
-        Location: {{ tournament.location }}<br>
-        Date: {{ tournament.dateStart|date('Y-m-d') }}<br>
+            Location: {{ tournament.location }}<br>
+            Date: {{ tournament.dateStart|date('Y-m-d') }}<br>
+        </div>
+
+        <ul class="list-group">
+            <li class="list-group-item">
+                <a href="{{ path('tournaments_details', { 'slug': tournament.slug }) }}">Results</a>
+            </li>
+            <li class="list-group-item">
+                <a href="">Brackets</a>
+            </li>
+        </ul>
 
     </div>
     <div class="col-md-9 ">

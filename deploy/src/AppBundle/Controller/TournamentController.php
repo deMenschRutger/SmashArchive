@@ -6,12 +6,14 @@ namespace AppBundle\Controller;
 
 use CoreBundle\Bracket\DoubleElimination\Bracket;
 use CoreBundle\Controller\AbstractDefaultController;
-use CoreBundle\Entity\Tournament;
+use CoreBundle\Entity\PhaseGroup;
+use CoreBundle\Repository\PhaseGroupRepository;
 use Domain\Command\Tournament\DetailsCommand;
 use Domain\Command\Tournament\OverviewCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -61,20 +63,45 @@ class TournamentController extends AbstractDefaultController
      * @return Response
      *
      * @Route("/{slug}/brackets", name="tournaments_brackets")
-     *
-     * @TODO Make the bracket loading dynamic based on phase group id.
-     * @TODO Optimize the database queries.
      */
-    public function bracketAction($slug)
+    public function bracketsAction($slug)
     {
-        $command = new DetailsCommand($slug, true);
-        /** @var Tournament $tournament */
-        $tournament = $this->commandBus->handle($command);
+        return new Response('This will contain an overview of the brackets for this tournament');
+    }
 
-        $phaseGroup = $this->getDoctrine()->getManager()->getRepository('CoreBundle:PhaseGroup')->find(5);
+    /**
+     * @param string $phaseGroupId
+     * @return Response
+     *
+     * @Route("/{slug}/brackets/{phaseGroupId}", name="tournaments_brackets_details")
+     */
+    public function bracketDetailAction($phaseGroupId)
+    {
+        /** @var PhaseGroupRepository $repository */
+        $repository = $this->getRepository('CoreBundle:PhaseGroup');
+        $phaseGroup = $repository->findWithTournament($phaseGroupId);
+
+        if (!$phaseGroup instanceof PhaseGroup) {
+            throw new NotFoundHttpException('The phase group could not be found.');
+        }
+
         $bracket = new Bracket($phaseGroup);
+        $tournament = $phaseGroup->getPhase()->getEvent()->getTournament();
+        $template = 'not-supported';
 
-        return $this->render('AppBundle:Tournaments/brackets:double-elimination.html.twig', [
+        switch ($phaseGroup->getType()) {
+            case PhaseGroup::TYPE_SINGLE_ELIMINATION:
+                $template = 'single-elimination';
+                break;
+
+            case PhaseGroup::TYPE_DOUBLE_ELIMINATION:
+                $template = 'double-elimination';
+                break;
+        }
+
+        $template = "AppBundle:Tournaments/brackets:{$template}.html.twig";
+
+        return $this->render($template, [
             'bracket'    => $bracket,
             'tournament' => $tournament,
         ]);

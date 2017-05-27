@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Controller;
 
+use Doctrine\Common\Persistence\ObjectRepository;
 use JMS\Serializer\SerializationContext;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use League\Tactician\CommandBus;
@@ -34,6 +35,15 @@ abstract class AbstractDefaultController extends Controller
     public function setCommandBus($commandBus)
     {
         $this->commandBus = $commandBus;
+    }
+
+    /**
+     * @param string $name
+     * @return ObjectRepository
+     */
+    public function getRepository(string $name)
+    {
+        return $this->getDoctrine()->getManager()->getRepository($name);
     }
 
     /**
