@@ -70,11 +70,20 @@ class Smashgg
 
     /**
      * @param string $slug
+     * @param bool   $filterInvalidGames
      * @return array
      */
-    public function getTournamentVideogames($slug)
+    public function getTournamentVideogames($slug, $filterInvalidGames = false)
     {
-        return $this->getTournamentEntities($slug, ['event'])['videogame'];
+        $games =  $this->getTournamentEntities($slug, ['event'])['videogame'];
+
+        if ($filterInvalidGames) {
+            $games = array_filter($games, function ($game) {
+                return in_array($game['id'], self::VALID_GAME_IDS);
+            });
+        }
+
+        return $games;
     }
 
     /**
@@ -92,7 +101,7 @@ class Smashgg
      */
     public function getTournamentGroups($slug)
     {
-        return $this->getTournamentEntities($slug, ['group'])['group'];
+        return $this->getTournamentEntities($slug, ['groups'])['groups'];
     }
 
     /**

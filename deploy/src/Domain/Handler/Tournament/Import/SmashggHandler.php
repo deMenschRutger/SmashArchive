@@ -5,33 +5,98 @@ declare(strict_types = 1);
 namespace Domain\Handler\Tournament\Import;
 
 use CoreBundle\Entity\Event;
+use CoreBundle\Entity\Game;
+use CoreBundle\Entity\Phase;
+use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Tournament;
+use CoreBundle\Service\Smashgg\Smashgg;
 use Domain\Command\Tournament\Import\SmashggCommand;
 use Domain\Handler\AbstractHandler;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
+ *
+ * @TODO Find a way to preserve the phase group ID when re-importing events (for SEO purposes).
  */
 class SmashggHandler extends AbstractHandler
 {
+    /**
+     * @var Smashgg
+     */
+    protected $smashgg;
+
     /**
      * @var Tournament
      */
     protected $tournament;
 
     /**
+     * @var array
+     */
+    protected $games = [];
+
+    /**
+     * @var array
+     */
+    protected $events = [];
+
+    /**
+     * @var array
+     */
+    protected $phases = [];
+
+    /**
+     * @var array
+     */
+    protected $phaseGroups = [];
+
+    /**
+     * @return Smashgg
+     */
+    public function getSmashgg()
+    {
+        return $this->smashgg;
+    }
+
+    /**
+     * @param Smashgg $smashgg
+     */
+    public function setSmashgg(Smashgg $smashgg)
+    {
+        $this->smashgg = $smashgg;
+    }
+
+    /**
+     * Example slugs:
+     *
+     * 'arcamelee-1'
+     * 'syndicate-2016'
+     * 'garelaf-x'
+     *
      * @param SmashggCommand $command
+     *
+     * @TODO Update tournament name from data received from smash.gg.
      */
     public function handle(SmashggCommand $command)
     {
-        $this->tournament = $this->getTournament($command->getSlug());
+        $eventIds = $command->getEventIds();
 
-        $this->handleExistingEvents($command->getEventIds(), $command->getForce());
+        $this->tournament = $this->getTournament($command->getSlug());
+        $this->handleExistingEvents($eventIds, $command->getForce());
+
+        $this->processGames();
+        $this->processEvents($eventIds);
+        $this->processPhases();
+        $this->processGroups();
+
+        $this->entityManager->flush();
     }
 
     /**
      * @param string $slug
      * @return Tournament
+     *
+     * @TODO Check with smash.gg if the tournament is actually complete.
      */
     protected function getTournament($slug)
     {
@@ -42,6 +107,8 @@ class SmashggHandler extends AbstractHandler
         if (!$tournament instanceof Tournament) {
             $tournament = new Tournament();
             $tournament->setSmashggSlug($slug);
+            $tournament->setIsActive(true);
+            $tournament->setIsComplete(true);
 
             $this->entityManager->persist($tournament);
         }
@@ -55,6 +122,7 @@ class SmashggHandler extends AbstractHandler
      */
     protected function handleExistingEvents(array $eventIds, bool $force = false)
     {
+        /** @var Event[] $events */
         $events = $this->getRepository('CoreBundle:Event')->findBy([
             'smashggId' => $eventIds,
         ]);
@@ -62,7 +130,6 @@ class SmashggHandler extends AbstractHandler
         if (count($events) > 0 && !$force) {
             $names = [];
 
-            /** @var Event $event */
             foreach ($events as $event) {
                 $names[] = $event->getName();
             }
@@ -75,5 +142,159 @@ class SmashggHandler extends AbstractHandler
 
             throw new \InvalidArgumentException(sprintf($message, join(', ', $names)));
         }
+
+        foreach ($events as $event) {
+            $this->entityManager->remove($event);
+        }
+
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @return void
+     */
+    protected function processGames()
+    {
+        $games = $this->smashgg->getTournamentVideogames($this->tournament->getSmashggSlug(), true);
+
+        foreach ($games as $gameData) {
+            $gameId = $gameData['id'];
+
+            $game = $this->findGame($gameId);
+            $game->setName($gameData['name']);
+            $game->setDisplayName($gameData['displayName']);
+
+            $this->games[$gameId] = $game;
+        }
+    }
+
+    /**
+     * @param array $eventIds
+     * @return void
+     */
+    protected function processEvents(array $eventIds)
+    {
+        $events = $this->smashgg->getTournamentEvents($this->tournament->getSmashggSlug(), true);
+        $events = array_filter($events, function ($event) use ($eventIds) {
+            return in_array($event['id'], $eventIds);
+        });
+
+        foreach ($events as $eventData) {
+            $eventId = $eventData['id'];
+            $game = $this->findGame($eventData['videogameId']);
+
+            $event = new Event();
+            $event->setSmashggId($eventId);
+            $event->setTournament($this->tournament);
+            $event->setName($eventData['name']);
+            $event->setDescription($eventData['description']);
+            $event->setGame($game);
+
+            $this->entityManager->persist($event);
+            $this->events[$eventId] = $event;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    protected function processPhases()
+    {
+        $phases = $this->smashgg->getTournamentPhases($this->tournament->getSmashggSlug());
+
+        foreach ($phases as $phaseData) {
+            $phaseId = $phaseData['id'];
+            $event = $this->findEvent($phaseData['eventId']);
+
+            if (!$event instanceof Event) {
+                continue;
+            }
+
+            $phase = new Phase();
+            $phase->setSmashggId($phaseId);
+            $phase->setEvent($event);
+            $phase->setName($phaseData['name']);
+            $phase->setPhaseOrder($phaseData['phaseOrder']);
+
+            $this->entityManager->persist($phase);
+            $this->phases[$phaseId] = $phase;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    protected function processGroups()
+    {
+        $groups = $this->smashgg->getTournamentGroups($this->tournament->getSmashggSlug());
+
+        foreach ($groups as $phaseGroupData) {
+            $phaseGroupId = $phaseGroupData['id'];
+            $phase = $this->findPhase($phaseGroupData['phaseId']);
+
+            if (!$phase instanceof Phase) {
+                continue;
+            }
+
+            $phaseGroup = new PhaseGroup();
+            $phaseGroup->setSmashggId($phaseGroupId);
+            $phaseGroup->setPhase($phase);
+            $phaseGroup->setName($phaseGroupData['displayIdentifier']);
+            $phaseGroup->setType($phaseGroupData['groupTypeId']);
+
+            $this->entityManager->persist($phaseGroup);
+
+            // TODO Process the phase groups (see TournamentImportCommand).
+        }
+    }
+
+    /**
+     * @param int $smashggId
+     * @return Game
+     */
+    protected function findGame(int $smashggId): Game
+    {
+        if (array_key_exists($smashggId, $this->games)) {
+            return $this->games[$smashggId];
+        }
+
+        $game = $this->getRepository('CoreBundle:Game')->findOneBy([
+            'smashggId' => $smashggId,
+        ]);
+
+        if (!$game instanceof Game) {
+            $game = new Game();
+            $game->setSmashggId($smashggId);
+
+            $this->entityManager->persist($game);
+        }
+
+        return $game;
+    }
+
+    /**
+     * @param int $smashggId
+     * @return Event|null
+     */
+    protected function findEvent(int $smashggId)
+    {
+        if (array_key_exists($smashggId, $this->events)) {
+            return $this->events[$smashggId];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param int $smashggId
+     * @return Phase|null
+     */
+    protected function findPhase(int $smashggId)
+    {
+        if (array_key_exists($smashggId, $this->phases)) {
+            return $this->phases[$smashggId];
+        }
+
+        return null;
     }
 }
