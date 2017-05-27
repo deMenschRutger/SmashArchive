@@ -106,6 +106,7 @@ class TournamentController extends AbstractDefaultController
 
         return $this->render($template, [
             'bracket'    => $bracket,
+            'phaseGroup' => $phaseGroup,
             'tournament' => $tournament,
         ]);
     }

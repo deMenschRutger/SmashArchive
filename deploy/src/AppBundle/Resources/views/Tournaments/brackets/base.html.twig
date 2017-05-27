@@ -3,8 +3,22 @@
 {% block body %}
 
 <div class="row">
+    <ol class="breadcrumb">
+        <li>
+            <a href="{{ path('homepage') }}">Home</a>
+        </li>
+        <li>
+            <a href="{{ path('tournaments_details', { 'slug': tournament.slug }) }}">Tournament</a>
+        </li>
+        <li class="active">
+            {{ phaseGroup.phase.event.name }}
+        </li>
+        <li class="active">
+            {{ phaseGroup.phase.name }}
+        </li>
+    </ol>
     <div class="col-md-12">
-        <h2>Brackets</h2>
+        <h2>{{ phaseGroup.extendedName }}</h2>
     </div>
 
     {% block bracket %}{% endblock %}

@@ -162,6 +162,20 @@ class PhaseGroup
     /**
      * @return string
      */
+    public function getExtendedName(): string
+    {
+        $phase = $this->getPhase();
+
+        if (count($phase->getPhaseGroups()) > 1) {
+            return sprintf('%s - %s', $phase->getName(), $this->getName());
+        }
+
+        return $phase->getName();
+    }
+
+    /**
+     * @return string
+     */
     public function getResultsPage()
     {
         return $this->resultsPage;
