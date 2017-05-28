@@ -1,24 +1,92 @@
 {% macro set(set) %}
+    {% import _self as macros %}
 
     <div class="bracket-set">
         <div class="bracket-set-entrant-one">
+            <div class="bracket-set-entrant-name pull-left">
 
-            {% if set.entrantOne and set.isWinner(set.entrantOne) %}
-                <strong>{{ set.entrantOneName }} ({{ set.winnerScore }})</strong>
-            {% else %}
-                {{ set.entrantOneName }} ({{ set.loserScore }})
-            {% endif %}
+                {% if set.entrantOne and set.isWinner(set.entrantOne) %}
+                    <strong>{{ macros.entrant(set.entrantOne) }}</strong>
+                {% else %}
+                    {{ macros.entrant(set.entrantOne) }}
+                {% endif %}
 
+            </div>
+            <div class="bracket-set-entrant-score pull-left">
+
+                {% if set.winnerScore is not null %}
+
+                    {% if set.entrantOne and set.isWinner(set.entrantOne) %}
+                        <strong>{{ set.winnerScore }}</strong>
+                    {% else %}
+                        {{ set.loserScore }}
+                    {% endif %}
+
+                {% else %}
+
+                    {% if set.entrantOne and set.isWinner(set.entrantOne) %}
+                        <strong>W</strong>
+                    {% else %}
+                        L
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
         </div>
         <div class="bracket-set-entrant-two">
+            <div class="bracket-set-entrant-name pull-left">
 
-            {% if set.entrantTwo and set.isWinner(set.entrantTwo) %}
-                <strong>{{ set.entrantTwoName }} ({{ set.winnerScore }})</strong>
-            {% else %}
-                {{ set.entrantTwoName }} ({{ set.loserScore }})
-            {% endif %}
+                {% if set.entrantTwo and set.isWinner(set.entrantTwo) %}
+                    <strong>{{ macros.entrant(set.entrantTwo) }}</strong>
+                {% else %}
+                    {{ macros.entrant(set.entrantTwo) }}
+                {% endif %}
 
+            </div>
+            <div class="bracket-set-entrant-score pull-left">
+
+                {% if set.winnerScore is not null %}
+
+                    {% if set.entrantTwo and set.isWinner(set.entrantTwo) %}
+                        <strong>{{ set.winnerScore }}</strong>
+                    {% else %}
+                        {{ set.loserScore }}
+                    {% endif %}
+
+                {% else %}
+
+                    {% if set.entrantTwo and set.isWinner(set.entrantTwo) %}
+                        <strong>W</strong>
+                    {% else %}
+                        L
+                    {% endif %}
+
+                {% endif %}
+
+
+            </div>
         </div>
     </div>
+
+{% endmacro %}
+
+{% macro entrant(entrant) %}
+
+    {% if entrant %}
+        {% if entrant.isSinglePlayer %}
+
+            <a href="{{ path('player_details', { 'slug': entrant.players[0].slug } )}}">{{ entrant.name }}</a>
+
+        {% else %}
+
+            {{ entrant.name }}
+
+        {% endif %}
+    {% else %}
+
+        bye
+
+    {% endif %}
 
 {% endmacro %}

@@ -11,7 +11,9 @@
             <a href="{{ path('tournaments_details', { 'slug': tournament.slug }) }}">Tournament</a>
         </li>
         <li class="active">
-            {{ phaseGroup.phase.event.name }}
+            <a href="{{ path('tournaments_brackets', { 'slug': tournament.slug }) }}">
+                {{ phaseGroup.phase.event.name }}
+            </a>
         </li>
         <li class="active">
             {{ phaseGroup.phase.name }}

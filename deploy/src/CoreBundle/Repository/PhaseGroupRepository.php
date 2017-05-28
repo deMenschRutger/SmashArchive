@@ -20,12 +20,14 @@ class PhaseGroupRepository extends EntityRepository
     {
         return $this
             ->createQueryBuilder('pg')
-            ->select('pg, s, en1, en2, p, ev, t')
+            ->select('pg, s, en1, pl1, en2, pl2, ph, ev, t')
             ->join('pg.sets', 's')
             ->join('s.entrantOne', 'en1')
+            ->join('en1.players', 'pl1')
             ->join('s.entrantTwo', 'en2')
-            ->join('pg.phase', 'p')
-            ->join('p.event', 'ev')
+            ->join('en2.players', 'pl2')
+            ->join('pg.phase', 'ph')
+            ->join('ph.event', 'ev')
             ->join('ev.tournament', 't')
             ->where('pg.id = :id')
             ->setParameter('id', $id)

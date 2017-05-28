@@ -160,5 +160,12 @@ class Entrant
         $player->addEntrant($this);
         $this->players[] = $player;
     }
-}
 
+    /**
+     * @return bool
+     */
+    public function isSinglePlayer()
+    {
+        return count($this->getPlayers()) === 1;
+    }
+}
