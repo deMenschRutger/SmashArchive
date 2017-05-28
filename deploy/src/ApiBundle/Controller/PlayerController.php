@@ -28,10 +28,11 @@ class PlayerController extends AbstractDefaultController
     public function indexAction(Request $request)
     {
         $tag = $request->get('tag');
+        $location = $request->get('location');
         $page = $request->get('page');
         $limit = $request->get('limit');
 
-        $command = new OverviewCommand($tag, $page, $limit);
+        $command = new OverviewCommand($tag, $location, $page, $limit);
         $pagination = $this->commandBus->handle($command);
 
         return $this->buildPaginatedResponse($pagination, 'players_overview');

@@ -28,10 +28,11 @@ class TournamentController extends AbstractDefaultController
     public function indexAction(Request $request)
     {
         $name = $request->get('name');
+        $location = $request->get('location');
         $page = $request->get('page');
         $limit = $request->get('limit');
 
-        $command = new OverviewCommand($name, $page, $limit, 'dateStart', 'DESC');
+        $command = new OverviewCommand($name, $location, $page, $limit, 'dateStart', 'desc');
         $pagination = $this->commandBus->handle($command);
 
         return $this->buildPaginatedResponse($pagination, 'tournaments_overview');
