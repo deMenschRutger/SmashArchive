@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace AppBundle\Controller;
 
+use AppBundle\Form\TournamentsType;
 use CoreBundle\Bracket\SingleElimination\Bracket as SingleEliminationBracket;
 use CoreBundle\Bracket\DoubleElimination\Bracket as DoubleEliminationBracket;
 use CoreBundle\Controller\AbstractDefaultController;
@@ -32,13 +33,30 @@ class TournamentController extends AbstractDefaultController
     public function indexAction(Request $request)
     {
         $name = $request->get('name');
+        $location = $request->get('location');
         $page = $request->get('page');
         $limit = $request->get('limit');
 
-        $command = new OverviewCommand($name, $page, $limit, 'dateStart', 'desc');
+        $form = $this->createForm(TournamentsType::class, [
+            'name' => $name,
+            'location' => $location,
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $parameters = $form->getData();
+
+            return $this->redirectToRoute('tournaments_overview', [
+                'name' => $parameters['name'],
+                'location' => $parameters['location'],
+            ]);
+        }
+
+        $command = new OverviewCommand($name, $location, $page, $limit, 'dateStart', 'desc');
         $pagination = $this->commandBus->handle($command);
 
         return $this->render('AppBundle:Tournaments:overview.html.twig', [
+            'form' => $form->createView(),
             'pagination' => $pagination,
         ]);
     }

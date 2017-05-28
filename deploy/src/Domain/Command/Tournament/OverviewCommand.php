@@ -20,6 +20,11 @@ class OverviewCommand
     private $name;
 
     /**
+     * @var string
+     */
+    private $location;
+
+    /**
      * @var int
      *
      * @Assert\Range(min=1)
@@ -49,6 +54,7 @@ class OverviewCommand
 
     /**
      * @param string $name
+     * @param string $location
      * @param int    $page
      * @param int    $limit
      * @param string $sort
@@ -58,12 +64,14 @@ class OverviewCommand
      */
     public function __construct(
         $name = null,
+        $location = null,
         $page = self::DEFAULT_PAGE,
         $limit = self::DEFAULT_LIMIT,
         $sort = 'name',
         $order = 'asc'
     ) {
         $this->name = $name;
+        $this->location = $location;
         $this->page = $page ? intval($page) : self::DEFAULT_PAGE;
         $this->limit = $limit ? intval($limit) : self::DEFAULT_LIMIT;
         $this->sort = $sort;
@@ -76,6 +84,14 @@ class OverviewCommand
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->location;
     }
 
     /**

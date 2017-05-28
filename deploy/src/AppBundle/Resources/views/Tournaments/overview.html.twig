@@ -1,9 +1,18 @@
 {% extends 'AppBundle::layout.html.twig' %}
 
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
 {% block body %}
 
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-3 well">
+        <h3>Tournaments</h3>
+        <br>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+    </div>
+    <div class="col-md-9">
         <table class="table">
             <thead>
                 <tr>
@@ -17,12 +26,13 @@
     {% for tournament in pagination %}
 
         <tr>
-            <td>{{ tournament.name }}</td>
+            <td>
+                <a href="{{ url('tournaments_details', { 'slug': tournament.slug }) }}">
+                    {{ tournament.name }}
+                </a>
+            </td>
             <td>{{ tournament.location }}</td>
             <td>{{ tournament.dateStart|date('Y-m-d') }}</td>
-            <td>
-                <a href="{{ url('tournaments_details', { 'slug': tournament.slug }) }}">Details</a>
-            </td>
         </tr>
 
     {% endfor %}

@@ -34,6 +34,7 @@ class OverviewHandler extends AbstractHandler
     public function handle(OverviewCommand $command)
     {
         $name = $command->getName();
+        $location = $command->getLocation();
         $page = $command->getPage();
         $limit = $command->getLimit();
 
@@ -50,6 +51,14 @@ class OverviewHandler extends AbstractHandler
 
         if ($name) {
             $queryBuilder->andWhere('t.name LIKE :name')->setParameter('name', "%{$name}%");
+        }
+
+        if ($location) {
+            $queryBuilder->andWhere($queryBuilder->expr()->orX(
+                $queryBuilder->expr()->like('c.name', ':location'),
+                $queryBuilder->expr()->like('t.region', ':location'),
+                $queryBuilder->expr()->like('t.city', ':location')
+            ))->setParameter('location', "%{$location}%");
         }
 
         return $this->paginator->paginate($queryBuilder->getQuery(), $page, $limit);
