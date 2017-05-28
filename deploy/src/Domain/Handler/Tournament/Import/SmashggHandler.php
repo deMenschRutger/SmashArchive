@@ -110,8 +110,6 @@ class SmashggHandler extends AbstractHandler
      * 'garelaf-x'
      *
      * @param SmashggCommand $command
-     *
-     * @TODO Update tournament name from data received from smash.gg.
      */
     public function handle(SmashggCommand $command)
     {
@@ -381,6 +379,8 @@ class SmashggHandler extends AbstractHandler
 
             if ($set->getLoserScore() === -1) {
                 $set->setStatus(Set::STATUS_DQED);
+            } elseif ($set->getWinner() === null && $set->getLoser() === null) {
+                $set->setStatus(Set::STATUS_NOT_PLAYED);
             }
         }
     }

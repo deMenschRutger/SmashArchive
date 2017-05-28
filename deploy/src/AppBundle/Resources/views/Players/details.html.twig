@@ -45,8 +45,14 @@
                         {% endif %}
 
                     </div>
-                    <div class="col-md-1">
-                        {{ set.entrantOneScore }}
+                    <div class="col-md-1 text-center">
+
+                        {% if not set.entrantOneScore is null %}
+                            {{ set.entrantOneScore }}
+                        {% else %}
+                            {{ set.entrantOne and set.isWinner(set.entrantOne) ? 'W' : 'L' }}
+                        {% endif %}
+
                     </div>
                     <div class="col-md-3">
 
@@ -57,8 +63,14 @@
                         {% endif %}
 
                     </div>
-                    <div class="col-md-1">
-                        {{ set.entrantTwoScore }}
+                    <div class="col-md-1 text-center">
+
+                        {% if not set.entrantTwoScore is null %}
+                            {{ set.entrantTwoScore }}
+                        {% else %}
+                            {{ set.entrantTwo and set.isWinner(set.entrantTwo) ? 'W' : 'L' }}
+                        {% endif %}
+
                     </div>
                     <div class="col-md-4">
                         {{ set.roundName }}
