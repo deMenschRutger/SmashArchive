@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace AppBundle\Controller;
 
+use AppBundle\Form\PlayersType;
 use CoreBundle\Controller\AbstractDefaultController;
 use Domain\Command\Player\DetailsCommand;
 use Domain\Command\Player\OverviewCommand;
@@ -29,13 +30,30 @@ class PlayerController extends AbstractDefaultController
     public function overviewAction(Request $request)
     {
         $tag = $request->get('tag');
+        $location = $request->get('location');
         $page = $request->get('page');
         $limit = $request->get('limit');
 
-        $command = new OverviewCommand($tag, $page, $limit);
+        $form = $this->createForm(PlayersType::class, [
+            'tag' => $tag,
+            'location' => $location,
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $parameters = $form->getData();
+
+            return $this->redirectToRoute('players_overview', [
+                'tag' => $parameters['tag'],
+                'location' => $parameters['location'],
+            ]);
+        }
+
+        $command = new OverviewCommand($tag, $location, $page, $limit);
         $pagination = $this->commandBus->handle($command);
 
         return $this->render('AppBundle:Players:overview.html.twig', [
+            'form' => $form->createView(),
             'pagination' => $pagination,
         ]);
     }

@@ -20,6 +20,11 @@ class OverviewCommand
     private $tag;
 
     /**
+     * @var string
+     */
+    private $location;
+
+    /**
      * @var int
      *
      * @Assert\Range(min=1)
@@ -35,6 +40,7 @@ class OverviewCommand
 
     /**
      * @param string $tag
+     * @param string $location
      * @param int    $page
      * @param int    $limit
      *
@@ -42,10 +48,12 @@ class OverviewCommand
      */
     public function __construct(
         $tag = null,
+        $location = null,
         $page = self::DEFAULT_PAGE,
         $limit = self::DEFAULT_LIMIT
     ) {
         $this->tag = $tag;
+        $this->location = $location;
         $this->page = $page ? intval($page) : self::DEFAULT_PAGE;
         $this->limit = $limit ? intval($limit) : self::DEFAULT_LIMIT;
     }
@@ -56,6 +64,14 @@ class OverviewCommand
     public function getTag()
     {
         return $this->tag;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->location;
     }
 
     /**

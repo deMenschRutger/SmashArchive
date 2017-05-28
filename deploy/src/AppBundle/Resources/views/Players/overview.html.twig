@@ -1,14 +1,22 @@
 {% extends 'AppBundle::layout.html.twig' %}
 
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
 {% block body %}
 
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-3 well">
+        <h3>Players</h3>
+        <br>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+    </div>
+    <div class="col-md-9">
         <table class="table">
             <thead>
                 <tr>
                     <th>Tag</th>
-                    <th>Name</th>
                     <th>Location</th>
                     <th>Nationality</th>
                     <th></th>
@@ -18,13 +26,13 @@
     {% for player in pagination %}
 
         <tr>
-            <td>{{ player.gamerTag }}</td>
-            <td>{{ player.name }}</td>
+            <td>
+                <a href="{{ url('player_details', { 'slug': player.slug }) }}">
+                    {{ player.gamerTag }}
+                </a>
+            </td>
             <td>{{ player.location }}</td>
             <td>{{ player.nationality }}</td>
-            <td>
-                <a href="{{ url('player_details', { 'slug': player.slug }) }}">Profile</a>
-            </td>
         </tr>
 
     {% endfor %}
