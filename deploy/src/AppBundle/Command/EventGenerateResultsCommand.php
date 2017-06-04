@@ -9,9 +9,9 @@ use Doctrine\ORM\EntityManager;
 use Domain\Command\Event\GenerateResultsCommand;
 use League\Tactician\CommandBus;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -46,6 +46,11 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
         $this
             ->setName('app:event:generate:results')
             ->setDescription('Generate the complete results for an entire event.')
+            ->addArgument(
+                'event-id',
+                InputArgument::REQUIRED,
+                'The ID of the event you wish to generate results for.'
+            );
         ;
     }
 
@@ -54,12 +59,12 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
      * @param OutputInterface $output
      * @return void
      *
-     * @TODO Add option to input event ID on the cli.
      * @TODO Add option to generate results for all events at once.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $command = new GenerateResultsCommand(1);
+        $eventId = intval($input->getArgument('event-id'));
+        $command = new GenerateResultsCommand($eventId);
         $this->commandBus->handle($command);
     }
 
