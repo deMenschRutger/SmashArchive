@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Domain\Handler\Tournament;
 
+use CoreBundle\Entity\Result;
+use CoreBundle\Repository\ResultRepository;
 use Domain\Command\Tournament\ResultsCommand;
 use Domain\Handler\AbstractHandler;
 
@@ -18,21 +20,31 @@ class ResultsHandler extends AbstractHandler
      */
     public function handle(ResultsCommand $command)
     {
-        $results = $this
-            ->entityManager
-            ->createQueryBuilder()
-            ->select('r, en, p')
-            ->from('CoreBundle:Result', 'r')
-            ->join('r.entrant', 'en')
-            ->join('en.players', 'p')
-            ->join('r.event', 'e')
-            ->where('e.id = :id')
-            ->setParameter('id', $command->getEventId())
-            ->orderBy('r.rank, en.name')
-            ->getQuery()
-            ->getResult()
-        ;
+        /** @var ResultRepository $resultRepository */
+        $resultRepository = $this->getRepository('CoreBundle:Result');
+        $tournamentId = $command->getTournamentId();
+        $eventId = $command->getEventId();
 
-        return $results;
+        if ($tournamentId) {
+            $resultsPerEvent = [];
+            $results = $resultRepository->findForTournament($tournamentId);
+
+            /** @var Result $result */
+            foreach ($results as $result) {
+                $eventId = $result->getEvent()->getId();
+
+                if (!array_key_exists($eventId, $resultsPerEvent)) {
+                    $resultsPerEvent[$eventId] = [];
+                }
+
+                $resultsPerEvent[$eventId][] = $result;
+            }
+
+            return $resultsPerEvent;
+        } elseif ($eventId) {
+            return $resultRepository->findForEvent($eventId);
+        }
+
+        return [];
     }
 }

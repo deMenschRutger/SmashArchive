@@ -60,7 +60,7 @@ class TournamentController extends AbstractDefaultController
      */
     public function resultsAction($eventId)
     {
-        $command = new ResultsCommand($eventId);
+        $command = new ResultsCommand(null, $eventId);
         $tournament = $this->commandBus->handle($command);
 
         return $this->buildResponse($tournament, 'tournaments_results');

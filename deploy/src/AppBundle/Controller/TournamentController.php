@@ -12,6 +12,7 @@ use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Repository\PhaseGroupRepository;
 use Domain\Command\Tournament\DetailsCommand;
 use Domain\Command\Tournament\OverviewCommand;
+use Domain\Command\Tournament\ResultsCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -72,7 +73,11 @@ class TournamentController extends AbstractDefaultController
         $command = new DetailsCommand($slug, true);
         $tournament = $this->commandBus->handle($command);
 
+        $command = new ResultsCommand($tournament->getId());
+        $results = $this->commandBus->handle($command);
+
         return $this->render('AppBundle:Tournaments:details.html.twig', [
+            'results' => $results,
             'tournament' => $tournament,
         ]);
     }
@@ -85,7 +90,7 @@ class TournamentController extends AbstractDefaultController
      */
     public function bracketsAction($slug)
     {
-        $command = new DetailsCommand($slug, true);
+        $command = new DetailsCommand($slug, false);
         $tournament = $this->commandBus->handle($command);
 
         return $this->render('AppBundle:Tournaments:brackets.html.twig', [
