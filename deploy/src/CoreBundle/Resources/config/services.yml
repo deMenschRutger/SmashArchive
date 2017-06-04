@@ -8,10 +8,17 @@ services:
             - [ "setKey", [ "%encryption_key%" ] ]
 #            - [ "setSalt", [ "%encryption_salt%" ] ] # TODO Do we still need to set the salt here?
 
+    gedmo.listener.sluggable:
+        class: Gedmo\Sluggable\SluggableListener
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        calls:
+            - [ "setAnnotationReader", [ "@annotation_reader" ] ]
+
     core.security.provider.user:
         class: CoreBundle\Security\Core\User\HWIOAuthUserProvider\UserProvider
         arguments:
-            - '@fos_user.user_manager'
+            - "@fos_user.user_manager"
             -
                 facebook: facebookId
                 twitter: twitterId

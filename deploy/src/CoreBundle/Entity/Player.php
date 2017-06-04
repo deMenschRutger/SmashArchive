@@ -53,7 +53,7 @@ class Player
     /**
      * @var string
      *
-     * @Gedmo\Slug(fields={"gamerTag"})
+     * @Gedmo\Slug(fields={"gamerTag"}, updatable=false)
      * @ORM\Column(name="slug", type="string", length=255, unique=true)
      *
      * @Serializer\Groups({"players_overview", "tournaments_results"})

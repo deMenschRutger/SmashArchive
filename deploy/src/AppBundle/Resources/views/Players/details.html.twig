@@ -33,7 +33,7 @@
                 <h4>{{ phase.name }}</h4>
 
                 {% for set in sort_player_sets(phase.sets) %}
-                    {% if set.status == constant('CoreBundle\\Entity\\Set::STATUS_PLAYED') %}
+                    {% if set.wasPlayed %}
 
                 <div class="row">
                     <div class="col-md-3">

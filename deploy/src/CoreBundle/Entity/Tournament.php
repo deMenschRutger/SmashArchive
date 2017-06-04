@@ -48,7 +48,7 @@ class Tournament
     /**
      * @var string
      *
-     * @Gedmo\Slug(fields={"name"})
+     * @Gedmo\Slug(fields={"name"}, updatable=false)
      * @ORM\Column(name="slug", type="string", length=255, unique=true)
      *
      * @Serializer\Groups({"players_sets", "tournaments_overview", "tournaments_details"})

@@ -1,6 +1,8 @@
 {% macro set(set) %}
     {% import _self as macros %}
 
+    {% if set.wasPlayed %}
+
     <div class="bracket-set">
         <div class="bracket-set-entrant-one">
             <div class="bracket-set-entrant-name pull-left">
@@ -64,11 +66,11 @@
 
                 {% endif %}
 
-
             </div>
         </div>
     </div>
 
+    {% endif %}
 {% endmacro %}
 
 {% macro entrant(entrant) %}
