@@ -8,7 +8,10 @@
             <a href="{{ path('homepage') }}">Home</a>
         </li>
         <li>
-            <a href="{{ path('tournaments_details', { 'slug': tournament.slug }) }}">Tournament</a>
+            <a href="{{ path('tournaments_overview') }}">Tournaments</a>
+        </li>
+        <li>
+            <a href="{{ path('tournaments_details', { 'slug': tournament.slug }) }}">{{ tournament.name }}</a>
         </li>
         <li class="active">
             <a href="{{ path('tournaments_brackets', { 'slug': tournament.slug }) }}">
@@ -20,7 +23,7 @@
         </li>
     </ol>
     <div class="col-md-12">
-        <h2>{{ phaseGroup.extendedName }}</h2>
+        <h2>{{ tournament.name }} - {{ phaseGroup.extendedName }}</h2>
     </div>
 
     {% block bracket %}{% endblock %}

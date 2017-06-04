@@ -33,6 +33,10 @@ class Bracket extends AbstractBracket
         $roundsRequired = $this->getRoundsRequired();
 
         foreach (array_reverse($this->getRounds()) as $index => $roundNumber) {
+            if ($roundNumber < 0) {
+                break;
+            }
+
             $sets = $this->getSetsForRound($roundNumber);
             $bracket = $this->matchSetsForRound($bracket, $roundsRequired - $index, $sets);
 
@@ -41,7 +45,7 @@ class Bracket extends AbstractBracket
             }
         }
 
-        return $bracket;
+        return $this->cleanBracket($bracket);
     }
 
     /**
@@ -76,6 +80,7 @@ class Bracket extends AbstractBracket
             $set->setRoundName($this->getRoundName($roundNumber));
             $set->setLoserRank($loserRank);
             $set->setIsFinals($isFinals);
+            $set->setStatus(Set::STATUS_NOT_PLAYED);
 
             $round[] = $set;
         }

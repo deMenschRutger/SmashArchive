@@ -348,6 +348,14 @@ class Set
     }
 
     /**
+     * @return bool
+     */
+    public function wasNotPlayed(): bool
+    {
+        return $this->status === self::STATUS_NOT_PLAYED;
+    }
+
+    /**
      * @param string $status
      */
     public function setStatus(string $status)

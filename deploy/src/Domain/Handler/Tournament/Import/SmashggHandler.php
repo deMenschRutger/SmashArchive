@@ -390,9 +390,12 @@ class SmashggHandler extends AbstractHandler
                 $set->setLoserScore($setData['entrant1Score']);
             }
 
-            if ($set->getLoserScore() === -1) {
+
+            if ($set->getEntrantOne() instanceof Entrant && $set->getEntrantTwo() instanceof Entrant && $set->getLoserScore() === -1) {
                 $set->setStatus(Set::STATUS_DQED);
             } elseif ($set->getWinner() === null && $set->getLoser() === null) {
+                $set->setStatus(Set::STATUS_NOT_PLAYED);
+            } elseif ($set->getWinner() instanceof Entrant && $set->getLoser() === null) {
                 $set->setStatus(Set::STATUS_NOT_PLAYED);
             }
         }

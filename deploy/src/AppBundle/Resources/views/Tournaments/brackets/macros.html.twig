@@ -1,7 +1,7 @@
 {% macro set(set) %}
     {% import _self as macros %}
 
-    {% if set.wasPlayed %}
+    {% if not set.wasNotPlayed %}
 
     <div class="bracket-set">
         <div class="bracket-set-entrant-one">

@@ -135,6 +135,42 @@ abstract class AbstractBracket
     }
 
     /**
+     * The purpose of this function is to remove any round that ended up with only unplayed sets, but only at the beginning and end
+     * of the bracket.
+     *
+     * @param array $bracket
+     * @return array
+     */
+    protected function cleanBracket($bracket)
+    {
+        foreach ($bracket as $round => $sets) {
+            /** @var Set $set */
+            foreach ($sets as $set) {
+                if ($set->getStatus() !== Set::STATUS_NOT_PLAYED) {
+                    break 2;
+                }
+            }
+
+            unset($bracket[$round]);
+        }
+
+        foreach (array_reverse(array_keys($bracket)) as $round) {
+            $sets = $bracket[$round];
+
+            /** @var Set $set */
+            foreach ($sets as $set) {
+                if ($set->getStatus() !== Set::STATUS_NOT_PLAYED) {
+                    break 2;
+                }
+            }
+
+            unset($bracket[$round]);
+        }
+
+        return $bracket;
+    }
+
+    /**
      * @return array
      */
     abstract protected function generateVirtualBracket();

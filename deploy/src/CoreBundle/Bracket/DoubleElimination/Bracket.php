@@ -88,7 +88,7 @@ class Bracket extends SingleEliminationBracket
             }
         }
 
-        return $bracket;
+        return $this->cleanBracket($bracket);
     }
 
     /**

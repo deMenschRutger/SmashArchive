@@ -24,6 +24,7 @@
         {% endfor %}
 
         {% for set in bracket.grandFinalsSets %}
+            {% if not set.wasNotPlayed %}
 
             <div class="pull-left">
                 <h4>{{ set.roundName }}</h4>
@@ -32,6 +33,7 @@
                 {{ macros.set(set) }}
             </div>
 
+            {% endif %}
         {% endfor %}
 
     </div>
