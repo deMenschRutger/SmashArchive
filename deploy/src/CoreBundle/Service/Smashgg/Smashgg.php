@@ -5,6 +5,13 @@ declare(strict_types = 1);
 namespace CoreBundle\Service\Smashgg;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -152,14 +159,52 @@ class Smashgg
     }
 
     /**
+     * @param int              $retries
+     * @param Request          $request
+     * @param Response         $response
+     * @param RequestException $exception
+     * @return bool
+     */
+    public function retryDecider($retries, $request, $response = null, $exception = null)
+    {
+        if ($retries >= 5) {
+            return false;
+        }
+
+        if ($exception instanceof ConnectException) {
+            return true;
+        }
+
+        if ($response && $response->getStatusCode() >= 500) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param int $numberOfRetries
+     * @return int
+     */
+    public function retryDelay($numberOfRetries)
+    {
+        return 500 * $numberOfRetries;
+    }
+
+    /**
      * @return Client
      */
     protected function getClient()
     {
         if (!$this->client) {
+            $handlerStack = HandlerStack::create(new CurlHandler());
+            $handlerStack->push(Middleware::retry([$this, 'retryDecider'], [$this, 'retryDelay']));
+
             $this->client = new Client([
                 'base_uri' => 'https://api.smash.gg',
+                'handler' => $handlerStack,
             ]);
+
         }
 
         return $this->client;

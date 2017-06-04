@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Domain\Command\Tournament\Import;
 
+use Symfony\Component\Console\Style\SymfonyStyle;
+
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
@@ -25,15 +27,22 @@ class SmashggCommand
     private $force;
 
     /**
-     * @param string $slug
-     * @param array  $eventIds
-     * @param bool   $force
+     * @var SymfonyStyle
      */
-    public function __construct($slug, $eventIds, $force)
+    private $io;
+
+    /**
+     * @param string       $slug
+     * @param array        $eventIds
+     * @param bool         $force
+     * @param SymfonyStyle $io
+     */
+    public function __construct($slug, $eventIds, $force, $io = null)
     {
         $this->slug = $slug;
         $this->eventIds = $eventIds;
         $this->force = $force;
+        $this->io = $io;
     }
 
     /**
@@ -58,5 +67,13 @@ class SmashggCommand
     public function getForce(): bool
     {
         return $this->force;
+    }
+
+    /**
+     * @return SymfonyStyle
+     */
+    public function getIo()
+    {
+        return $this->io;
     }
 }

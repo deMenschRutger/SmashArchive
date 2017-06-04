@@ -127,7 +127,7 @@ class TournamentImportCommand extends ContainerAwareCommand
             $selectedEvent = $ids[$selectedEvent];
         }
 
-        $command = new SmashggCommand($slug, $selectedEvents, $force);
+        $command = new SmashggCommand($slug, $selectedEvents, $force, $this->io);
         $this->commandBus->handle($command);
     }
 }

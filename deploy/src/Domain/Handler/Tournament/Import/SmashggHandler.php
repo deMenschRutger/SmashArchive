@@ -113,22 +113,42 @@ class SmashggHandler extends AbstractHandler
      */
     public function handle(SmashggCommand $command)
     {
-        $eventIds = $command->getEventIds();
+        $this->setIo($command->getIo());
 
+        $eventIds = $command->getEventIds();
         $this->tournament = $this->getTournament($command->getSlug());
+
+        $this->io->writeln('Handling existing events...');
         $this->handleExistingEvents($eventIds, $command->getForce());
 
+        $this->io->writeln('Processing games...');
         $this->processGames();
+
+        $this->io->writeln('Processing events...');
         $this->processEvents($eventIds);
+
+        $this->io->writeln('Processing phases...');
         $this->processPhases();
+
         $this->processGroups();
 
+        $this->io->writeln('Flushing the entity manager...');
         $this->entityManager->flush();
 
-        foreach ($this->tournament->getEvents() as $event) {
+        $events = $this->tournament->getEvents();
+        $eventCount = count($events);
+
+        $this->io->writeln(sprintf('Generating results for %d events...', $eventCount));
+        $this->io->progressStart($eventCount);
+
+        foreach ($events as $event) {
             $command = new GenerateResultsCommand($event->getId());
             $this->commandBus->handle($command);
+
+            $this->io->progressAdvance();
         }
+
+        $this->io->progressFinish();
     }
 
     /**
@@ -177,7 +197,7 @@ class SmashggHandler extends AbstractHandler
             }
 
             $message = join(' ', [
-                'The following events already exist in the database: %s. Please add the force flag (-f) if you wish to override these',
+                'The following events already exist in the database: %s. Please add the force flag (-f=1) if you wish to override these',
                 'events with the most recent event data from smash.gg. Please note that this will remove all existing data for the event,',
                 'even the data that was modified after the event was originally imported.',
             ]);
@@ -269,6 +289,10 @@ class SmashggHandler extends AbstractHandler
     protected function processGroups()
     {
         $groups = $this->smashgg->getTournamentGroups($this->tournament->getSmashggSlug());
+        $counter = count($groups);
+
+        $this->io->writeln(sprintf('Processing %d groups...', $counter));
+        $this->io->progressStart($counter);
 
         foreach ($groups as $phaseGroupData) {
             $phaseGroupId = $phaseGroupData['id'];
@@ -289,7 +313,11 @@ class SmashggHandler extends AbstractHandler
             $this->processPhaseGroupPlayers($phaseGroupId);
             $this->processPhaseGroupEntrants($phaseGroupId);
             $this->processPhaseGroupSets($phaseGroupId, $phaseGroup);
+
+            $this->io->progressAdvance();
         }
+
+        $this->io->progressFinish();
     }
 
     /**
