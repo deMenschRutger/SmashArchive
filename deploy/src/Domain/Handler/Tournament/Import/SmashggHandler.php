@@ -157,7 +157,11 @@ class SmashggHandler extends AbstractHandler
             $this->entityManager->persist($tournament);
         }
 
+        $dateStart = new \DateTime();
+        $dateStart->setTimestamp($smashggTournament['startAt']);
+
         $tournament->setName($smashggTournament['name']);
+        $tournament->setDateStart($dateStart);
 
         return $tournament;
     }

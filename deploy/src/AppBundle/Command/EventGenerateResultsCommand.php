@@ -60,6 +60,7 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
      * @return void
      *
      * @TODO Add option to generate results for all events at once.
+     * @TODO Output more information about the progress of the generation on the CLI.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
