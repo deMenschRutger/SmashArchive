@@ -13,7 +13,6 @@ use CoreBundle\Entity\Player;
 use CoreBundle\Entity\Set;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Service\Smashgg\Smashgg;
-use Domain\Command\Event\GenerateResultsCommand;
 use Domain\Command\Tournament\Import\SmashggCommand;
 use Domain\Handler\AbstractHandler;
 use League\Tactician\CommandBus;
@@ -134,21 +133,6 @@ class SmashggHandler extends AbstractHandler
 
         $this->io->writeln('Flushing the entity manager...');
         $this->entityManager->flush();
-
-        $events = $this->tournament->getEvents();
-        $eventCount = count($events);
-
-        $this->io->writeln(sprintf('Generating results for %d events...', $eventCount));
-        $this->io->progressStart($eventCount);
-
-        foreach ($events as $event) {
-            $command = new GenerateResultsCommand($event->getId());
-            $this->commandBus->handle($command);
-
-            $this->io->progressAdvance();
-        }
-
-        $this->io->progressFinish();
     }
 
     /**
@@ -288,7 +272,8 @@ class SmashggHandler extends AbstractHandler
      */
     protected function processGroups()
     {
-        $groups = $this->smashgg->getTournamentGroups($this->tournament->getSmashggSlug());
+        $phaseIds = array_keys($this->phases);
+        $groups = $this->smashgg->getTournamentGroups($this->tournament->getSmashggSlug(), $phaseIds);
         $counter = count($groups);
 
         $this->io->writeln(sprintf('Processing %d groups...', $counter));

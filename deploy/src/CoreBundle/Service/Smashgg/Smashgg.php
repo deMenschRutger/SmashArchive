@@ -104,11 +104,20 @@ class Smashgg
 
     /**
      * @param string $slug
+     * @param array  $phaseIds
      * @return array
      */
-    public function getTournamentGroups($slug)
+    public function getTournamentGroups($slug, $phaseIds = null)
     {
-        return $this->getTournamentEntities($slug, ['groups'])['groups'];
+        $groups = $this->getTournamentEntities($slug, ['groups'])['groups'];
+
+        return array_filter($groups, function ($group) use ($phaseIds) {
+            if (!is_array($phaseIds)) {
+                return true;
+            }
+
+            return in_array($group['phaseId'], $phaseIds);
+        });
     }
 
     /**
@@ -204,7 +213,6 @@ class Smashgg
                 'base_uri' => 'https://api.smash.gg',
                 'handler' => $handlerStack,
             ]);
-
         }
 
         return $this->client;
