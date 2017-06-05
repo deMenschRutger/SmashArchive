@@ -129,8 +129,9 @@ class Bracket extends AbstractBracket
         }
 
         if (count($sets) > 0) {
-            // TODO Mark sets that weren't processed as orphans.
-            assert(count($sets) === 0);
+            foreach ($sets as $set) {
+                $set->setIsOrphaned(true);
+            }
         }
 
         return $bracket;

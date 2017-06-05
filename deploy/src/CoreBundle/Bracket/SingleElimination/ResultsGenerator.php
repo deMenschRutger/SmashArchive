@@ -46,6 +46,10 @@ class ResultsGenerator extends AbstractResultsGenerator
         foreach ($bracket as $round => $sets) {
             /** @var Set $set */
             foreach ($sets as $set) {
+                if ($set->isOrphaned()) {
+                    continue;
+                }
+
                 $entrantOne = $set->getEntrantOne();
                 $entrantTwo = $set->getEntrantTwo();
                 $rank = $set->getLoserRank();

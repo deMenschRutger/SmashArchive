@@ -121,6 +121,13 @@ class Set
     private $status = self::STATUS_PLAYED;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_orphaned", type="boolean")
+     */
+    private $isOrphaned = false;
+
+    /**
      * @var PhaseGroup
      *
      * @ORM\ManyToOne(targetEntity="PhaseGroup", inversedBy="sets")
@@ -361,6 +368,22 @@ class Set
     public function setStatus(string $status)
     {
         $this->status = $status;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOrphaned()
+    {
+        return $this->isOrphaned;
+    }
+
+    /**
+     * @param bool $isOrphaned
+     */
+    public function setIsOrphaned(bool $isOrphaned)
+    {
+        $this->isOrphaned = $isOrphaned;
     }
 
     /**
