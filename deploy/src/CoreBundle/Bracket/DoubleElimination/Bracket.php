@@ -104,6 +104,7 @@ class Bracket extends SingleEliminationBracket
             $set->setRoundName('Grand Finals');
             $set->setLoserRank(2);
             $set->setIsFinals(true);
+            $set->setStatus(Set::STATUS_NOT_PLAYED);
 
             $sets[$round][] = $set;
         }
