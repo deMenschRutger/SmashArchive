@@ -64,6 +64,12 @@ class ResultsGenerator extends SingleEliminationResultsGenerator
             return;
         }
 
+        if ($set->wasNotPlayed()) {
+            $this->processGrandFinalsSets($event, $sets);
+
+            return;
+        }
+
         $winner = $set->getWinner();
         $loser = $set->getLoser();
 
