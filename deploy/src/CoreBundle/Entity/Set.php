@@ -509,7 +509,11 @@ class Set
      */
     public function getWinnerId()
     {
-        return $this->winner->getId();
+        if ($this->winner instanceof Entrant) {
+            return $this->winner->getId();
+        }
+
+        return null;
     }
 
     /**
@@ -546,7 +550,11 @@ class Set
      */
     public function getLoserId()
     {
-        return $this->loser->getId();
+        if ($this->loser instanceof Entrant) {
+            return $this->loser->getId();
+        }
+
+        return null;
     }
 
     /**
