@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Service\Smashgg;
 
+use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\CacheProvider;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
@@ -12,6 +14,9 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use Kevinrob\GuzzleCache\CacheMiddleware;
+use Kevinrob\GuzzleCache\Storage\DoctrineCacheStorage;
+use Kevinrob\GuzzleCache\Strategy\GreedyCacheStrategy;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -27,6 +32,11 @@ class Smashgg
      * @var Client
      */
     protected $client;
+
+    /**
+     * @var CacheProvider
+     */
+    protected $cache;
 
     /**
      * @param string $slug
@@ -202,12 +212,18 @@ class Smashgg
 
     /**
      * @return Client
+     *
+     * @TODO Perhaps we can use the APCu cache for the production environment? We would need to clean it regularly though.
      */
     protected function getClient()
     {
         if (!$this->client) {
+            $this->cache = new ArrayCache();
+            $cache = new GreedyCacheStrategy(new DoctrineCacheStorage($this->cache), 3600);
+
             $handlerStack = HandlerStack::create(new CurlHandler());
-            $handlerStack->push(Middleware::retry([$this, 'retryDecider'], [$this, 'retryDelay']));
+            $handlerStack->push(Middleware::retry([$this, 'retryDecider'], [$this, 'retryDelay']), 'retry');
+            $handlerStack->push(new CacheMiddleware($cache), 'cache');
 
             $this->client = new Client([
                 'base_uri' => 'https://api.smash.gg',
