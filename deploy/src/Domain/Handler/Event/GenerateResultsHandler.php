@@ -29,7 +29,11 @@ class GenerateResultsHandler extends AbstractHandler
      */
     public function handle(GenerateResultsCommand $command)
     {
+        $this->entityManager->getConfiguration()->setSQLLogger(null);
         $eventId = $command->getEventId();
+
+        $this->setIo($command->getIo());
+        $this->io->writeln(sprintf('Generating results for event #%s...', $eventId));
 
         /** @var EventRepository $eventRepository */
         $eventRepository = $this->getRepository('CoreBundle:Event');
@@ -44,6 +48,8 @@ class GenerateResultsHandler extends AbstractHandler
         $phases = $eventRepository->getOrderedPhases($command->getEventId());
 
         if (count($phases) === 0) {
+            $this->io->writeln('Could not find any phases for the event, skipping...');
+
             return;
         }
 
@@ -62,7 +68,10 @@ class GenerateResultsHandler extends AbstractHandler
             $this->entityManager->persist($result);
         }
 
+        $this->io->writeln('Flushing entity manager...');
+
         $this->entityManager->flush();
+        $this->entityManager->clear();
     }
 
     /**

@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace AppBundle\Command;
 
-use CoreBundle\Entity\Phase;
 use Doctrine\ORM\EntityManager;
 use Domain\Command\Event\GenerateResultsCommand;
 use League\Tactician\CommandBus;
@@ -12,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -29,11 +29,13 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
     protected $entityManager;
 
     /**
-     * @param CommandBus $commandBus
+     * @param CommandBus    $commandBus
+     * @param EntityManager $entityManager
      */
-    public function __construct(CommandBus $commandBus)
+    public function __construct(CommandBus $commandBus, EntityManager $entityManager)
     {
         $this->commandBus = $commandBus;
+        $this->entityManager = $entityManager;
 
         parent::__construct();
     }
@@ -46,11 +48,17 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
         $this
             ->setName('app:event:generate:results')
             ->setDescription('Generate the complete results for an entire event.')
-            ->addArgument(
+            ->addOption(
                 'event-id',
-                InputArgument::REQUIRED,
+                'i',
+                InputArgument::OPTIONAL,
                 'The ID of the event you wish to generate results for.'
-            );
+            )->addOption(
+                'all',
+                'a',
+                InputArgument::OPTIONAL,
+                'Pass true if you want results to be (re)generated for all events.'
+            )
         ;
     }
 
@@ -58,34 +66,70 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return void
-     *
-     * @TODO Add option to generate results for all events at once.
-     * @TODO Output more information about the progress of the generation on the CLI.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $eventId = intval($input->getArgument('event-id'));
-        $command = new GenerateResultsCommand($eventId);
-        $this->commandBus->handle($command);
+        $io = new SymfonyStyle($input, $output);
+
+        $eventId = intval($input->getOption('event-id'));
+        $all = boolval($input->getOption('all'));
+
+        if ($eventId > 0) {
+            $command = new GenerateResultsCommand($eventId, $io);
+            $this->commandBus->handle($command);
+        } elseif ($all) {
+            $confirmed = $io->confirm(
+                'Regenerating all results could take a long time. Are you sure you wish to continue?',
+                false
+            );
+
+            if (!$confirmed) {
+                $io->warning('The results generation was aborted.');
+
+                return;
+            }
+
+            $eventIds = $this->getEventIds();
+
+            $io->progressStart(count($eventIds));
+
+            foreach ($eventIds as $eventId) {
+                $output->setVerbosity(OutputInterface::VERBOSITY_QUIET);
+
+                $command = new GenerateResultsCommand($eventId, $io);
+                $this->commandBus->handle($command);
+
+                $output->setVerbosity(OutputInterface::VERBOSITY_NORMAL);
+                $io->progressAdvance();
+            }
+
+            $io->progressFinish();
+        } else {
+            throw new \InvalidArgumentException("You need to specify either an event ID or the 'all' flag.");
+        }
+
+        $io->success('The results were successfully generated!');
     }
 
     /**
-     * @return void
+     * @return int[]
      */
-    protected function processAllEvent()
+    protected function getEventIds()
     {
-        /** @var Phase[] $phases */
-        $phases = $this
+        $events = $this
             ->entityManager
             ->createQueryBuilder()
-            ->select('p, pg, s')
-            ->from('CoreBundle:Phase', 'p')
-            ->join('p.phaseGroups', 'pg')
-            ->join('pg.sets', 's')
-            ->join('p.event', 'e')
-            ->addOrderBy('s.round')
+            ->select('e.id')
+            ->from('CoreBundle:Event', 'e')
+            ->join('e.tournament', 't')
+            ->where('t.isActive = :active')
+            ->setParameter('active', true)
             ->getQuery()
             ->getResult()
         ;
+
+        return array_map(function (array $event) {
+            return $event['id'];
+        }, $events);
     }
 }

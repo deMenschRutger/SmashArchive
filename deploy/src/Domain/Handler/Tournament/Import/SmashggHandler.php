@@ -114,8 +114,8 @@ class SmashggHandler extends AbstractHandler
      */
     public function handle(SmashggCommand $command)
     {
-        $this->setIo($command->getIo());
         $this->entityManager->getConfiguration()->setSQLLogger(null);
+        $this->setIo($command->getIo());
 
         $eventIds = $command->getEventIds();
         $this->tournament = $this->getTournament($command->getSlug());
@@ -136,6 +136,7 @@ class SmashggHandler extends AbstractHandler
 
         $this->io->writeln('Flushing the entity manager...');
         $this->entityManager->flush();
+        $this->entityManager->clear();
     }
 
     /**
