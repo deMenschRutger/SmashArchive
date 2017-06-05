@@ -105,14 +105,17 @@ class SmashggHandler extends AbstractHandler
      * Example slugs:
      *
      * 'arcamelee-1'
-     * 'syndicate-2016'
+     * 'dgsummer-clash-1'
      * 'garelaf-x'
+     * 'genesis-4'
+     * 'syndicate-2016'
      *
      * @param SmashggCommand $command
      */
     public function handle(SmashggCommand $command)
     {
         $this->setIo($command->getIo());
+        $this->entityManager->getConfiguration()->setSQLLogger(null);
 
         $eventIds = $command->getEventIds();
         $this->tournament = $this->getTournament($command->getSlug());
@@ -280,7 +283,27 @@ class SmashggHandler extends AbstractHandler
         $groups = $this->smashgg->getTournamentGroups($this->tournament->getSmashggSlug(), $phaseIds);
         $counter = count($groups);
 
+        $this->io->writeln(sprintf('Processing players for %d groups...', $counter));
+        $this->io->newLine();
+        $this->io->progressStart($counter);
+
+        foreach ($groups as $phaseGroupData) {
+            $phaseGroupId = $phaseGroupData['id'];
+            $this->processPhaseGroupPlayers($phaseGroupId);
+
+            $this->io->progressAdvance();
+        }
+
+        $this->io->progressFinish();
+        $this->io->newLine();
+        $this->io->writeln('Flushing the entity manager...');
+
+        // We need to flush the entity manager here, otherwise the next event won't find new players created in
+        // previous events associated with this tournament.
+        $this->entityManager->flush();
+
         $this->io->writeln(sprintf('Processing %d groups...', $counter));
+        $this->io->newLine();
         $this->io->progressStart($counter);
 
         foreach ($groups as $phaseGroupData) {
@@ -299,14 +322,13 @@ class SmashggHandler extends AbstractHandler
 
             $this->entityManager->persist($phaseGroup);
 
-            $this->processPhaseGroupPlayers($phaseGroupId);
             $this->processPhaseGroupEntrants($phaseGroupId);
             $this->processPhaseGroupSets($phaseGroupId, $phaseGroup);
-
             $this->io->progressAdvance();
         }
 
         $this->io->progressFinish();
+        $this->io->newLine();
     }
 
     /**
@@ -322,10 +344,6 @@ class SmashggHandler extends AbstractHandler
             $player = $this->findPlayer($playerId);
             $player->setGamerTag($playerData['gamerTag']);
         }
-
-        // We need to flush the entity manager here, otherwise the next event won't find new players created in
-        // previous events associated with this tournament.
-        $this->entityManager->flush();
     }
 
     /**
@@ -393,7 +411,6 @@ class SmashggHandler extends AbstractHandler
                 $set->setLoser($entrantOne);
                 $set->setLoserScore($setData['entrant1Score']);
             }
-
 
             if ($set->getEntrantOne() instanceof Entrant && $set->getEntrantTwo() instanceof Entrant && $set->getLoserScore() === -1) {
                 $set->setStatus(Set::STATUS_DQED);
