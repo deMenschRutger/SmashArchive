@@ -13,6 +13,7 @@ use CoreBundle\Entity\Player;
 use CoreBundle\Entity\Set;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Service\Smashgg\Smashgg;
+use Domain\Command\Event\GenerateResultsCommand;
 use Domain\Command\Tournament\Import\SmashggCommand;
 use Domain\Handler\AbstractHandler;
 use League\Tactician\CommandBus;
@@ -136,7 +137,11 @@ class SmashggHandler extends AbstractHandler
 
         $this->io->writeln('Flushing the entity manager...');
         $this->entityManager->flush();
-        $this->entityManager->clear();
+
+        foreach ($this->events as $event) {
+            $command = new GenerateResultsCommand($event->getId(), $this->getIo());
+            $this->commandBus->handle($command);
+        }
     }
 
     /**

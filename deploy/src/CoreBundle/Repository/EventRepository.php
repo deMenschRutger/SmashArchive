@@ -43,23 +43,14 @@ class EventRepository extends EntityRepository
      */
     public function deleteResults(Event $event)
     {
-        $connection = $this->_em->getConnection();
-        $connection->beginTransaction();
+        $results = $this->_em->getRepository('CoreBundle:Result')->findBy([
+            'event' => $event,
+        ]);
 
-        try {
-            $results = $this->_em->getRepository('CoreBundle:Result')->findBy([
-                'event' => $event,
-            ]);
-
-            foreach ($results as $result) {
-                $this->_em->remove($result);
-            }
-
-            $connection->commit();
-            $this->_em->flush();
-        } catch (\Exception $e) {
-            // TODO Log the expection.
-            $connection->rollBack();
+        foreach ($results as $result) {
+            $this->_em->remove($result);
         }
+
+        $this->_em->flush();
     }
 }
