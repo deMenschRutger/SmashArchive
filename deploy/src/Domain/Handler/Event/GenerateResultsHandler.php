@@ -103,6 +103,22 @@ class GenerateResultsHandler extends AbstractHandler
             $results = array_merge($results, $bracket->getResults($event));
         }
 
+        // Occasionally it might happen that data was incorrectly entered and a player exists in a phase multiple times. Here we filter
+        // out the duplicate results for those players.
+        $existingEntrants = [];
+
+        /** @var Result $result */
+        foreach ($results as $key => $result) {
+            $entrantId = $result->getEntrant()->getId();
+
+            if (in_array($entrantId, $existingEntrants)) {
+                unset($results[$key]);
+                continue;
+            }
+
+            $existingEntrants[] = $entrantId;
+        }
+
         return $results;
     }
 
