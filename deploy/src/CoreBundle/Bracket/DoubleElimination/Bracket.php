@@ -154,6 +154,7 @@ class Bracket extends SingleEliminationBracket
             $set->setRoundName($this->getLoserRoundName($initialRoundNumber));
             $set->setLoserRank($loserRank);
             $set->setIsFinals($isFinals);
+            $set->setStatus(Set::STATUS_NOT_PLAYED);
 
             $round[] = $set;
         }
