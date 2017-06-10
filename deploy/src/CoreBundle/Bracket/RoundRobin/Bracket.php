@@ -84,25 +84,18 @@ class Bracket extends AbstractBracket
     /**
      * @param Entrant $entrantOne
      * @param Entrant $entrantTwo
-     * @return int|null|string
+     * @return Set
      */
-    public function getSetScore(Entrant $entrantOne, Entrant $entrantTwo)
+    public function getSet(Entrant $entrantOne, Entrant $entrantTwo)
     {
         $bracket = $this->getIterableBracket();
         $setTag = $entrantOne->getId().'-'.$entrantTwo->getId();
 
         if (array_key_exists($setTag, $bracket)) {
-            /** @var Set $set */
-            $set = $bracket[$setTag];
-
-            if ($entrantOne === $set->getWinner()) {
-                return 'W';
-            } else {
-                return 'L';
-            }
+            return $bracket[$setTag];
         }
 
-        return null;
+        return new Set();
     }
 
     /**

@@ -13,7 +13,7 @@
 
                 {% for entrant in bracket.entrants %}
 
-                    <th>{{ entrant.name }}</th>
+                    <th>{{ macros.entrant(entrant) }}</th>
 
                 {% endfor %}
 
@@ -24,17 +24,54 @@
             {% for entrant in bracket.entrants %}
 
                 <tr>
-                    <td>{{ entrant.name }}</td>
+                    <td>{{ macros.entrant(entrant) }}</td>
 
                     {% for opponent in bracket.entrants %}
 
                         {% if entrant == opponent %}
 
-                        <td>N/A</td>
+                            <td>N/A</td>
 
                         {% else %}
+                            {% set set = bracket.getSet(entrant, opponent) %}
 
-                        <td>{{ bracket.getSetScore(entrant, opponent) }}</td>
+                            {% if set.hasResultWithScore %}
+
+                                <td>
+
+                                    {% if set.isWinner(opponent) %}
+
+                                        {{ set.loserScore }} - <strong>{{ set.winnerScore }}</strong>
+
+                                    {% else %}
+
+                                        <strong>{{ set.winnerScore }}</strong> - {{ set.loserScore }}
+
+                                    {% endif %}
+
+                                </td>
+
+                            {% elseif set.hasResult %}
+
+                                <td>
+
+                                    {% if set.isWinner(opponent) %}
+
+                                        L
+
+                                    {% else %}
+
+                                        <strong>W</strong>
+
+                                    {% endif %}
+
+                                </td>
+
+                            {% else %}
+
+                                <td>N/A</td>
+
+                            {% endif %}
 
                         {% endif %}
 

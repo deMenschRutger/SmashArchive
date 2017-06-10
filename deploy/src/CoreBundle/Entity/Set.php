@@ -484,6 +484,22 @@ class Set
     }
 
     /**
+     * @return bool
+     */
+    public function hasResult()
+    {
+        return $this->winner instanceof Entrant && $this->loser instanceof Entrant;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasResultWithScore()
+    {
+        return $this->hasResult() && $this->winnerScore !== null && $this->loserScore !== null;
+    }
+
+    /**
      * @param bool $reverse
      * @return string
      */
