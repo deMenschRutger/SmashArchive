@@ -64,7 +64,7 @@ abstract class AbstractBracket
     }
 
     /**
-     * @return float
+     * @return int
      */
     public function getRoundsRequired()
     {
@@ -72,7 +72,7 @@ abstract class AbstractBracket
             $this->roundsRequired = ceil(log($this->countEntrants(), 2));
         }
 
-        return $this->roundsRequired;
+        return intval($this->roundsRequired);
     }
 
     /**

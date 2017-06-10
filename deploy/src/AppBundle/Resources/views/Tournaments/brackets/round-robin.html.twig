@@ -1,0 +1,81 @@
+{% extends 'AppBundle:Tournaments/brackets:base.html.twig' %}
+
+{% import '@App/Tournaments/brackets/macros.html.twig' as macros %}
+
+{% block bracket %}
+
+    <div class="col-md-12">
+
+        <br>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+
+                {% for entrant in bracket.entrants %}
+
+                    <th>{{ entrant.name }}</th>
+
+                {% endfor %}
+
+                </tr>
+            </thead>
+            <tbody>
+
+
+            {% for entrant in bracket.entrants %}
+
+                <tr>
+                    <td>{{ entrant.name }}</td>
+
+
+
+
+
+                    {% for opponent in bracket.entrants %}
+
+                        {% if entrant == opponent %}
+
+                            <td>N/A</td>
+
+                        {% else %}
+
+                            <td>{{ bracket.getSetScore(entrant, opponent) }}</td>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+
+
+                </tr>
+
+            {% endfor %}
+
+
+
+
+            {#{% for round, sets in bracket.iterableBracket %}#}
+
+                {#<tr>#}
+
+                {#{% for set in sets %}#}
+
+                        {#<td>{{ set.entrantOneName }} vs {{ set.entrantTwoName }}</td>#}
+
+                {#{% endfor %}#}
+
+                {#</tr>#}
+
+            {#{% endfor %}#}
+
+            </tbody>
+        </table>
+
+
+
+    </div>
+
+{% endblock %}

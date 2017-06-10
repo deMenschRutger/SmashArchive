@@ -7,6 +7,7 @@ namespace AppBundle\Controller;
 use AppBundle\Form\TournamentsType;
 use CoreBundle\Bracket\SingleElimination\Bracket as SingleEliminationBracket;
 use CoreBundle\Bracket\DoubleElimination\Bracket as DoubleEliminationBracket;
+use CoreBundle\Bracket\RoundRobin\Bracket as RoundRobinBracket;
 use CoreBundle\Controller\AbstractDefaultController;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Repository\PhaseGroupRepository;
@@ -127,6 +128,11 @@ class TournamentController extends AbstractDefaultController
             case PhaseGroup::TYPE_DOUBLE_ELIMINATION:
                 $bracket = new DoubleEliminationBracket($phaseGroup);
                 $template = 'double-elimination';
+                break;
+
+            case PhaseGroup::TYPE_ROUND_ROBIN:
+                $bracket = new RoundRobinBracket($phaseGroup);
+                $template = 'round-robin';
                 break;
         }
 
