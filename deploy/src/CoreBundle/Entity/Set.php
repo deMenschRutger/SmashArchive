@@ -484,6 +484,23 @@ class Set
     }
 
     /**
+     * @param bool $reverse
+     * @return string
+     */
+    public function getTag($reverse = false)
+    {
+        if ($this->entrantOne instanceof Entrant && $this->entrantTwo instanceof Entrant) {
+            if ($reverse) {
+                return $this->entrantTwo->getId().'-'.$this->entrantOne->getId();
+            }
+
+            return $this->entrantOne->getId().'-'.$this->entrantTwo->getId();
+        }
+
+        return null;
+    }
+
+    /**
      * @param Entrant $entrant
      * @return bool
      */
