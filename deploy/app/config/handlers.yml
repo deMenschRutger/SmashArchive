@@ -21,6 +21,7 @@ services:
             - { name: "tactician.handler", command: Domain\Command\Player\SetsCommand }
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+            - ['setCache', ['@cache.provider.filesystem']]
 
     bus.handler.player.results:
         class: Domain\Handler\Player\ResultsHandler
@@ -28,6 +29,7 @@ services:
             - { name: "tactician.handler", command: Domain\Command\Player\ResultsCommand }
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+            - ['setCache', ['@cache.provider.filesystem']]
 
     bus.handler.player.head_to_head:
         class: Domain\Handler\Player\HeadToHeadHandler

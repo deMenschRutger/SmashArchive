@@ -14,8 +14,6 @@ class SetRepository extends EntityRepository
     /**
      * @param string|array $slugs
      * @return array
-     *
-     * @TODO When ordering the sets by round, it doesn't take into account that losers bracket matches happen after winners bracket matches.
      */
     public function findByPlayerSlug($slugs)
     {

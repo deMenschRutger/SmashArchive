@@ -21,9 +21,20 @@ class SetsHandler extends AbstractHandler
      */
     public function handle(SetsCommand $command)
     {
+        $slug = $command->getSlug();
+        $cacheKey = 'player_sets_'.$slug;
+
+        if ($this->isCached($cacheKey)) {
+            return $this->getFromCache($cacheKey);
+        }
+
         /** @var SetRepository $repository */
         $repository = $this->getRepository('CoreBundle:Set');
+        $sets = $repository->findByPlayerSlug($slug);
 
-         return $repository->findByPlayerSlug($command->getSlug());
+        $tag = 'player_'.$slug;
+        $this->saveToCache($cacheKey, $sets, [ $tag ]);
+
+        return $sets;
     }
 }

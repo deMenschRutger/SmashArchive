@@ -69,7 +69,7 @@ class ResultRepository extends EntityRepository
         return $this
             ->_em
             ->createQueryBuilder()
-            ->select('r, en, p')
+            ->select('r, en, p, ev, t')
             ->from('CoreBundle:Result', 'r')
             ->leftJoin('r.event', 'ev')
             ->leftJoin('ev.tournament', 't')

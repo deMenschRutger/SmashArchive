@@ -247,12 +247,14 @@ class Set
      */
     public function getRoundName()
     {
-        switch ($this->phaseGroup->getType()) {
-            case PhaseGroup::TYPE_SWISS:
-                return 'Swiss';
+        if ($this->phaseGroup instanceof PhaseGroup) {
+            switch ($this->phaseGroup->getType()) {
+                case PhaseGroup::TYPE_SWISS:
+                    return 'Swiss';
 
-            case PhaseGroup::TYPE_ROUND_ROBIN:
-                return 'Round Robin Pools';
+                case PhaseGroup::TYPE_ROUND_ROBIN:
+                    return 'Round Robin Pools';
+            }
         }
 
         if ($this->roundName === null) {

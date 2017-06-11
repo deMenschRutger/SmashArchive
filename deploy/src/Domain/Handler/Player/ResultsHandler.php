@@ -35,19 +35,30 @@ class ResultsHandler extends AbstractHandler
     {
         /** @var ResultRepository $repository */
         $repository = $this->getRepository('CoreBundle:Result');
-        $results = $repository->findByPlayerSlug($command->getSlug());
         $sets = $command->getSets();
+        $slug = $command->getSlug();
 
         if (!$sets) {
-            return $results;
+            return $repository->findByPlayerSlug($slug);
+        }
+
+        $cacheKey = 'player_results_'.$slug;
+
+        if ($this->isCached($cacheKey)) {
+            return $this->getFromCache($cacheKey);
         }
 
         $this->setsByEventId = $this->getSetsByEventId($sets);
 
+        $results = $repository->findByPlayerSlug($slug);
         $resultsByEvent = $this->processResults($results);
         $remainingResults = $this->processSetsWithoutResult();
+        $fullResults = array_merge($resultsByEvent, $remainingResults);
 
-        return array_merge($resultsByEvent, $remainingResults);
+        $tag = 'player_'.$slug;
+        $this->saveToCache($cacheKey, $fullResults, [ $tag ]);
+
+        return $fullResults;
     }
 
     /**
