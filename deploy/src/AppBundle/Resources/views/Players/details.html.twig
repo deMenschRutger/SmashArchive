@@ -19,7 +19,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <a href="#collapse-{{ eventId }}" data-toggle="collapse">
-                    {{ result.tournament.name }}: {{ result.event.name }}
+                    {{ result.tournament.name }} ({{ result.tournament.dateStart.format('Y-m-d') }}): {{ result.event.name }}
                 </a>
                 <div class="pull-right">
                     <strong>{{ result.rank }}</strong>
@@ -39,12 +39,13 @@
                             'slug': result.tournament.slug,
                             'phaseGroupId': phase.sets[0].phaseGroup.id,
                         }) }}">
-                            {{ phase.sets[0].phaseGroup.name }}
-                        </a>
+                            {{ phase.sets[0].phaseGroup.name }}</a>
+                        |
+                        <a href="{{ path('tournaments_details', { 'slug': result.tournament.slug }) }}">Full results</a>
 
                     {% endif %}
-
                 </h4>
+                <br>
 
                 {% for set in sort_player_sets(phase.sets) %}
                     {% if set.wasPlayed %}
@@ -93,6 +94,8 @@
 
                     {% endif %}
                 {% endfor %}
+
+                <br>
 
             {% endfor %}
 

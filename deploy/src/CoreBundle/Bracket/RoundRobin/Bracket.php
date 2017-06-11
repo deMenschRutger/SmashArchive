@@ -145,7 +145,7 @@ class Bracket extends AbstractBracket
         /** @var Set $set */
         foreach ($this->phaseGroup->getSets() as $set) {
             $set->setRound(1);
-            $set->setRoundName('Pools');
+            $set->setRoundName('Round Robin Pools');
 
             $tag = $set->getTag();
             $reverseTag = $set->getTag(true);
