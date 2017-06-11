@@ -65,6 +65,7 @@ class Bracket extends AbstractBracket
                 $set = new Set();
                 $set->setStatus(Set::STATUS_NOT_PLAYED);
                 $set->setRound(1);
+                $set->setRoundName('Pools');
                 $set->setEntrantOne($entrant);
                 $set->setEntrantTwo($opponent);
 
@@ -102,7 +103,7 @@ class Bracket extends AbstractBracket
      * @param Entrant $entrant
      * @return string
      */
-    public function getScore(Entrant $entrant)
+    public function getScoreForEntrant(Entrant $entrant)
     {
         $entrantId = $entrant->getId();
         $scores = $this->getResultsGenerator()->getScores();
@@ -121,12 +122,31 @@ class Bracket extends AbstractBracket
     }
 
     /**
+     * @param Entrant $entrant
+     * @return string
+     */
+    public function getResultForEntrant(Entrant $entrant)
+    {
+        $entrantId = $entrant->getId();
+        $results = $this->getResults($this->phaseGroup->getPhase()->getEvent());
+
+        if (array_key_exists($entrantId, $results)) {
+            return $results[$entrantId];
+        }
+
+        return '?';
+    }
+
+    /**
      * @return void
      */
     protected function matchSets()
     {
         /** @var Set $set */
         foreach ($this->phaseGroup->getSets() as $set) {
+            $set->setRound(1);
+            $set->setRoundName('Pools');
+
             $tag = $set->getTag();
             $reverseTag = $set->getTag(true);
 

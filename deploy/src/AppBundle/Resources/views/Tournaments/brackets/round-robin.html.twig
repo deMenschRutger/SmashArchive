@@ -32,8 +32,8 @@
                         {{ macros.roundRobinSet(bracket, entrant, opponent) }}
                     {% endfor %}
 
-                    <td>{{ bracket.getScore(entrant) }}</td>
-                    <td>1st</td>
+                    <td>{{ bracket.getScoreForEntrant(entrant) }}</td>
+                    <td>{{ bracket.getResultForEntrant(entrant) }}</td>
                 </tr>
 
             {% endfor %}

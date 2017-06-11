@@ -6,6 +6,7 @@ namespace Domain\Handler\Event;
 
 use CoreBundle\Bracket\SingleElimination\Bracket as SingleEliminationBracket;
 use CoreBundle\Bracket\DoubleElimination\Bracket as DoubleEliminationBracket;
+use CoreBundle\Bracket\RoundRobin\Bracket as RoundRobinBracket;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\PhaseGroup;
@@ -94,6 +95,10 @@ class GenerateResultsHandler extends AbstractHandler
 
                 case PhaseGroup::TYPE_DOUBLE_ELIMINATION:
                     $bracket = new DoubleEliminationBracket($phaseGroup);
+                    break;
+
+                case PhaseGroup::TYPE_ROUND_ROBIN:
+                    $bracket = new RoundRobinBracket($phaseGroup);
                     break;
 
                 default:

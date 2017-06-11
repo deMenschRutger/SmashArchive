@@ -44,6 +44,14 @@ class Result
     private $rank;
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getStringifiedRank();
+    }
+
+    /**
      * @return Event
      */
     public function getEvent(): Event
@@ -104,6 +112,16 @@ class Result
     public function getRank(): int
     {
         return $this->rank;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStringifiedRank(): string
+    {
+        $formatter = new \NumberFormatter('en_US', \NumberFormatter::ORDINAL);
+
+        return $formatter->format($this->rank);
     }
 
     /**

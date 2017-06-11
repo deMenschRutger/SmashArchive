@@ -30,7 +30,21 @@
 
             {% for phase in result.setsByPhase %}
 
-                <h4>{{ phase.name }}</h4>
+                <h4>
+                    {{ phase.name }}
+
+                    {% if phase.sets|length > 0 %}
+
+                        - <a href="{{ path('tournaments_brackets_details', {
+                            'slug': result.tournament.slug,
+                            'phaseGroupId': phase.sets[0].phaseGroup.id,
+                        }) }}">
+                            {{ phase.sets[0].phaseGroup.name }}
+                        </a>
+
+                    {% endif %}
+
+                </h4>
 
                 {% for set in sort_player_sets(phase.sets) %}
                     {% if set.wasPlayed %}
