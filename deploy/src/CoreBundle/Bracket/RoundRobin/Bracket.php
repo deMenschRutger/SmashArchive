@@ -99,6 +99,28 @@ class Bracket extends AbstractBracket
     }
 
     /**
+     * @param Entrant $entrant
+     * @return string
+     */
+    public function getScore(Entrant $entrant)
+    {
+        $entrantId = $entrant->getId();
+        $scores = $this->getResultsGenerator()->getScores();
+
+        if (array_key_exists($entrantId, $scores)) {
+            $score = $scores[$entrantId];
+
+            if ($score['lose'] === null) {
+                return $score['win'];
+            }
+
+            return $score['win'].' - '.$score['lose'];
+        }
+
+        return '?';
+    }
+
+    /**
      * @return void
      */
     protected function matchSets()

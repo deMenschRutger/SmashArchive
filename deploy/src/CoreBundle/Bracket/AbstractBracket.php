@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Bracket;
 
+use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Result;
@@ -54,13 +55,19 @@ abstract class AbstractBracket
     abstract public function getResultsGenerator();
 
     /**
+     * @return Entrant[]
+     */
+    public function getEntrants()
+    {
+        return $this->phaseGroup->getEntrants();
+    }
+
+    /**
      * @return int
      */
     public function countEntrants()
     {
-        $entrants = $this->phaseGroup->getEntrants();
-
-        return count($entrants);
+        return count($this->getEntrants());
     }
 
     /**
