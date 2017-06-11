@@ -169,9 +169,4 @@ abstract class AbstractBracket
 
         return $bracket;
     }
-
-    /**
-     * @return array
-     */
-    abstract protected function generateVirtualBracket();
 }

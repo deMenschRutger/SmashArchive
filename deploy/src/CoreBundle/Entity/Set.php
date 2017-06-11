@@ -229,7 +229,7 @@ class Set
     /**
      * @return int
      */
-    public function getRound(): int
+    public function getRound()
     {
         return $this->round;
     }
@@ -247,6 +247,10 @@ class Set
      */
     public function getRoundName()
     {
+        if ($this->roundName === null) {
+            return 'Unknown round';
+        }
+
         return $this->roundName;
     }
 

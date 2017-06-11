@@ -13,7 +13,7 @@
 
                 {% for entrant in bracket.entrants %}
 
-                    <th>{{ macros.entrant(entrant) }}</th>
+                    <th>{{ macros.entrantWithPath(entrant) }}</th>
 
                 {% endfor %}
 
@@ -24,57 +24,10 @@
             {% for entrant in bracket.entrants %}
 
                 <tr>
-                    <td>{{ macros.entrant(entrant) }}</td>
+                    <td>{{ macros.entrantWithPath(entrant) }}</td>
 
                     {% for opponent in bracket.entrants %}
-
-                        {% if entrant == opponent %}
-
-                            <td>N/A</td>
-
-                        {% else %}
-                            {% set set = bracket.getSet(entrant, opponent) %}
-
-                            {% if set.hasResultWithScore %}
-
-                                <td>
-
-                                    {% if set.isWinner(opponent) %}
-
-                                        {{ set.loserScore }} - <strong>{{ set.winnerScore }}</strong>
-
-                                    {% else %}
-
-                                        <strong>{{ set.winnerScore }}</strong> - {{ set.loserScore }}
-
-                                    {% endif %}
-
-                                </td>
-
-                            {% elseif set.hasResult %}
-
-                                <td>
-
-                                    {% if set.isWinner(opponent) %}
-
-                                        L
-
-                                    {% else %}
-
-                                        <strong>W</strong>
-
-                                    {% endif %}
-
-                                </td>
-
-                            {% else %}
-
-                                <td>N/A</td>
-
-                            {% endif %}
-
-                        {% endif %}
-
+                        {{ macros.roundRobinSet(bracket, entrant, opponent) }}
                     {% endfor %}
 
                 </tr>

@@ -99,14 +99,6 @@ class Bracket extends AbstractBracket
     }
 
     /**
-     * @return array
-     */
-    protected function generateVirtualBracket()
-    {
-        return [];
-    }
-
-    /**
      * @return void
      */
     protected function matchSets()
