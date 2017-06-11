@@ -113,6 +113,11 @@ hwi_oauth:
             client_id: "%twitter_app_id%"
             client_secret: "%twitter_app_secret%"
 
+# Pagination
+knp_paginator:
+    template:
+        pagination: "KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig"
+
 # Sonata
 sonata_block:
     default_contexts: [cms]
