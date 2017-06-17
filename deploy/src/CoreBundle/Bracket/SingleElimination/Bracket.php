@@ -123,8 +123,10 @@ class Bracket extends AbstractBracket
                 $newSet->setRoundName($set->getRoundName());
                 $newSet->setLoserRank($set->getLoserRank());
                 $newSet->setIsFinals($set->isFinals());
+                $newSet->setIsGrandFinals($set->isGrandFinals());
 
                 $set = $newSet;
+                $set->setIsOrphaned(false);
             }
         }
 

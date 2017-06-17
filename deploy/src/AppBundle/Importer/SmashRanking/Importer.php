@@ -164,6 +164,9 @@ class Importer
         $this->io->text('Processing matches...');
         $this->processMatches();
 
+        $this->io->text('Correcting missing grand finals...');
+        $this->processGrandFinals();
+
         $this->io->text('Flushing entity manager...');
         $this->entityManager->flush();
 
@@ -381,6 +384,42 @@ class Importer
         }
 
         $this->io->text("Counted {$counter} matches (sets).");
+    }
+
+    /**
+     * Sometimes a phase group does not contain a grand finals set, in which case we'll add it.
+     *
+     * @return void
+     */
+    protected function processGrandFinals()
+    {
+        /** @var PhaseGroup $phaseGroup */
+        foreach ($this->phaseGroups as $phaseGroup) {
+            if ($phaseGroup->getType() !== PhaseGroup::TYPE_DOUBLE_ELIMINATION) {
+                continue;
+            }
+
+            $hasGrandFinals = false;
+
+            /** @var Set $set */
+            foreach ($phaseGroup->getSets() as $set) {
+                if ($set->getRound() === 11) {
+                    $hasGrandFinals = true;
+
+                    break;
+                }
+            }
+
+            if (!$hasGrandFinals) {
+                $set = new Set();
+                $set->setPhaseGroup($phaseGroup);
+                $set->setRound(11);
+                $set->setIsRanked(false);
+                $set->setStatus(Set::STATUS_NOT_PLAYED);
+
+                $this->entityManager->persist($set);
+            }
+        }
     }
 
     /**
