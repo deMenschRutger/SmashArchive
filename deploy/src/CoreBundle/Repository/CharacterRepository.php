@@ -9,6 +9,6 @@ use Doctrine\ORM\EntityRepository;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class CountryRepository extends EntityRepository
+class CharacterRepository extends EntityRepository
 {
 }

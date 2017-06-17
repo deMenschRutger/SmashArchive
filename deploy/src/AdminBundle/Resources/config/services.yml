@@ -1,4 +1,22 @@
 services:
+    admin.character:
+        class: AdminBundle\Admin\CharacterAdmin
+        arguments: [~, CoreBundle\Entity\Character, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Characters }
+
+    admin.country:
+        class: AdminBundle\Admin\CountryAdmin
+        arguments: [~, CoreBundle\Entity\Country, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Countries }
+
+    admin.event:
+        class: AdminBundle\Admin\EventAdmin
+        arguments: [~, CoreBundle\Entity\Event, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Event }
+
     admin.player:
         class: AdminBundle\Admin\PlayerAdmin
         arguments: [~, CoreBundle\Entity\Player, ~]
@@ -11,17 +29,6 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, label: Tournaments }
 
-    admin.event:
-        class: AdminBundle\Admin\EventAdmin
-        arguments: [~, CoreBundle\Entity\Event, ~]
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: Event }
-
-    admin.country:
-        class: AdminBundle\Admin\CountryAdmin
-        arguments: [~, CoreBundle\Entity\Country, ~]
-        tags:
-            - { name: sonata.admin, manager_type: orm, label: Countries }
     admin.user:
         class: AdminBundle\Admin\UserAdmin
         arguments: [~, CoreBundle\Entity\User, ~]

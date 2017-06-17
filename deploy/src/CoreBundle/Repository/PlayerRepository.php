@@ -17,13 +17,13 @@ class PlayerRepository extends EntityRepository
      */
     public function findPlayerIdBySlug(string $slug)
     {
-        return intval($this
+        return (int) $this
             ->createQueryBuilder('p')
             ->select('p.id')
             ->where('p.slug = :slug')
             ->setParameter('slug', $slug)
             ->getQuery()
             ->getSingleScalarResult()
-        );
+        ;
     }
 }

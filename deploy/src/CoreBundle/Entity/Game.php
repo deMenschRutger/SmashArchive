@@ -60,6 +60,11 @@ class Game
     private $displayName;
 
     /**
+     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Character", mappedBy="game")
+     */
+    private $characters;
+
+    /**
      * @ORM\OneToMany(targetEntity="Event", mappedBy="game")
      */
     private $events;
@@ -134,6 +139,14 @@ class Game
     public function setDisplayName(string $displayName)
     {
         $this->displayName = $displayName;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCharacters(): Collection
+    {
+        return $this->events;
     }
 
     /**
