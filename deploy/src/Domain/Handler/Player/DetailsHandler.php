@@ -23,9 +23,11 @@ class DetailsHandler extends AbstractHandler
         $player = $this
             ->getEntityManager()
             ->createQueryBuilder()
-            ->select('p, c')
+            ->select('p, c, m, s')
             ->from('CoreBundle:Player', 'p')
             ->leftJoin('p.country', 'c')
+            ->leftJoin('p.mains', 'm')
+            ->leftJoin('p.secondaries', 's')
             ->where('p.slug = :slug')
             ->setParameter('slug', $command->getSlug())
             ->getQuery()
