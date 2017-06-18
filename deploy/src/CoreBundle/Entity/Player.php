@@ -227,6 +227,14 @@ class Player
     }
 
     /**
+     * @param string $slug
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+    }
+
+    /**
      * @return string
      */
     public function getSmashggId()

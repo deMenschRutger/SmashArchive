@@ -36,6 +36,7 @@ class PlayerAdmin extends AbstractAdmin
             ->with('Basics')
             ->add('gamerTag')
             ->add('name')
+            ->add('slug')
             ->add('region')
             ->add('city')
             ->add('country')
