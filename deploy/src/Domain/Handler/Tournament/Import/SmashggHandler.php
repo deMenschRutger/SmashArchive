@@ -169,6 +169,8 @@ class SmashggHandler extends AbstractHandler
         $dateStart->setTimestamp($smashggTournament['startAt']);
 
         $tournament->setName($smashggTournament['name']);
+        $tournament->setCity($smashggTournament['city']);
+        $tournament->setCountry($this->findCountry(null, $smashggTournament['countryCode']));
         $tournament->setDateStart($dateStart);
 
         return $tournament;
@@ -516,11 +518,23 @@ class SmashggHandler extends AbstractHandler
 
     /**
      * @param string $name
+     * @param string $code
      * @return Country|null
      */
-    protected function findCountry($name)
+    protected function findCountry($name, $code = null)
     {
         $countryRepository = $this->getRepository('CoreBundle:Country');
+
+        if ($code) {
+            $country = $countryRepository->findOneBy([
+                'code' => $code,
+            ]);
+
+            if ($country instanceof Country) {
+                return $country;
+            }
+        }
+
         $country = $countryRepository->findOneBy([
             'name' => $name,
         ]);
