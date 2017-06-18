@@ -124,7 +124,7 @@ class Tournament
      *
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
-    private $isComplete;
+    private $isComplete = false;
 
     /**
      * @var bool

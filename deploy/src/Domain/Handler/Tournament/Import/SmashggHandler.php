@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Domain\Handler\Tournament\Import;
 
+use CoreBundle\Entity\Country;
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Game;
@@ -147,8 +148,6 @@ class SmashggHandler extends AbstractHandler
     /**
      * @param string $slug
      * @return Tournament
-     *
-     * @TODO Check with smash.gg if the tournament is actually complete.
      */
     protected function getTournament($slug)
     {
@@ -347,8 +346,15 @@ class SmashggHandler extends AbstractHandler
         foreach ($players as $playerData) {
             $playerId = $playerData['id'];
 
-            $player = $this->findPlayer($playerId);
-            $player->setGamerTag($playerData['gamerTag']);
+            $player = $this->findPlayer($playerId, $playerData['gamerTag']);
+
+            if ($player->getRegion() === null && $playerData['region']) {
+                $player->setRegion($playerData['region']);
+            }
+
+            if (!$player->getCountry() instanceof Country && $playerData['country']) {
+                $player->setCountry($this->findCountry($playerData['country']));
+            }
         }
     }
 
@@ -483,10 +489,11 @@ class SmashggHandler extends AbstractHandler
     }
 
     /**
-     * @param int $smashggId
+     * @param int    $smashggId
+     * @param string $tag
      * @return Player
      */
-    protected function findPlayer(int $smashggId): Player
+    protected function findPlayer(int $smashggId, $tag): Player
     {
         if (!array_key_exists($smashggId, $this->players)) {
             $player = $this->getRepository('CoreBundle:Player')->findOneBy([
@@ -496,6 +503,7 @@ class SmashggHandler extends AbstractHandler
             if (!$player instanceof Player) {
                 $player = new Player();
                 $player->setSmashggId($smashggId);
+                $player->setGamerTag($tag);
 
                 $this->entityManager->persist($player);
             }
@@ -504,6 +512,28 @@ class SmashggHandler extends AbstractHandler
         }
 
         return $this->players[$smashggId];
+    }
+
+    /**
+     * @param string $name
+     * @return Country|null
+     */
+    protected function findCountry($name)
+    {
+        $countryRepository = $this->getRepository('CoreBundle:Country');
+        $country = $countryRepository->findOneBy([
+            'name' => $name,
+        ]);
+
+        if ($country instanceof Country) {
+            return $country;
+        }
+
+        $name = 'The '.$name;
+
+        return $countryRepository->findOneBy([
+            'name' => $name,
+        ]);
     }
 
     /**
