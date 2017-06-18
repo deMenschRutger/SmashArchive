@@ -9,13 +9,23 @@ imports:
 
 monolog:
     handlers:
-        main:
-            type:         fingers_crossed
-            action_level: error
-            handler:      nested
-        nested:
-            type:  stream
-            path:  "%kernel.logs_dir%/%kernel.environment%.log"
-            level: debug
-        console:
-            type:  console
+        error:
+            type: "rotating_file"
+            path: "%kernel.logs_dir%/%kernel.environment%/error/errors.log"
+            level: "error"
+            formatter: "monolog.formatter.json"
+            max_files: 60
+        filter_for_info:
+            type: "fingers_crossed"
+            action_level: "error"
+            buffer_size: 200
+            channels: ["!event"]
+            handler: "info"
+        info:
+            type: "rotating_file"
+            path: "%kernel.logs_dir%/%kernel.environment%/info/info.log"
+            level: "debug"
+            formatter: "monolog.formatter.json"
+            max_files: 60
+        sentry:
+            type: "null"

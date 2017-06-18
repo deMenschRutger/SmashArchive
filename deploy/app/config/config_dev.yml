@@ -13,22 +13,18 @@ web_profiler:
 
 monolog:
     handlers:
-        main:
-            type: stream
-            path: "%kernel.logs_dir%/%kernel.environment%.log"
-            level: debug
-            channels: [!event]
-        console:
-            type:   console
-            channels: [!event, !doctrine]
-        # uncomment to get logging in your browser
-        # you may have to allow bigger header sizes in your Web server configuration
-        #firephp:
-        #    type:   firephp
-        #    level:  info
-        #chromephp:
-        #    type:   chromephp
-        #    level:  info
-
-#swiftmailer:
-#    delivery_address: me@example.com
+        error:
+            type: "rotating_file"
+            path: "%kernel.logs_dir%/%kernel.environment%/error/errors.log"
+            level: "error"
+            formatter: "monolog.formatter.json"
+            max_files: 60
+        info:
+            type: "rotating_file"
+            path: "%kernel.logs_dir%/%kernel.environment%/info/info.log"
+            level: "debug"
+            channels: ["!event", "!doctrine"]
+            formatter: "monolog.formatter.json"
+            max_files: 60
+        sentry:
+            type: "null"
