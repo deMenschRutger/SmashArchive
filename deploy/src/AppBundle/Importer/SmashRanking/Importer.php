@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace AppBundle\Importer\SmashRanking;
 
+use CoreBundle\Entity\Character;
 use CoreBundle\Entity\Country;
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\PhaseGroup;
@@ -216,9 +217,19 @@ class Importer
             $entity->setGamerTag($player['tag']);
             $entity->setNationality($nationality);
             $entity->setCountry($country);
-            $entity->setRegion($player['region']);
-            $entity->setCity($player['city']);
+            $entity->setRegion($player['region'] ? $player['region'] : null);
+            $entity->setCity($player['city'] ?  $player['city'] : null);
             $entity->setIsActive(!$player['hide']);
+
+            if ($player['main']) {
+                $character = $this->getCharacterBySmashRankingId($player['main']);
+                $entity->addMain($character);
+            }
+
+            if ($player['secondary']) {
+                $character = $this->getCharacterBySmashRankingId($player['secondary']);
+                $entity->addSecondary($character);
+            }
 
             $this->entityManager->persist($entity);
             $player = $entity;
@@ -323,6 +334,15 @@ class Importer
         }
 
         return null;
+    }
+
+    /**
+     * @param int $id
+     * @return Character
+     */
+    protected function getCharacterBySmashRankingId($id)
+    {
+        return $this->entityManager->find('CoreBundle:Character', $id);
     }
 
     /**

@@ -400,11 +400,27 @@ class Player
     }
 
     /**
+     * @param Character $character
+     */
+    public function addMain(Character $character)
+    {
+        $this->mains[] = $character;
+    }
+
+    /**
      * @return Collection
      */
     public function getSecondaries(): Collection
     {
         return $this->secondaries;
+    }
+
+    /**
+     * @param Character $character
+     */
+    public function addSecondary(Character $character)
+    {
+        $this->secondaries[] = $character;
     }
 
     /**
