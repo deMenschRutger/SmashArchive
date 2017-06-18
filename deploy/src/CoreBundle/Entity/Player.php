@@ -144,6 +144,34 @@ class Player
     private $isActive = true;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Character")
+     * @ORM\JoinTable(
+     *  name="players_mains",
+     *  joinColumns={
+     *     @ORM\JoinColumn(name="player_id", referencedColumnName="id", onDelete="CASCADE")
+     *  },
+     *  inverseJoinColumns={
+     *     @ORM\JoinColumn(name="character_id", referencedColumnName="id", onDelete="CASCADE")
+     *  }
+     * )
+     */
+    private $mains;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Character")
+     * @ORM\JoinTable(
+     *  name="players_secondaries",
+     *  joinColumns={
+     *     @ORM\JoinColumn(name="player_id", referencedColumnName="id", onDelete="CASCADE")
+     *  },
+     *  inverseJoinColumns={
+     *     @ORM\JoinColumn(name="character_id", referencedColumnName="id", onDelete="CASCADE")
+     *  }
+     * )
+     */
+    private $secondaries;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Entrant", mappedBy="players")
      */
     private $entrants;
@@ -153,6 +181,8 @@ class Player
      */
     public function __construct()
     {
+        $this->mains = new ArrayCollection();
+        $this->secondaries = new ArrayCollection();
         $this->entrants = new ArrayCollection();
     }
 
@@ -359,6 +389,22 @@ class Player
     public function setIsActive($isActive)
     {
         $this->isActive = $isActive;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getMains(): Collection
+    {
+        return $this->mains;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getSecondaries(): Collection
+    {
+        return $this->secondaries;
     }
 
     /**

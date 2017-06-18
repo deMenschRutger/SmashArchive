@@ -7,7 +7,9 @@ namespace CoreBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="characters")
+ * @ORM\Table(name="characters", uniqueConstraints={
+ *  @ORM\UniqueConstraint(name="name_game_unique", columns={"name", "game_id"})
+ * })
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\CharacterRepository")
  */
 class Character
@@ -39,7 +41,13 @@ class Character
      */
     public function __toString()
     {
-        return $this->getName();
+        $game = $this->getGame();
+
+        if (!$game instanceof Game) {
+            return $this->getName();
+        }
+
+        return sprintf('%s (%s)', $this->getName(), $game->getDisplayName());
     }
 
     /**
