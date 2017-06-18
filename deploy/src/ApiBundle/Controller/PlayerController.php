@@ -57,7 +57,7 @@ class PlayerController extends AbstractDefaultController
      * @param string $playerTwoSlug
      * @return array
      *
-     * @Route("/head-to-head/{playerOneSlug}/{playerTwoSlug}/", name="api_players_head_to_head")
+     * @Route("/{playerOneSlug}/head-to-head/{playerTwoSlug}/", name="api_players_head_to_head")
      */
     public function headToHeadAction($playerOneSlug, $playerTwoSlug)
     {

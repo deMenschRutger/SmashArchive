@@ -5,9 +5,11 @@ declare(strict_types = 1);
 namespace Domain\Handler\Player;
 
 use CoreBundle\Entity\Set;
+use CoreBundle\Repository\PlayerRepository;
 use CoreBundle\Repository\SetRepository;
 use Domain\Command\Player\HeadToHeadCommand;
 use Domain\Handler\AbstractHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -23,9 +25,20 @@ class HeadToHeadHandler extends AbstractHandler
         $playerOneSlug = $command->getPlayerOneSlug();
         $playerTwoSlug = $command->getPlayerTwoSlug();
 
-        /** @var SetRepository $repository */
-        $repository = $this->getRepository('CoreBundle:Set');
-        $sets = $repository->findHeadToHeadSets($playerOneSlug, $playerTwoSlug);
+        /** @var PlayerRepository $playerRepository */
+        $playerRepository = $this->getRepository('CoreBundle:Player');
+
+        if (!$playerRepository->exists($playerOneSlug)) {
+            throw new NotFoundHttpException("The player '{$playerOneSlug}' could not be found.");
+        }
+
+        if (!$playerRepository->exists($playerTwoSlug)) {
+            throw new NotFoundHttpException("The player '{$playerTwoSlug}' could not be found.");
+        }
+
+        /** @var SetRepository $setRepository */
+        $setRepository = $this->getRepository('CoreBundle:Set');
+        $sets = $setRepository->findHeadToHeadSets($playerOneSlug, $playerTwoSlug);
 
         $playerOneScore = 0;
         $playerTwoScore = 0;
@@ -34,7 +47,7 @@ class HeadToHeadHandler extends AbstractHandler
             /** @var Set $set */
 
             if ($set->getWinner() === null) {
-                // This can happen if the result of a set was never submitted.
+                // This can happen if the result of a set was never submitted or the set was never played.
                 continue;
             }
 

@@ -26,4 +26,22 @@ class PlayerRepository extends EntityRepository
             ->getSingleScalarResult()
         ;
     }
+
+    /**
+     * @param string $slug
+     * @return int
+     */
+    public function exists(string $slug)
+    {
+        $result = $this
+            ->createQueryBuilder('p')
+            ->select('p.id')
+            ->where('p.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        return $result !== null;
+    }
 }
