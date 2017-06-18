@@ -211,10 +211,19 @@ class Importer
                 $nationality = $country;
             }
 
+            // Some players had a country suffix in smashranking.eu to uniquely identify them (for example: Adam (NL)). This code removes
+            // that suffix. Uniquely identifying a player is now based on slugs.
+            $tag = $player['tag'];
+            preg_match('~^(.*) \(([A-Z]{2})\)$~', $tag, $tagMatches);
+
+            if (array_key_exists(1, $tagMatches)) {
+                $tag = $tagMatches[1];
+            }
+
             $entity = new Player();
             $entity->setOriginalId($playerId);
             $entity->setName($player['name'] ? $player['name'] : null);
-            $entity->setGamerTag($player['tag']);
+            $entity->setGamerTag($tag);
             $entity->setNationality($nationality);
             $entity->setCountry($country);
             $entity->setRegion($player['region'] ? $player['region'] : null);
