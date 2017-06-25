@@ -6,7 +6,6 @@ services:
             - "mcrypt"
         calls:
             - [ "setKey", [ "%encryption_key%" ] ]
-#            - [ "setSalt", [ "%encryption_salt%" ] ] # TODO Do we still need to set the salt here?
 
     core.security.provider.user:
         class: CoreBundle\Security\Core\User\HWIOAuthUserProvider\UserProvider
@@ -15,6 +14,11 @@ services:
             -
                 facebook: facebookId
                 twitter: twitterId
+
+    core.tactician.middleware.stopwatch:
+        class: CoreBundle\Tactician\Middleware\StopwatchMiddleware
+        arguments:
+            - "@debug.stopwatch"
 
     core.service.smashgg:
         class: CoreBundle\Service\Smashgg\Smashgg
