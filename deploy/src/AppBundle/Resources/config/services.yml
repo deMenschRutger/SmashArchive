@@ -33,6 +33,7 @@ services:
         calls:
             - ['setContainer', ['@service_container']]
             - ['setCommandBus', ['@tactician.commandbus']]
+            - ['setCache', ['@cache.provider.filesystem']]
 
     app.controller.tournament:
         class: AppBundle\Controller\TournamentController

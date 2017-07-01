@@ -13,7 +13,6 @@ use Domain\Command\Player\SetsCommand;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -67,6 +66,12 @@ class PlayerController extends AbstractDefaultController
      */
     public function detailsAction($slug)
     {
+        $cacheKey = 'views_player_details_'.$slug;
+
+        if ($this->isCached($cacheKey)) {
+            return $this->getFromCache($cacheKey);
+        }
+
         $detailsCommand = new DetailsCommand($slug);
         $player = $this->commandBus->handle($detailsCommand);
 
@@ -76,7 +81,9 @@ class PlayerController extends AbstractDefaultController
         $resultsCommand = new ResultsCommand($slug, $sets);
         $results = $this->commandBus->handle($resultsCommand);
 
-        return $this->render('AppBundle:Players:details.html.twig', [
+        $tags = [ 'player_'.$slug ];
+
+        return $this->renderWithCache($cacheKey, $tags, 'AppBundle:Players:details.html.twig', [
             'player'  => $player,
             'results' => $results,
         ]);

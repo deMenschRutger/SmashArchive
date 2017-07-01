@@ -55,8 +55,8 @@ class ResultsHandler extends AbstractHandler
         $remainingResults = $this->processSetsWithoutResult();
         $fullResults = array_merge($resultsByEvent, $remainingResults);
 
-        $tag = 'player_'.$slug;
-        $this->saveToCache($cacheKey, $fullResults, [ $tag ]);
+        $tags = [ 'player_'.$slug ];
+        $this->saveToCache($cacheKey, $fullResults, $tags);
 
         return $fullResults;
     }
