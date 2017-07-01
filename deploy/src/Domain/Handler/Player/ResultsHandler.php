@@ -11,6 +11,7 @@ use CoreBundle\Entity\Tournament;
 use CoreBundle\Repository\ResultRepository;
 use Domain\Command\Player\ResultsCommand;
 use Domain\Handler\AbstractHandler;
+use Knp\Component\Pager\Pagination\SlidingPagination;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -35,6 +36,8 @@ class ResultsHandler extends AbstractHandler
     {
         /** @var ResultRepository $repository */
         $repository = $this->getRepository('CoreBundle:Result');
+
+        /** @var SlidingPagination $sets */
         $sets = $command->getSets();
         $slug = $command->getSlug();
 
@@ -48,7 +51,7 @@ class ResultsHandler extends AbstractHandler
             return $this->getFromCache($cacheKey);
         }
 
-        $this->setsByEventId = $this->getSetsByEventId($sets);
+        $this->setsByEventId = $this->getSetsByEventId($sets->getItems());
 
         $results = $repository->findByPlayerSlug($slug);
         $resultsByEvent = $this->processResults($results);

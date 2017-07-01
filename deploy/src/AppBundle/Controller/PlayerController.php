@@ -75,7 +75,7 @@ class PlayerController extends AbstractDefaultController
         $detailsCommand = new DetailsCommand($slug);
         $player = $this->commandBus->handle($detailsCommand);
 
-        $setCommand = new SetsCommand($slug);
+        $setCommand = new SetsCommand($slug, 1, 999999999);
         $sets = $this->commandBus->handle($setCommand);
 
         $resultsCommand = new ResultsCommand($slug, $sets);

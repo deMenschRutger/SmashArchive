@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace CoreBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -13,7 +14,7 @@ class SetRepository extends EntityRepository
 {
     /**
      * @param string|array $slugs
-     * @return array
+     * @return Query
      */
     public function findByPlayerSlug($slugs)
     {
@@ -40,8 +41,7 @@ class SetRepository extends EntityRepository
             ->orWhere('e2.id IN (:ids)')
             ->setParameter('ids', $singlePlayerEntrantIds)
             ->orderBy('t.dateStart DESC, ev.id, ph.phaseOrder, s.round')
-            ->getQuery()
-            ->getResult()
+            ->getQuery() // Returning the query to accommodate pagination.
         ;
     }
 

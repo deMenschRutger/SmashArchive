@@ -17,6 +17,8 @@ services:
 
     bus.handler.player.sets:
         class: Domain\Handler\Player\SetsHandler
+        arguments:
+            - '@knp_paginator'
         tags:
             - { name: "tactician.handler", command: Domain\Command\Player\SetsCommand }
         calls:

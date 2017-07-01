@@ -8,6 +8,7 @@ use CoreBundle\Controller\AbstractDefaultController;
 use Domain\Command\Player\HeadToHeadCommand;
 use Domain\Command\Player\OverviewCommand;
 use Domain\Command\Player\SetsCommand;
+use MediaMonks\RestApiBundle\Response\OffsetPaginatedResponse;
 use MediaMonks\RestApiBundle\Response\PaginatedResponseInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,17 +40,21 @@ class PlayerController extends AbstractDefaultController
     }
 
     /**
-     * @param string $slug
-     * @return array
+     * @param Request $request
+     * @param string  $slug
+     * @return array|OffsetPaginatedResponse
      *
      * @Route("/{slug}/sets/", name="api_players_sets")
      */
-    public function setsAction($slug)
+    public function setsAction(Request $request, $slug)
     {
-        $command = new SetsCommand($slug);
+        $page = $request->get('page');
+        $limit = $request->get('limit');
+
+        $command = new SetsCommand($slug, $page, $limit);
         $sets = $this->commandBus->handle($command);
 
-        return $this->buildResponse($sets, 'players_sets');
+        return $this->buildPaginatedResponse($sets, 'players_sets');
     }
 
     /**
