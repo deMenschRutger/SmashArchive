@@ -11,6 +11,13 @@ web_profiler:
     toolbar: true
     intercept_redirects: false
 
+cache_adapter:
+    providers:
+        filesystem:
+            factory: 'cache.factory.doctrine_filesystem'
+            options:
+                directory: "%kernel.root_dir%/../var/cache/%kernel.environment%/doctrine/filesystem"
+
 monolog:
     handlers:
         error:

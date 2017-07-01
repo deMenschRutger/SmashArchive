@@ -10,8 +10,14 @@
         Full name: {{ player.name }}<br>
         Location: {{ player.location }}<br>
         Nationality: {{ player.nationality }}<br>
-        Mains: {{ player.mains|join(', ') }}<br>
-        Secondaries: {{ player.secondaries|join(', ') }}<br>
+
+        {% if player.mains|length > 0 %}
+            Mains: {{ player.mains|join(', ') }}<br>
+        {% endif %}
+
+        {% if player.secondaries|length > 0 %}
+            Secondaries: {{ player.secondaries|join(', ') }}<br>
+        {% endif %}
 
     </div>
     <div class="col-md-9 ">

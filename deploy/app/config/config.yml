@@ -75,9 +75,7 @@ stof_doctrine_extensions:
 cache_adapter:
     providers:
         filesystem:
-            factory: 'cache.factory.doctrine_filesystem'
-            options:
-                directory: "%kernel.root_dir%/../var/cache/%kernel.environment%/doctrine/filesystem"
+            factory: 'cache.factory.void'
 
 # Swiftmailer Configuration
 swiftmailer:
