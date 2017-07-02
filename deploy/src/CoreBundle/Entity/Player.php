@@ -177,6 +177,11 @@ class Player
     private $entrants;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Tournament", mappedBy="organizers")
+     */
+    private $tournamentsOrganized;
+
+    /**
      *
      */
     public function __construct()
@@ -184,6 +189,7 @@ class Player
         $this->mains = new ArrayCollection();
         $this->secondaries = new ArrayCollection();
         $this->entrants = new ArrayCollection();
+        $this->tournamentsOrganized = new ArrayCollection();
     }
 
     /**

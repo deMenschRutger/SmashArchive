@@ -6,9 +6,11 @@ namespace CoreBundle\Entity;
 
 use CoreBundle\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="tournament", indexes={
@@ -113,6 +115,23 @@ class Tournament
     /**
      * @var string
      *
+     * @ORM\Column(name="smashgg_url", type="text", nullable=true)
+     * @Assert\Url
+     */
+    private $smashggUrl;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="facebook_event_url", type="text", nullable=true)
+     * @Assert\Url
+     */
+    private $facebookEventUrl;
+
+    /**
+     * @var string
+     * @Assert\Url
+     *
      * @ORM\Column(name="results_page", type="text", nullable=true)
      */
     private $resultsPage;
@@ -134,6 +153,12 @@ class Tournament
     private $isActive;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Player", inversedBy="tournamentsOrganized")
+     * @ORM\JoinTable(name="tournaments_organizers")
+     */
+    private $organizers;
+
+    /**
      * @var Event[]
      *
      * @ORM\OneToMany(targetEntity="Event", mappedBy="tournament", cascade={"persist"}, orphanRemoval=true)
@@ -147,6 +172,7 @@ class Tournament
      */
     public function __construct()
     {
+        $this->organizers = new ArrayCollection();
         $this->events = new ArrayCollection();
     }
 
@@ -329,6 +355,38 @@ class Tournament
     }
 
     /**
+     * @return string
+     */
+    public function getSmashggUrl()
+    {
+        return $this->smashggUrl;
+    }
+
+    /**
+     * @param string $smashggUrl
+     */
+    public function setSmashggUrl($smashggUrl)
+    {
+        $this->smashggUrl = $smashggUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFacebookEventUrl()
+    {
+        return $this->facebookEventUrl;
+    }
+
+    /**
+     * @param string $facebookEventUrl
+     */
+    public function setFacebookEventUrl($facebookEventUrl)
+    {
+        $this->facebookEventUrl = $facebookEventUrl;
+    }
+
+    /**
      * @return bool
      */
     public function getIsComplete()
@@ -361,7 +419,23 @@ class Tournament
     }
 
     /**
-     * @return Event[]
+     * @return Collection|Player[]
+     */
+    public function getOrganizers(): Collection
+    {
+        return $this->organizers;
+    }
+
+    /**
+     * @param Player $organizer
+     */
+    public function addOrganizer(Player $organizer)
+    {
+        $this->organizers[] = $organizer;
+    }
+
+    /**
+     * @return Collection|Event[]
      */
     public function getEvents()
     {

@@ -130,7 +130,7 @@ sonata_block:
             contexts: [admin]
 
 sonata_admin:
-    title: SmashRanking
+    title: SmashArchive
     security:
         handler: sonata.admin.security.handler.role
     options:
