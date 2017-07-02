@@ -69,12 +69,6 @@ class SmashRankingImportCommand extends ContainerAwareCommand
                 InputOption::VALUE_OPTIONAL,
                 'Import the smashranking.eu database export into the database.'
             )
-            ->addOption(
-                'match-smashgg-ids',
-                'm',
-                InputOption::VALUE_OPTIONAL,
-                'Match the imported data from SmashRanking to the same data on smash.gg and store the IDs.'
-            )
         ;
     }
 
@@ -96,8 +90,6 @@ class SmashRankingImportCommand extends ContainerAwareCommand
             $this->countModels($modelName);
         } elseif ($input->getOption('import')) {
             $this->importer->import();
-        } elseif ($input->getOption('match-smashgg-ids')) {
-            $this->matchSmashggIds();
         }
     }
 
@@ -151,27 +143,6 @@ class SmashRankingImportCommand extends ContainerAwareCommand
         $count = count($this->importer->getContentFromJson($modelName));
 
         $this->io->text(sprintf("Counted %d items for model name '%s'.", $count, $modelName));
-    }
-
-    /**
-     * @TODO Compare smash.gg IDs with SmashRanking IDs.
-     */
-    protected function matchSmashggIds()
-    {
-        $queryBuilder = $this->entityManager->createQueryBuilder();
-
-        $smashggTournaments = $queryBuilder
-            ->select('t.name')
-            ->from('CoreBundle:Tournament', 't')
-            ->leftJoin('t.events', 'e')
-            ->leftJoin('e.phases', 'p')
-            ->leftJoin('p.phaseGroups', 'pg')
-            ->where("t.resultsPage LIKE '%smash.gg%'")
-            ->orWhere("pg.resultsPage LIKE '%smash.gg%'")
-            ->getQuery()
-            ->getResult()
-        ;
-        $smashggTournament = current($smashggTournaments);
     }
 
     /**

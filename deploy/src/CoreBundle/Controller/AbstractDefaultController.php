@@ -4,12 +4,13 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Controller;
 
-use Cache\TagInterop\TaggableCacheItemPoolInterface as Cache;
+use Cache\TagInterop\TaggableCacheItemPoolInterface;
 use Doctrine\Common\Persistence\ObjectRepository;
 use JMS\Serializer\SerializationContext;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use League\Tactician\CommandBus;
 use MediaMonks\RestApiBundle\Response\OffsetPaginatedResponse;
+use Psr\Cache\CacheItemPoolInterface as Cache;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,7 +25,7 @@ abstract class AbstractDefaultController extends Controller
     protected $commandBus;
 
     /**
-     * @var Cache
+     * @var Cache|TaggableCacheItemPoolInterface
      */
     protected $cache;
 

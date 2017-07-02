@@ -34,7 +34,7 @@ class TwitterAdapter extends AbstractAdapter
     public function resetUserAuthData(User $user)
     {
         $user->setTwitterId(null);
-        $user->setTwitchAccessToken(null);
+        $user->setTwitterAccessToken(null);
     }
 
     /**

@@ -154,4 +154,3 @@ class Phase
         return $this->phaseGroups;
     }
 }
-

@@ -6,6 +6,7 @@ namespace AppBundle\Controller;
 
 use CoreBundle\Controller\AbstractDefaultController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -15,6 +16,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class DefaultController extends AbstractDefaultController
 {
     /**
+     * @return Response
+     *
      * @Route("/", name="homepage")
      */
     public function indexAction()

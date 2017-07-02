@@ -15,6 +15,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class DefaultController extends AbstractDefaultController
 {
     /**
+     * @return array
+     *
      * @Route("/")
      */
     public function indexAction()

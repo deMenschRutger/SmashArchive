@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace CoreBundle\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;

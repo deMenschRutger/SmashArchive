@@ -146,7 +146,7 @@ class Game
      */
     public function getCharacters(): Collection
     {
-        return $this->events;
+        return $this->characters;
     }
 
     /**

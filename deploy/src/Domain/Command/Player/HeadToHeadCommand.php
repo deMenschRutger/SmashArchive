@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace Domain\Command\Player;
 
-use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */

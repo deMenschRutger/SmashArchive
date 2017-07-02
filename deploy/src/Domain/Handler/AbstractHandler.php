@@ -4,9 +4,10 @@ declare(strict_types = 1);
 
 namespace Domain\Handler;
 
-use Cache\TagInterop\TaggableCacheItemPoolInterface as Cache;
+use Cache\TagInterop\TaggableCacheItemPoolInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Psr\Cache\CacheItemPoolInterface as Cache;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -15,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 abstract class AbstractHandler
 {
     /**
-     * @var Cache
+     * @var Cache|TaggableCacheItemPoolInterface
      */
     protected $cache;
 
