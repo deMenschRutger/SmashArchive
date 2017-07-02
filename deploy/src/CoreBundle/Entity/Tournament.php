@@ -153,6 +153,15 @@ class Tournament
     private $isActive;
 
     /**
+     * @var Series
+     *
+     * @ORM\ManyToOne(targetEntity="Series", inversedBy="tournaments")
+     */
+    private $series;
+
+    /**
+     * @var Player[]
+     *
      * @ORM\ManyToMany(targetEntity="Player", inversedBy="tournamentsOrganized")
      * @ORM\JoinTable(name="tournaments_organizers")
      */
@@ -416,6 +425,22 @@ class Tournament
     public function setIsActive($isActive)
     {
         $this->isActive = $isActive;
+    }
+
+    /**
+     * @return Series
+     */
+    public function getSeries()
+    {
+        return $this->series;
+    }
+
+    /**
+     * @param Series $series
+     */
+    public function setSeries($series)
+    {
+        $this->series = $series;
     }
 
     /**

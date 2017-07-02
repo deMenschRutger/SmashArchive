@@ -23,6 +23,12 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, label: Players }
 
+    admin.series:
+        class: AdminBundle\Admin\SeriesAdmin
+        arguments: [~, CoreBundle\Entity\Series, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Series }
+
     admin.tournament:
         class: AdminBundle\Admin\TournamentAdmin
         arguments: [~, CoreBundle\Entity\Tournament, ~]
