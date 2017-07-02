@@ -35,6 +35,7 @@ class AppKernel extends Kernel
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new League\Tactician\Bundle\TacticianBundle(),
             new MediaMonks\RestApiBundle\MediaMonksRestApiBundle(),
+            new Sentry\SentryBundle\SentryBundle(),
 
             new AdminBundle\AdminBundle(),
             new ApiBundle\ApiBundle(),

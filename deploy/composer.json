@@ -43,7 +43,8 @@
         "zendframework/zend-crypt": "^3.2",
         "friendsofsymfony/user-bundle": "~2.0",
         "kevinrob/guzzle-cache-middleware": "^2.0",
-        "cache/cache-bundle": "^0.5.0"
+        "cache/cache-bundle": "^0.5.0",
+        "sentry/sentry-symfony": "^0.8.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

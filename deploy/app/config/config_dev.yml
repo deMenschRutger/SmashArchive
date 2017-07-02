@@ -33,5 +33,12 @@ monolog:
             channels: ["!event", "!doctrine"]
             formatter: "monolog.formatter.json"
             max_files: 60
+        filter_for_sentry:
+            type: "fingers_crossed"
+            action_level: "error"
+            buffer_size: 200
+            handler: "sentry"
+            excluded_404s:
+                - "(.*)"
         sentry:
-            type: "null"
+             type: "null"
