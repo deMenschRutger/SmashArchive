@@ -4,19 +4,9 @@
 
 {% import "SonataAdminBundle:CRUD:base_edit_form_macro.html.twig" as form_helper %}
 
-{% block sonata_page_content_nav %}
-
-    <nav class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">Import "{{ tournament.name }}"</a>
-            </div>
-        </div>
-    </nav>
-
-{% endblock %}
-
 {% block sonata_admin_content %}
+
+    {# TODO Show much more information about the players about to be merged. #}
 
     <div class="sonata-ba-form">
         {{ form_start(form) }}

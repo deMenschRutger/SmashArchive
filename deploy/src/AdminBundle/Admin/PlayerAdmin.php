@@ -8,6 +8,7 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
 
 /**
@@ -21,6 +22,15 @@ class PlayerAdmin extends AbstractAdmin
     protected $datagridValues = [
         '_sort_by' => 'gamerTag',
     ];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function configureRoutes(RouteCollection $collection)
+    {
+        $collection->add('merge', $this->getRouterIdParameter().'/merge');
+        $collection->add('confirm_merge', $this->getRouterIdParameter().'/confirm-merge/{targetId}');
+    }
 
     /**
      * @param FormMapper $formMapper
@@ -103,6 +113,9 @@ class PlayerAdmin extends AbstractAdmin
             [
                 'actions' => [
                     'edit' => [],
+                    'merge' => [
+                        'template' => 'AdminBundle:Player:list__action_merge.html.twig',
+                    ],
                     'show' => [],
                     'delete' => [],
                 ],

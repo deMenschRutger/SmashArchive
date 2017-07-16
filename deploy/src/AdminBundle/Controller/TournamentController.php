@@ -60,12 +60,10 @@ class TournamentController extends Controller
             $choices[$name] = $event['id'];
         }
 
-        $defaultData = [
-            'events' => [],
-        ];
-
         $form = $this
-            ->createFormBuilder($defaultData)
+            ->createFormBuilder([
+                'events' => [],
+            ])
             ->add('events', ChoiceType::class, [
                 'choices' => $choices,
                 'constraints' => [
@@ -115,7 +113,7 @@ class TournamentController extends Controller
         }
 
         $this->admin->setFormGroups([
-            'events' => [
+            'default' => [
                 'name' => 'Select events to import',
                 'description' => null,
                 'box_class' => 'box box-primary',

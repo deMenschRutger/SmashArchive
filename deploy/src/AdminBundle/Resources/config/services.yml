@@ -19,7 +19,7 @@ services:
 
     admin.player:
         class: AdminBundle\Admin\PlayerAdmin
-        arguments: [~, CoreBundle\Entity\Player, ~]
+        arguments: [~, CoreBundle\Entity\Player, AdminBundle:Player ]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Players, pager_type: simple }
 

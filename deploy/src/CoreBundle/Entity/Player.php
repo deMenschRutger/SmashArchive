@@ -289,6 +289,20 @@ class Player
     }
 
     /**
+     * @return string
+     */
+    public function getExpandedGamerTag()
+    {
+        $country = $this->getCountry();
+
+        if (!$country instanceof Country) {
+            $country = 'unknown';
+        }
+
+        return sprintf('%s (%s)', $this->gamerTag, $country);
+    }
+
+    /**
      * @return Country
      */
     public function getNationality()
