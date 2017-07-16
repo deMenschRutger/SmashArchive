@@ -47,6 +47,15 @@ class TournamentAdmin extends AbstractAdmin
     {
         $formMapper
             ->with('Basics')
+            ->add('source', 'choice', [
+                'choices' => [
+                    'custom'          => Tournament::SOURCE_CUSTOM,
+                    'smash.gg'        => Tournament::SOURCE_SMASHGG,
+                    'Challone'        => Tournament::SOURCE_CHALLONGE,
+                    'TIO'             => Tournament::SOURCE_TIO,
+                    'smashranking.eu' => Tournament::SOURCE_SMASHRANKING,
+                ],
+            ])
             ->add('name')
             ->add('country')
             ->add('region')

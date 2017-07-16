@@ -25,6 +25,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Tournament
 {
+    const SOURCE_CUSTOM       = 'custom';
+    const SOURCE_SMASHGG      = 'smashgg';
+    const SOURCE_CHALLONGE    = 'challonge';
+    const SOURCE_TIO          = 'tio';
+    const SOURCE_SMASHRANKING = 'smashranking';
+
     use TimestampableTrait;
 
     /**
@@ -37,6 +43,13 @@ class Tournament
      * @Serializer\Groups({"players_sets", "tournaments_overview", "tournaments_details"})
      */
     private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="source", type="string", length=255)
+     */
+    private $source = self::SOURCE_CUSTOM;
 
     /**
      * The original ID from the SmashRanking database.
@@ -130,9 +143,9 @@ class Tournament
 
     /**
      * @var string
-     * @Assert\Url
      *
      * @ORM\Column(name="results_page", type="text", nullable=true)
+     * @Assert\Url
      */
     private $resultsPage;
 
@@ -199,6 +212,22 @@ class Tournament
     public function getId(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSource()
+    {
+        return $this->source;
+    }
+
+    /**
+     * @param string $source
+     */
+    public function setSource(string $source)
+    {
+        $this->source = $source;
     }
 
     /**
