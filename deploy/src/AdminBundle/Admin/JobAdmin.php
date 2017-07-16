@@ -13,13 +13,13 @@ use Sonata\AdminBundle\Show\ShowMapper;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class PlayerAdmin extends AbstractAdmin
+class JobAdmin extends AbstractAdmin
 {
     /**
      * @var array
      */
     protected $datagridValues = [
-        '_sort_by' => 'gamerTag',
+        '_sort_by' => 'name',
     ];
 
     /**
@@ -28,22 +28,7 @@ class PlayerAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->with('Basics')
-            ->add('gamerTag')
             ->add('name')
-            ->add('slug')
-            ->add('region')
-            ->add('city')
-            ->add('country')
-            ->add('nationality')
-            ->end()
-            ->with('Characters')
-            ->add('mains')
-            ->add('secondaries')
-            ->end()
-            ->with('Status')
-            ->add('isActive')
-            ->end()
         ;
     }
 
@@ -53,13 +38,8 @@ class PlayerAdmin extends AbstractAdmin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('gamerTag')
             ->add('name')
-            ->add('region')
-            ->add('city')
-            ->add('country')
-            ->add('nationality')
-            ->add('isActive')
+            ->add('status')
         ;
     }
 
@@ -70,19 +50,9 @@ class PlayerAdmin extends AbstractAdmin
     {
         $show
             ->add('id')
-            ->add('slug')
-            ->add('gamerTag')
+            ->add('queueId')
             ->add('name')
-            ->add('region')
-            ->add('city')
-            ->add('country')
-            ->add('nationality')
-            ->add('mains')
-            ->add('secondaries')
-            ->add('isCompeting')
-            ->add('isActive')
-            ->add('createdAt')
-            ->add('updatedAt')
+            ->add('status')
         ;
     }
 
@@ -92,9 +62,9 @@ class PlayerAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('gamerTag')
+            ->addIdentifier('id')
             ->add('name')
-            ->add('country')
+            ->add('status')
         ;
 
         $listMapper->add(
@@ -102,9 +72,7 @@ class PlayerAdmin extends AbstractAdmin
             'actions',
             [
                 'actions' => [
-                    'edit' => [],
                     'show' => [],
-                    'delete' => [],
                 ],
                 'label' => 'Actions',
             ]

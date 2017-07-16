@@ -174,3 +174,9 @@ sonata_admin:
                 on_top: true
                 items:
                     - admin.user
+            admin.job:
+                label: Jobs
+                icon: '<i class="fa fa-tasks"></i>'
+                on_top: true
+                items:
+                    - admin.job

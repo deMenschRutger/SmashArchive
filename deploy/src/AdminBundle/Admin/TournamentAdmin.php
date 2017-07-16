@@ -17,11 +17,6 @@ use Sonata\AdminBundle\Show\ShowMapper;
 class TournamentAdmin extends AbstractAdmin
 {
     /**
-     * @var int
-     */
-    protected $maxPerPage = 100;
-
-    /**
      * @var array
      */
     protected $datagridValues = [

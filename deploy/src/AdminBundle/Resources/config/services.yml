@@ -21,7 +21,7 @@ services:
         class: AdminBundle\Admin\PlayerAdmin
         arguments: [~, CoreBundle\Entity\Player, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: Players }
+            - { name: sonata.admin, manager_type: orm, label: Players, pager_type: simple }
 
     admin.series:
         class: AdminBundle\Admin\SeriesAdmin
@@ -33,7 +33,13 @@ services:
         class: AdminBundle\Admin\TournamentAdmin
         arguments: [~, CoreBundle\Entity\Tournament, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: Tournaments }
+            - { name: sonata.admin, manager_type: orm, label: Tournaments, pager_type: simple }
+
+    admin.job:
+        class: AdminBundle\Admin\JobAdmin
+        arguments: [~, CoreBundle\Entity\Job, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Jobs }
 
     admin.user:
         class: AdminBundle\Admin\UserAdmin
