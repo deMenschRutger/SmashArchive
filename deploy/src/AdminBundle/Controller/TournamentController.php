@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints\Count;
-use Symfony\Component\Validator\Constraints\Length;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -88,15 +87,16 @@ class TournamentController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+            $tournament->setSmashggSlug($smashggId);
 
             $job = \GuzzleHttp\json_encode([
-                'type' => 'import-tournament',
-                'slug' => $tournament->getSmashggSlug(),
+                'source' => Tournament::SOURCE_SMASHGG,
+                'smashggId' => $smashggId,
                 'events' => $data['events'],
             ]);
 
             $pheanstalk = $this->get('leezy.pheanstalk');
-            $jobId = $pheanstalk->useTube('default')->put($job);
+            $jobId = $pheanstalk->useTube('import-tournament')->put($job);
 
             $job = new Job();
             $job->setQueueId($jobId);
@@ -126,7 +126,6 @@ class TournamentController extends Controller
 
         return $this->render('AdminBundle:Tournament:import.html.twig', [
             'admin' => $this->admin,
-            'error' => null,
             'form' => $form->createView(),
             'tournament' => $tournament,
         ]);
@@ -139,7 +138,7 @@ class TournamentController extends Controller
      */
     protected function renderError(string $error, Tournament $tournament)
     {
-        return $this->render('AdminBundle:Tournament:import.html.twig', [
+        return $this->render('AdminBundle:Tournament:import_error.html.twig', [
             'error' => $error,
             'tournament' => $tournament,
         ]);

@@ -4,8 +4,6 @@ security:
             - ROLE_ADMIN_EVENT_ALL
             - ROLE_ADMIN_PLAYER_ALL
             - ROLE_ADMIN_TOURNAMENT_ALL
-            - ROLE_ADMIN_JOB_LIST
-            - ROLE_ADMIN_JOB_VIEW
             - ROLE_MANAGER
         ROLE_SUPER_ADMIN:
             - ROLE_ADMIN

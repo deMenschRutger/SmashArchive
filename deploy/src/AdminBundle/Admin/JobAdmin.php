@@ -19,7 +19,7 @@ class JobAdmin extends AbstractAdmin
      * @var array
      */
     protected $datagridValues = [
-        '_sort_by' => 'name',
+        '_sort_order' => 'DESC',
     ];
 
     /**
@@ -40,6 +40,8 @@ class JobAdmin extends AbstractAdmin
         $datagridMapper
             ->add('name')
             ->add('status')
+            ->add('createdAt')
+            ->add('updatedAt')
         ;
     }
 
@@ -53,6 +55,8 @@ class JobAdmin extends AbstractAdmin
             ->add('queueId')
             ->add('name')
             ->add('status')
+            ->add('createdAt')
+            ->add('updatedAt')
         ;
     }
 
@@ -65,6 +69,8 @@ class JobAdmin extends AbstractAdmin
             ->addIdentifier('id')
             ->add('name')
             ->add('status')
+            ->add('createdAt')
+            ->add('updatedAt')
         ;
 
         $listMapper->add(

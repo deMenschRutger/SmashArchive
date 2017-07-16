@@ -1,4 +1,13 @@
 services:
+    command.work_queue.process:
+        class: AppBundle\Command\WorkQueueProcessCommand
+        arguments:
+            - "@tactician.commandbus"
+            - "@doctrine.orm.default_entity_manager"
+            - "@leezy.pheanstalk"
+        tags:
+            - { name: console.command }
+
     command.tournament.import:
         class: AppBundle\Command\TournamentImportCommand
         arguments:
