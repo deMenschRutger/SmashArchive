@@ -122,6 +122,13 @@ knp_paginator:
     template:
         pagination: "KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig"
 
+# Pheanstalk
+leezy_pheanstalk:
+    pheanstalks:
+        primary:
+            server: localhost
+            default: true
+
 # Sonata
 sonata_block:
     default_contexts: [cms]

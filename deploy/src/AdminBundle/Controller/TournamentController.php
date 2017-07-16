@@ -4,14 +4,18 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Controller;
 
+use CoreBundle\Entity\Job;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Service\Smashgg\Smashgg;
 use Sonata\AdminBundle\Controller\CRUDController as Controller;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Validator\Constraints\Count;
+use Symfony\Component\Validator\Constraints\Length;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -65,6 +69,11 @@ class TournamentController extends Controller
             ->createFormBuilder($defaultData)
             ->add('events', ChoiceType::class, [
                 'choices' => $choices,
+                'constraints' => [
+                    new Count([
+                        'min' => 1,
+                    ]),
+                ],
                 'expanded' => true,
                 'label' => false,
                 'multiple' => true,
@@ -80,7 +89,29 @@ class TournamentController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
 
-            // TODO Add the job to the queue and redirect.
+            $job = \GuzzleHttp\json_encode([
+                'type' => 'import-tournament',
+                'slug' => $tournament->getSmashggSlug(),
+                'events' => $data['events'],
+            ]);
+
+            $pheanstalk = $this->get('leezy.pheanstalk');
+            $jobId = $pheanstalk->useTube('default')->put($job);
+
+            $job = new Job();
+            $job->setQueueId($jobId);
+            $job->setName("Import events for tournament {$tournament->getName()}");
+
+            $entityManager = $this->get('doctrine.orm.entity_manager');
+            $entityManager->persist($job);
+            $entityManager->flush();
+
+            $this->addFlash(
+                'sonata_flash_success',
+                'The tournament import job was added to the queue and will be processed shortly'
+            );
+
+            return new RedirectResponse($this->admin->generateUrl('list'));
         }
 
         $this->admin->setFormGroups([

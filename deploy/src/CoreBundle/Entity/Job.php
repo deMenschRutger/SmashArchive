@@ -32,7 +32,7 @@ class Job
     private $id;
 
     /**
-     * @var string
+     * @var int
      *
      * @ORM\Column(name="queue_id", type="integer")
      */
@@ -50,7 +50,15 @@ class Job
      *
      * @ORM\Column(name="status", type="string", length=255)
      */
-    private $status;
+    private $status = self::STATUS_WAITING;
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return 'Job #'.$this->getId();
+    }
 
     /**
      * @return int
@@ -69,15 +77,15 @@ class Job
     }
 
     /**
-     * @param string $queueId
+     * @param int $queueId
      */
-    public function setQueueId(string $queueId)
+    public function setQueueId(int $queueId)
     {
         $this->queueId = $queueId;
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getName()
     {

@@ -34,6 +34,7 @@ class AppKernel extends Kernel
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new League\Tactician\Bundle\TacticianBundle(),
+            new Leezy\PheanstalkBundle\LeezyPheanstalkBundle(),
             new MediaMonks\RestApiBundle\MediaMonksRestApiBundle(),
             new Sentry\SentryBundle\SentryBundle(),
 
