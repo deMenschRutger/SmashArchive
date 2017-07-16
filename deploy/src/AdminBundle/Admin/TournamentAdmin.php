@@ -9,6 +9,7 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
 
 /**
@@ -41,6 +42,14 @@ class TournamentAdmin extends AbstractAdmin
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function configureRoutes(RouteCollection $collection)
+    {
+        $collection->add('import', $this->getRouterIdParameter().'/import');
+    }
+
+    /**
      * @param FormMapper $formMapper
      */
     protected function configureFormFields(FormMapper $formMapper)
@@ -51,7 +60,7 @@ class TournamentAdmin extends AbstractAdmin
                 'choices' => [
                     'custom'          => Tournament::SOURCE_CUSTOM,
                     'smash.gg'        => Tournament::SOURCE_SMASHGG,
-                    'Challone'        => Tournament::SOURCE_CHALLONGE,
+                    'Challonge'       => Tournament::SOURCE_CHALLONGE,
                     'TIO'             => Tournament::SOURCE_TIO,
                     'smashranking.eu' => Tournament::SOURCE_SMASHRANKING,
                 ],
@@ -145,6 +154,9 @@ class TournamentAdmin extends AbstractAdmin
             [
                 'actions' => [
                     'edit' => [],
+                    'import' => [
+                        'template' => 'AdminBundle:Tournament:list__action_import.html.twig',
+                    ],
                     'show' => [],
                     'delete' => [],
                 ],

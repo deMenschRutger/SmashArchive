@@ -31,7 +31,7 @@ services:
 
     admin.tournament:
         class: AdminBundle\Admin\TournamentAdmin
-        arguments: [~, CoreBundle\Entity\Tournament, ~]
+        arguments: [~, CoreBundle\Entity\Tournament, AdminBundle:Tournament ]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Tournaments, pager_type: simple }
 
