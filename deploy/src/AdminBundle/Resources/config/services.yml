@@ -46,3 +46,9 @@ services:
         arguments: [~, CoreBundle\Entity\User, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Users }
+
+    admin.form.tournament.import:
+        class: AdminBundle\Form\ImportTournamentType
+        arguments: ['@core.service.smashgg']
+        tags:
+            - { name: form.type }

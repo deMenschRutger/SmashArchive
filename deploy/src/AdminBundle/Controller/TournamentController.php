@@ -4,17 +4,14 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Controller;
 
+use AdminBundle\Form\ImportTournamentType;
 use CoreBundle\Entity\Job;
 use CoreBundle\Entity\Tournament;
-use CoreBundle\Service\Smashgg\Smashgg;
 use Sonata\AdminBundle\Controller\CRUDController as Controller;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Validator\Constraints\Count;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -41,46 +38,17 @@ class TournamentController extends Controller
             return $this->renderError("Only tournaments with the source 'smash.gg' can be imported at this time.", $tournament);
         }
 
-        $smashggUrl = $tournament->getSmashggUrl();
-        preg_match('~https?:\/\/smash\.gg\/tournament\/([0-9a-z-]+)\/~', $smashggUrl, $matches);
+        $smashggId = $tournament->getSmashggIdFromUrl();
 
-        if (!array_key_exists(1, $matches)) {
+        if (!$smashggId) {
             return $this->renderError('Could not extract a tournament ID from the provided smash.gg url.', $tournament);
         }
 
-        $smashggId = $matches[1];
-
-        /** @var Smashgg $smashgg */
-        $smashgg = $this->get('core.service.smashgg');
-        $events = $smashgg->getTournamentEvents($smashggId, true);
-        $choices = [];
-
-        foreach ($events as $event) {
-            $name = $event['name'];
-            $choices[$name] = $event['id'];
-        }
-
-        $form = $this
-            ->createFormBuilder([
-                'events' => [],
-            ])
-            ->add('events', ChoiceType::class, [
-                'choices' => $choices,
-                'constraints' => [
-                    new Count([
-                        'min' => 1,
-                    ]),
-                ],
-                'expanded' => true,
-                'label' => false,
-                'multiple' => true,
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Add to queue',
-            ])
-            ->getForm()
-        ;
-
+        $form = $this->createForm(
+            ImportTournamentType::class,
+            [ 'events' => [] ],
+            [ 'smashggId' => $smashggId ]
+        );
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

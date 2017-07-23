@@ -401,6 +401,20 @@ class Tournament
     }
 
     /**
+     * @return bool|int
+     */
+    public function getSmashggIdFromUrl()
+    {
+        preg_match('~https?:\/\/smash\.gg\/tournament\/([0-9a-z-]+)\/~', $this->getSmashggUrl(), $matches);
+
+        if (!array_key_exists(1, $matches)) {
+            return false;
+        }
+
+        return $matches[1];
+    }
+
+    /**
      * @param string $smashggUrl
      */
     public function setSmashggUrl($smashggUrl)
