@@ -4,9 +4,8 @@ declare(strict_types = 1);
 
 namespace AppBundle\Command;
 
-use CoreBundle\Entity\Job as JobEntity;
 use Doctrine\ORM\EntityManager;
-use Domain\Command\Tournament\Import\SmashggCommand;
+use Domain\Command\WorkQueue\ProcessJobCommand;
 use League\Tactician\CommandBus;
 use Leezy\PheanstalkBundle\Proxy\PheanstalkProxy;
 use Pheanstalk\Job;
@@ -69,47 +68,20 @@ class WorkQueueProcessCommand extends ContainerAwareCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return void
-     *
-     * @TODO Automatically clean up old jobs after a job was processed.
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io = new SymfonyStyle($input, $output);
-        $jobRepository = $this->entityManager->getRepository('CoreBundle:Job');
-
         $this->pheanstalk->watch('import-tournament');
 
         while (true) {
             /** @var Job $job */
             $job = $this->pheanstalk->reserve(3600);
 
-            try {
-                $data = \GuzzleHttp\json_decode($job->getData(), true);
-                $jobId = $job->getId();
-                $jobEntity = $jobRepository->findOneBy([ 'queueId' => $jobId ]);
+            $command = new ProcessJobCommand($job, $this->io);
+            $this->commandBus->handle($command);
 
-                if ($jobEntity instanceof JobEntity) {
-                    $jobEntity->setStatus(JobEntity::STATUS_PROCESSING);
-                    $this->entityManager->flush();
-                }
-
-                $command = new SmashggCommand($data['smashggId'], $data['events'], true, $this->io);
-                $this->commandBus->handle($command);
-
-                $this->io->success('The tournament was successfully imported.');
-
-                // For some reason the job needs to be retrieved a second time here in order to update the status.
-                $jobEntity = $jobRepository->findOneBy([ 'queueId' => $jobId ]);
-
-                if ($jobEntity instanceof JobEntity) {
-                    $jobEntity->setStatus(JobEntity::STATUS_FINISHED);
-                    $this->entityManager->flush();
-                }
-            } catch (\Exception $e) {
-                $this->io->error($e->getMessage());
-            } finally {
-                $this->pheanstalk->delete($job);
-            }
+            $this->pheanstalk->delete($job);
         }
     }
 }

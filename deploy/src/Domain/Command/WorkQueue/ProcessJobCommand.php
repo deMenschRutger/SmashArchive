@@ -4,29 +4,47 @@ declare(strict_types = 1);
 
 namespace Domain\Command\WorkQueue;
 
+use Pheanstalk\Job;
+use Symfony\Component\Console\Style\SymfonyStyle;
+
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
 class ProcessJobCommand
 {
     /**
-     * @var int
+     * @var Job
      */
-    private $queueId;
+    private $job;
 
     /**
-     * @param int $queueID
+     * @var SymfonyStyle
      */
-    public function __construct($queueID)
+    private $io;
+
+    /**
+     * @param Job          $job
+     * @param SymfonyStyle $io
+     */
+    public function __construct(Job $job, $io = null)
     {
-        $this->queueId = $queueID;
+        $this->job = $job;
+        $this->io = $io;
     }
 
     /**
-     * @return int
+     * @return Job
      */
-    public function getQueueId(): int
+    public function getJob(): Job
     {
-        return $this->queueId;
+        return $this->job;
+    }
+
+    /**
+     * @return SymfonyStyle
+     */
+    public function getIo()
+    {
+        return $this->io;
     }
 }

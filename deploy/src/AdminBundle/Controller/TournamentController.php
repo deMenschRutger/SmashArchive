@@ -20,8 +20,6 @@ class TournamentController extends AbstractController
     /**
      * @param Request $request
      * @return Response
-     *
-     * @TODO Refactor this method, it has too many responsibilities.
      */
     public function importAction(Request $request)
     {

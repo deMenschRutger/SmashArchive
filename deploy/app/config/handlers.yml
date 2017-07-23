@@ -86,3 +86,11 @@ services:
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
             - ['setPheanstalk', ['@leezy.pheanstalk']]
+
+    bus.handler.work_queue.process_job:
+        class: Domain\Handler\WorkQueue\ProcessJobHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\WorkQueue\ProcessJobCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+            - ['setCommandBus', ['@tactician.commandbus']]
