@@ -4,11 +4,9 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Controller;
 
+use AdminBundle\Form\ConfirmMergePlayersType;
+use AdminBundle\Form\MergePlayersType;
 use CoreBundle\Entity\Player;
-use Sonata\AdminBundle\Controller\CRUDController as Controller;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class PlayerController extends Controller
+class PlayerController extends AbstractController
 {
     /**
      * @param Request $request
@@ -31,23 +29,9 @@ class PlayerController extends Controller
             throw new NotFoundHttpException('The player could not be found');
         }
 
-        $form = $this
-            ->createFormBuilder([
-                'targetPlayer' => null,
-            ])
-            ->add('targetPlayer', EntityType::class, [
-                'class' => 'CoreBundle:Player',
-                'label' => false,
-                'multiple' => false,
-                'placeholder' => 'Please select a player',
-                'choice_label' => 'expandedGamerTag',
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Merge players',
-            ])
-            ->getForm()
-        ;
-
+        $form = $this->createForm(MergePlayersType::class, [
+            'targetPlayer' => null,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -85,7 +69,7 @@ class PlayerController extends Controller
     public function confirmMergeAction(Request $request, $targetId)
     {
         $player = $this->admin->getSubject();
-        $targetPlayer = $this->get('doctrine.orm.entity_manager')->getRepository('CoreBundle:Player')->findOneBy([
+        $targetPlayer = $this->getRepository('CoreBundle:Player')->findOneBy([
             'id' => $targetId,
         ]);
 
@@ -97,17 +81,7 @@ class PlayerController extends Controller
             throw new NotFoundHttpException('The target player could not be found');
         }
 
-        $form = $this
-            ->createFormBuilder([])
-            ->add('confirm', CheckboxType::class, [
-                'label' => "I confirm that I'm aware of the consequences of merging these two players.",
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Merge players',
-            ])
-            ->getForm()
-        ;
-
+        $form = $this->createForm(ConfirmMergePlayersType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -120,9 +94,11 @@ class PlayerController extends Controller
             return new RedirectResponse($this->admin->generateUrl('list'));
         }
 
+        $formGroupMessage = "Confirm merger of players '{$player->getGamerTag()}' and '{$targetPlayer->getGamerTag()}'";
+
         $this->admin->setFormGroups([
             'default' => [
-                'name' => "Confirm merger of players '{$player->getGamerTag()}' and '{$targetPlayer->getGamerTag()}'",
+                'name' => $formGroupMessage,
                 'description' => null,
                 'box_class' => 'box box-primary',
                 'translation_domain' => null,
