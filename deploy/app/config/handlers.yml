@@ -78,3 +78,11 @@ services:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
             - ['setCommandBus', ['@tactician.commandbus']]
             - ['setSmashgg', ['@core.service.smashgg']]
+
+    bus.handler.work_queue.add_job:
+        class: Domain\Handler\WorkQueue\AddJobHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\WorkQueue\AddJobCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+            - ['setPheanstalk', ['@leezy.pheanstalk']]

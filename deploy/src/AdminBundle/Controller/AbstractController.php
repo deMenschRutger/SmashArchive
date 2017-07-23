@@ -29,4 +29,13 @@ class AbstractController extends Controller
     {
         return $this->getEntityManager()->getRepository($name);
     }
+
+    /**
+     * @param object $command
+     * @return mixed
+     */
+    public function handleCommand($command)
+    {
+        return $this->get('tactician.commandbus')->handle($command);
+    }
 }

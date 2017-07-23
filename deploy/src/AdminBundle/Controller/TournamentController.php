@@ -5,9 +5,8 @@ declare(strict_types = 1);
 namespace AdminBundle\Controller;
 
 use AdminBundle\Form\ImportTournamentType;
-use CoreBundle\Entity\Job;
 use CoreBundle\Entity\Tournament;
-use Sonata\AdminBundle\Controller\CRUDController as Controller;
+use Domain\Command\WorkQueue\AddJobCommand;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class TournamentController extends Controller
+class TournamentController extends AbstractController
 {
     /**
      * @param Request $request
@@ -55,22 +54,15 @@ class TournamentController extends Controller
             $data = $form->getData();
             $tournament->setSmashggSlug($smashggId);
 
-            $job = \GuzzleHttp\json_encode([
+            $name = "Import events for tournament {$tournament->getName()}";
+            $job = [
                 'source' => Tournament::SOURCE_SMASHGG,
                 'smashggId' => $smashggId,
                 'events' => $data['events'],
-            ]);
+            ];
 
-            $pheanstalk = $this->get('leezy.pheanstalk');
-            $jobId = $pheanstalk->useTube('import-tournament')->put($job);
-
-            $job = new Job();
-            $job->setQueueId($jobId);
-            $job->setName("Import events for tournament {$tournament->getName()}");
-
-            $entityManager = $this->get('doctrine.orm.entity_manager');
-            $entityManager->persist($job);
-            $entityManager->flush();
+            $command = new AddJobCommand('import-tournament', $name, $job);
+            $this->handleCommand($command);
 
             $this->addFlash(
                 'sonata_flash_success',
