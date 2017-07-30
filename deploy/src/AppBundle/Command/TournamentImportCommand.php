@@ -4,13 +4,12 @@ declare(strict_types = 1);
 
 namespace AppBundle\Command;
 
+use CoreBundle\Importer\Smashgg\Importer as SmashggImporter;
 use CoreBundle\Service\Smashgg\Smashgg;
 use Doctrine\ORM\EntityManager;
-use Domain\Command\Tournament\Import\SmashggCommand;
 use League\Tactician\CommandBus;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -66,12 +65,6 @@ class TournamentImportCommand extends ContainerAwareCommand
         $this
             ->setName('app:tournament:import')
             ->setDescription('Import a tournament from a third-party')
-            ->addOption(
-                'force',
-                'f',
-                InputOption::VALUE_OPTIONAL,
-                'Whether or not existing data should be overwritten or not.'
-            )
         ;
     }
 
@@ -89,10 +82,9 @@ class TournamentImportCommand extends ContainerAwareCommand
             [ self::PROVIDER_SMASHGG, self::PROVIDER_CHALLONGE, self::PROVIDER_TIO ]
         );
         $provider = $this->io->askQuestion($question);
-        $force = (bool) $input->getOption('force');
 
         if ($provider === self::PROVIDER_SMASHGG) {
-            $this->executeSmashgg($force);
+            $this->executeSmashgg();
         } else {
             $this->io->error('Unfortunately that provider is currently not supported.');
 
@@ -103,10 +95,9 @@ class TournamentImportCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param bool $force
      * @return void
      */
-    protected function executeSmashgg($force)
+    protected function executeSmashgg()
     {
         $slug = $this->io->ask('Please enter the slug of this tournament');
         $events = $this->smashgg->getTournamentEvents($slug, true);
@@ -127,8 +118,7 @@ class TournamentImportCommand extends ContainerAwareCommand
             $selectedEvent = $ids[$selectedEvent];
         }
 
-        // TODO This will be completely broken after implementing the new importer.
-        $command = new SmashggCommand($slug, $selectedEvents, $force, $this->io);
-        $this->commandBus->handle($command);
+        $importer = new SmashggImporter($this->io, $this->entityManager, $this->smashgg);
+        $importer->import($slug, $selectedEvents);
     }
 }
