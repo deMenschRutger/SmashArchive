@@ -43,7 +43,7 @@ class PlayerProcessor extends AbstractProcessor
      * @param array   $playerData
      * @param Country $country
      */
-    public function processNew(array $playerData, Country $country)
+    public function processNew(array $playerData, Country $country = null)
     {
         $playerId = $playerData['id'];
 

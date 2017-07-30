@@ -145,7 +145,9 @@ class TournamentAdmin extends AbstractAdmin
             ->addIdentifier('name')
             ->add('country')
             ->add('dateStart')
-            ->add('isActive')
+            ->add('isActive', null, [
+                'editable' => 'inline',
+            ])
         ;
 
         $listMapper->add(

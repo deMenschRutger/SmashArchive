@@ -104,14 +104,6 @@ class SmashggHandler extends AbstractHandler
     }
 
     /**
-     * Example slugs:
-     *
-     * 'arcamelee-1'
-     * 'dgsummer-clash-1'
-     * 'garelaf-x'
-     * 'genesis-4'
-     * 'syndicate-2016'
-     *
      * @param SmashggCommand $command
      */
     public function handle(SmashggCommand $command)

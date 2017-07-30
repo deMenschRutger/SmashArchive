@@ -15,6 +15,7 @@ use CoreBundle\Importer\Smashgg\Processor\GameProcessor;
 use CoreBundle\Importer\Smashgg\Processor\PhaseGroupProcessor;
 use CoreBundle\Importer\Smashgg\Processor\PhaseProcessor;
 use CoreBundle\Importer\Smashgg\Processor\PlayerProcessor;
+use CoreBundle\Importer\Smashgg\Processor\SetProcessor;
 use CoreBundle\Service\Smashgg\Smashgg;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -77,6 +78,14 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Example slugs:
+     *
+     * 'arcamelee-1'
+     * 'dgsummer-clash-1'
+     * 'garelaf-x'
+     * 'genesis-4'
+     * 'syndicate-2016'
+     *
      * @param string $smashggId
      * @param array  $eventIds
      */
@@ -105,8 +114,13 @@ class Importer extends AbstractImporter
         $this->io->writeln('Processing entrants...');
         $this->entrantProcessor = $this->processEntrants($groups);
 
+        $this->io->writeln('Processing sets...');
+        $this->entrantProcessor = $this->processSets($groups);
+
         $this->io->writeln('Flushing the entity manager...');
         $this->entityManager->flush();
+
+        // TODO Generate results for each event.
     }
 
     /**
@@ -298,11 +312,6 @@ class Importer extends AbstractImporter
         $this->io->progressFinish();
         $this->io->newLine();
 
-        // We need to flush the entity manager here, otherwise the next event won't find new players created in
-        // previous events associated with this tournament.
-        //$this->io->writeln('Flushing the entity manager...');
-        //$this->entityManager->flush();
-
         return $processor;
     }
 
@@ -321,6 +330,28 @@ class Importer extends AbstractImporter
                 $processor->processNew($entrantData, $this->playerProcessor);
             }
         }
+
+        return $processor;
+    }
+
+    /**
+     * @param array $groups
+     * @return SetProcessor
+     */
+    protected function processSets(array $groups)
+    {
+        $processor = new SetProcessor($this->entityManager);
+
+        foreach ($groups as $phaseGroupData) {
+            $sets = $this->smashgg->getPhaseGroupSets($phaseGroupData['id']);
+            $phaseGroup = $this->phaseGroupProcessor->findPhaseGroup($phaseGroupData['id']);
+
+            foreach ($sets as $setData) {
+                $processor->processNew($setData, $this->entrantProcessor, $phaseGroup);
+            }
+        }
+
+        $processor->cleanUp($this->tournament);
 
         return $processor;
     }
