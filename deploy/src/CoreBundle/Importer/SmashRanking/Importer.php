@@ -11,6 +11,7 @@ use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Player;
 use CoreBundle\Entity\Set;
 use CoreBundle\Entity\Tournament;
+use CoreBundle\Importer\AbstractImporter;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Webmozart\Assert\Assert;
@@ -18,7 +19,7 @@ use Webmozart\Assert\Assert;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class Importer
+class Importer extends AbstractImporter
 {
     /**
      * @var array
@@ -61,19 +62,9 @@ class Importer
     ];
 
     /**
-     * @var SymfonyStyle
-     */
-    protected $io;
-
-    /**
      * @var string
      */
     protected $contentDirPath;
-
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
 
     /**
      * @var array
@@ -122,9 +113,9 @@ class Importer
      */
     public function __construct(SymfonyStyle $io, string $contentDirPath, EntityManager $entityManager)
     {
-        $this->io = $io;
+        $this->setIo($io);
         $this->contentDirPath = $contentDirPath;
-        $this->entityManager = $entityManager;
+        $this->setEntityManager($entityManager);
     }
 
     /**

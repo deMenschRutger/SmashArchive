@@ -93,4 +93,4 @@ services:
             - { name: "tactician.handler", command: Domain\Command\WorkQueue\ProcessJobCommand }
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
-            - ['setCommandBus', ['@tactician.commandbus']]
+            - ['setSmashgg', ['@core.service.smashgg']]

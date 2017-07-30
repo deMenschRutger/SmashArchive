@@ -6,10 +6,10 @@ namespace Domain\Handler\WorkQueue;
 
 use CoreBundle\Entity\Job;
 use CoreBundle\Importer\Smashgg\Importer as SmashggImporter;
+use CoreBundle\Service\Smashgg\Smashgg;
 use Domain\Command\WorkQueue\AddJobCommand;
 use Domain\Command\WorkQueue\ProcessJobCommand;
 use Domain\Handler\AbstractHandler;
-use League\Tactician\CommandBus;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -20,16 +20,16 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ProcessJobHandler extends AbstractHandler
 {
     /**
-     * @var CommandBus
+     * @var Smashgg
      */
-    protected $commandBus;
+    protected $smashgg;
 
     /**
-     * @param CommandBus $commandBus
+     * @param Smashgg $smashgg
      */
-    public function setCommandBus(CommandBus $commandBus)
+    public function setSmashgg(Smashgg $smashgg)
     {
-        $this->commandBus = $commandBus;
+        $this->smashgg = $smashgg;
     }
 
     /**
@@ -40,10 +40,9 @@ class ProcessJobHandler extends AbstractHandler
     {
         $io = $command->getIo();
         $jobId = $command->getJob()->getId();
-        $entity = $this->getRepository('CoreBundle:Job')->findOneBy([ 'queueId' => $jobId ]);
 
         try {
-            $this->updateStatus($entity, Job::STATUS_PROCESSING);
+            $this->updateStatus($jobId, Job::STATUS_PROCESSING);
             $data = \GuzzleHttp\json_decode($command->getJob()->getData(), true);
 
             if (!array_key_exists('type', $data)) {
@@ -61,21 +60,23 @@ class ProcessJobHandler extends AbstractHandler
                     break;
             }
 
-            $this->updateStatus($entity, Job::STATUS_FINISHED);
+            $this->updateStatus($jobId, Job::STATUS_FINISHED);
             $io->success('The tournament was successfully imported.');
         } catch (\Exception $e) {
-            $this->updateStatus($entity, Job::STATUS_FAILED);
+            $this->updateStatus($jobId, Job::STATUS_FAILED);
             $io->error($e->getMessage());
         }
     }
 
     /**
-     * @param Job    $job
+     * @param int    $jobId
      * @param string $status
      * @return Job
      */
-    protected function updateStatus($job, $status)
+    protected function updateStatus($jobId, $status)
     {
+        $job = $this->getRepository('CoreBundle:Job')->findOneBy([ 'queueId' => $jobId ]);
+
         if ($job instanceof Job) {
             $job->setStatus($status);
             $this->entityManager->flush();
@@ -97,7 +98,7 @@ class ProcessJobHandler extends AbstractHandler
 
         switch ($data['type']) {
             case AddJobCommand::TYPE_TOURNAMENT_IMPORT:
-                $importer = new SmashggImporter();
+                $importer = new SmashggImporter($io, $this->entityManager, $this->smashgg);
                 break;
 
             default:
@@ -106,6 +107,6 @@ class ProcessJobHandler extends AbstractHandler
                 break;
         }
 
-        $importer->import($data['smashggId'], $data['events'], $io);
+        $importer->import($data['smashggId'], $data['events']);
     }
 }
