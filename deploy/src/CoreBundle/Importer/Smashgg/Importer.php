@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace CoreBundle\Importer\Smashgg;
 
 use CoreBundle\Entity\Country;
+use CoreBundle\Entity\Game;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Importer\AbstractImporter;
 use CoreBundle\Service\Smashgg\Smashgg;
@@ -20,6 +21,16 @@ class Importer extends AbstractImporter
      * @var Smashgg
      */
     protected $smashgg;
+
+    /**
+     * @var Tournament
+     */
+    protected $tournament;
+
+    /**
+     * @var array
+     */
+    protected $games = [];
 
     /**
      * @param SymfonyStyle  $io
@@ -40,7 +51,12 @@ class Importer extends AbstractImporter
     public function import($smashggId, $eventIds)
     {
         $this->entityManager->getConfiguration()->setSQLLogger(null);
-        $tournament = $this->getTournament($smashggId);
+
+        $this->io->writeln('Retrieving tournament...');
+        $this->tournament = $this->getTournament($smashggId);
+
+        $this->io->writeln('Processing games...');
+        $this->processGames();
 
         $this->entityManager->flush();
     }
@@ -77,6 +93,24 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * @return void
+     */
+    protected function processGames()
+    {
+        $games = $this->smashgg->getTournamentVideogames($this->tournament->getSmashggSlug(), true);
+
+        foreach ($games as $gameData) {
+            $gameId = $gameData['id'];
+
+            $game = $this->findGame($gameId);
+            $game->setName($gameData['name']);
+            $game->setDisplayName($gameData['displayName']);
+
+            $this->games[$gameId] = $game;
+        }
+    }
+
+    /**
      * @param string $name
      * @param string $code
      * @return Country|null
@@ -108,5 +142,29 @@ class Importer extends AbstractImporter
         return $countryRepository->findOneBy([
             'name' => $name,
         ]);
+    }
+
+    /**
+     * @param int $smashggId
+     * @return Game
+     */
+    protected function findGame(int $smashggId): Game
+    {
+        if (!array_key_exists($smashggId, $this->games)) {
+            $game = $this->getRepository('CoreBundle:Game')->findOneBy([
+                'smashggId' => $smashggId,
+            ]);
+
+            if (!$game instanceof Game) {
+                $game = new Game();
+                $game->setSmashggId($smashggId);
+
+                $this->entityManager->persist($game);
+            }
+
+            $this->games[$smashggId] = $game;
+        }
+
+        return $this->games[$smashggId];
     }
 }
