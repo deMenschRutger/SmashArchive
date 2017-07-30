@@ -75,6 +75,14 @@ class Phase
     private $phaseGroups;
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return 'Phase #'.$this->getId();
+    }
+
+    /**
      * @return int
      */
     public function getId()
