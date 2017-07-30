@@ -2,12 +2,12 @@
 
 declare(strict_types = 1);
 
-namespace AppBundle\Importer\SmashRanking;
+namespace CoreBundle\Importer\SmashRanking;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class PhasesSingleEventNoBracket extends AbstractScenario
+class NoPhasesSingleEventNoBracket extends AbstractScenario
 {
     /**
      * @var string
@@ -19,6 +19,6 @@ class PhasesSingleEventNoBracket extends AbstractScenario
      */
     public function importWithConfiguration()
     {
-        $this->import(true, false, false);
+        $this->import(false, false, false);
     }
 }

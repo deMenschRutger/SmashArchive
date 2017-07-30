@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace AppBundle\Importer\SmashRanking;
+namespace CoreBundle\Importer\SmashRanking;
 
 use CoreBundle\Entity\Character;
 use CoreBundle\Entity\Country;
@@ -152,7 +152,7 @@ class Importer
             }
 
             $this->io->section("Importing tournaments for scenario '{$scenario}'...");
-            $class = 'AppBundle\Importer\SmashRanking\\'.$scenario;
+            $class = 'CoreBundle\Importer\SmashRanking\\'.$scenario;
 
             /** @var AbstractScenario $scenario */
             $scenario = new $class($this, $this->io, $this->entityManager);

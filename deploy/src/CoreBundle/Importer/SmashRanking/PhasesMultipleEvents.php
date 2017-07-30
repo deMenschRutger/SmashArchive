@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace AppBundle\Importer\SmashRanking;
+namespace CoreBundle\Importer\SmashRanking;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>

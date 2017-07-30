@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace AppBundle\Importer\SmashRanking;
+namespace CoreBundle\Importer\SmashRanking;
 
 use AppBundle\Command\SmashRankingImportCommand;
 use CoreBundle\Entity\Event;
