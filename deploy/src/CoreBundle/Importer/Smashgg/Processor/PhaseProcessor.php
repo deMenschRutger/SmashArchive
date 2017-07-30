@@ -41,6 +41,14 @@ class PhaseProcessor extends AbstractProcessor
     }
 
     /**
+     * @return Phase[]
+     */
+    public function getAllPhases()
+    {
+        return $this->phases;
+    }
+
+    /**
      * @param array $phaseData
      * @param Event $event
      */
