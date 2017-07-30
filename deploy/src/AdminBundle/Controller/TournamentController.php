@@ -54,6 +54,7 @@ class TournamentController extends AbstractController
 
             $name = "Import events for tournament {$tournament->getName()}";
             $job = [
+                'type' => AddJobCommand::TYPE_TOURNAMENT_IMPORT,
                 'source' => Tournament::SOURCE_SMASHGG,
                 'smashggId' => $smashggId,
                 'events' => $data['events'],

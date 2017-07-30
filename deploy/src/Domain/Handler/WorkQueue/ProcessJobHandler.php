@@ -5,10 +5,12 @@ declare(strict_types = 1);
 namespace Domain\Handler\WorkQueue;
 
 use CoreBundle\Entity\Job;
-use Domain\Command\Tournament\Import\SmashggCommand;
+use CoreBundle\Importer\Smashgg\Importer as SmashggImporter;
+use Domain\Command\WorkQueue\AddJobCommand;
 use Domain\Command\WorkQueue\ProcessJobCommand;
 use Domain\Handler\AbstractHandler;
 use League\Tactician\CommandBus;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -36,40 +38,74 @@ class ProcessJobHandler extends AbstractHandler
      */
     public function handle(ProcessJobCommand $command)
     {
-        $jobId = $command->getJob()->getId();
         $io = $command->getIo();
+        $jobId = $command->getJob()->getId();
+        $entity = $this->getRepository('CoreBundle:Job')->findOneBy([ 'queueId' => $jobId ]);
 
         try {
-            $this->updateStatus($jobId, Job::STATUS_PROCESSING);
+            $this->updateStatus($entity, Job::STATUS_PROCESSING);
             $data = \GuzzleHttp\json_decode($command->getJob()->getData(), true);
 
-            $command = new SmashggCommand($data['smashggId'], $data['events'], true, $command->getIo());
-            $this->commandBus->handle($command);
+            if (!array_key_exists('type', $data)) {
+                throw new \InvalidArgumentException("Job #{$jobId} does not have a 'type' property.");
+            }
 
-            $this->updateStatus($jobId, Job::STATUS_FINISHED);
+            switch ($data['type']) {
+                case AddJobCommand::TYPE_TOURNAMENT_IMPORT:
+                    $this->importTournament($jobId, $data, $io);
+                    break;
+
+                default:
+                    $message = sprintf("Job #%s does not have a valid 'type' property ('%s' given).", $jobId, $data['type']);
+                    throw new \InvalidArgumentException($message);
+                    break;
+            }
+
+            $this->updateStatus($entity, Job::STATUS_FINISHED);
             $io->success('The tournament was successfully imported.');
         } catch (\Exception $e) {
-            $this->updateStatus($jobId, Job::STATUS_FAILED);
+            $this->updateStatus($entity, Job::STATUS_FAILED);
             $io->error($e->getMessage());
         }
     }
 
     /**
-     * For some reason the job needs to be retrieved again each time we update the status.
-     *
-     * @param int    $id
+     * @param Job    $job
      * @param string $status
      * @return Job
      */
-    protected function updateStatus($id, $status)
+    protected function updateStatus($job, $status)
     {
-        $job = $this->getRepository('CoreBundle:Job')->findOneBy([ 'queueId' => $id ]);
-
         if ($job instanceof Job) {
             $job->setStatus($status);
             $this->entityManager->flush();
         }
 
         return $job;
+    }
+
+    /**
+     * @param int          $jobId
+     * @param array        $data
+     * @param SymfonyStyle $io
+     */
+    protected function importTournament($jobId, array $data, SymfonyStyle $io)
+    {
+        if (!array_key_exists('source', $data)) {
+            throw new \InvalidArgumentException("Job #{$jobId} does not have a 'source' property.");
+        }
+
+        switch ($data['type']) {
+            case AddJobCommand::TYPE_TOURNAMENT_IMPORT:
+                $importer = new SmashggImporter();
+                break;
+
+            default:
+                $message = sprintf("Job #%s does not have a valid 'source' property ('%s' given).", $jobId, $data['source']);
+                throw new \InvalidArgumentException($message);
+                break;
+        }
+
+        $importer->import($data['smashggId'], $data['events'], $io);
     }
 }

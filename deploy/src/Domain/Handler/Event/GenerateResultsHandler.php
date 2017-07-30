@@ -17,6 +17,8 @@ use Domain\Handler\AbstractHandler;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
+ *
+ * @TODO Make sure state is handled correctly when the handler is used multiple times.
  */
 class GenerateResultsHandler extends AbstractHandler
 {

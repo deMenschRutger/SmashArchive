@@ -26,7 +26,7 @@ class ProcessJobCommand
      * @param Job          $job
      * @param SymfonyStyle $io
      */
-    public function __construct(Job $job, $io = null)
+    public function __construct(Job $job, $io)
     {
         $this->job = $job;
         $this->io = $io;

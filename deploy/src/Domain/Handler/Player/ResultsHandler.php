@@ -15,6 +15,8 @@ use Knp\Component\Pager\Pagination\SlidingPagination;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
+ *
+ * @TODO Make sure state is handled correctly when the handler is used multiple times.
  */
 class ResultsHandler extends AbstractHandler
 {
