@@ -5,10 +5,12 @@ declare(strict_types = 1);
 namespace CoreBundle\Importer\Smashgg;
 
 use CoreBundle\Entity\Country;
+use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Importer\AbstractImporter;
 use CoreBundle\Importer\Smashgg\Processor\EventProcessor;
 use CoreBundle\Importer\Smashgg\Processor\GameProcessor;
+use CoreBundle\Importer\Smashgg\Processor\PhaseProcessor;
 use CoreBundle\Service\Smashgg\Smashgg;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -39,6 +41,11 @@ class Importer extends AbstractImporter
     protected $eventProcessor;
 
     /**
+     * @var PhaseProcessor
+     */
+    protected $phaseProcessor;
+
+    /**
      * @param SymfonyStyle  $io
      * @param EntityManager $entityManager
      * @param Smashgg       $smashgg
@@ -65,8 +72,12 @@ class Importer extends AbstractImporter
         $this->gameProcessor = $this->processGames();
 
         $this->io->writeln('Processing events...');
-        $this->processEvents($eventIds);
+        $this->eventProcessor = $this->processEvents($eventIds);
 
+        $this->io->writeln('Processing phases...');
+        $this->phaseProcessor = $this->processPhases();
+
+        $this->io->writeln('Flushing the entity manager...');
         $this->entityManager->flush();
     }
 
@@ -166,6 +177,30 @@ class Importer extends AbstractImporter
         foreach ($events as $eventData) {
             $game = $this->gameProcessor->findGame($eventData['videogameId']);
             $processor->processNew($eventData, $this->tournament, $game);
+        }
+
+        $processor->cleanUp($this->tournament);
+
+        return $processor;
+    }
+
+    /**
+     * @return PhaseProcessor
+     */
+    protected function processPhases()
+    {
+        $phases = $this->smashgg->getTournamentPhases($this->tournament->getSmashggSlug());
+        $processor = new PhaseProcessor($this->entityManager);
+
+        foreach ($phases as $phaseData) {
+            $event = $this->eventProcessor->findEvent($phaseData['eventId']);
+
+            if (!$event instanceof Event) {
+                // This probably means the event was not selected for importing.
+                continue;
+            }
+
+            $processor->processNew($phaseData, $event);
         }
 
         $processor->cleanUp($this->tournament);

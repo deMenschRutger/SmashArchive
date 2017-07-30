@@ -77,7 +77,6 @@ class EventProcessor extends AbstractProcessor
     }
 
     /**
-     *
      * This will remove existing entities that were not imported from the database.
      *
      * @param Tournament $tournament
