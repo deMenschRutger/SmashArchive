@@ -5,10 +5,10 @@ declare(strict_types = 1);
 namespace CoreBundle\Importer\Smashgg;
 
 use CoreBundle\Entity\Country;
-use CoreBundle\Entity\Game;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Importer\AbstractImporter;
 use CoreBundle\Importer\Smashgg\Processor\EventProcessor;
+use CoreBundle\Importer\Smashgg\Processor\GameProcessor;
 use CoreBundle\Service\Smashgg\Smashgg;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -29,14 +29,14 @@ class Importer extends AbstractImporter
     protected $tournament;
 
     /**
-     * @var array
+     * @var GameProcessor
      */
-    protected $games = [];
+    protected $gameProcessor;
 
     /**
-     * @var array
+     * @var EventProcessor
      */
-    protected $events = [];
+    protected $eventProcessor;
 
     /**
      * @param SymfonyStyle  $io
@@ -62,7 +62,7 @@ class Importer extends AbstractImporter
         $this->tournament = $this->getTournament($smashggId);
 
         $this->io->writeln('Processing games...');
-        $this->processGames();
+        $this->gameProcessor = $this->processGames();
 
         $this->io->writeln('Processing events...');
         $this->processEvents($eventIds);
@@ -102,45 +102,6 @@ class Importer extends AbstractImporter
     }
 
     /**
-     * @return void
-     */
-    protected function processGames()
-    {
-        $games = $this->smashgg->getTournamentVideogames($this->tournament->getSmashggSlug(), true);
-
-        foreach ($games as $gameData) {
-            $gameId = $gameData['id'];
-
-            $game = $this->findGame($gameId);
-            $game->setName($gameData['name']);
-            $game->setDisplayName($gameData['displayName']);
-
-            $this->games[$gameId] = $game;
-        }
-    }
-
-    /**
-     * @param array $eventIds
-     * @return void
-     */
-    protected function processEvents(array $eventIds)
-    {
-        $events = $this->smashgg->getTournamentEvents($this->tournament->getSmashggSlug(), true);
-        $events = array_filter($events, function ($event) use ($eventIds) {
-            return in_array($event['id'], $eventIds);
-        });
-
-        $handler = new EventProcessor($this->entityManager, $this->smashgg);
-
-        foreach ($events as $eventData) {
-            $game = $this->findGame($eventData['videogameId']);
-            $handler->processNew($eventData, $this->tournament, $game);
-        }
-
-        $handler->cleanUp($this->tournament);
-    }
-
-    /**
      * @param string $name
      * @param string $code
      * @return Country|null
@@ -175,26 +136,40 @@ class Importer extends AbstractImporter
     }
 
     /**
-     * @param int $smashggId
-     * @return Game
+     * @return GameProcessor
      */
-    protected function findGame(int $smashggId): Game
+    protected function processGames()
     {
-        if (!array_key_exists($smashggId, $this->games)) {
-            $game = $this->getRepository('CoreBundle:Game')->findOneBy([
-                'smashggId' => $smashggId,
-            ]);
+        $games = $this->smashgg->getTournamentVideogames($this->tournament->getSmashggSlug(), true);
+        $processor = new GameProcessor($this->entityManager);
 
-            if (!$game instanceof Game) {
-                $game = new Game();
-                $game->setSmashggId($smashggId);
-
-                $this->entityManager->persist($game);
-            }
-
-            $this->games[$smashggId] = $game;
+        foreach ($games as $gameData) {
+            $processor->processNew($gameData);
         }
 
-        return $this->games[$smashggId];
+        return $processor;
+    }
+
+    /**
+     * @param array $eventIds
+     * @return EventProcessor
+     */
+    protected function processEvents(array $eventIds)
+    {
+        $events = $this->smashgg->getTournamentEvents($this->tournament->getSmashggSlug(), true);
+        $events = array_filter($events, function ($event) use ($eventIds) {
+            return in_array($event['id'], $eventIds);
+        });
+
+        $processor = new EventProcessor($this->entityManager);
+
+        foreach ($events as $eventData) {
+            $game = $this->gameProcessor->findGame($eventData['videogameId']);
+            $processor->processNew($eventData, $this->tournament, $game);
+        }
+
+        $processor->cleanUp($this->tournament);
+
+        return $processor;
     }
 }

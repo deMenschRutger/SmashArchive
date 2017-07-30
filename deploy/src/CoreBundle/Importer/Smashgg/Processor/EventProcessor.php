@@ -7,38 +7,16 @@ namespace CoreBundle\Importer\Smashgg\Processor;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Game;
 use CoreBundle\Entity\Tournament;
-use CoreBundle\Service\Smashgg\Smashgg;
-use Doctrine\ORM\EntityManager;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class EventProcessor
+class EventProcessor extends AbstractProcessor
 {
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
-     * @var Smashgg
-     */
-    protected $smashgg;
-
     /**
      * @var Event[]
      */
     protected $events = [];
-
-    /**
-     * @param EntityManager $entityManager
-     * @param Smashgg       $smashgg
-     */
-    public function __construct(EntityManager $entityManager, Smashgg $smashgg)
-    {
-        $this->entityManager = $entityManager;
-        $this->smashgg = $smashgg;
-    }
 
     /**
      * @param int $eventId
@@ -53,7 +31,7 @@ class EventProcessor
      * @param int $eventId
      * @return Event
      */
-    public function getEvent($eventId)
+    public function findEvent($eventId)
     {
         if ($this->hasEvent($eventId)) {
             return $this->events[$eventId];

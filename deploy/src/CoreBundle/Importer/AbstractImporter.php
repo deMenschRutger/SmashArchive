@@ -11,7 +11,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class AbstractImporter
+abstract class AbstractImporter
 {
     /**
      * @var SymfonyStyle
