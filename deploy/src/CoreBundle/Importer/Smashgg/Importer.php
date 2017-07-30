@@ -8,6 +8,7 @@ use CoreBundle\Entity\Country;
 use CoreBundle\Entity\Game;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Importer\AbstractImporter;
+use CoreBundle\Importer\Smashgg\Processor\EventProcessor;
 use CoreBundle\Service\Smashgg\Smashgg;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -31,6 +32,11 @@ class Importer extends AbstractImporter
      * @var array
      */
     protected $games = [];
+
+    /**
+     * @var array
+     */
+    protected $events = [];
 
     /**
      * @param SymfonyStyle  $io
@@ -57,6 +63,9 @@ class Importer extends AbstractImporter
 
         $this->io->writeln('Processing games...');
         $this->processGames();
+
+        $this->io->writeln('Processing events...');
+        $this->processEvents($eventIds);
 
         $this->entityManager->flush();
     }
@@ -108,6 +117,27 @@ class Importer extends AbstractImporter
 
             $this->games[$gameId] = $game;
         }
+    }
+
+    /**
+     * @param array $eventIds
+     * @return void
+     */
+    protected function processEvents(array $eventIds)
+    {
+        $events = $this->smashgg->getTournamentEvents($this->tournament->getSmashggSlug(), true);
+        $events = array_filter($events, function ($event) use ($eventIds) {
+            return in_array($event['id'], $eventIds);
+        });
+
+        $handler = new EventProcessor($this->entityManager, $this->smashgg);
+
+        foreach ($events as $eventData) {
+            $game = $this->findGame($eventData['videogameId']);
+            $handler->processNew($eventData, $this->tournament, $game);
+        }
+
+        $handler->cleanUp($this->tournament);
     }
 
     /**
