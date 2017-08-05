@@ -41,6 +41,14 @@ class EventProcessor extends AbstractProcessor
     }
 
     /**
+     * @return Event[]
+     */
+    public function getAllEvents()
+    {
+        return $this->events;
+    }
+
+    /**
      * @param array      $eventData
      * @param Tournament $tournament
      * @param Game       $game

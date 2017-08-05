@@ -6,6 +6,7 @@ namespace CoreBundle\Importer;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use League\Tactician\CommandBus;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -22,6 +23,11 @@ abstract class AbstractImporter
      * @var EntityManager
      */
     protected $entityManager;
+
+    /**
+     * @var CommandBus
+     */
+    protected $commandBus;
 
     /**
      * @return SymfonyStyle
@@ -62,5 +68,21 @@ abstract class AbstractImporter
     public function getRepository(string $name)
     {
         return $this->entityManager->getRepository($name);
+    }
+
+    /**
+     * @return CommandBus
+     */
+    public function getCommandBus()
+    {
+        return $this->commandBus;
+    }
+
+    /**
+     * @param CommandBus $commandBus
+     */
+    public function setCommandBus($commandBus)
+    {
+        $this->commandBus = $commandBus;
     }
 }

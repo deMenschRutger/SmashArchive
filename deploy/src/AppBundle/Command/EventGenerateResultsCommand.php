@@ -89,7 +89,7 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
                 return;
             }
 
-            $eventIds = $this->getEventIds();
+            $eventIds = $this->entityManager->getRepository('CoreBundle:Event')->getAllEventIds();
 
             $io->progressStart(count($eventIds));
 
@@ -109,27 +109,5 @@ class EventGenerateResultsCommand extends ContainerAwareCommand
         }
 
         $io->success('The results were successfully generated!');
-    }
-
-    /**
-     * @return int[]
-     */
-    protected function getEventIds()
-    {
-        $events = $this
-            ->entityManager
-            ->createQueryBuilder()
-            ->select('e.id')
-            ->from('CoreBundle:Event', 'e')
-            ->join('e.tournament', 't')
-            ->where('t.isActive = :active')
-            ->setParameter('active', true)
-            ->getQuery()
-            ->getResult()
-        ;
-
-        return array_map(function (array $event) {
-            return $event['id'];
-        }, $events);
     }
 }

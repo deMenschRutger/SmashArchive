@@ -18,6 +18,8 @@ use CoreBundle\Importer\Smashgg\Processor\PlayerProcessor;
 use CoreBundle\Importer\Smashgg\Processor\SetProcessor;
 use CoreBundle\Service\Smashgg\Smashgg;
 use Doctrine\ORM\EntityManager;
+use Domain\Command\WorkQueue\AddJobCommand;
+use League\Tactician\CommandBus;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -69,11 +71,13 @@ class Importer extends AbstractImporter
      * @param SymfonyStyle  $io
      * @param EntityManager $entityManager
      * @param Smashgg       $smashgg
+     * @param CommandBus    $commandBus
      */
-    public function __construct(SymfonyStyle $io, EntityManager $entityManager, Smashgg $smashgg)
+    public function __construct(SymfonyStyle $io, EntityManager $entityManager, Smashgg $smashgg, CommandBus $commandBus)
     {
         $this->setIo($io);
         $this->setEntityManager($entityManager);
+        $this->setCommandBus($commandBus);
         $this->smashgg = $smashgg;
     }
 
@@ -120,7 +124,7 @@ class Importer extends AbstractImporter
         $this->io->writeln('Flushing the entity manager...');
         $this->entityManager->flush();
 
-        // TODO Generate results for each event.
+        $this->generateResults();
     }
 
     /**
@@ -354,5 +358,24 @@ class Importer extends AbstractImporter
         $processor->cleanUp($this->tournament);
 
         return $processor;
+    }
+
+    /**
+     * @return void
+     */
+    protected function generateResults()
+    {
+        $tournamentName = $this->tournament->getName();
+
+        foreach ($this->eventProcessor->getAllEvents() as $event) {
+            $name = "Generate results for event #{$event->getId()} of tournament {$tournamentName}";
+            $job = [
+                'type' => AddJobCommand::TYPE_GENERATE_RESULTS,
+                'eventId' => $event->getId(),
+            ];
+
+            $command = new AddJobCommand('generate-results', $name, $job);
+            $this->getCommandBus()->handle($command);
+        }
     }
 }

@@ -34,7 +34,7 @@ class AddJobHandler extends AbstractHandler
     public function handle(AddJobCommand $command)
     {
         $job = \GuzzleHttp\json_encode($command->getJob());
-        $jobId = $this->pheanstalk->useTube('import-tournament')->put($job);
+        $jobId = $this->pheanstalk->useTube($command->getTube())->put($job);
 
         $jobEntity = new Job();
         $jobEntity->setQueueId($jobId);

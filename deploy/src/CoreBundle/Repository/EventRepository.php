@@ -13,6 +13,26 @@ use Doctrine\ORM\EntityRepository;
 class EventRepository extends EntityRepository
 {
     /**
+     * @return integer[]
+     */
+    public function getAllEventIds()
+    {
+        $events = $this
+            ->createQueryBuilder('e')
+            ->select('e.id')
+            ->join('e.tournament', 't')
+            ->where('t.isActive = :active')
+            ->setParameter('active', true)
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return array_map(function (array $event) {
+            return $event['id'];
+        }, $events);
+    }
+
+    /**
      * @param int $eventId
      * @return array
      */

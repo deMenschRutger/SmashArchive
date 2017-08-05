@@ -72,7 +72,7 @@ class WorkQueueProcessCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io = new SymfonyStyle($input, $output);
-        $this->pheanstalk->watch('import-tournament');
+        $this->pheanstalk->watch('import-tournament')->watch('generate-results');
 
         while (true) {
             /** @var Job $job */

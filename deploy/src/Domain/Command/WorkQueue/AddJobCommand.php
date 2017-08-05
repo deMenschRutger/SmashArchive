@@ -9,7 +9,8 @@ namespace Domain\Command\WorkQueue;
  */
 class AddJobCommand
 {
-    const TYPE_TOURNAMENT_IMPORT = 'tournament-import';
+    const TYPE_IMPORT_TOURNAMENT = 'import-tournament';
+    const TYPE_GENERATE_RESULTS = 'generate-results';
 
     /**
      * @var string
