@@ -190,6 +190,11 @@ class Tournament
     private $events;
 
     /**
+     * @var int
+     */
+    private $entrantCount;
+
+    /**
      *
      */
     public function __construct()
@@ -527,5 +532,21 @@ class Tournament
         foreach ($events as $event) {
             $this->addEvent($event);
         }
+    }
+
+    /**
+     * @return int
+     */
+    public function getEntrantCount()
+    {
+        return $this->entrantCount;
+    }
+
+    /**
+     * @param int $entrantCount
+     */
+    public function setEntrantCount(int $entrantCount)
+    {
+        $this->entrantCount = $entrantCount;
     }
 }

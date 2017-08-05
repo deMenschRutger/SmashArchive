@@ -4,15 +4,25 @@
 
 <h2>Details</h2>
 <br>
-<h4>Tournament organizers</h4>
-<ul>
-
-{% for to in tournament.organizers %}
-    <li>{{ to.gamerTag }}</li>
-{% endfor %}
-
-</ul>
+<h4>Number of entrants</h4>
+<p>{{ tournament.entrantCount }}</p>
 <br>
+
+{% if tournament.organizers|length > 0 %}
+
+    <h4>Tournament organizers</h4>
+    <ul>
+
+        {% for to in tournament.organizers %}
+            <li>
+                <a href="{{ path('player_details', { 'slug': to.slug }) }}">{{ to.gamerTag }}</a>
+            </li>
+        {% endfor %}
+
+    </ul>
+    <br>
+
+{% endif %}
 
 {% if tournament.resultsPage %}
 
