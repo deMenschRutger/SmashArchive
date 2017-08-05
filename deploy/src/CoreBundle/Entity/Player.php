@@ -144,6 +144,13 @@ class Player
     private $isActive = true;
 
     /**
+     * @var array
+     *
+     * @ORM\Column(name="properties", type="json_array")
+     */
+    private $properties = [];
+
+    /**
      * @ORM\ManyToMany(targetEntity="Character")
      * @ORM\JoinTable(
      *  name="players_mains",
@@ -417,6 +424,28 @@ class Player
     public function setIsActive($isActive)
     {
         $this->isActive = $isActive;
+    }
+
+    /**
+     * @param string $key
+     * @return array
+     */
+    public function getProperty($key)
+    {
+        if (!array_key_exists($key, $this->properties)) {
+            return null;
+        }
+
+        return $this->properties[$key];
+    }
+
+    /**
+     * @param string $key
+     * @param mixed  $value
+     */
+    public function setProperty($key, $value)
+    {
+        $this->properties[$key] = $value;
     }
 
     /**

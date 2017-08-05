@@ -9,6 +9,7 @@ use CoreBundle\Entity\Country;
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Player;
+use CoreBundle\Entity\Series;
 use CoreBundle\Entity\Set;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Importer\AbstractImporter;
@@ -79,6 +80,11 @@ class Importer extends AbstractImporter
     /**
      * @var array
      */
+    protected $tournamentSeries = [];
+
+    /**
+     * @var array
+     */
     protected $tournaments = [];
 
     /**
@@ -133,6 +139,10 @@ class Importer extends AbstractImporter
         $this->players = $this->getPlayers();
         $this->io->text(sprintf('Retrieved %s players.', count($this->players)));
 
+        $this->io->text('Retrieving tournament series...');
+        $this->tournamentSeries = $this->getTournamentSeries();
+        $this->io->text(sprintf('Retrieved %s tournament series.', count($this->tournamentSeries)));
+
         $this->io->text('Retrieving tournaments...');
         $this->tournaments = $this->getTournaments();
         $this->io->text(sprintf('Retrieved %s tournaments.', count($this->tournaments)));
@@ -183,8 +193,6 @@ class Importer extends AbstractImporter
 
     /**
      * @return array
-     *
-     * @TODO Gather more data about the players from the SmashRanking database export.
      */
     public function getPlayers()
     {
@@ -220,6 +228,22 @@ class Importer extends AbstractImporter
             $entity->setRegion($player['region'] ? $player['region'] : null);
             $entity->setCity($player['city'] ?  $player['city'] : null);
             $entity->setIsActive(!$player['hide']);
+
+            if ($player['smashwiki']) {
+                $entity->setProperty('smashwiki_url', $player['smashwiki']);
+            }
+
+            if ($player['twitter']) {
+                $entity->setProperty('twitter_url', $player['twitter']);
+            }
+
+            if ($player['twitch']) {
+                $entity->setProperty('twitch_url', $player['twitch']);
+            }
+
+            if ($player['youtube']) {
+                $entity->setProperty('youtube_url', $player['youtube']);
+            }
 
             if ($player['main']) {
                 $character = $this->getCharacterBySmashRankingId($player['main']);
@@ -257,8 +281,28 @@ class Importer extends AbstractImporter
 
     /**
      * @return array
-     *
-     * @TODO Gather more data about the tournaments from the SmashRanking database export.
+     */
+    public function getTournamentSeries()
+    {
+        if (count($this->tournamentSeries) > 0) {
+            return $this->tournamentSeries;
+        }
+
+        $tournamentSeries = $this->getContentFromJson('tournamentserie');
+
+        foreach ($tournamentSeries as $seriesId => &$series) {
+            $entity = new Series();
+            $entity->setName($series['name']);
+
+            $this->entityManager->persist($entity);
+            $series = $entity;
+        }
+
+        return $tournamentSeries;
+    }
+
+    /**
+     * @return array
      */
     public function getTournaments()
     {
@@ -281,6 +325,10 @@ class Importer extends AbstractImporter
             $entity->setResultsPage($tournament['result_page']);
             $entity->setIsComplete(true);
             $entity->setIsActive(true);
+
+            if ($tournament['serie'] && array_key_exists($tournament['serie'], $this->tournamentSeries)) {
+                $entity->setSeries($this->tournamentSeries[$tournament['serie']]);
+            }
 
             $this->entityManager->persist($entity);
             $tournament = $entity;

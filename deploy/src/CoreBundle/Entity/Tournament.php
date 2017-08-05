@@ -537,7 +537,7 @@ class Tournament
     /**
      * @return int
      */
-    public function getEntrantCount()
+    public function getEntrantCount(): int
     {
         return $this->entrantCount;
     }
