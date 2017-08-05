@@ -9,9 +9,8 @@
 
         {% for index, event in tournament.events %}
 
-        <li role="presentation" {{ index == 0 ? 'class="active"' : '' }}>
-            <a href="#event-{{ event.id }}" aria-controls="event-{{ event.id }}" role="tab"
-                data-toggle="tab">
+        <li role="presentation" {{ event.id == eventId ? 'class="active"' : '' }}>
+            <a href="{{ path('tournaments_results', { 'slug': tournament.slug, 'eventId': event.id }) }}">
                 {{ event.name }}
             </a>
         </li>
@@ -23,7 +22,7 @@
 
         {% for index, event in tournament.events %}
 
-        <div role="tabpanel" class="tab-pane  {{ index == 0 ? 'active' : '' }}" id="event-{{ event.id }}">
+        <div role="tabpanel" class="tab-pane {{ event.id == eventId ? 'active' : '' }}" id="event-{{ event.id }}">
             <br>
 
             {% if results[event.id] is defined and results[event.id]|length > 0 %}

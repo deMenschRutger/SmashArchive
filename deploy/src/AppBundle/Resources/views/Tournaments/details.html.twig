@@ -68,7 +68,7 @@
             </tbody>
         </table>
         <p class="text-right">
-            <a href="{{ path('tournaments_results', { 'slug': tournament.slug }) }}">Full results</a>
+            <a href="{{ path('tournaments_results', { 'slug': tournament.slug, 'eventId': event.id }) }}">Full results</a>
         </p>
 
         {% else %}

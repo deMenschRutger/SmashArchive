@@ -100,32 +100,12 @@ class TournamentController extends AbstractDefaultController
     }
 
     /**
-     * @param string $slug
-     * @return Response
-     *
-     * @Route("/{slug}/results", name="tournaments_results")
-     */
-    public function resultsAction($slug)
-    {
-        $command = new DetailsCommand($slug, true);
-        $tournament = $this->commandBus->handle($command);
-
-        $command = new ResultsCommand($tournament->getId());
-        $results = $this->commandBus->handle($command);
-
-        return $this->render('AppBundle:Tournaments:results.html.twig', [
-            'results' => $results,
-            'tournament' => $tournament,
-        ]);
-    }
-
-    /**
      * @param string $phaseGroupId
      * @return Response
      *
      * @Route("/{slug}/brackets/{phaseGroupId}", name="tournaments_brackets_details")
      */
-    public function bracketDetailAction($phaseGroupId)
+    public function bracketDetailsAction($phaseGroupId)
     {
         /** @var PhaseGroupRepository $repository */
         $repository = $this->getRepository('CoreBundle:PhaseGroup');
@@ -161,6 +141,30 @@ class TournamentController extends AbstractDefaultController
         return $this->render($template, [
             'bracket'    => $bracket,
             'phaseGroup' => $phaseGroup,
+            'tournament' => $tournament,
+        ]);
+    }
+
+    /**
+     * @param string $slug
+     * @param string $eventId
+     * @return Response
+     *
+     * @Route("/{slug}/results/{eventId}", name="tournaments_results")
+     *
+     * @TODO Only retrieve the results of the selected event instead of results for all tournament events.
+     */
+    public function resultsAction($slug, $eventId)
+    {
+        $command = new DetailsCommand($slug, true);
+        $tournament = $this->commandBus->handle($command);
+
+        $command = new ResultsCommand($tournament->getId());
+        $results = $this->commandBus->handle($command);
+
+        return $this->render('AppBundle:Tournaments:results.html.twig', [
+            'eventId' => $eventId,
+            'results' => $results,
             'tournament' => $tournament,
         ]);
     }
