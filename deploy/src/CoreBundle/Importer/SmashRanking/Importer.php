@@ -235,6 +235,7 @@ class Importer extends AbstractImporter
             $entity->setRegion($player['region'] ? $player['region'] : null);
             $entity->setCity($player['city'] ?  $player['city'] : null);
             $entity->setIsActive(!$player['hide']);
+            $entity->setIsNew(false);
 
             if ($player['smashwiki']) {
                 $entity->setProperty('smashwiki_url', $player['smashwiki']);

@@ -126,7 +126,7 @@ class Player
     private $city;
 
     /**
-     * @var string
+     * @var bool
      *
      * @ORM\Column(name="is_competing", type="boolean")
      *
@@ -135,13 +135,20 @@ class Player
     private $isCompeting = true;
 
     /**
-     * @var string
+     * @var bool
      *
      * @ORM\Column(name="is_active", type="boolean")
      *
      * @Serializer\Groups({"players_overview"})
      */
     private $isActive = true;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_new", type="boolean")
+     */
+    private $isNew = true;
 
     /**
      * @var array
@@ -424,6 +431,22 @@ class Player
     public function setIsActive($isActive)
     {
         $this->isActive = $isActive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNew()
+    {
+        return $this->isNew;
+    }
+
+    /**
+     * @param bool $isNew
+     */
+    public function setIsNew(bool $isNew)
+    {
+        $this->isNew = $isNew;
     }
 
     /**
