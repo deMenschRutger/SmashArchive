@@ -69,15 +69,7 @@ services:
             - { name: "tactician.handler", command: Domain\Command\Event\GenerateResultsCommand }
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
-
-    bus.handler.tournament.import.smashgg:
-        class: Domain\Handler\Tournament\Import\SmashggHandler
-        tags:
-            - { name: "tactician.handler", command: Domain\Command\Tournament\Import\SmashggCommand }
-        calls:
-            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
-            - ['setCommandBus', ['@tactician.commandbus']]
-            - ['setSmashgg', ['@core.service.smashgg']]
+            - ['setCache', ['@cache.provider.filesystem']]
 
     bus.handler.work_queue.add_job:
         class: Domain\Handler\WorkQueue\AddJobHandler
