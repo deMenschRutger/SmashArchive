@@ -100,6 +100,26 @@ class TournamentController extends AbstractDefaultController
     }
 
     /**
+     * @param string $slug
+     * @return Response
+     *
+     * @Route("/{slug}/results", name="tournaments_results")
+     */
+    public function resultsAction($slug)
+    {
+        $command = new DetailsCommand($slug, true);
+        $tournament = $this->commandBus->handle($command);
+
+        $command = new ResultsCommand($tournament->getId());
+        $results = $this->commandBus->handle($command);
+
+        return $this->render('AppBundle:Tournaments:results.html.twig', [
+            'results' => $results,
+            'tournament' => $tournament,
+        ]);
+    }
+
+    /**
      * @param string $phaseGroupId
      * @return Response
      *

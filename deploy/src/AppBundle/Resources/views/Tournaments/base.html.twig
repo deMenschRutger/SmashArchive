@@ -14,10 +14,13 @@
 
         <ul class="list-group">
             <li class="list-group-item">
-                <a href="{{ path('tournaments_details', { 'slug': tournament.slug }) }}">Results</a>
+                <a href="{{ path('tournaments_details', { 'slug': tournament.slug }) }}">Details</a>
             </li>
             <li class="list-group-item">
                 <a href="{{ path('tournaments_brackets', { 'slug': tournament.slug }) }}">Brackets</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{{ path('tournaments_results', { 'slug': tournament.slug }) }}">Results</a>
             </li>
         </ul>
 

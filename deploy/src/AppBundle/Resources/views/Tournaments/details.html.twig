@@ -2,57 +2,75 @@
 
 {% block tournament %}
 
+<h2>Details</h2>
+<br>
+<h4>Tournament organizers</h4>
+<ul>
+
+{% for to in tournament.organizers %}
+    <li>{{ to.gamerTag }}</li>
+{% endfor %}
+
+</ul>
+<br>
+
+{% if tournament.resultsPage %}
+
+    <h4>
+        <a href="{{ tournament.resultsPage }}">Results page</a>
+    </h4>
+    <br>
+
+{% endif %}
+
+{% if tournament.smashggUrl %}
+
+    <h4>
+        <a href="{{ tournament.smashggUrl }}">smash.gg url</a>
+    </h4>
+    <br>
+
+{% endif %}
+
 <h2>Results</h2>
-<div>
-    <ul class="nav nav-tabs" role="tablist">
+<div class="row">
 
-        {% for index, event in tournament.events %}
+    {% for index, event in tournament.events %}
 
-        <li role="presentation" {{ index == 0 ? 'class="active"' : '' }}>
-            <a href="#event-{{ event.id }}" aria-controls="event-{{ event.id }}" role="tab"
-                data-toggle="tab">
-                {{ event.name }}
-            </a>
-        </li>
+    <div class="col-sm-6">
 
-        {% endfor %}
+        {% if results[event.id] is defined and results[event.id]|length > 0 %}
 
-    </ul>
-    <div class="tab-content">
+        <h3>{{ event.name }}</h3>
+        <br>
+        <table class="table">
+            <tbody>
 
-        {% for index, event in tournament.events %}
+            {% for result in results[event.id]|slice(0, 8) %}
 
-        <div role="tabpanel" class="tab-pane  {{ index == 0 ? 'active' : '' }}" id="event-{{ event.id }}">
-            <br>
+            <tr>
+                <td>{{ result.rank }}</td>
+                <td>{{ include('entrant.html.twig', { 'entrant': result.entrant }) }}</td>
+            </tr>
 
-            {% if results[event.id] is defined and results[event.id]|length > 0 %}
+            {% endfor %}
 
-            <table class="table">
-                <tbody>
+            </tbody>
+        </table>
+        <p class="text-right">
+            <a href="{{ path('tournaments_results', { 'slug': tournament.slug }) }}">Full results</a>
+        </p>
 
-                {% for result in results[event.id] %}
+        {% else %}
 
-                <tr>
-                    <td>{{ result.rank }}</td>
-                    <td>{{ include('entrant.html.twig', { 'entrant': result.entrant }) }}</td>
-                </tr>
+            No results found.
 
-                {% endfor %}
-
-                </tbody>
-            </table>
-
-            {% else %}
-
-                No results found.
-
-            {% endif %}
-
-        </div>
-
-        {% endfor %}
+        {% endif %}
 
     </div>
+
+    {% endfor %}
+
 </div>
 
 {% endblock %}
