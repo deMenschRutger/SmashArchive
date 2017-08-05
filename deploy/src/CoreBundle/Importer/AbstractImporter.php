@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Importer;
 
+use CoreBundle\Entity\Tournament;
+use CoreBundle\Repository\TournamentRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use League\Tactician\CommandBus;
@@ -84,5 +86,15 @@ abstract class AbstractImporter
     public function setCommandBus($commandBus)
     {
         $this->commandBus = $commandBus;
+    }
+
+    /**
+     * @param Tournament $tournament
+     */
+    protected function setEntrantCount(Tournament $tournament)
+    {
+        /** @var TournamentRepository $tournamentRepository */
+        $tournamentRepository = $this->getRepository('CoreBundle:Tournament');
+        $tournamentRepository->setEntrantCount($tournament);
     }
 }

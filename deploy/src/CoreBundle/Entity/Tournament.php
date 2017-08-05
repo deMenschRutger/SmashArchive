@@ -150,6 +150,13 @@ class Tournament
     private $resultsPage;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="entrant_count", type="integer", nullable=true)
+     */
+    private $entrantCount;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="is_complete", type="boolean")
@@ -188,11 +195,6 @@ class Tournament
      * @Serializer\Groups({"tournaments_details"})
      */
     private $events;
-
-    /**
-     * @var int
-     */
-    private $entrantCount;
 
     /**
      *
@@ -398,6 +400,22 @@ class Tournament
     }
 
     /**
+     * @return int
+     */
+    public function getEntrantCount()
+    {
+        return $this->entrantCount;
+    }
+
+    /**
+     * @param int $entrantCount
+     */
+    public function setEntrantCount(int $entrantCount)
+    {
+        $this->entrantCount = $entrantCount;
+    }
+
+    /**
      * @return string
      */
     public function getSmashggUrl()
@@ -532,21 +550,5 @@ class Tournament
         foreach ($events as $event) {
             $this->addEvent($event);
         }
-    }
-
-    /**
-     * @return int
-     */
-    public function getEntrantCount(): int
-    {
-        return $this->entrantCount;
-    }
-
-    /**
-     * @param int $entrantCount
-     */
-    public function setEntrantCount(int $entrantCount)
-    {
-        $this->entrantCount = $entrantCount;
     }
 }

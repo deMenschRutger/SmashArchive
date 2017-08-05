@@ -29,9 +29,6 @@ class DetailsHandler extends AbstractHandler
             throw new NotFoundHttpException('The tournament could not be found.');
         }
 
-        $entrantCount = $tournamentRepository->getEntrantCount($tournament->getId());
-        $tournament->setEntrantCount($entrantCount);
-
         return $tournament;
     }
 }

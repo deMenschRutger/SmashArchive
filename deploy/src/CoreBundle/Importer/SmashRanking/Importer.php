@@ -13,6 +13,7 @@ use CoreBundle\Entity\Series;
 use CoreBundle\Entity\Set;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Importer\AbstractImporter;
+use CoreBundle\Repository\TournamentRepository;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Webmozart\Assert\Assert;
@@ -168,6 +169,12 @@ class Importer extends AbstractImporter
 
         $this->io->text('Correcting missing grand finals...');
         $this->processGrandFinals();
+
+        $this->io->text('Flushing entity manager...');
+        $this->entityManager->flush();
+
+        $this->io->text('Counting entrants per tournament...');
+        $this->countEntrants();
 
         $this->io->text('Flushing entity manager...');
         $this->entityManager->flush();
@@ -513,5 +520,16 @@ class Importer extends AbstractImporter
         $this->entrants[$tournamentId][$playerId] = $entrant;
 
         return $entrant;
+    }
+
+    /**
+     * @return void
+     */
+    protected function countEntrants()
+    {
+        /** @var Tournament $tournament */
+        foreach ($this->tournaments as $tournament) {
+            $this->setEntrantCount($tournament);
+        }
     }
 }

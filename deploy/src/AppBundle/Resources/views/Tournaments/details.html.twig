@@ -4,9 +4,14 @@
 
 <h2>Details</h2>
 <br>
-<h4>Number of entrants</h4>
-<p>{{ tournament.entrantCount }}</p>
-<br>
+
+{% if tournament.entrantCount > 0 %}
+
+    <h4>Number of entrants</h4>
+    <p>{{ tournament.entrantCount }}</p>
+    <br>
+
+{% endif %}
 
 {% if tournament.series %}
 
