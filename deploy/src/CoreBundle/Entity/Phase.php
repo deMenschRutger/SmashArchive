@@ -170,8 +170,8 @@ class Phase
         $players = [];
 
         /** @var PhaseGroup $phaseGroup */
-        foreach ($this->getPhaseGroups() as $phaseGroup) {
-            $players = $players + $phaseGroup->getPlayers();
+        foreach ($this->getPhaseGroups() as $key => $phaseGroup) {
+            $players = array_merge($players, $phaseGroup->getPlayers());
         }
 
         return array_unique($players);

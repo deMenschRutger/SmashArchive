@@ -560,7 +560,7 @@ class Tournament
         $players = [];
 
         foreach ($this->getEvents() as $event) {
-            $players = $players + $event->getPlayers();
+            $players = array_merge($players, $event->getPlayers());
         }
 
         return array_unique($players);

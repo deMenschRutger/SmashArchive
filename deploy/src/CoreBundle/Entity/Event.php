@@ -217,7 +217,7 @@ class Event
 
         /** @var Phase $phase */
         foreach ($this->getPhases() as $phase) {
-            $players = $players + $phase->getPlayers();
+            $players = array_merge($players, $phase->getPlayers());
         }
 
         return array_unique($players);
