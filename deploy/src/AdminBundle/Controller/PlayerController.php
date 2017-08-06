@@ -88,9 +88,9 @@ class PlayerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-
-            // TODO Actually merge the two players.
+            $entityManager = $this->getEntityManager();
+            $playerMerger->mergePlayers($entityManager, $this->getCache());
+            $entityManager->flush();
 
             $this->addFlash('sonata_flash_success', 'The players were successfully merged.');
 

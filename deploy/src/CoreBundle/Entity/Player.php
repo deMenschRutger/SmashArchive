@@ -247,6 +247,14 @@ class Player
     }
 
     /**
+     * @return string
+     */
+    public function getTag()
+    {
+        return 'player_'.$this->slug;
+    }
+
+    /**
      * @param string $slug
      */
     public function setSlug($slug)

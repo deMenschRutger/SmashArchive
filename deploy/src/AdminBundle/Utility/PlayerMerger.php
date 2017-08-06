@@ -4,7 +4,11 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Utility;
 
+use Cache\TagInterop\TaggableCacheItemPoolInterface;
+use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Player;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Cache\CacheItemPoolInterface as Cache;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -87,5 +91,34 @@ class PlayerMerger
         }
 
         return $this->getSourceProperty($property);
+    }
+
+    /**
+     * @param EntityManagerInterface               $entityManager
+     * @param Cache|TaggableCacheItemPoolInterface $cache
+     */
+    public function mergePlayers($entityManager, $cache)
+    {
+        foreach ($this->getProperties() as $property) {
+            if (in_array($property, ['id', 'slug'])) {
+                continue;
+            }
+
+            $setter = 'set'.ucfirst($property);
+
+            $this->targetPlayer->$setter($this->getResultProperty($property));
+        }
+
+        /** @var Entrant $entrant */
+        foreach ($this->sourcePlayer->getEntrants() as $entrant) {
+            $players = $entrant->getPlayers();
+            $players->removeElement($this->sourcePlayer);
+            $players->add($this->targetPlayer);
+        }
+
+        $cache->invalidateTag($this->sourcePlayer->getTag());
+        $cache->invalidateTag($this->targetPlayer->getTag());
+
+        $entityManager->remove($this->sourcePlayer);
     }
 }

@@ -53,6 +53,7 @@ class PlayerAdmin extends AbstractAdmin
             ->end()
             ->with('Status')
             ->add('isActive')
+            ->add('isNew')
             ->end()
         ;
     }
@@ -92,6 +93,7 @@ class PlayerAdmin extends AbstractAdmin
             ->add('secondaries')
             ->add('isCompeting')
             ->add('isActive')
+            ->add('isNew')
             ->add('createdAt')
             ->add('updatedAt')
         ;
@@ -106,6 +108,7 @@ class PlayerAdmin extends AbstractAdmin
             ->addIdentifier('gamerTag')
             ->add('name')
             ->add('country')
+            ->add('isNew')
         ;
 
         $listMapper->add(
