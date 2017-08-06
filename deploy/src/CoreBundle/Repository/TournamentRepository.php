@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Repository;
 
-use CoreBundle\Entity\Tournament;
 use Doctrine\ORM\EntityRepository;
 
 /**

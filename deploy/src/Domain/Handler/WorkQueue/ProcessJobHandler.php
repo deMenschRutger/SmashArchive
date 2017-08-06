@@ -118,8 +118,20 @@ class ProcessJobHandler extends AbstractHandler
         }
 
         if ($data['source'] === Tournament::SOURCE_SMASHGG) {
-            $importer = new SmashggImporter($io, $this->entityManager, $this->smashgg, $this->commandBus);
-            $importer->import($data['smashggId'], $data['events']);
+            $importer = new SmashggImporter($io, $this->entityManager, $this->smashgg);
+            $tournament = $importer->import($data['smashggId'], $data['events']);
+            $tournamentName = $tournament->getName();
+
+            foreach ($tournament->getEvents() as $event) {
+                $name = "Generate results for event #{$event->getId()} of tournament {$tournamentName}";
+                $job = [
+                    'type' => AddJobCommand::TYPE_GENERATE_RESULTS,
+                    'eventId' => $event->getId(),
+                ];
+
+                $command = new AddJobCommand('generate-results', $name, $job);
+                $this->commandBus->handle($command);
+            }
         } else {
             throw new \InvalidArgumentException("Unfortunately the source #{$data['source']} can not be handled yet.");
         }

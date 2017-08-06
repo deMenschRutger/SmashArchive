@@ -7,7 +7,6 @@ namespace AppBundle\Command;
 use CoreBundle\Importer\Smashgg\Importer as SmashggImporter;
 use CoreBundle\Service\Smashgg\Smashgg;
 use Doctrine\ORM\EntityManager;
-use League\Tactician\CommandBus;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,11 +21,6 @@ class TournamentImportCommand extends ContainerAwareCommand
     const PROVIDER_SMASHGG = 'smash.gg';
     const PROVIDER_CHALLONGE = 'Challonge';
     const PROVIDER_TIO = 'TIO';
-
-    /**
-     * @var CommandBus
-     */
-    protected $commandBus;
 
     /**
      * @var EntityManager
@@ -44,13 +38,11 @@ class TournamentImportCommand extends ContainerAwareCommand
     protected $smashgg;
 
     /**
-     * @param CommandBus    $commandBus
      * @param EntityManager $entityManager
      * @param Smashgg       $smashgg
      */
-    public function __construct(CommandBus $commandBus, EntityManager $entityManager, Smashgg $smashgg)
+    public function __construct(EntityManager $entityManager, Smashgg $smashgg)
     {
-        $this->commandBus = $commandBus;
         $this->entityManager = $entityManager;
         $this->smashgg = $smashgg;
 
@@ -118,7 +110,7 @@ class TournamentImportCommand extends ContainerAwareCommand
             $selectedEvent = $ids[$selectedEvent];
         }
 
-        $importer = new SmashggImporter($this->io, $this->entityManager, $this->smashgg, $this->commandBus);
+        $importer = new SmashggImporter($this->io, $this->entityManager, $this->smashgg);
         $importer->import($slug, $selectedEvents);
     }
 }

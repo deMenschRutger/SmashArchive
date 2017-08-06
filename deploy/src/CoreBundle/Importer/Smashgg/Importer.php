@@ -18,8 +18,6 @@ use CoreBundle\Importer\Smashgg\Processor\PlayerProcessor;
 use CoreBundle\Importer\Smashgg\Processor\SetProcessor;
 use CoreBundle\Service\Smashgg\Smashgg;
 use Doctrine\ORM\EntityManager;
-use Domain\Command\WorkQueue\AddJobCommand;
-use League\Tactician\CommandBus;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -71,13 +69,11 @@ class Importer extends AbstractImporter
      * @param SymfonyStyle  $io
      * @param EntityManager $entityManager
      * @param Smashgg       $smashgg
-     * @param CommandBus    $commandBus
      */
-    public function __construct(SymfonyStyle $io, EntityManager $entityManager, Smashgg $smashgg, CommandBus $commandBus)
+    public function __construct(SymfonyStyle $io, EntityManager $entityManager, Smashgg $smashgg)
     {
         $this->setIo($io);
         $this->setEntityManager($entityManager);
-        $this->setCommandBus($commandBus);
         $this->smashgg = $smashgg;
     }
 
@@ -92,6 +88,7 @@ class Importer extends AbstractImporter
      *
      * @param string $smashggId
      * @param array  $eventIds
+     * @return Tournament
      */
     public function import($smashggId, $eventIds)
     {
@@ -125,12 +122,15 @@ class Importer extends AbstractImporter
         $this->entityManager->flush();
 
         $this->io->writeln('Counting entrants for the tournament...');
+        $this->entityManager->clear();
+
+        $this->tournament = $this->getRepository('CoreBundle:Tournament')->find($this->tournament->getId());
         $this->tournament->setEntrantCount();
 
         $this->io->writeln('Flushing the entity manager...');
         $this->entityManager->flush();
 
-        $this->generateResults();
+        return $this->tournament;
     }
 
     /**
@@ -146,6 +146,7 @@ class Importer extends AbstractImporter
 
         if (!$tournament instanceof Tournament) {
             $tournament = new Tournament();
+            $tournament->setSource(Tournament::SOURCE_SMASHGG);
             $tournament->setSmashggSlug($slug);
             $tournament->setIsActive(true);
             $tournament->setIsComplete(true);
@@ -364,24 +365,5 @@ class Importer extends AbstractImporter
         $processor->cleanUp($this->tournament);
 
         return $processor;
-    }
-
-    /**
-     * @return void
-     */
-    protected function generateResults()
-    {
-        $tournamentName = $this->tournament->getName();
-
-        foreach ($this->eventProcessor->getAllEvents() as $event) {
-            $name = "Generate results for event #{$event->getId()} of tournament {$tournamentName}";
-            $job = [
-                'type' => AddJobCommand::TYPE_GENERATE_RESULTS,
-                'eventId' => $event->getId(),
-            ];
-
-            $command = new AddJobCommand('generate-results', $name, $job);
-            $this->getCommandBus()->handle($command);
-        }
     }
 }
