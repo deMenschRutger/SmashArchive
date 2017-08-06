@@ -75,6 +75,8 @@ class GenerateResultsHandler extends AbstractHandler
         $this->io->writeln('Flushing entity manager...');
 
         $this->entityManager->flush();
+        $this->entityManager->clear();
+
         $this->clearPlayerCache();
     }
 
