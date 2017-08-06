@@ -13,7 +13,6 @@ use CoreBundle\Entity\Series;
 use CoreBundle\Entity\Set;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Importer\AbstractImporter;
-use CoreBundle\Repository\TournamentRepository;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Webmozart\Assert\Assert;
@@ -530,7 +529,7 @@ class Importer extends AbstractImporter
     {
         /** @var Tournament $tournament */
         foreach ($this->tournaments as $tournament) {
-            $this->setEntrantCount($tournament);
+            $tournament->setEntrantCount();
         }
     }
 }

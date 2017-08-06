@@ -276,4 +276,20 @@ class PhaseGroup
 
         return array_unique(array_filter($entrants));
     }
+
+    /**
+     * @return Player[]
+     */
+    public function getPlayers()
+    {
+        $players = [];
+
+        foreach ($this->getEntrants() as $entrant) {
+            foreach ($entrant->getPlayers() as $player) {
+                $players[] = $player;
+            }
+        }
+
+        return array_unique($players);
+    }
 }

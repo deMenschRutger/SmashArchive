@@ -4,6 +4,9 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Admin;
 
+use Cache\TagInterop\TaggableCacheItemPoolInterface;
+use CoreBundle\Entity\Player;
+use Psr\Cache\CacheItemPoolInterface as Cache;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -17,11 +20,40 @@ use Sonata\AdminBundle\Show\ShowMapper;
 class PlayerAdmin extends AbstractAdmin
 {
     /**
+     * @var Cache|TaggableCacheItemPoolInterface
+     */
+    protected $cache;
+
+    /**
      * @var array
      */
     protected $datagridValues = [
         '_sort_by' => 'gamerTag',
     ];
+
+    /**
+     * @param Cache|TaggableCacheItemPoolInterface $cache
+     */
+    public function setCache($cache)
+    {
+        $this->cache = $cache;
+    }
+
+    /**
+     * @param Player $object
+     */
+    public function postUpdate($object)
+    {
+        $this->cache->invalidateTag($object->getCacheTag());
+    }
+
+    /**
+     * @param Player $object
+     */
+    public function postRemove($object)
+    {
+        $this->cache->invalidateTag($object->getCacheTag());
+    }
 
     /**
      * {@inheritdoc}

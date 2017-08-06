@@ -161,4 +161,19 @@ class Phase
     {
         return $this->phaseGroups;
     }
+
+    /**
+     * @return Player[]
+     */
+    public function getPlayers()
+    {
+        $players = [];
+
+        /** @var PhaseGroup $phaseGroup */
+        foreach ($this->getPhaseGroups() as $phaseGroup) {
+            $players = $players + $phaseGroup->getPlayers();
+        }
+
+        return array_unique($players);
+    }
 }

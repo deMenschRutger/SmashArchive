@@ -125,7 +125,7 @@ class Importer extends AbstractImporter
         $this->entityManager->flush();
 
         $this->io->writeln('Counting entrants for the tournament...');
-        $this->setEntrantCount($this->tournament);
+        $this->tournament->setEntrantCount();
 
         $this->io->writeln('Flushing the entity manager...');
         $this->entityManager->flush();

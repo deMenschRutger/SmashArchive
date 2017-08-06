@@ -249,7 +249,7 @@ class Player
     /**
      * @return string
      */
-    public function getTag()
+    public function getCacheTag()
     {
         return 'player_'.$this->slug;
     }

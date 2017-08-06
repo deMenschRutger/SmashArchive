@@ -22,6 +22,8 @@ services:
         arguments: [~, CoreBundle\Entity\Player, AdminBundle:Player ]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Players, pager_type: simple }
+        calls:
+          - ['setCache', ['@cache.provider.filesystem']]
 
     admin.series:
         class: AdminBundle\Admin\SeriesAdmin
@@ -34,6 +36,8 @@ services:
         arguments: [~, CoreBundle\Entity\Tournament, AdminBundle:Tournament ]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Tournaments, pager_type: simple }
+        calls:
+          - ['setCache', ['@cache.provider.filesystem']]
 
     admin.job:
         class: AdminBundle\Admin\JobAdmin

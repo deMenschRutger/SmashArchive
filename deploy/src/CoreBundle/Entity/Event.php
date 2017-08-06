@@ -207,4 +207,19 @@ class Event
     {
         return $this->results;
     }
+
+    /**
+     * @return Player[]
+     */
+    public function getPlayers()
+    {
+        $players = [];
+
+        /** @var Phase $phase */
+        foreach ($this->getPhases() as $phase) {
+            $players = $players + $phase->getPlayers();
+        }
+
+        return array_unique($players);
+    }
 }

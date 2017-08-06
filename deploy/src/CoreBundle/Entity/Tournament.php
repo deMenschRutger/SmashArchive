@@ -408,11 +408,11 @@ class Tournament
     }
 
     /**
-     * @param int $entrantCount
+     * @return void
      */
-    public function setEntrantCount(int $entrantCount)
+    public function setEntrantCount()
     {
-        $this->entrantCount = $entrantCount;
+        $this->entrantCount = count($this->getPlayers());
     }
 
     /**
@@ -550,5 +550,19 @@ class Tournament
         foreach ($events as $event) {
             $this->addEvent($event);
         }
+    }
+
+    /**
+     * @return Player[]
+     */
+    public function getPlayers(): array
+    {
+        $players = [];
+
+        foreach ($this->getEvents() as $event) {
+            $players = $players + $event->getPlayers();
+        }
+
+        return array_unique($players);
     }
 }

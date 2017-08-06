@@ -116,8 +116,8 @@ class PlayerMerger
             $players->add($this->targetPlayer);
         }
 
-        $cache->invalidateTag($this->sourcePlayer->getTag());
-        $cache->invalidateTag($this->targetPlayer->getTag());
+        $cache->invalidateTag($this->sourcePlayer->getCacheTag());
+        $cache->invalidateTag($this->targetPlayer->getCacheTag());
 
         $entityManager->remove($this->sourcePlayer);
     }

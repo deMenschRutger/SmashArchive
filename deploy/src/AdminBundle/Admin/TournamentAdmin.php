@@ -4,7 +4,10 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Admin;
 
+use Cache\TagInterop\TaggableCacheItemPoolInterface;
+use CoreBundle\Entity\Player;
 use CoreBundle\Entity\Tournament;
+use Psr\Cache\CacheItemPoolInterface as Cache;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -18,12 +21,25 @@ use Sonata\AdminBundle\Show\ShowMapper;
 class TournamentAdmin extends AbstractAdmin
 {
     /**
+     * @var Cache|TaggableCacheItemPoolInterface
+     */
+    protected $cache;
+
+    /**
      * @var array
      */
     protected $datagridValues = [
         '_sort_order' => 'DESC',
         '_sort_by' => 'dateStart',
     ];
+
+    /**
+     * @param Cache|TaggableCacheItemPoolInterface $cache
+     */
+    public function setCache($cache)
+    {
+        $this->cache = $cache;
+    }
 
     /**
      * @param Tournament $tournament
@@ -39,6 +55,17 @@ class TournamentAdmin extends AbstractAdmin
     public function preUpdate($tournament)
     {
         $tournament->setEvents($tournament->getEvents());
+    }
+
+    /**
+     * @param Tournament $tournament
+     */
+    public function preRemove($tournament)
+    {
+        /** @var Player $player */
+        foreach ($tournament->getPlayers() as $player) {
+            $this->cache->invalidateTag($player->getCacheTag());
+        }
     }
 
     /**
