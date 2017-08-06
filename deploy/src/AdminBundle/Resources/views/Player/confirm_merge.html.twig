@@ -8,6 +8,54 @@
 
     {# TODO Show much more information about the players about to be merged. #}
 
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <div class="box box-primary">
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-bordered table-striped sonata-ba-list">
+                        <thead>
+                            <tr class="sonata-ba-list-field-header">
+                                <th class="sonata-ba-list-field-header-text">
+                                    Property
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    Source player
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    Target player
+                                </th>
+                                <th class="sonata-ba-list-field-header-text">
+                                    Resulting player
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for property in playerMerger.properties %}
+
+                            <tr>
+                                <td class="sonata-ba-list-field sonata-ba-list-field-text">
+                                    {{ property }}
+                                </td>
+                                <td class="sonata-ba-list-field sonata-ba-list-field-text">
+                                    {{ playerMerger.getSourceProperty(property) }}
+                                </td>
+                                <td class="sonata-ba-list-field sonata-ba-list-field-text">
+                                    {{ playerMerger.getTargetProperty(property) }}
+                                </td>
+                                <td class="sonata-ba-list-field sonata-ba-list-field-text">
+                                    {{ playerMerger.getResultProperty(property) }}
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="sonata-ba-form">
         {{ form_start(form) }}
         {{ form_helper.render_groups(admin, form, ['default'], false) }}

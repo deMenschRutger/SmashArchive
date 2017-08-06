@@ -6,6 +6,7 @@ namespace AdminBundle\Controller;
 
 use AdminBundle\Form\ConfirmMergePlayersType;
 use AdminBundle\Form\MergePlayersType;
+use AdminBundle\Utility\PlayerMerger;
 use CoreBundle\Entity\Player;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -81,6 +82,8 @@ class PlayerController extends AbstractController
             throw new NotFoundHttpException('The target player could not be found');
         }
 
+        $playerMerger = new PlayerMerger($player, $targetPlayer);
+
         $form = $this->createForm(ConfirmMergePlayersType::class);
         $form->handleRequest($request);
 
@@ -110,6 +113,7 @@ class PlayerController extends AbstractController
             'admin' => $this->admin,
             'form' => $form->createView(),
             'player' => $player,
+            'playerMerger' => $playerMerger,
             'targetPlayer' => $targetPlayer,
         ]);
     }

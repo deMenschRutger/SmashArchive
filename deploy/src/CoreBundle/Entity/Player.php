@@ -307,13 +307,13 @@ class Player
      */
     public function getExpandedGamerTag()
     {
-        $country = $this->getCountry();
+        $location = $this->getLocation();
 
-        if (!$country instanceof Country) {
-            $country = 'unknown';
+        if (!$location) {
+            $location = 'unknown';
         }
 
-        return sprintf('%s (%s)', $this->gamerTag, $country);
+        return sprintf('%s | %s | %s | #%s', $this->getGamerTag(), $location, $this->getSlug(), $this->getId());
     }
 
     /**

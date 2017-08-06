@@ -70,6 +70,7 @@ class PlayerAdmin extends AbstractAdmin
             ->add('country')
             ->add('nationality')
             ->add('isActive')
+            ->add('isNew')
         ;
     }
 
