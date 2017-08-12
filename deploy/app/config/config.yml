@@ -143,6 +143,7 @@ sonata_admin:
     options:
         title_mode: single_text
     show_mosaic_button: false
+    persist_filters: true
     dashboard:
         groups:
             admin.character:

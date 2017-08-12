@@ -196,6 +196,13 @@ class Player
     private $tournamentsOrganized;
 
     /**
+     * User for merging two players.
+     *
+     * @ORM\OneToOne(targetEntity="Player")
+     */
+    private $targetPlayer;
+
+    /**
      *
      */
     public function __construct()
@@ -525,5 +532,21 @@ class Player
     public function addEntrant(Entrant $entrant)
     {
         $this->entrants[] = $entrant;
+    }
+
+    /**
+     * @return Player
+     */
+    public function getTargetPlayer()
+    {
+        return $this->targetPlayer;
+    }
+
+    /**
+     * @param Player $targetPlayer
+     */
+    public function setTargetPlayer(Player $targetPlayer)
+    {
+        $this->targetPlayer = $targetPlayer;
     }
 }

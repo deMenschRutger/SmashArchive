@@ -61,7 +61,6 @@ class PlayerAdmin extends AbstractAdmin
     protected function configureRoutes(RouteCollection $collection)
     {
         $collection->add('merge', $this->getRouterIdParameter().'/merge');
-        $collection->add('confirm_merge', $this->getRouterIdParameter().'/confirm-merge/{targetId}');
     }
 
     /**
@@ -86,6 +85,16 @@ class PlayerAdmin extends AbstractAdmin
             ->with('Status')
             ->add('isActive')
             ->add('isNew')
+            ->end()
+            ->with('Merge with player')
+            ->add('targetPlayer', 'sonata_type_model_autocomplete', [
+                'minimum_input_length' => 2,
+                'property' => 'gamerTag',
+                'required' => false,
+                'to_string_callback' => function (Player $entity) {
+                    return $entity->getExpandedGamerTag();
+                },
+            ])
             ->end()
         ;
     }
@@ -123,6 +132,7 @@ class PlayerAdmin extends AbstractAdmin
             ->add('nationality')
             ->add('mains')
             ->add('secondaries')
+            ->add('smashggId')
             ->add('isCompeting')
             ->add('isActive')
             ->add('isNew')
@@ -149,10 +159,10 @@ class PlayerAdmin extends AbstractAdmin
             [
                 'actions' => [
                     'edit' => [],
+                    'show' => [],
                     'merge' => [
                         'template' => 'AdminBundle:Player:list__action_merge.html.twig',
                     ],
-                    'show' => [],
                     'delete' => [],
                 ],
                 'label' => 'Actions',

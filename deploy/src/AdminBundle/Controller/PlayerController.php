@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace AdminBundle\Controller;
 
 use AdminBundle\Form\ConfirmMergePlayersType;
-use AdminBundle\Form\MergePlayersType;
 use AdminBundle\Utility\PlayerMerger;
 use CoreBundle\Entity\Player;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -30,53 +29,7 @@ class PlayerController extends AbstractController
             throw new NotFoundHttpException('The player could not be found');
         }
 
-        $form = $this->createForm(MergePlayersType::class, [
-            'targetPlayer' => null,
-        ]);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var Player $targetPlayer */
-            $targetPlayer = $form->getData()['targetPlayer'];
-
-            return new RedirectResponse($this->admin->generateUrl('confirm_merge', [
-                'id' => $player->getId(),
-                'targetId' => $targetPlayer->getId(),
-            ]));
-        }
-
-        $this->admin->setFormGroups([
-            'default' => [
-                'name' => 'Select player to merge with',
-                'description' => null,
-                'box_class' => 'box box-primary',
-                'translation_domain' => null,
-                'fields' => ['targetPlayer', 'submit'],
-            ],
-        ]);
-
-        return $this->render('AdminBundle:Player:merge.html.twig', [
-            'admin' => $this->admin,
-            'form' => $form->createView(),
-            'player' => $player,
-        ]);
-    }
-
-    /**
-     * @param Request $request
-     * @param string  $targetId
-     * @return Response
-     */
-    public function confirmMergeAction(Request $request, $targetId)
-    {
-        $player = $this->admin->getSubject();
-        $targetPlayer = $this->getRepository('CoreBundle:Player')->findOneBy([
-            'id' => $targetId,
-        ]);
-
-        if (!$player instanceof Player) {
-            throw new NotFoundHttpException('The player could not be found');
-        }
+        $targetPlayer = $player->getTargetPlayer();
 
         if (!$targetPlayer instanceof Player) {
             throw new NotFoundHttpException('The target player could not be found');
