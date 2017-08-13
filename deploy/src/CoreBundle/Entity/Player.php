@@ -21,6 +21,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="city_index", columns={"city"}),
  *     @ORM\Index(name="is_competing_index", columns={"is_competing"}),
  *     @ORM\Index(name="is_active_index", columns={"is_active"}),
+ *     @ORM\Index(name="is_new_index", columns={"is_new"}),
  *     @ORM\Index(name="created_at_index", columns={"created_at"}),
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
@@ -196,7 +197,15 @@ class Player
     private $tournamentsOrganized;
 
     /**
-     * User for merging two players.
+     * The tournament that resulted in the player becoming a part of the database.
+     *
+     * @ORM\ManyToOne(targetEntity="Tournament")
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     */
+    private $originTournament;
+
+    /**
+     * Used for merging two players.
      *
      * @ORM\OneToOne(targetEntity="Player")
      */
@@ -532,6 +541,22 @@ class Player
     public function addEntrant(Entrant $entrant)
     {
         $this->entrants[] = $entrant;
+    }
+
+    /**
+     * @return Tournament
+     */
+    public function getOriginTournament()
+    {
+        return $this->originTournament;
+    }
+
+    /**
+     * @param Tournament $originTournament
+     */
+    public function setOriginTournament(Tournament $originTournament)
+    {
+        $this->originTournament = $originTournament;
     }
 
     /**

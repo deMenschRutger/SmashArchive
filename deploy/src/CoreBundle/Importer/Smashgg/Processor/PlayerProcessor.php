@@ -6,6 +6,7 @@ namespace CoreBundle\Importer\Smashgg\Processor;
 
 use CoreBundle\Entity\Country;
 use CoreBundle\Entity\Player;
+use CoreBundle\Entity\Tournament;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -40,10 +41,11 @@ class PlayerProcessor extends AbstractProcessor
     }
 
     /**
-     * @param array   $playerData
-     * @param Country $country
+     * @param array      $playerData
+     * @param Country    $country
+     * @param Tournament $originTournament
      */
-    public function processNew(array $playerData, Country $country = null)
+    public function processNew(array $playerData, Country $country = null, Tournament $originTournament = null)
     {
         $playerId = $playerData['id'];
 
@@ -59,6 +61,7 @@ class PlayerProcessor extends AbstractProcessor
             $player = new Player();
             $player->setSmashggId($playerId);
             $player->setGamerTag($playerData['gamerTag']);
+            $player->setOriginTournament($originTournament);
 
             $this->entityManager->persist($player);
         }

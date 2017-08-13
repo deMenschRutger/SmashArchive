@@ -45,10 +45,12 @@ class OverviewHandler extends AbstractHandler
             ->from('CoreBundle:Player', 'p')
             ->leftJoin('p.country', 'c')
             ->orderBy('p.gamerTag')
+            ->where('p.isNew = :isNew')
+            ->setParameter('isNew', false)
         ;
 
         if ($tag) {
-            $queryBuilder->where('p.gamerTag LIKE :tag')->setParameter('tag', "%{$tag}%");
+            $queryBuilder->andWhere('p.gamerTag LIKE :tag')->setParameter('tag', "%{$tag}%");
         }
 
         if ($location) {

@@ -314,7 +314,7 @@ class Importer extends AbstractImporter
 
             foreach ($players as $playerData) {
                 $country = $this->findCountry($playerData['country']);
-                $processor->processNew($playerData, $country);
+                $processor->processNew($playerData, $country, $this->tournament);
             }
 
             $this->io->progressAdvance();

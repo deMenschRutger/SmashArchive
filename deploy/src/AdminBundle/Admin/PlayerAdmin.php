@@ -113,6 +113,7 @@ class PlayerAdmin extends AbstractAdmin
             ->add('nationality')
             ->add('isActive')
             ->add('isNew')
+            ->add('originTournament')
         ;
     }
 
@@ -136,6 +137,7 @@ class PlayerAdmin extends AbstractAdmin
             ->add('isCompeting')
             ->add('isActive')
             ->add('isNew')
+            ->add('originTournament')
             ->add('createdAt')
             ->add('updatedAt')
         ;
