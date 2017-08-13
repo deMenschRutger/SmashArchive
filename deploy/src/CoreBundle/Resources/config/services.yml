@@ -3,14 +3,19 @@ services:
         class: Zend\Crypt\BlockCipher
         factory: 'Zend\Crypt\BlockCipher::factory'
         arguments:
-            - "mcrypt"
+            - 'mcrypt'
         calls:
-            - [ "setKey", [ "%encryption_key%" ] ]
+            - [ 'setKey', [ '%encryption_key%' ] ]
+
+    core.service.cache.manager:
+        class: CoreBundle\Utility\CacheManager
+        arguments:
+            - '@cache.provider.filesystem'
 
     core.security.provider.user:
         class: CoreBundle\Security\Core\User\HWIOAuthUserProvider\UserProvider
         arguments:
-            - "@fos_user.user_manager"
+            - '@fos_user.user_manager'
             -
                 facebook: facebookId
                 twitter: twitterId
@@ -18,7 +23,7 @@ services:
     core.tactician.middleware.stopwatch:
         class: CoreBundle\Tactician\Middleware\StopwatchMiddleware
         arguments:
-            - "@debug.stopwatch"
+            - '@debug.stopwatch'
 
     core.service.smashgg:
         class: CoreBundle\Service\Smashgg\Smashgg

@@ -4,9 +4,8 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Admin;
 
-use Cache\TagInterop\TaggableCacheItemPoolInterface;
 use CoreBundle\Entity\Player;
-use Psr\Cache\CacheItemPoolInterface as Cache;
+use CoreBundle\Utility\CacheManager;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -20,9 +19,9 @@ use Sonata\AdminBundle\Show\ShowMapper;
 class PlayerAdmin extends AbstractAdmin
 {
     /**
-     * @var Cache|TaggableCacheItemPoolInterface
+     * @var CacheManager
      */
-    protected $cache;
+    protected $cacheManager;
 
     /**
      * @var array
@@ -32,11 +31,11 @@ class PlayerAdmin extends AbstractAdmin
     ];
 
     /**
-     * @param Cache|TaggableCacheItemPoolInterface $cache
+     * @param CacheManager $cacheManager
      */
-    public function setCache($cache)
+    public function setCacheManager($cacheManager)
     {
-        $this->cache = $cache;
+        $this->cacheManager = $cacheManager;
     }
 
     /**
@@ -44,15 +43,15 @@ class PlayerAdmin extends AbstractAdmin
      */
     public function postUpdate($object)
     {
-        $this->cache->invalidateTag($object->getCacheTag());
+        $this->cacheManager->onPlayerProfileUpdate($object);
     }
 
     /**
      * @param Player $object
      */
-    public function postRemove($object)
+    public function preRemove($object)
     {
-        $this->cache->invalidateTag($object->getCacheTag());
+        $this->cacheManager->onPlayerProfileUpdate($object);
     }
 
     /**
