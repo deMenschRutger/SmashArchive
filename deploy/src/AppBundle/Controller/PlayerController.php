@@ -66,14 +66,14 @@ class PlayerController extends AbstractDefaultController
      */
     public function detailsAction($slug)
     {
+        $detailsCommand = new DetailsCommand($slug);
+        $player = $this->commandBus->handle($detailsCommand);
+
         $cacheKey = 'views_player_details_'.$slug;
 
         if ($this->isCached($cacheKey)) {
             return $this->getFromCache($cacheKey);
         }
-
-        $detailsCommand = new DetailsCommand($slug);
-        $player = $this->commandBus->handle($detailsCommand);
 
         $setCommand = new SetsCommand($slug, 1, 999999999);
         $sets = $this->commandBus->handle($setCommand);

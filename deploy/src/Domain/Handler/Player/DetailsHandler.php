@@ -36,7 +36,7 @@ class DetailsHandler extends AbstractHandler
             ->getOneOrNullResult()
         ;
 
-        if (!$player instanceof Player) {
+        if (!$player instanceof Player || $player->isNew()) {
             throw new NotFoundHttpException('The player could not be found.');
         }
 
