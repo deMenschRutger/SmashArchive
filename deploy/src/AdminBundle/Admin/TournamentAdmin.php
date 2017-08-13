@@ -74,6 +74,7 @@ class TournamentAdmin extends AbstractAdmin
     protected function configureRoutes(RouteCollection $collection)
     {
         $collection->add('import', $this->getRouterIdParameter().'/import');
+        $collection->add('results', $this->getRouterIdParameter().'/results');
     }
 
     /**
@@ -185,6 +186,9 @@ class TournamentAdmin extends AbstractAdmin
                     'edit' => [],
                     'import' => [
                         'template' => 'AdminBundle:Tournament:list__action_import.html.twig',
+                    ],
+                    'results' => [
+                        'template' => 'AdminBundle:Tournament:list__action_results.html.twig',
                     ],
                     'show' => [],
                     'delete' => [],
