@@ -4,10 +4,8 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Admin;
 
-use Cache\TagInterop\TaggableCacheItemPoolInterface;
-use CoreBundle\Entity\Player;
 use CoreBundle\Entity\Tournament;
-use Psr\Cache\CacheItemPoolInterface as Cache;
+use CoreBundle\Utility\CacheManager;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -21,9 +19,9 @@ use Sonata\AdminBundle\Show\ShowMapper;
 class TournamentAdmin extends AbstractAdmin
 {
     /**
-     * @var Cache|TaggableCacheItemPoolInterface
+     * @var CacheManager
      */
-    protected $cache;
+    protected $cacheManager;
 
     /**
      * @var array
@@ -34,11 +32,11 @@ class TournamentAdmin extends AbstractAdmin
     ];
 
     /**
-     * @param Cache|TaggableCacheItemPoolInterface $cache
+     * @param CacheManager $cacheManager
      */
-    public function setCache($cache)
+    public function setCacheManager($cacheManager)
     {
-        $this->cache = $cache;
+        $this->cacheManager = $cacheManager;
     }
 
     /**
@@ -46,7 +44,7 @@ class TournamentAdmin extends AbstractAdmin
      */
     public function prePersist($tournament)
     {
-        $tournament->setEvents($tournament->getEvents());
+        $this->cacheManager->onTournamentChange($tournament);
     }
 
     /**
@@ -54,7 +52,7 @@ class TournamentAdmin extends AbstractAdmin
      */
     public function preUpdate($tournament)
     {
-        $tournament->setEvents($tournament->getEvents());
+        $this->cacheManager->onTournamentChange($tournament);
     }
 
     /**
@@ -62,10 +60,7 @@ class TournamentAdmin extends AbstractAdmin
      */
     public function preRemove($tournament)
     {
-        /** @var Player $player */
-        foreach ($tournament->getPlayers() as $player) {
-            $this->cache->invalidateTag($player->getCacheTag());
-        }
+        $this->cacheManager->onTournamentChange($tournament);
     }
 
     /**

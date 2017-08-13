@@ -37,7 +37,7 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, label: Tournaments, pager_type: simple }
         calls:
-          - ['setCache', ['@cache.provider.filesystem']]
+          - ['setCacheManager', ['@core.service.cache.manager']]
 
     admin.job:
         class: AdminBundle\Admin\JobAdmin

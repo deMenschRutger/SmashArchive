@@ -4,10 +4,9 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Controller;
 
-use Cache\TagInterop\TaggableCacheItemPoolInterface;
+use CoreBundle\Utility\CacheManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
-use Psr\Cache\CacheItemPoolInterface as Cache;
 use Sonata\AdminBundle\Controller\CRUDController as Controller;
 
 /**
@@ -33,11 +32,11 @@ class AbstractController extends Controller
     }
 
     /**
-     * @return Cache|TaggableCacheItemPoolInterface
+     * @return CacheManager
      */
-    public function getCache()
+    public function getCacheManager()
     {
-        return $this->get('cache.provider.filesystem');
+        return $this->get('core.service.cache.manager');
     }
 
     /**

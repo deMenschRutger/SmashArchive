@@ -42,7 +42,7 @@ class PlayerController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getEntityManager();
-            $playerMerger->mergePlayers($entityManager, $this->getCache());
+            $playerMerger->mergePlayers($entityManager, $this->getCacheManager());
             $entityManager->flush();
 
             $this->addFlash('sonata_flash_success', 'The players were successfully merged.');

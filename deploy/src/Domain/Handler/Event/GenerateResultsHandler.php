@@ -10,7 +10,6 @@ use CoreBundle\Bracket\RoundRobin\Bracket as RoundRobinBracket;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\PhaseGroup;
-use CoreBundle\Entity\Player;
 use CoreBundle\Entity\Result;
 use CoreBundle\Repository\EventRepository;
 use Domain\Command\Event\GenerateResultsCommand;
@@ -18,8 +17,6 @@ use Domain\Handler\AbstractHandler;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
- *
- * @TODO Make sure state is handled correctly when the handler is used multiple times.
  */
 class GenerateResultsHandler extends AbstractHandler
 {
@@ -77,7 +74,7 @@ class GenerateResultsHandler extends AbstractHandler
         $this->entityManager->flush();
         $this->entityManager->clear();
 
-        $this->clearPlayerCache();
+        $this->getCacheManager()->onResultsChange($this->combinedResults);
     }
 
     /**
@@ -250,21 +247,5 @@ class GenerateResultsHandler extends AbstractHandler
         }
 
         return $resultsByEntrantId;
-    }
-
-    /**
-     * @return void
-     *
-     * @TODO Can the player retrieval and cache clear be optimized?
-     */
-    protected function clearPlayerCache()
-    {
-        foreach ($this->combinedResults as $result) {
-            /** @var Player $player */
-            foreach ($result->getPlayers() as $player) {
-                $tag = 'player_'.$player->getSlug();
-                $this->cache->invalidateTag($tag);
-            }
-        }
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Domain\Handler;
 
 use Cache\TagInterop\TaggableCacheItemPoolInterface;
+use CoreBundle\Utility\CacheManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Psr\Cache\CacheItemPoolInterface as Cache;
@@ -19,6 +20,11 @@ abstract class AbstractHandler
      * @var Cache|TaggableCacheItemPoolInterface
      */
     protected $cache;
+
+    /**
+     * @var CacheManager
+     */
+    protected $cacheManager;
 
     /**
      * @var EntityManager
@@ -89,6 +95,22 @@ abstract class AbstractHandler
         }
 
         return null;
+    }
+
+    /**
+     * @return CacheManager
+     */
+    public function getCacheManager()
+    {
+        return $this->cacheManager;
+    }
+
+    /**
+     * @param CacheManager $cacheManager
+     */
+    public function setCacheManager(CacheManager $cacheManager)
+    {
+        $this->cacheManager = $cacheManager;
     }
 
     /**

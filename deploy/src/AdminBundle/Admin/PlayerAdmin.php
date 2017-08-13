@@ -39,19 +39,19 @@ class PlayerAdmin extends AbstractAdmin
     }
 
     /**
-     * @param Player $object
+     * @param Player $player
      */
-    public function postUpdate($object)
+    public function postUpdate($player)
     {
-        $this->cacheManager->onPlayerProfileUpdate($object);
+        $this->cacheManager->onPlayerChange($player);
     }
 
     /**
-     * @param Player $object
+     * @param Player $player
      */
-    public function preRemove($object)
+    public function preRemove($player)
     {
-        $this->cacheManager->onPlayerProfileUpdate($object);
+        $this->cacheManager->onPlayerChange($player);
     }
 
     /**

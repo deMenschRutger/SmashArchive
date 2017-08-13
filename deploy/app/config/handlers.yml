@@ -23,7 +23,6 @@ services:
             - { name: "tactician.handler", command: Domain\Command\Player\SetsCommand }
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
-            - ['setCache', ['@cache.provider.filesystem']]
 
     bus.handler.player.results:
         class: Domain\Handler\Player\ResultsHandler
@@ -69,7 +68,7 @@ services:
             - { name: "tactician.handler", command: Domain\Command\Event\GenerateResultsCommand }
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
-            - ['setCache', ['@cache.provider.filesystem']]
+            - ['setCacheManager', ['@core.service.cache.manager']]
 
     bus.handler.work_queue.add_job:
         class: Domain\Handler\WorkQueue\AddJobHandler
