@@ -263,19 +263,27 @@ class Player
     }
 
     /**
-     * @return string
-     */
-    public function getCacheTag()
-    {
-        return 'player_'.$this->slug;
-    }
-
-    /**
      * @param string $slug
      */
     public function setSlug($slug)
     {
         $this->slug = $slug;
+    }
+
+    /**
+     * @return string
+     */
+    public function getResultsCacheTag()
+    {
+        return 'player_results_'.$this->slug;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheTag()
+    {
+        return 'player_'.$this->slug;
     }
 
     /**

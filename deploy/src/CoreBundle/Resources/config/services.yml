@@ -11,6 +11,7 @@ services:
         class: CoreBundle\Utility\CacheManager
         arguments:
             - '@cache.provider.filesystem'
+            - '@doctrine.orm.entity_manager'
 
     core.security.provider.user:
         class: CoreBundle\Security\Core\User\HWIOAuthUserProvider\UserProvider

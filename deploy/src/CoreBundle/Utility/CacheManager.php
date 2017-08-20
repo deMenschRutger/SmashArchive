@@ -8,6 +8,7 @@ use Cache\TagInterop\TaggableCacheItemPoolInterface;
 use CoreBundle\Entity\Player;
 use CoreBundle\Entity\Result;
 use CoreBundle\Entity\Tournament;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\CacheItemPoolInterface as Cache;
 
 /**
@@ -21,21 +22,40 @@ class CacheManager
     protected $cache;
 
     /**
-     * @param Cache $cache
+     * @var EntityManagerInterface
      */
-    public function __construct(Cache $cache)
+    protected $entityManager;
+
+    /**
+     * @param Cache                  $cache
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(Cache $cache, EntityManagerInterface $entityManager)
     {
         $this->cache = $cache;
+        $this->entityManager = $entityManager;
     }
 
     /**
      * @param Player $player
-     *
-     * @TODO When changing a player's slug or sets played, or when the player is removed, clear the cache of all his opponents as well.
-     * @TODO When updating a player's sets, also clear the cache for the tag 'player_results_{slug}'.
+     * @param bool   $clearResults
+     * @param bool   $clearOpponentResults
      */
-    public function onPlayerChange(Player $player)
+    public function onPlayerChange(Player $player, bool $clearResults = false, bool $clearOpponentResults = false)
     {
+        if ($clearOpponentResults) {
+            $playerRepository = $this->entityManager->getRepository('CoreBundle:Player');
+            $opponents = $playerRepository->findOpponents($player->getSlug());
+
+            foreach ($opponents as $opponent) {
+                $this->onPlayerChange($opponent, true, false);
+            }
+        }
+
+        if ($clearResults) {
+            $this->cache->invalidateTag($player->getResultsCacheTag());
+        }
+
         $this->cache->invalidateTag($player->getCacheTag());
     }
 
@@ -47,6 +67,7 @@ class CacheManager
         /** @var Player $player */
         foreach ($tournament->getPlayers() as $player) {
             $this->cache->invalidateTag($player->getCacheTag());
+            $this->cache->invalidateTag($player->getResultsCacheTag());
         }
     }
 
@@ -58,7 +79,6 @@ class CacheManager
     public function onResultsChange($results)
     {
         foreach ($results as $result) {
-            /** @var Player $player */
             foreach ($result->getPlayers() as $player) {
                 $this->cache->invalidateTag($player->getCacheTag());
             }

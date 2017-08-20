@@ -43,7 +43,7 @@ class PlayerAdmin extends AbstractAdmin
      */
     public function postUpdate($player)
     {
-        $this->cacheManager->onPlayerChange($player);
+        $this->cacheManager->onPlayerChange($player, true, true);
     }
 
     /**
@@ -51,7 +51,7 @@ class PlayerAdmin extends AbstractAdmin
      */
     public function preRemove($player)
     {
-        $this->cacheManager->onPlayerChange($player);
+        $this->cacheManager->onPlayerChange($player, true, true);
     }
 
     /**
@@ -71,7 +71,6 @@ class PlayerAdmin extends AbstractAdmin
             ->with('Basics')
             ->add('gamerTag')
             ->add('name')
-            ->add('slug')
             ->add('region')
             ->add('city')
             ->add('country')
