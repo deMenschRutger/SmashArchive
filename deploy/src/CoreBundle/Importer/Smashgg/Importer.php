@@ -156,11 +156,15 @@ class Importer extends AbstractImporter
 
         $dateStart = new \DateTime();
         $dateStart->setTimestamp($smashggTournament['startAt']);
+        $country = $this->findCountry(null, $smashggTournament['countryCode']);
 
         $tournament->setName($smashggTournament['name']);
         $tournament->setCity($smashggTournament['city']);
-        $tournament->setCountry($this->findCountry(null, $smashggTournament['countryCode']));
         $tournament->setDateStart($dateStart);
+
+        if ($country) {
+            $tournament->setCountry($country);
+        }
 
         return $tournament;
     }
