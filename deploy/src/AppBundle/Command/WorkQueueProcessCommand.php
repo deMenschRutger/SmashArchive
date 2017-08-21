@@ -91,8 +91,6 @@ class WorkQueueProcessCommand extends ContainerAwareCommand
 
                 $command = new ProcessJobCommand($job, $this->io);
                 $this->commandBus->handle($command);
-
-                $this->pheanstalk->delete($job);
             } catch (\InvalidArgumentException $e) {
                 $this->io->warning($e->getMessage());
             } catch (\Exception $e) {
