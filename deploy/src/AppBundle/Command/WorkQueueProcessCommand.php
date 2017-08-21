@@ -74,14 +74,33 @@ class WorkQueueProcessCommand extends ContainerAwareCommand
         $this->io = new SymfonyStyle($input, $output);
         $this->pheanstalk->watch('import-tournament')->watch('generate-results');
 
+        $connection = $this->entityManager->getConnection();
+
         while (true) {
             /** @var Job $job */
             $job = $this->pheanstalk->reserve(3600);
 
-            $command = new ProcessJobCommand($job, $this->io);
-            $this->commandBus->handle($command);
+            if (!$job instanceof Job) {
+                continue;
+            }
 
-            $this->pheanstalk->delete($job);
+            try {
+                if ($connection->isConnected() === false) {
+                    $connection->connect();
+                }
+
+                $command = new ProcessJobCommand($job, $this->io);
+                $this->commandBus->handle($command);
+
+                $this->pheanstalk->delete($job);
+            } catch (\InvalidArgumentException $e) {
+                $this->io->warning($e->getMessage());
+            } catch (\Exception $e) {
+                $this->io->warning($e->getMessage());
+            } finally {
+                $this->pheanstalk->delete($job);
+                $connection->close();
+            }
         }
     }
 }
