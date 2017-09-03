@@ -93,7 +93,7 @@ class TournamentAdmin extends AbstractAdmin
             ->add('region')
             ->add('city')
             ->add('dateStart')
-            ->add('organizers')
+            //->add('organizers') TODO Enable this field in a way that doesn't hinder performance.
             ->add('series')
             ->add('isActive')
             ->end()
