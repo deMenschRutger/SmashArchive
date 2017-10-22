@@ -46,6 +46,7 @@ class TournamentAdmin extends AbstractAdmin
     public function prePersist($tournament)
     {
         $this->cacheManager->onTournamentChange($tournament);
+        $tournament->setEvents($tournament->getEvents());
     }
 
     /**
@@ -54,6 +55,7 @@ class TournamentAdmin extends AbstractAdmin
     public function preUpdate($tournament)
     {
         $this->cacheManager->onTournamentChange($tournament);
+        $tournament->setEvents($tournament->getEvents());
     }
 
     /**

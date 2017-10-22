@@ -137,6 +137,14 @@ class Event
     }
 
     /**
+     * @return string
+     */
+    public function getExtendedName()
+    {
+        return sprintf('%s (%s)', $this->name, $this->getTournament()->getName());
+    }
+
+    /**
      * @param string $name
      */
     public function setName(string $name)

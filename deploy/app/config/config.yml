@@ -176,6 +176,18 @@ sonata_admin:
                 on_top: true
                 items:
                     - admin.tournament
+            admin.phase:
+                label: Phases
+                icon: '<i class="fa fa-database"></i>'
+                on_top: true
+                items:
+                    - admin.phase
+            admin.bracket:
+                label: Brackets
+                icon: '<i class="fa fa-share-alt"></i>'
+                on_top: true
+                items:
+                    - admin.phase_group
             admin.user:
                 label: Users
                 icon: '<i class="fa fa-user"></i>'

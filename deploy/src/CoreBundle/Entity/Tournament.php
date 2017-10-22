@@ -530,7 +530,7 @@ class Tournament
      */
     public function setOrganizers(ArrayCollection $organizers)
     {
-        $this->organizers = [];
+        $this->organizers = new ArrayCollection();
 
         foreach ($organizers as $organizer) {
             $this->addOrganizer($organizer);
