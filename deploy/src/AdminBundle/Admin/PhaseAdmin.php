@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace AdminBundle\Admin;
 
 use CoreBundle\Entity\Event;
+use CoreBundle\Entity\Phase;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -16,6 +17,22 @@ use Sonata\AdminBundle\Show\ShowMapper;
  */
 class PhaseAdmin extends AbstractAdmin
 {
+    /**
+     * @param Phase $phase
+     */
+    public function prePersist($phase)
+    {
+        $phase->setPhaseGroups($phase->getPhaseGroups());
+    }
+
+    /**
+     * @param Phase $phase
+     */
+    public function preUpdate($phase)
+    {
+        $phase->setPhaseGroups($phase->getPhaseGroups());
+    }
+
     /**
      * @param FormMapper $formMapper
      */

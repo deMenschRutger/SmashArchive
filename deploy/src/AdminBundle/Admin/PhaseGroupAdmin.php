@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Admin;
 
+use CoreBundle\Entity\PhaseGroup;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -24,7 +25,14 @@ class PhaseGroupAdmin extends AbstractAdmin
             ->with('Basics')
             ->add('name')
             ->add('smashggId')
-            ->add('type')
+            ->add('type', 'choice', [
+                'choices' => [
+                    'Single elimination' => PhaseGroup::TYPE_SINGLE_ELIMINATION,
+                    'Double elimination' => PhaseGroup::TYPE_DOUBLE_ELIMINATION,
+                    'Round Robin'        => PhaseGroup::TYPE_ROUND_ROBIN,
+                    'Swiss'              => PhaseGroup::TYPE_SWISS,
+                ],
+            ])
             ->end()
         ;
     }

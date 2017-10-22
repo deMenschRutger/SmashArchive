@@ -52,7 +52,9 @@ class PhaseGroup
     /**
      * @var string
      *
-     * @ORM\Column(name="smashgg_id", type="integer", nullable=true)
+     * @ORM\Column(name="smashgg_id", type="string", length=255, nullable=true)
+     *
+     * @TODO Rename to 'externalId'.
      */
     private $smashggId;
 
@@ -154,7 +156,7 @@ class PhaseGroup
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->name;
     }
@@ -216,7 +218,7 @@ class PhaseGroup
     /**
      * @return int
      */
-    public function getType(): int
+    public function getType()
     {
         return $this->type;
     }

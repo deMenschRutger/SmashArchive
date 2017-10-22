@@ -69,7 +69,7 @@ class Phase
     private $event;
 
     /**
-     * @ORM\OneToMany(targetEntity="PhaseGroup", mappedBy="phase")
+     * @ORM\OneToMany(targetEntity="PhaseGroup", mappedBy="phase", cascade={"persist"}, orphanRemoval=true)
      *
      * @Serializer\Groups({"tournaments_details"})
      */
@@ -169,6 +169,25 @@ class Phase
     public function getPhaseGroups(): Collection
     {
         return $this->phaseGroups;
+    }
+
+    /**
+     * @param PhaseGroup $phaseGroup
+     */
+    public function addPhaseGroup(PhaseGroup $phaseGroup)
+    {
+        $this->phaseGroups->add($phaseGroup);
+        $phaseGroup->setPhase($this);
+    }
+
+    /**
+     * @param PhaseGroup[]|Collection $phaseGroups
+     */
+    public function setPhaseGroups($phaseGroups)
+    {
+        foreach ($phaseGroups as $phaseGroup) {
+            $this->addPhaseGroup($phaseGroup);
+        }
     }
 
     /**
