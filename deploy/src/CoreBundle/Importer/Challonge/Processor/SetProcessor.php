@@ -2,13 +2,13 @@
 
 declare(strict_types = 1);
 
-namespace CoreBundle\Importer\Smashgg\Processor;
+namespace CoreBundle\Importer\Challonge\Processor;
 
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Set;
-use CoreBundle\Entity\Tournament;
 use CoreBundle\Importer\AbstractProcessor;
+use Reflex\Challonge\Models\Match;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -43,13 +43,13 @@ class SetProcessor extends AbstractProcessor
     }
 
     /**
-     * @param array            $setData
+     * @param Match            $setData
      * @param EntrantProcessor $entrantProcessor
      * @param PhaseGroup       $phaseGroup
      */
-    public function processNew(array $setData, EntrantProcessor $entrantProcessor, PhaseGroup $phaseGroup = null)
+    public function processNew(Match $setData, EntrantProcessor $entrantProcessor, PhaseGroup $phaseGroup = null)
     {
-        $setId = $setData['id'];
+        $setId = $setData->id;
 
         if ($this->hasSet($setId)) {
             return;
@@ -66,11 +66,14 @@ class SetProcessor extends AbstractProcessor
             $this->entityManager->persist($set);
         }
 
-        $set->setRound($setData['originalRound']);
-        $set->setPhaseGroup($phaseGroup);
+        $set->setRound($setData->round);
 
-        $entrantOne = $entrantProcessor->findEntrant($setData['entrant1Id']);
-        $entrantTwo = $entrantProcessor->findEntrant($setData['entrant2Id']);
+        if ($phaseGroup instanceof PhaseGroup) {
+            $set->setPhaseGroup($phaseGroup);
+        }
+
+        $entrantOne = $entrantProcessor->findEntrant($setData->player1_id);
+        $entrantTwo = $entrantProcessor->findEntrant($setData->player2_id);
 
         if ($entrantOne) {
             $set->setEntrantOne($entrantOne);
@@ -80,16 +83,25 @@ class SetProcessor extends AbstractProcessor
             $set->setEntrantTwo($entrantTwo);
         }
 
-        if ($setData['winnerId'] && $setData['winnerId'] == $setData['entrant1Id']) {
+        $entrant1Score = null;
+        $entrant2Score = null;
+        $processedScores = $this->processScores($setData->scores_csv);
+
+        if ($processedScores) {
+            $entrant1Score = intval($processedScores[1]);
+            $entrant2Score = intval($processedScores[2]);
+        }
+
+        if ($setData->winner_id && $setData->winner_id == $setData->player1_id) {
             $set->setWinner($entrantOne);
-            $set->setWinnerScore($setData['entrant1Score']);
+            $set->setWinnerScore($entrant1Score);
             $set->setLoser($entrantTwo);
-            $set->setLoserScore($setData['entrant2Score']);
-        } elseif ($setData['winnerId'] && $setData['winnerId'] == $setData['entrant2Id']) {
+            $set->setLoserScore($entrant2Score);
+        } elseif ($setData->winner_id && $setData->winner_id == $setData->player2_id) {
             $set->setWinner($entrantTwo);
-            $set->setWinnerScore($setData['entrant2Score']);
+            $set->setWinnerScore($entrant2Score);
             $set->setLoser($entrantOne);
-            $set->setLoserScore($setData['entrant1Score']);
+            $set->setLoserScore($entrant1Score);
         }
 
         if ($set->getEntrantOne() instanceof Entrant && $set->getEntrantTwo() instanceof Entrant && $set->getLoserScore() === -1) {
@@ -107,34 +119,36 @@ class SetProcessor extends AbstractProcessor
     }
 
     /**
-     * @param Tournament $tournament
+     * @param string $score
+     * @return array|false
      */
-    public function cleanUp(Tournament $tournament)
+    protected function processScores($score)
     {
-        $sets = $this
-            ->entityManager
-            ->createQueryBuilder()
-            ->select('s')
-            ->from('CoreBundle:Set', 's')
-            ->join('s.phaseGroup', 'pg')
-            ->join('pg.phase', 'p')
-            ->join('p.event', 'e')
-            ->join('e.tournament', 't')
-            ->where('t.id = :tournamentId')
-            ->setParameter('tournamentId', $tournament->getId())
-            ->getQuery()
-            ->getResult()
-        ;
+        $scores = [
+            1 => '',
+            2 => '',
+        ];
+        $activePlayer = 1;
+        $hasScore = false;
 
-        /** @var Set[] $sets */
-        foreach ($sets as $set) {
-            $setId = $set->getSmashggId();
-
-            if ($this->hasSet($setId)) {
-                continue;
+        foreach (str_split($score) as $character) {
+            if ($character === '-') {
+                if ($hasScore) {
+                    $activePlayer = 2;
+                    $hasScore = false;
+                } else {
+                    $scores[$activePlayer] = $scores[$activePlayer].$character;
+                }
+            } else {
+                $scores[$activePlayer] = $scores[$activePlayer].$character;
+                $hasScore = true;
             }
-
-            $this->entityManager->remove($set);
         }
+
+        if ($scores[1] === '' || $scores[2] === '') {
+            return false;
+        }
+
+        return $scores;
     }
 }

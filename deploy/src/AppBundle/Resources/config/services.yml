@@ -13,6 +13,7 @@ services:
         arguments:
             - "@doctrine.orm.default_entity_manager"
             - "@core.service.smashgg"
+            - "@core.service.challonge"
         tags:
             - { name: console.command }
 

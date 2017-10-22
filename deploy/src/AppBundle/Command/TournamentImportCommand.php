@@ -4,9 +4,11 @@ declare(strict_types = 1);
 
 namespace AppBundle\Command;
 
+use CoreBundle\Importer\Challonge\Importer as ChallongeImporter;
 use CoreBundle\Importer\Smashgg\Importer as SmashggImporter;
 use CoreBundle\Service\Smashgg\Smashgg;
 use Doctrine\ORM\EntityManager;
+use Reflex\Challonge\Challonge;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -38,13 +40,20 @@ class TournamentImportCommand extends ContainerAwareCommand
     protected $smashgg;
 
     /**
+     * @var Challonge
+     */
+    protected $challonge;
+
+    /**
      * @param EntityManager $entityManager
      * @param Smashgg       $smashgg
+     * @param Challonge     $challonge
      */
-    public function __construct(EntityManager $entityManager, Smashgg $smashgg)
+    public function __construct(EntityManager $entityManager, Smashgg $smashgg, Challonge $challonge)
     {
         $this->entityManager = $entityManager;
         $this->smashgg = $smashgg;
+        $this->challonge = $challonge;
 
         parent::__construct();
     }
@@ -77,6 +86,8 @@ class TournamentImportCommand extends ContainerAwareCommand
 
         if ($provider === self::PROVIDER_SMASHGG) {
             $this->executeSmashgg();
+        } elseif ($provider === self::PROVIDER_CHALLONGE) {
+                $this->executeChallonge();
         } else {
             $this->io->error('Unfortunately that provider is currently not supported.');
 
@@ -112,5 +123,14 @@ class TournamentImportCommand extends ContainerAwareCommand
 
         $importer = new SmashggImporter($this->io, $this->entityManager, $this->smashgg);
         $importer->import($slug, $selectedEvents);
+    }
+
+    /**
+     * @return void
+     */
+    protected function executeChallonge()
+    {
+        $importer = new ChallongeImporter($this->io, $this->entityManager, $this->challonge);
+        $importer->import('spice_4_amateur');
     }
 }

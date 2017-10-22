@@ -30,3 +30,6 @@ parameters:
 
     # Sentry configuration
     sentry_dsn: ~
+
+    # Challonge configuration
+    challonge_api_key: ~

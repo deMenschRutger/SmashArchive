@@ -7,6 +7,7 @@ namespace CoreBundle\Importer\Smashgg\Processor;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Game;
 use CoreBundle\Entity\Tournament;
+use CoreBundle\Importer\AbstractProcessor;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>

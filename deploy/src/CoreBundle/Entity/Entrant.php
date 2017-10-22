@@ -38,6 +38,8 @@ class Entrant
      * @var string
      *
      * @ORM\Column(name="smashgg_id", type="integer", nullable=true)
+     *
+     * @TODO Rename to 'externalId'.
      */
     private $smashggId;
 

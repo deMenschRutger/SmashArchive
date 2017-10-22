@@ -28,3 +28,8 @@ services:
 
     core.service.smashgg:
         class: CoreBundle\Service\Smashgg\Smashgg
+
+    core.service.challonge:
+        class: Reflex\Challonge\Challonge
+        arguments:
+            - '%challonge_api_key%'

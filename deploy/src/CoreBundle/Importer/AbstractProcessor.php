@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace CoreBundle\Importer\Smashgg\Processor;
+namespace CoreBundle\Importer;
 
 use Doctrine\ORM\EntityManager;
 

@@ -2,15 +2,14 @@
 
 declare(strict_types = 1);
 
-namespace CoreBundle\Importer\Smashgg\Processor;
+namespace CoreBundle\Importer\Challonge\Processor;
 
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Importer\AbstractProcessor;
+use Reflex\Challonge\Models\Participant;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
- *
- * @TODO 'entrants' and 'entrants_players' tables are not automatically cleared when no longer necessary.
  */
 class EntrantProcessor extends AbstractProcessor
 {
@@ -42,14 +41,11 @@ class EntrantProcessor extends AbstractProcessor
     }
 
     /**
-     * @param array           $entrantData
-     * @param PlayerProcessor $playerProcessor
-     *
-     * @TODO Also remove players that are no longer part of the entrant.
+     * @param Participant $entrantData
      */
-    public function processNew(array $entrantData, PlayerProcessor $playerProcessor)
+    public function processNew(Participant $entrantData)
     {
-        $entrantId = $entrantData['id'];
+        $entrantId = $entrantData->id;
 
         if ($this->hasEntrant($entrantId)) {
             return;
@@ -66,15 +62,7 @@ class EntrantProcessor extends AbstractProcessor
             $this->entityManager->persist($entrant);
         }
 
-        $entrant->setName($entrantData['name']);
-
-        foreach ($entrantData['playerIds'] as $playerId) {
-            $player = $playerProcessor->findPlayer($playerId);
-
-            if (!$entrant->hasPlayer($player)) {
-                $entrant->addPlayer($player);
-            }
-        }
+        $entrant->setName($entrantData->name);
 
         $this->entrants[$entrantId] = $entrant;
     }

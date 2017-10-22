@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace CoreBundle\Importer\Smashgg\Processor;
 
 use CoreBundle\Entity\Game;
+use CoreBundle\Importer\AbstractProcessor;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>

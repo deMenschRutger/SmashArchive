@@ -46,7 +46,8 @@
         "cache/cache-bundle": "^0.5.0",
         "sentry/sentry-symfony": "^0.8.0",
         "pda/pheanstalk": "^3.1",
-        "leezy/pheanstalk-bundle": "^3.2"
+        "leezy/pheanstalk-bundle": "^3.2",
+        "team-reflex/challonge-php": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
