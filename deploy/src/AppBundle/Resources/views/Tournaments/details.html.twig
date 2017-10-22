@@ -59,11 +59,11 @@
     {% for index, event in tournament.events %}
 
     <div class="col-sm-6">
+        <h3>{{ event.name }}</h3>
+        <br>
 
         {% if results[event.id] is defined and results[event.id]|length > 0 %}
 
-        <h3>{{ event.name }}</h3>
-        <br>
         <table class="table">
             <tbody>
 

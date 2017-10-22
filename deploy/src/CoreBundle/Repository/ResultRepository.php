@@ -23,7 +23,7 @@ class ResultRepository extends EntityRepository
             ->select('r, en, p')
             ->from('CoreBundle:Result', 'r')
             ->join('r.entrant', 'en')
-            ->join('en.players', 'p')
+            ->leftJoin('en.players', 'p')
             ->join('r.event', 'e')
             ->join('e.tournament', 't')
             ->where('t.id = :id')
