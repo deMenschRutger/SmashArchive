@@ -130,7 +130,9 @@ class TournamentImportCommand extends ContainerAwareCommand
      */
     protected function executeChallonge()
     {
+        $slug = $this->io->ask('Please enter the slug of this tournament');
+
         $importer = new ChallongeImporter($this->io, $this->entityManager, $this->challonge);
-        $importer->import('spice_4_amateur');
+        $importer->import($slug);
     }
 }

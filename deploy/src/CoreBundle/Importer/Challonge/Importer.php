@@ -4,6 +4,9 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Importer\Challonge;
 
+use CoreBundle\Entity\Phase;
+use CoreBundle\Entity\PhaseGroup;
+use CoreBundle\Entity\Tournament;
 use CoreBundle\Importer\AbstractImporter;
 use CoreBundle\Importer\Challonge\Processor\EntrantProcessor;
 use CoreBundle\Importer\Challonge\Processor\SetProcessor;
@@ -22,6 +25,16 @@ class Importer extends AbstractImporter
     protected $challonge;
 
     /**
+     * @var Tournament
+     */
+    protected $tournament;
+
+    /**
+     * @var EntrantProcessor
+     */
+    protected $entrantProcessor;
+
+    /**
      * @param SymfonyStyle  $io
      * @param EntityManager $entityManager
      * @param Challonge     $challonge
@@ -34,18 +47,54 @@ class Importer extends AbstractImporter
     }
 
     /**
-     * @param string $challongeId
+     * @param string $slug
      */
-    public function import($challongeId)
+    public function import($slug)
     {
         $this->entityManager->getConfiguration()->setSQLLogger(null);
 
+        $this->io->writeln('Retrieving tournament...');
+
+        // TODO Improve the query (load more entities).
+        $this->tournament = $this->getRepository('CoreBundle:Tournament')->findOneBy([
+            'slug' => $slug,
+        ]);
+
+        if (!$this->tournament instanceof Tournament) {
+            throw new \InvalidArgumentException('The tournament could not be found.');
+        }
+
+        if ($this->tournament->getSource() !== Tournament::SOURCE_CHALLONGE) {
+            throw new \InvalidArgumentException('The tournament does not have Challonge as its source.');
+        }
+
+        $this->entrantProcessor = new EntrantProcessor($this->entityManager);
+
+        foreach ($this->tournament->getEvents() as $event) {
+            foreach ($event->getPhases() as $phase) {
+                /** @var Phase $phase */
+                foreach ($phase->getPhaseGroups() as $phaseGroup) {
+                    $this->processPhaseGroup($phaseGroup);
+                }
+            }
+        }
+
+        $this->io->writeln('Flushing the entity manager...');
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @param PhaseGroup $phaseGroup
+     */
+    protected function processPhaseGroup(PhaseGroup $phaseGroup)
+    {
+        $challongeId = $phaseGroup->getSmashggId();
+
         $this->io->writeln('Processing entrants...');
-        $entrantProcessor = new EntrantProcessor($this->entityManager);
         $entrants = $this->challonge->getParticipants($challongeId);
 
         foreach ($entrants as $entrant) {
-            $entrantProcessor->processNew($entrant);
+            $this->entrantProcessor->processNew($entrant);
         }
 
         $this->io->writeln('Processing sets...');
@@ -53,10 +102,7 @@ class Importer extends AbstractImporter
         $sets = $this->challonge->getMatches($challongeId);
 
         foreach ($sets as $set) {
-            $setProcessor->processNew($set, $entrantProcessor);
+            $setProcessor->processNew($set, $this->entrantProcessor, $phaseGroup);
         }
-
-        $this->io->writeln('Flushing the entity manager...');
-        $this->entityManager->flush();
     }
 }

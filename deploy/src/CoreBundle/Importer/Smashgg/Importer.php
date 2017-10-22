@@ -97,6 +97,10 @@ class Importer extends AbstractImporter
         $this->io->writeln('Retrieving tournament...');
         $this->tournament = $this->getTournament($smashggId);
 
+        if ($this->tournament->getSource() !== Tournament::SOURCE_SMASHGG) {
+            throw new \InvalidArgumentException('The tournament does not have smash.gg as its source.');
+        }
+
         $this->io->writeln('Processing games...');
         $this->gameProcessor = $this->processGames();
 
