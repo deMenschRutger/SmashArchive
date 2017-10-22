@@ -321,7 +321,7 @@ class Player
     /**
      * @return string
      */
-    public function getGamerTag(): string
+    public function getGamerTag()
     {
         return $this->gamerTag;
     }

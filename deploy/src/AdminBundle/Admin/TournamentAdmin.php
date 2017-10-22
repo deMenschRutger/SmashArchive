@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Admin;
 
+use CoreBundle\Entity\Player;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Utility\CacheManager;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -93,7 +94,15 @@ class TournamentAdmin extends AbstractAdmin
             ->add('region')
             ->add('city')
             ->add('dateStart')
-            //->add('organizers') TODO Enable this field in a way that doesn't hinder performance.
+            ->add('organizers', 'sonata_type_model_autocomplete', [
+                'minimum_input_length' => 2,
+                'multiple' => true,
+                'property' => 'gamerTag',
+                'required' => false,
+                'to_string_callback' => function (Player $entity) {
+                    return $entity->getExpandedGamerTag();
+                },
+            ])
             ->add('series')
             ->add('isActive')
             ->end()

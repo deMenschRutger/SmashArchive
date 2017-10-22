@@ -526,6 +526,18 @@ class Tournament
     }
 
     /**
+     * @param ArrayCollection $organizers
+     */
+    public function setOrganizers(ArrayCollection $organizers)
+    {
+        $this->organizers = [];
+
+        foreach ($organizers as $organizer) {
+            $this->addOrganizer($organizer);
+        }
+    }
+
+    /**
      * @return Collection|Event[]
      */
     public function getEvents()
