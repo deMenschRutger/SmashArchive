@@ -187,6 +187,7 @@ class EntrantAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
+            ->addIdentifier('id')
             ->addIdentifier('name')
             ->add('parentEntrant', null, [
                 'label' => 'Parent',

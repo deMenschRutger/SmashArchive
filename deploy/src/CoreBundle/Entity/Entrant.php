@@ -127,6 +127,18 @@ class Entrant
     }
 
     /**
+     * @return int
+     */
+    public function getOriginId()
+    {
+        if ($this->hasParentEntrant()) {
+            return $this->getParentEntrant()->getId();
+        }
+
+        return $this->id;
+    }
+
+    /**
      * @return string
      */
     public function getSmashggId()
@@ -147,6 +159,10 @@ class Entrant
      */
     public function getName()
     {
+        if ($this->hasParentEntrant()) {
+            return $this->getParentEntrant()->getName();
+        }
+
         return $this->name;
     }
 
@@ -180,12 +196,12 @@ class Entrant
 
             $joined = join(',', $players);
 
-            if ($joined !== $this->name) {
-                return sprintf('%s (%s)', $this->name, $joined);
+            if ($joined !== $this->getName()) {
+                return sprintf('%s (%s)', $this->getName(), $joined);
             }
         }
 
-        return $this->name;
+        return $this->getName();
     }
 
     /**
@@ -247,6 +263,13 @@ class Entrant
     {
         return $this->parentEntrant;
     }
+    /**
+     * @return bool
+     */
+    public function hasParentEntrant()
+    {
+        return $this->parentEntrant instanceof Entrant;
+    }
 
     /**
      * @param Entrant $parentEntrant
@@ -257,10 +280,15 @@ class Entrant
     }
 
     /**
+     * @param bool $fromParent
      * @return Collection
      */
-    public function getPlayers(): Collection
+    public function getPlayers($fromParent = false): Collection
     {
+        if ($fromParent && $this->hasParentEntrant()) {
+            return $this->getParentEntrant()->getPlayers();
+        }
+
         // This is a workaround for confusing behaviour in Doctrine where it loads certain associations multiple times.
         if (count($this->players) === 2 && $this->players[0] === $this->players[1]) {
             $this->players->remove(1);
@@ -276,6 +304,14 @@ class Entrant
     public function hasPlayer(Player $player)
     {
         return $this->players->contains($player);
+    }
+
+    /**
+     * @return Player
+     */
+    public function getFirstPlayer()
+    {
+        return $this->getPlayers(true)->first();
     }
 
     /**
@@ -305,6 +341,14 @@ class Entrant
      */
     public function isSinglePlayer()
     {
-        return count($this->getPlayers()) === 1;
+        return count($this->getPlayers(true)) === 1;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTeam()
+    {
+        return count($this->getPlayers(true)) > 1;
     }
 }

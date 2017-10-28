@@ -130,6 +130,9 @@ class GenerateResultsHandler extends AbstractHandler
     }
 
     /**
+     * This method makes sure that entrants in the same result group receive the same rank, and that no gaps exist between two result
+     * groups.
+     *
      * @param Result[] $results
      * @return Result[]
      */
@@ -166,6 +169,8 @@ class GenerateResultsHandler extends AbstractHandler
     }
 
     /**
+     * This method adds results for a new phase to the results of existing phases.
+     *
      * @param Result[] $results
      * @param int      $highestRank
      */
@@ -218,10 +223,9 @@ class GenerateResultsHandler extends AbstractHandler
     protected function getHighestRank(array $results)
     {
         $ranksByEntrantId = $this->getRanksByEntrantId($this->combinedResults);
-        $highestRank = null;
 
         foreach ($results as $result) {
-            $entrantId = $result->getEntrant()->getId();
+            $entrantId = $result->getEntrant()->getOriginId();
 
             if (!array_key_exists($entrantId, $ranksByEntrantId)) {
                 continue;
@@ -242,7 +246,7 @@ class GenerateResultsHandler extends AbstractHandler
         $resultsByEntrantId = [];
 
         foreach ($results as $result) {
-            $entrantId = $result->getEntrant()->getId();
+            $entrantId = $result->getEntrant()->getOriginId();
             $resultsByEntrantId[$entrantId] = $result->getRank();
         }
 

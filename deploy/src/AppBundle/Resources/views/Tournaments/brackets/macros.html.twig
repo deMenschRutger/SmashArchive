@@ -121,7 +121,7 @@
     {% if entrant %}
         {% if entrant.isSinglePlayer %}
 
-            <a href="{{ path('player_details', { 'slug': entrant.players[0].slug } )}}">{{ entrant.name }}</a>
+            <a href="{{ path('player_details', { 'slug': entrant.firstPlayer.slug } )}}">{{ entrant.name }}</a>
 
         {% else %}
 

@@ -113,6 +113,7 @@ class PhaseAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('name')
+            ->add('phaseOrder')
             ->add('event')
             ->add('event.tournament', null, [
                 'label' => 'Tournament',
