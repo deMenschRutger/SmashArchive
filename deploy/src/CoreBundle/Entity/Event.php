@@ -139,7 +139,7 @@ class Event
     /**
      * @return string
      */
-    public function getExtendedName()
+    public function getExpandedName()
     {
         return sprintf('%s (%s)', $this->name, $this->getTournament()->getName());
     }

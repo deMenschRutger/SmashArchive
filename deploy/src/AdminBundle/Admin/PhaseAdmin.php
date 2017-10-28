@@ -62,7 +62,7 @@ class PhaseAdmin extends AbstractAdmin
                     ;
                 },
                 'to_string_callback' => function (Event $entity) {
-                    return $entity->getExtendedName();
+                    return $entity->getExpandedName();
                 },
             ])
             ->end()

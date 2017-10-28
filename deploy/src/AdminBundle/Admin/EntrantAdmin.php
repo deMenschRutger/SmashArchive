@@ -64,13 +64,53 @@ class EntrantAdmin extends AbstractAdmin
         $rootAlias = $query->getRootAliases()[0];
 
         $query
-            ->select($rootAlias.', p, te, t')
+            ->select($rootAlias.', p, pe, oe, t')
             ->leftJoin($rootAlias.'.players', 'p')
-            ->leftJoin($rootAlias.'.targetEntrant', 'te')
-            ->leftJoin($rootAlias.'.originTournament', 't')
+            ->leftJoin($rootAlias.'.parentEntrant', 'pe')
+            ->leftJoin($rootAlias.'.originEvent', 'oe')
+            ->leftJoin('oe.tournament', 't');
         ;
 
         return $query;
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param string       $alias
+     * @param string       $field
+     * @param mixed        $value
+     * @return bool
+     */
+    public function filterTournamentName($queryBuilder, $alias, $field, $value)
+    {
+        if (!$value['value']) {
+            return false;
+        }
+
+        $queryBuilder->andWhere('t.name LIKE :name');
+        $queryBuilder->setParameter('name', '%'.$value['value'].'%');
+
+        return true;
+    }
+
+    /**
+     * @param AbstractAdmin $admin
+     * @param string        $property
+     * @param mixed         $value
+     */
+    public function completeParentEntrant(AbstractAdmin $admin, $property, $value)
+    {
+        $datagrid = $admin->getDatagrid();
+
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $datagrid->getQuery();
+        $rootAlias = $queryBuilder->getRootAlias();
+
+        $queryBuilder
+            ->where("{$rootAlias}.{$property} LIKE :name")
+            ->andWhere("{$rootAlias}.originEvent IS NOT NULL")
+            ->setParameter('name', '%'.$value.'%')
+        ;
     }
 
     /**
@@ -102,25 +142,12 @@ class EntrantAdmin extends AbstractAdmin
                     return $entity->getExpandedGamerTag();
                 },
             ])
-            ->add('targetEntrant', 'sonata_type_model_autocomplete', [
+            ->add('parentEntrant', 'sonata_type_model_autocomplete', [
+                'callback' => [$this, 'completeParentEntrant'],
                 'label' => 'Parent',
                 'minimum_input_length' => 2,
                 'property' => 'name',
                 'required' => false,
-                'callback' => function (AbstractAdmin $admin, $property, $value) {
-                    $datagrid = $admin->getDatagrid();
-
-                    /** @var QueryBuilder $queryBuilder */
-                    $queryBuilder = $datagrid->getQuery();
-                    $rootAlias = $queryBuilder->getRootAlias();
-
-                    $queryBuilder
-                        ->select("{$rootAlias}, ot")
-                        ->join("{$rootAlias}.originTournament", 'ot')
-                        ->where("{$rootAlias}.{$property} LIKE :name")
-                        ->setParameter('name', '%'.$value.'%')
-                    ;
-                },
                 'to_string_callback' => function (Entrant $entity) {
                     return $entity->getExpandedName();
                 },
@@ -137,7 +164,14 @@ class EntrantAdmin extends AbstractAdmin
         $datagridMapper
             ->add('name')
             ->add('isNew')
-            ->add('originTournament')
+            ->add('originEvent.name', null, [
+                'label' => 'Origin event',
+            ])
+            ->add('originTournament', 'doctrine_orm_callback', [
+                'callback'   => [$this, 'filterTournamentName'],
+                'field_type' => 'text',
+                'label'      => 'Origin tournament',
+            ])
         ;
     }
 
@@ -158,11 +192,13 @@ class EntrantAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('name')
-            ->add('targetEntrant', null, [
+            ->add('parentEntrant', null, [
                 'label' => 'Parent',
             ])
             ->add('players')
-            ->add('originTournament')
+            ->add('originEventExpandedName', null, [
+                'label' => 'Origin event',
+            ])
             ->add('isNew', null, [
                 'editable' => true,
             ])

@@ -512,6 +512,7 @@ class Importer extends AbstractImporter
 
         $entrant = new Entrant();
         $entrant->setName($player->getGamerTag());
+        $entrant->setIsNew(false);
         $entrant->addPlayer($player);
         $player->addEntrant($entrant);
 

@@ -60,12 +60,14 @@ class Entrant
     private $isNew = true;
 
     /**
-     * The tournament that resulted in the player becoming a part of the database.
+     * The event that resulted in the player becoming a part of the database.
      *
-     * @ORM\ManyToOne(targetEntity="Tournament")
+     * @var Event
+     *
+     * @ORM\ManyToOne(targetEntity="Event")
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
-    private $originTournament;
+    private $originEvent;
 
     /**
      * Used for merging two entrants.
@@ -74,7 +76,7 @@ class Entrant
      *
      * @ORM\OneToOne(targetEntity="Entrant")
      */
-    private $targetEntrant;
+    private $parentEntrant;
 
     /**
      * @ORM\OneToMany(targetEntity="Set", mappedBy="entrantOne")
@@ -153,15 +155,15 @@ class Entrant
      */
     public function getExpandedName()
     {
-        $tournament = $this->getOriginTournament();
+        $event = $this->getOriginEvent();
 
-        if ($tournament instanceof Tournament) {
-            $tournament = $tournament->getName();
+        if ($event instanceof Event) {
+            $event = $event->getName();
         } else {
-            $tournament = 'unknown';
+            $event = 'Event unknown';
         }
 
-        return sprintf('%s | %s | #%s', $this->name, $tournament, $this->getId());
+        return sprintf('%s | %s | #%s', $this->name, $event, $this->getId());
     }
 
     /**
@@ -211,35 +213,47 @@ class Entrant
     }
 
     /**
-     * @return Tournament
+     * @return Event
      */
-    public function getOriginTournament()
+    public function getOriginEvent()
     {
-        return $this->originTournament;
+        return $this->originEvent;
     }
 
     /**
-     * @param Tournament $originTournament
+     * @return string
      */
-    public function setOriginTournament(Tournament $originTournament)
+    public function getOriginEventExpandedName()
     {
-        $this->originTournament = $originTournament;
+        if (!$this->originEvent instanceof Event) {
+            return null;
+        }
+
+        return $this->originEvent->getExpandedName();
+    }
+
+    /**
+     * @param Event $originEvent
+     */
+    public function setOriginEvent(Event $originEvent)
+    {
+        $this->originEvent = $originEvent;
     }
 
     /**
      * @return Entrant
      */
-    public function getTargetEntrant()
+    public function getParentEntrant()
     {
-        return $this->targetEntrant;
+        return $this->parentEntrant;
     }
 
     /**
-     * @param Entrant $targetEntrant
+     * @param Entrant $parentEntrant
      */
-    public function setTargetEntrant($targetEntrant)
+    public function setParentEntrant($parentEntrant)
     {
-        $this->targetEntrant = $targetEntrant;
+        $this->parentEntrant = $parentEntrant;
     }
 
     /**
