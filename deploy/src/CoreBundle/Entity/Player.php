@@ -207,6 +207,8 @@ class Player
     /**
      * Used for merging two players.
      *
+     * @var Player
+     *
      * @ORM\OneToOne(targetEntity="Player")
      */
     private $targetPlayer;
@@ -578,7 +580,7 @@ class Player
     /**
      * @param Player $targetPlayer
      */
-    public function setTargetPlayer(Player $targetPlayer)
+    public function setTargetPlayer($targetPlayer)
     {
         $this->targetPlayer = $targetPlayer;
     }

@@ -6,6 +6,7 @@ namespace AdminBundle\Admin;
 
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Phase;
+use Doctrine\ORM\QueryBuilder;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -48,6 +49,8 @@ class PhaseAdmin extends AbstractAdmin
                 'required' => false,
                 'callback' => function (AbstractAdmin $admin, $property, $value) {
                     $datagrid = $admin->getDatagrid();
+
+                    /** @var QueryBuilder $queryBuilder */
                     $queryBuilder = $datagrid->getQuery();
                     $rootAlias = $queryBuilder->getRootAlias();
 

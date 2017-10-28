@@ -68,6 +68,15 @@ class Entrant
     private $originTournament;
 
     /**
+     * Used for merging two entrants.
+     *
+     * @var Entrant
+     *
+     * @ORM\OneToOne(targetEntity="Entrant")
+     */
+    private $targetEntrant;
+
+    /**
      * @ORM\OneToMany(targetEntity="Set", mappedBy="entrantOne")
      */
     private $entrantOneSets;
@@ -142,7 +151,23 @@ class Entrant
     /**
      * @return string
      */
-    public function getExtendedName()
+    public function getExpandedName()
+    {
+        $tournament = $this->getOriginTournament();
+
+        if ($tournament instanceof Tournament) {
+            $tournament = $tournament->getName();
+        } else {
+            $tournament = 'unknown';
+        }
+
+        return sprintf('%s | %s | #%s', $this->name, $tournament, $this->getId());
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameWithPlayers()
     {
         $players = $this->getPlayers();
 
@@ -199,6 +224,22 @@ class Entrant
     public function setOriginTournament(Tournament $originTournament)
     {
         $this->originTournament = $originTournament;
+    }
+
+    /**
+     * @return Entrant
+     */
+    public function getTargetEntrant()
+    {
+        return $this->targetEntrant;
+    }
+
+    /**
+     * @param Entrant $targetEntrant
+     */
+    public function setTargetEntrant($targetEntrant)
+    {
+        $this->targetEntrant = $targetEntrant;
     }
 
     /**

@@ -17,7 +17,7 @@
     {% elseif entrant.players|length == 1 %}
 
         <a href="{{ url('player_details', { 'slug': entrant.players[0].slug }) }}">
-            {{ entrant.extendedName }}
+            {{ entrant.nameWithPlayers }}
         </a>
 
     {% else %}

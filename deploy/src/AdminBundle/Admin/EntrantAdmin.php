@@ -12,6 +12,7 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
 
 /**
@@ -63,14 +64,22 @@ class EntrantAdmin extends AbstractAdmin
         $rootAlias = $query->getRootAliases()[0];
 
         $query
-            ->select($rootAlias.', p, t')
+            ->select($rootAlias.', p, te, t')
             ->leftJoin($rootAlias.'.players', 'p')
+            ->leftJoin($rootAlias.'.targetEntrant', 'te')
             ->leftJoin($rootAlias.'.originTournament', 't')
         ;
 
         return $query;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function configureRoutes(RouteCollection $collection)
+    {
+        $collection->add('merge', $this->getRouterIdParameter().'/merge');
+    }
 
     /**
      * @param FormMapper $formMapper
@@ -79,6 +88,9 @@ class EntrantAdmin extends AbstractAdmin
     {
         $formMapper
             ->with('Basics')
+            ->add('id', null, [
+                'disabled' => true,
+            ])
             ->add('name')
             ->add('isNew')
             ->add('players', 'sonata_type_model_autocomplete', [
@@ -88,6 +100,29 @@ class EntrantAdmin extends AbstractAdmin
                 'required' => false,
                 'to_string_callback' => function (Player $entity) {
                     return $entity->getExpandedGamerTag();
+                },
+            ])
+            ->add('targetEntrant', 'sonata_type_model_autocomplete', [
+                'label' => 'Parent',
+                'minimum_input_length' => 2,
+                'property' => 'name',
+                'required' => false,
+                'callback' => function (AbstractAdmin $admin, $property, $value) {
+                    $datagrid = $admin->getDatagrid();
+
+                    /** @var QueryBuilder $queryBuilder */
+                    $queryBuilder = $datagrid->getQuery();
+                    $rootAlias = $queryBuilder->getRootAlias();
+
+                    $queryBuilder
+                        ->select("{$rootAlias}, ot")
+                        ->join("{$rootAlias}.originTournament", 'ot')
+                        ->where("{$rootAlias}.{$property} LIKE :name")
+                        ->setParameter('name', '%'.$value.'%')
+                    ;
+                },
+                'to_string_callback' => function (Entrant $entity) {
+                    return $entity->getExpandedName();
                 },
             ])
             ->end()
@@ -123,9 +158,14 @@ class EntrantAdmin extends AbstractAdmin
     {
         $listMapper
             ->addIdentifier('name')
+            ->add('targetEntrant', null, [
+                'label' => 'Parent',
+            ])
             ->add('players')
             ->add('originTournament')
-            ->add('isNew')
+            ->add('isNew', null, [
+                'editable' => true,
+            ])
         ;
 
         $listMapper->add(
