@@ -5,10 +5,12 @@ declare(strict_types = 1);
 namespace CoreBundle\Utility;
 
 use Cache\TagInterop\TaggableCacheItemPoolInterface;
+use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Player;
 use CoreBundle\Entity\Result;
 use CoreBundle\Entity\Tournament;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\UnitOfWork;
 use Psr\Cache\CacheItemPoolInterface as Cache;
 
 /**
@@ -57,6 +59,16 @@ class CacheManager
         }
 
         $this->cache->invalidateTag($player->getCacheTag());
+    }
+
+    /**
+     * @param Entrant $entrant
+     */
+    public function onEntrantChange(Entrant $entrant)
+    {
+        foreach ($entrant->getPlayers() as $player) {
+            $this->onPlayerChange($player, true, true);
+        }
     }
 
     /**

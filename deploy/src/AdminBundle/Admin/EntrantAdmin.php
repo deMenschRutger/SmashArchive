@@ -36,11 +36,9 @@ class EntrantAdmin extends AbstractAdmin
     /**
      * @param Entrant $entrant
      */
-    public function postUpdate($entrant)
+    public function preUpdate($entrant)
     {
-        foreach ($entrant->getPlayers() as $player) {
-            $this->cacheManager->onPlayerChange($player, true, true);
-        }
+        $this->cacheManager->onEntrantChange($entrant);
     }
 
     /**
@@ -48,9 +46,7 @@ class EntrantAdmin extends AbstractAdmin
      */
     public function preRemove($entrant)
     {
-        foreach ($entrant->getPlayers() as $player) {
-            $this->cacheManager->onPlayerChange($player, true, true);
-        }
+        $this->cacheManager->onEntrantChange($entrant);
     }
 
     /**

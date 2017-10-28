@@ -292,6 +292,7 @@ class Entrant
      */
     public function setPlayers(ArrayCollection $players)
     {
+        // TODO Find a better way to determine removed players.
         $this->players = new ArrayCollection();
 
         foreach ($players as $player) {
