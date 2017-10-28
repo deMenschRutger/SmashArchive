@@ -182,9 +182,15 @@ sonata_admin:
                 on_top: true
                 items:
                     - admin.phase
+            admin.entrant:
+                label: Entrants
+                icon: '<i class="fa fa-user-plus"></i>'
+                on_top: true
+                items:
+                    - admin.entrant
             admin.user:
                 label: Users
-                icon: '<i class="fa fa-user"></i>'
+                icon: '<i class="fa fa-users"></i>'
                 on_top: true
                 items:
                     - admin.user

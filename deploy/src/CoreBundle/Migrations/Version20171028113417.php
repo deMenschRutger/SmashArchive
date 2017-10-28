@@ -10,7 +10,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class Version20171022154216 extends AbstractMigration
+class Version20171028113417 extends AbstractMigration
 {
     /**
      * @param Schema $schema
@@ -19,7 +19,7 @@ class Version20171022154216 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE phase_group CHANGE smashgg_id smashgg_id VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE entrant ADD is_new TINYINT(1) NOT NULL');
     }
 
     /**
@@ -29,6 +29,6 @@ class Version20171022154216 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE phase_group CHANGE smashgg_id smashgg_id INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE entrant DROP is_new');
     }
 }

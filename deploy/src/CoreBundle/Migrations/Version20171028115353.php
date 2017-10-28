@@ -10,7 +10,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class Version20171022154216 extends AbstractMigration
+class Version20171028115353 extends AbstractMigration
 {
     /**
      * @param Schema $schema
@@ -19,7 +19,9 @@ class Version20171022154216 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE phase_group CHANGE smashgg_id smashgg_id VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE entrant ADD origin_tournament_id INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE entrant ADD CONSTRAINT FK_5E7BAE151AC6034F FOREIGN KEY (origin_tournament_id) REFERENCES tournament (id) ON DELETE CASCADE');
+        $this->addSql('CREATE INDEX IDX_5E7BAE151AC6034F ON entrant (origin_tournament_id)');
     }
 
     /**
@@ -29,6 +31,8 @@ class Version20171022154216 extends AbstractMigration
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE phase_group CHANGE smashgg_id smashgg_id INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE entrant DROP FOREIGN KEY FK_5E7BAE151AC6034F');
+        $this->addSql('DROP INDEX IDX_5E7BAE151AC6034F ON entrant');
+        $this->addSql('ALTER TABLE entrant DROP origin_tournament_id');
     }
 }

@@ -53,6 +53,21 @@ class Entrant
     private $name;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_new", type="boolean")
+     */
+    private $isNew = true;
+
+    /**
+     * The tournament that resulted in the player becoming a part of the database.
+     *
+     * @ORM\ManyToOne(targetEntity="Tournament")
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     */
+    private $originTournament;
+
+    /**
      * @ORM\OneToMany(targetEntity="Set", mappedBy="entrantOne")
      */
     private $entrantOneSets;
@@ -119,17 +134,71 @@ class Entrant
     /**
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExtendedName()
+    {
+        $players = $this->getPlayers();
+
+        if ($players->count() > 0) {
+            $players = $players->map(function (Player $player) {
+                return $player->getGamerTag();
+            })->toArray();
+
+            $joined = join(',', $players);
+
+            if ($joined !== $this->name) {
+                return sprintf('%s (%s)', $this->name, $joined);
+            }
+        }
+
         return $this->name;
     }
 
     /**
      * @param string $name
      */
-    public function setName(string $name)
+    public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNew()
+    {
+        return $this->isNew;
+    }
+
+    /**
+     * @param bool $isNew
+     */
+    public function setIsNew($isNew)
+    {
+        $this->isNew = $isNew;
+    }
+
+    /**
+     * @return Tournament
+     */
+    public function getOriginTournament()
+    {
+        return $this->originTournament;
+    }
+
+    /**
+     * @param Tournament $originTournament
+     */
+    public function setOriginTournament(Tournament $originTournament)
+    {
+        $this->originTournament = $originTournament;
     }
 
     /**
@@ -161,6 +230,18 @@ class Entrant
     {
         $player->addEntrant($this);
         $this->players[] = $player;
+    }
+
+    /**
+     * @param ArrayCollection $players
+     */
+    public function setPlayers(ArrayCollection $players)
+    {
+        $this->players = new ArrayCollection();
+
+        foreach ($players as $player) {
+            $this->addPlayer($player);
+        }
     }
 
     /**

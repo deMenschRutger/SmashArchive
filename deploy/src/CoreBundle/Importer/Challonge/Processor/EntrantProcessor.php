@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace CoreBundle\Importer\Challonge\Processor;
 
 use CoreBundle\Entity\Entrant;
+use CoreBundle\Entity\Tournament;
 use CoreBundle\Importer\AbstractProcessor;
 use Reflex\Challonge\Models\Participant;
 
@@ -42,8 +43,9 @@ class EntrantProcessor extends AbstractProcessor
 
     /**
      * @param Participant $entrantData
+     * @param Tournament  $tournament
      */
-    public function processNew(Participant $entrantData)
+    public function processNew(Participant $entrantData, Tournament $tournament)
     {
         $entrantId = $entrantData->id;
 
@@ -63,6 +65,7 @@ class EntrantProcessor extends AbstractProcessor
         }
 
         $entrant->setName($entrantData->name);
+        $entrant->setOriginTournament($tournament);
 
         $this->entrants[$entrantId] = $entrant;
     }

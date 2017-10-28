@@ -11,23 +11,31 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, label: Countries }
 
+    admin.entrant:
+        class: AdminBundle\Admin\EntrantAdmin
+        arguments: [~, CoreBundle\Entity\Entrant, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Entrant, pager_type: simple }
+        calls:
+          - ['setCacheManager', ['@core.service.cache.manager']]
+
     admin.event:
         class: AdminBundle\Admin\EventAdmin
         arguments: [~, CoreBundle\Entity\Event, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: Event }
+            - { name: sonata.admin, manager_type: orm, label: Event, pager_type: simple }
 
     admin.phase:
         class: AdminBundle\Admin\PhaseAdmin
         arguments: [~, CoreBundle\Entity\Phase, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: Phase }
+            - { name: sonata.admin, manager_type: orm, label: Phase, pager_type: simple }
 
     admin.phase_group:
         class: AdminBundle\Admin\PhaseGroupAdmin
         arguments: [~, CoreBundle\Entity\PhaseGroup, ~]
         tags:
-            - { name: sonata.admin, manager_type: orm, label: PhaseGroup }
+            - { name: sonata.admin, manager_type: orm, label: PhaseGroup, pager_type: simple }
 
     admin.player:
         class: AdminBundle\Admin\PlayerAdmin

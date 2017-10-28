@@ -94,7 +94,7 @@ class Importer extends AbstractImporter
         $entrants = $this->challonge->getParticipants($challongeId);
 
         foreach ($entrants as $entrant) {
-            $this->entrantProcessor->processNew($entrant);
+            $this->entrantProcessor->processNew($entrant, $this->tournament);
         }
 
         $this->io->writeln('Processing sets...');

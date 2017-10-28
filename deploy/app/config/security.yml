@@ -1,6 +1,7 @@
 security:
     role_hierarchy:
         ROLE_ADMIN:
+            - ROLE_ADMIN_ENTRANT_ALL
             - ROLE_ADMIN_EVENT_ALL
             - ROLE_ADMIN_PHASE_ALL
             - ROLE_ADMIN_PHASE_GROUP_ALL
