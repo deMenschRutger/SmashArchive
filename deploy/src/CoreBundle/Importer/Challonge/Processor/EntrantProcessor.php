@@ -47,7 +47,7 @@ class EntrantProcessor extends AbstractProcessor
      */
     public function processNew(Participant $entrantData, Event $event)
     {
-        $entrantId = $entrantData->id;
+        $entrantId = $entrantData->{'id'};
 
         if ($this->hasEntrant($entrantId)) {
             return;
@@ -64,7 +64,7 @@ class EntrantProcessor extends AbstractProcessor
             $this->entityManager->persist($entrant);
         }
 
-        $entrant->setName($entrantData->name);
+        $entrant->setName($entrantData->{'name'});
         $entrant->setOriginEvent($event);
 
         $this->entrants[$entrantId] = $entrant;

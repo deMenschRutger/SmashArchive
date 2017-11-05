@@ -10,7 +10,7 @@
 
         {{ entrant.name }} (
 
-        {% for player in entrant.getPlayers(true) %}
+        {% for player in entrant.getPlayers() %}
 
             <a href="{{ url('player_details', { 'slug': player.slug }) }}">
                 {{ player.gamerTag }}

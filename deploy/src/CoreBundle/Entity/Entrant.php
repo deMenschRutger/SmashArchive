@@ -70,8 +70,6 @@ class Entrant
     private $originEvent;
 
     /**
-     * Used for merging two entrants.
-     *
      * @var Entrant
      *
      * @ORM\OneToOne(targetEntity="Entrant")
@@ -127,18 +125,6 @@ class Entrant
     }
 
     /**
-     * @return int
-     */
-    public function getOriginId()
-    {
-        if ($this->hasParentEntrant()) {
-            return $this->getParentEntrant()->getId();
-        }
-
-        return $this->id;
-    }
-
-    /**
      * @return string
      */
     public function getSmashggId()
@@ -159,10 +145,6 @@ class Entrant
      */
     public function getName()
     {
-        if ($this->hasParentEntrant()) {
-            return $this->getParentEntrant()->getName();
-        }
-
         return $this->name;
     }
 
@@ -276,19 +258,52 @@ class Entrant
      */
     public function setParentEntrant($parentEntrant)
     {
+        if ($this->parentEntrant !== $parentEntrant) {
+            foreach ($this->getEntrantOneSets() as $set) {
+                $set->setEntrantOne($parentEntrant);
+
+                if ($set->getWinner() === $this) {
+                    $set->setWinner($parentEntrant);
+                } elseif ($set->getLoser() === $this) {
+                    $set->setLoser($parentEntrant);
+                }
+            }
+
+            foreach ($this->getEntrantTwoSets() as $set) {
+                $set->setEntrantTwo($parentEntrant);
+
+                if ($set->getWinner() === $this) {
+                    $set->setWinner($parentEntrant);
+                } elseif ($set->getLoser() === $this) {
+                    $set->setLoser($parentEntrant);
+                }
+            }
+        }
+
         $this->parentEntrant = $parentEntrant;
     }
 
     /**
-     * @param bool $fromParent
+     * @return Set[]|ArrayCollection
+     */
+    public function getEntrantOneSets()
+    {
+        return $this->entrantOneSets;
+    }
+
+    /**
+     * @return Set[]|ArrayCollection
+     */
+    public function getEntrantTwoSets()
+    {
+        return $this->entrantTwoSets;
+    }
+
+    /**
      * @return Collection
      */
-    public function getPlayers($fromParent = false): Collection
+    public function getPlayers(): Collection
     {
-        if ($fromParent && $this->hasParentEntrant()) {
-            return $this->getParentEntrant()->getPlayers();
-        }
-
         // This is a workaround for confusing behaviour in Doctrine where it loads certain associations multiple times.
         if (count($this->players) === 2 && $this->players[0] === $this->players[1]) {
             $this->players->remove(1);
@@ -311,7 +326,7 @@ class Entrant
      */
     public function getFirstPlayer()
     {
-        return $this->getPlayers(true)->first();
+        return $this->getPlayers()->first();
     }
 
     /**
@@ -341,7 +356,7 @@ class Entrant
      */
     public function isSinglePlayer()
     {
-        return count($this->getPlayers(true)) === 1;
+        return count($this->getPlayers()) === 1;
     }
 
     /**
@@ -349,6 +364,6 @@ class Entrant
      */
     public function isTeam()
     {
-        return count($this->getPlayers(true)) > 1;
+        return count($this->getPlayers()) > 1;
     }
 }

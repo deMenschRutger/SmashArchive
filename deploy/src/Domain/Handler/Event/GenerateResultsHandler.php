@@ -225,7 +225,7 @@ class GenerateResultsHandler extends AbstractHandler
         $ranksByEntrantId = $this->getRanksByEntrantId($this->combinedResults);
 
         foreach ($results as $result) {
-            $entrantId = $result->getEntrant()->getOriginId();
+            $entrantId = $result->getEntrant()->getId();
 
             if (!array_key_exists($entrantId, $ranksByEntrantId)) {
                 continue;
@@ -246,7 +246,7 @@ class GenerateResultsHandler extends AbstractHandler
         $resultsByEntrantId = [];
 
         foreach ($results as $result) {
-            $entrantId = $result->getEntrant()->getOriginId();
+            $entrantId = $result->getEntrant()->getId();
             $resultsByEntrantId[$entrantId] = $result->getRank();
         }
 

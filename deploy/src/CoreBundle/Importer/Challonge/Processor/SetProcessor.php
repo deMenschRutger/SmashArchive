@@ -46,10 +46,12 @@ class SetProcessor extends AbstractProcessor
      * @param Match            $setData
      * @param EntrantProcessor $entrantProcessor
      * @param PhaseGroup       $phaseGroup
+     *
+     * @TODO Combine some functionality with the entrant processor for smash.gg.
      */
     public function processNew(Match $setData, EntrantProcessor $entrantProcessor, PhaseGroup $phaseGroup = null)
     {
-        $setId = $setData->id;
+        $setId = $setData->{'id'};
 
         if ($this->hasSet($setId)) {
             return;
@@ -66,38 +68,50 @@ class SetProcessor extends AbstractProcessor
             $this->entityManager->persist($set);
         }
 
-        $set->setRound($setData->round);
+        $set->setRound($setData->{'round'});
 
         if ($phaseGroup instanceof PhaseGroup) {
             $set->setPhaseGroup($phaseGroup);
         }
 
-        $entrantOne = $entrantProcessor->findEntrant($setData->player1_id);
-        $entrantTwo = $entrantProcessor->findEntrant($setData->player2_id);
+        $entrantOne = $entrantProcessor->findEntrant($setData->{'player1_id'});
+        $entrantTwo = $entrantProcessor->findEntrant($setData->{'player2_id'});
 
         if ($entrantOne) {
+            $entrantOneParent = $entrantOne->getParentEntrant();
+
+            if ($entrantOneParent) {
+                $entrantOne = $entrantOneParent;
+            }
+
             $set->setEntrantOne($entrantOne);
         }
 
         if ($entrantTwo) {
+            $entrantTwoParent = $entrantTwo->getParentEntrant();
+
+            if ($entrantTwoParent) {
+                $entrantTwo = $entrantTwoParent;
+            }
+
             $set->setEntrantTwo($entrantTwo);
         }
 
         $entrant1Score = null;
         $entrant2Score = null;
-        $processedScores = $this->processScores($setData->scores_csv);
+        $processedScores = $this->processScores($setData->{'scores_csv'});
 
         if ($processedScores) {
             $entrant1Score = intval($processedScores[1]);
             $entrant2Score = intval($processedScores[2]);
         }
 
-        if ($setData->winner_id && $setData->winner_id == $setData->player1_id) {
+        if ($setData->{'winner_id'} && $setData->{'winner_id'} == $setData->{'player1_id'}) {
             $set->setWinner($entrantOne);
             $set->setWinnerScore($entrant1Score);
             $set->setLoser($entrantTwo);
             $set->setLoserScore($entrant2Score);
-        } elseif ($setData->winner_id && $setData->winner_id == $setData->player2_id) {
+        } elseif ($setData->{'winner_id'} && $setData->{'winner_id'} == $setData->{'player2_id'}) {
             $set->setWinner($entrantTwo);
             $set->setWinnerScore($entrant2Score);
             $set->setLoser($entrantOne);
