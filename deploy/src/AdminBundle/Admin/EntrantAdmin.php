@@ -138,9 +138,15 @@ class EntrantAdmin extends AbstractAdmin
                     return $entity->getExpandedGamerTag();
                 },
             ])
+            ->end()
+            ->with('Parent Entrant')
             ->add('parentEntrant', 'sonata_type_model_autocomplete', [
                 'callback' => [$this, 'completeParentEntrant'],
                 'label' => 'Parent',
+                'help' => join([
+                    'Please note: configuring a parent entrant and saving this form will assign all matches played by this entrant to the',
+                    'parent entrant. This action can not be undone.',
+                ]),
                 'minimum_input_length' => 2,
                 'property' => 'name',
                 'required' => false,

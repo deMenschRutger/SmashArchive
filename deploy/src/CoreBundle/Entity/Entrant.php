@@ -258,7 +258,7 @@ class Entrant
      */
     public function setParentEntrant($parentEntrant)
     {
-        if ($this->parentEntrant !== $parentEntrant) {
+        /*if ($parentEntrant instanceof Entrant && $this->parentEntrant !== $parentEntrant) {
             foreach ($this->getEntrantOneSets() as $set) {
                 $set->setEntrantOne($parentEntrant);
 
@@ -278,7 +278,7 @@ class Entrant
                     $set->setLoser($parentEntrant);
                 }
             }
-        }
+        }*/
 
         $this->parentEntrant = $parentEntrant;
     }
@@ -305,9 +305,9 @@ class Entrant
     public function getPlayers(): Collection
     {
         // This is a workaround for confusing behaviour in Doctrine where it loads certain associations multiple times.
-        if (count($this->players) === 2 && $this->players[0] === $this->players[1]) {
-            $this->players->remove(1);
-        }
+//        if (count($this->players) === 2 && $this->players[0] === $this->players[1]) {
+//            $this->players->remove(1);
+//        }
 
         return $this->players;
     }
@@ -334,8 +334,10 @@ class Entrant
      */
     public function addPlayer(Player $player)
     {
-        $player->addEntrant($this);
-        $this->players[] = $player;
+        if (!$this->players->contains($player)) {
+            $player->addEntrant($this);
+            $this->players->add($player);
+        }
     }
 
     /**
@@ -343,8 +345,9 @@ class Entrant
      */
     public function setPlayers(ArrayCollection $players)
     {
-        // TODO Find a better way to determine removed players.
-        $this->players = new ArrayCollection();
+        $this->players = $this->players->filter(function (Player $player) use ($players) {
+            return $players->contains($player);
+        });
 
         foreach ($players as $player) {
             $this->addPlayer($player);
