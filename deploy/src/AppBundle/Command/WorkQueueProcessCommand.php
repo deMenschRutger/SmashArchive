@@ -13,12 +13,15 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Filesystem\LockHandler;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
 class WorkQueueProcessCommand extends ContainerAwareCommand
 {
+    const JOB_LIMIT = 10;
+
     /**
      * @var CommandBus
      */
@@ -72,33 +75,39 @@ class WorkQueueProcessCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io = new SymfonyStyle($input, $output);
+        $lockHandler = new LockHandler('app:work-queue:process');
+
+        if ($lockHandler->lock()) {
+            $this->io->comment('Lock acquired.');
+        } else {
+            $this->io->warning('Could not acquire a lock.');
+
+            return;
+        }
+
         $this->pheanstalk->watch('import-tournament')->watch('generate-results');
 
-        $connection = $this->entityManager->getConnection();
+        $counter = 0;
 
-        while (true) {
+        while ($counter < self::JOB_LIMIT) {
             /** @var Job $job */
-            $job = $this->pheanstalk->reserve(3600);
+            $job = $this->pheanstalk->reserve(0);
 
             if (!$job instanceof Job) {
-                continue;
+                break;
             }
 
             try {
-                if ($connection->isConnected() === false) {
-                    $connection->connect();
-                }
-
                 $command = new ProcessJobCommand($job, $this->io);
                 $this->commandBus->handle($command);
-            } catch (\InvalidArgumentException $e) {
-                $this->io->warning($e->getMessage());
-            } catch (\Exception $e) {
-                $this->io->warning($e->getMessage());
             } finally {
                 $this->pheanstalk->delete($job);
-                $connection->close();
+                $counter++;
             }
         }
+
+        $this->io->comment('Releasing lock...');
+
+        $lockHandler->release();
     }
 }
