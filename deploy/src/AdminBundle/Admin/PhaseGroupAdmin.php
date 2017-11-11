@@ -33,6 +33,7 @@ class PhaseGroupAdmin extends AbstractAdmin
                     'Swiss'              => PhaseGroup::TYPE_SWISS,
                 ],
             ])
+            ->add('resultsPage')
             ->end()
         ;
     }

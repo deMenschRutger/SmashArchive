@@ -85,4 +85,5 @@ services:
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
             - ['setSmashgg', ['@core.service.smashgg']]
+            - ['setChallonge', ['@core.service.challonge']]
             - ['setCommandBus', ['@tactician.commandbus']]

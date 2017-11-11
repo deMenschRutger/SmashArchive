@@ -6,6 +6,7 @@ namespace Domain\Handler\WorkQueue;
 
 use CoreBundle\Entity\Job;
 use CoreBundle\Entity\Tournament;
+use CoreBundle\Importer\Challonge\Importer as ChallongeImporter;
 use CoreBundle\Importer\Smashgg\Importer as SmashggImporter;
 use CoreBundle\Service\Smashgg\Smashgg;
 use Domain\Command\Event\GenerateResultsCommand;
@@ -13,7 +14,7 @@ use Domain\Command\WorkQueue\AddJobCommand;
 use Domain\Command\WorkQueue\ProcessJobCommand;
 use Domain\Handler\AbstractHandler;
 use League\Tactician\CommandBus;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Reflex\Challonge\Challonge;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -28,6 +29,11 @@ class ProcessJobHandler extends AbstractHandler
     protected $smashgg;
 
     /**
+     * @var Challonge
+     */
+    protected $challonge;
+
+    /**
      * @var CommandBus
      */
     protected $commandBus;
@@ -38,6 +44,14 @@ class ProcessJobHandler extends AbstractHandler
     public function setSmashgg(Smashgg $smashgg)
     {
         $this->smashgg = $smashgg;
+    }
+
+    /**
+     * @param Challonge $challonge
+     */
+    public function setChallonge(Challonge $challonge)
+    {
+        $this->challonge = $challonge;
     }
 
     /**
@@ -54,7 +68,7 @@ class ProcessJobHandler extends AbstractHandler
      */
     public function handle(ProcessJobCommand $command)
     {
-        $io = $command->getIo();
+        $this->setIo($command->getIo());
         $jobId = $command->getJob()->getId();
 
         try {
@@ -67,11 +81,11 @@ class ProcessJobHandler extends AbstractHandler
 
             switch ($data['type']) {
                 case AddJobCommand::TYPE_IMPORT_TOURNAMENT:
-                    $message = $this->importTournament($jobId, $data, $io);
+                    $message = $this->importTournament($jobId, $data);
                     break;
 
                 case AddJobCommand::TYPE_GENERATE_RESULTS:
-                    $message = $this->generateResults($jobId, $data, $io);
+                    $message = $this->generateResults($jobId, $data);
                     break;
 
                 default:
@@ -81,10 +95,10 @@ class ProcessJobHandler extends AbstractHandler
             }
 
             $this->updateStatus($jobId, Job::STATUS_FINISHED);
-            $io->success($message);
+            $this->io->success($message);
         } catch (\Exception $e) {
             $this->updateStatus($jobId, Job::STATUS_FAILED);
-            $io->error($e->getMessage());
+            $this->io->error($e->getMessage());
         }
     }
 
@@ -106,32 +120,22 @@ class ProcessJobHandler extends AbstractHandler
     }
 
     /**
-     * @param int          $jobId
-     * @param array        $data
-     * @param SymfonyStyle $io
+     * @param int   $jobId
+     * @param array $data
      * @return string
      */
-    protected function importTournament($jobId, array $data, SymfonyStyle $io)
+    protected function importTournament($jobId, array $data)
     {
         if (!array_key_exists('source', $data)) {
             throw new \InvalidArgumentException("Job #{$jobId} does not have a 'source' property.");
         }
 
         if ($data['source'] === Tournament::SOURCE_SMASHGG) {
-            $importer = new SmashggImporter($io, $this->entityManager, $this->smashgg);
-            $tournament = $importer->import($data['smashggId'], $data['events']);
-            $tournamentName = $tournament->getName();
-
-            foreach ($tournament->getEvents() as $event) {
-                $name = "Generate results for event #{$event->getId()} of tournament {$tournamentName}";
-                $job = [
-                    'type' => AddJobCommand::TYPE_GENERATE_RESULTS,
-                    'eventId' => $event->getId(),
-                ];
-
-                $command = new AddJobCommand('generate-results', $name, $job);
-                $this->commandBus->handle($command);
-            }
+            $importer = new SmashggImporter($this->io, $this->entityManager, $this->smashgg);
+            $importer->import($data['smashggId'], $data['events']);
+        } elseif ($data['source'] === Tournament::SOURCE_CHALLONGE) {
+            $importer = new ChallongeImporter($this->io, $this->entityManager, $this->challonge);
+            $importer->import($data['slug']);
         } else {
             throw new \InvalidArgumentException("Unfortunately the source #{$data['source']} can not be handled yet.");
         }
@@ -140,18 +144,17 @@ class ProcessJobHandler extends AbstractHandler
     }
 
     /**
-     * @param int          $jobId
-     * @param array        $data
-     * @param SymfonyStyle $io
+     * @param int   $jobId
+     * @param array $data
      * @return string
      */
-    protected function generateResults($jobId, array $data, SymfonyStyle $io)
+    protected function generateResults($jobId, array $data)
     {
         if (!array_key_exists('eventId', $data)) {
             throw new \InvalidArgumentException("Job #{$jobId} does not have an 'eventId' property.");
         }
 
-        $command = new GenerateResultsCommand($data['eventId'], $io);
+        $command = new GenerateResultsCommand($data['eventId'], $this->io);
         $this->commandBus->handle($command);
 
         return 'The results were successfully generated.';

@@ -30,12 +30,79 @@ class TournamentController extends AbstractController
             throw new NotFoundHttpException('The tournament could not be found');
         }
 
-        if ($tournament->getSource() === Tournament::SOURCE_CUSTOM) {
+        if ($tournament->getSource() === Tournament::SOURCE_SMASHGG) {
+            return $this->importSmashgg($request, $tournament);
+        } elseif ($tournament->getSource() === Tournament::SOURCE_CHALLONGE) {
+            return $this->importChallonge($request, $tournament);
+        } elseif ($tournament->getSource() === Tournament::SOURCE_CUSTOM) {
             return $this->renderError("The source for this tournament is 'custom', therefore it can not be imported.", $tournament);
-        } elseif ($tournament->getSource() !== Tournament::SOURCE_SMASHGG) {
-            return $this->renderError("Only tournaments with the source 'smash.gg' can be imported at this time.", $tournament);
+        } else {
+            $message = sprintf("Tournaments with the source '%s' can not be imported at this time.", $tournament->getSource());
+
+            return $this->renderError($message, $tournament);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function resultsAction(Request $request)
+    {
+        $tournament = $this->admin->getSubject();
+
+        if (!$tournament instanceof Tournament) {
+            throw new NotFoundHttpException('The tournament could not be found');
         }
 
+        $form = $this->createForm(ConfirmGenerateResultsType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($tournament->getEvents() as $event) {
+                $name = "Generate results for event #{$event->getId()} of tournament {$tournament->getName()}";
+                $job = [
+                    'type' => AddJobCommand::TYPE_GENERATE_RESULTS,
+                    'eventId' => $event->getId(),
+                ];
+
+                $command = new AddJobCommand('generate-results', $name, $job);
+                $this->handleCommand($command);
+            }
+
+            $this->addFlash(
+                'sonata_flash_success',
+                'The generate results job was added to the queue and will be processed shortly'
+            );
+
+            return new RedirectResponse($this->admin->generateUrl('list'));
+        }
+
+        $formGroupMessage = "Confirm generating results for tournament '{$tournament->getName()}'";
+
+        $this->admin->setFormGroups([
+            'default' => [
+                'name' => $formGroupMessage,
+                'description' => null,
+                'box_class' => 'box box-primary',
+                'translation_domain' => null,
+                'fields' => ['confirm', 'submit'],
+            ],
+        ]);
+
+        return $this->render('AdminBundle:Tournament:confirm_results.html.twig', [
+            'admin' => $this->admin,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @param Tournament $tournament
+     * @return RedirectResponse|Response
+     */
+    protected function importSmashgg(Request $request, Tournament $tournament)
+    {
         $smashggId = $tournament->getSmashggIdFromUrl();
 
         if (!$smashggId) {
@@ -91,56 +158,12 @@ class TournamentController extends AbstractController
 
     /**
      * @param Request $request
+     * @param Tournament $tournament
      * @return Response
      */
-    public function resultsAction(Request $request)
+    protected function importChallonge(Request $request, Tournament $tournament)
     {
-        $tournament = $this->admin->getSubject();
-
-        if (!$tournament instanceof Tournament) {
-            throw new NotFoundHttpException('The tournament could not be found');
-        }
-
-        $form = $this->createForm(ConfirmGenerateResultsType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // TODO Duplicate code, also exists in the ProcessJobHandler.
-            foreach ($tournament->getEvents() as $event) {
-                $name = "Generate results for event #{$event->getId()} of tournament {$tournament->getName()}";
-                $job = [
-                    'type' => AddJobCommand::TYPE_GENERATE_RESULTS,
-                    'eventId' => $event->getId(),
-                ];
-
-                $command = new AddJobCommand('generate-results', $name, $job);
-                $this->handleCommand($command);
-            }
-
-            $this->addFlash(
-                'sonata_flash_success',
-                'The generate results job was added to the queue and will be processed shortly'
-            );
-
-            return new RedirectResponse($this->admin->generateUrl('list'));
-        }
-
-        $formGroupMessage = "Confirm generating results for tournament '{$tournament->getName()}'";
-
-        $this->admin->setFormGroups([
-            'default' => [
-                'name' => $formGroupMessage,
-                'description' => null,
-                'box_class' => 'box box-primary',
-                'translation_domain' => null,
-                'fields' => ['confirm', 'submit'],
-            ],
-        ]);
-
-        return $this->render('AdminBundle:Tournament:confirm_results.html.twig', [
-            'admin' => $this->admin,
-            'form' => $form->createView(),
-        ]);
+        return $this->renderError('Challonge is not available yet.', $tournament);
     }
 
     /**
