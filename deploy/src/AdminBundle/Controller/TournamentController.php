@@ -5,7 +5,8 @@ declare(strict_types = 1);
 namespace AdminBundle\Controller;
 
 use AdminBundle\Form\ConfirmGenerateResultsType;
-use AdminBundle\Form\ImportTournamentType;
+use AdminBundle\Form\ImportChallongeType;
+use AdminBundle\Form\ImportSmashggType;
 use CoreBundle\Entity\Tournament;
 use Domain\Command\WorkQueue\AddJobCommand;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -110,33 +111,20 @@ class TournamentController extends AbstractController
         }
 
         $form = $this->createForm(
-            ImportTournamentType::class,
+            ImportSmashggType::class,
             [ 'events' => [] ],
             [ 'smashggId' => $smashggId ]
         );
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
             $tournament->setSmashggSlug($smashggId);
+            $data = $form->getData();
 
-            $name = "Import events for tournament {$tournament->getName()}";
-            $job = [
-                'type' => AddJobCommand::TYPE_IMPORT_TOURNAMENT,
-                'source' => Tournament::SOURCE_SMASHGG,
+            return $this->addImportJob($tournament, Tournament::SOURCE_SMASHGG, [
                 'smashggId' => $smashggId,
                 'events' => $data['events'],
-            ];
-
-            $command = new AddJobCommand('import-tournament', $name, $job);
-            $this->handleCommand($command);
-
-            $this->addFlash(
-                'sonata_flash_success',
-                'The tournament import job was added to the queue and will be processed shortly'
-            );
-
-            return new RedirectResponse($this->admin->generateUrl('list'));
+            ]);
         }
 
         $this->admin->setFormGroups([
@@ -163,7 +151,55 @@ class TournamentController extends AbstractController
      */
     protected function importChallonge(Request $request, Tournament $tournament)
     {
-        return $this->renderError('Challonge is not available yet.', $tournament);
+        $form = $this->createForm(ImportChallongeType::class);
+        $form->handleRequest($request);
+
+        $this->admin->setFormGroups([
+            'default' => [
+                'name' => 'Confirmation',
+                'description' => null,
+                'box_class' => 'box box-primary',
+                'translation_domain' => null,
+                'fields' => ['confirm', 'submit'],
+            ],
+        ]);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            return $this->addImportJob($tournament, Tournament::SOURCE_CHALLONGE, [
+                'slug' => $tournament->getSlug(),
+            ]);
+        }
+
+        return $this->render('AdminBundle:Tournament:import.html.twig', [
+            'admin' => $this->admin,
+            'form' => $form->createView(),
+            'tournament' => $tournament,
+        ]);
+    }
+
+    /**
+     * @param Tournament $tournament
+     * @param string     $source
+     * @param array      $options
+     * @return Response
+     */
+    protected function addImportJob(Tournament $tournament, $source, array $options)
+    {
+        $name = "Import tournament {$tournament->getName()}";
+        $job = array_merge([
+            'type' => AddJobCommand::TYPE_IMPORT_TOURNAMENT,
+            'source' => $source,
+        ], $options);
+
+        $command = new AddJobCommand('import-tournament', $name, $job);
+        $this->handleCommand($command);
+
+        $this->addFlash(
+            'sonata_flash_success',
+            'The tournament import job was added to the queue and will be processed shortly'
+        );
+
+        return new RedirectResponse($this->admin->generateUrl('list'));
     }
 
     /**

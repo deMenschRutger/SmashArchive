@@ -71,8 +71,8 @@ services:
         tags:
             - { name: sonata.admin, manager_type: orm, label: Users }
 
-    admin.form.tournament.import:
-        class: AdminBundle\Form\ImportTournamentType
+    admin.form.tournament.import.smashgg:
+        class: AdminBundle\Form\ImportSmashggType
         arguments: ['@core.service.smashgg']
         tags:
             - { name: form.type }

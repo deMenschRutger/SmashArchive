@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints\Count;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class ImportTournamentType extends AbstractType
+class ImportSmashggType extends AbstractType
 {
     /**
      * @var Smashgg
