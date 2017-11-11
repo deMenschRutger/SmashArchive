@@ -258,7 +258,7 @@ class Entrant
      */
     public function setParentEntrant($parentEntrant)
     {
-        /*if ($parentEntrant instanceof Entrant && $this->parentEntrant !== $parentEntrant) {
+        if ($parentEntrant instanceof Entrant && $this->parentEntrant !== $parentEntrant) {
             foreach ($this->getEntrantOneSets() as $set) {
                 $set->setEntrantOne($parentEntrant);
 
@@ -278,7 +278,7 @@ class Entrant
                     $set->setLoser($parentEntrant);
                 }
             }
-        }*/
+        }
 
         $this->parentEntrant = $parentEntrant;
     }
@@ -305,11 +305,15 @@ class Entrant
     public function getPlayers(): Collection
     {
         // This is a workaround for confusing behaviour in Doctrine where it loads certain associations multiple times.
-//        if (count($this->players) === 2 && $this->players[0] === $this->players[1]) {
-//            $this->players->remove(1);
-//        }
+        $unique = new ArrayCollection();
 
-        return $this->players;
+        foreach ($this->players as $player) {
+            if (!$unique->contains($player)) {
+                $unique->add($player);
+            }
+        }
+
+        return $unique;
     }
 
     /**
@@ -368,5 +372,23 @@ class Entrant
     public function isTeam()
     {
         return count($this->getPlayers()) > 1;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTournament()
+    {
+        $sets = $this->getEntrantOneSets();
+
+        if (count($sets) === 0) {
+            $sets = $this->getEntrantTwoSets();
+        }
+
+        if (count($sets) === 0) {
+            return null;
+        }
+
+        return $sets->first()->getPhaseGroup()->getPhase()->getEvent()->getTournament()->getName();
     }
 }

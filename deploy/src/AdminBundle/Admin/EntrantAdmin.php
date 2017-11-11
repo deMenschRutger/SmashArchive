@@ -184,6 +184,7 @@ class EntrantAdmin extends AbstractAdmin
     {
         $show
             ->add('name')
+            ->add('tournament')
         ;
     }
 
