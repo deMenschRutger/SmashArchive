@@ -20,6 +20,16 @@ class SetsCommand
     private $slug;
 
     /**
+     * @var string
+     */
+    private $eventId;
+
+    /**
+     * @var bool
+     */
+    private $sortByPhase;
+
+    /**
      * @var int
      *
      * @Assert\Range(min=1)
@@ -35,12 +45,21 @@ class SetsCommand
 
     /**
      * @param string $slug
+     * @param string $eventId
+     * @param bool   $sortByPhase
      * @param int    $page
      * @param int    $limit
      */
-    public function __construct(string $slug, $page = self::DEFAULT_PAGE, $limit = self::DEFAULT_LIMIT)
-    {
+    public function __construct(
+        string $slug,
+        $eventId = null,
+        $sortByPhase = false,
+        $page = self::DEFAULT_PAGE,
+        $limit = self::DEFAULT_LIMIT
+    ) {
         $this->slug = $slug;
+        $this->eventId = $eventId;
+        $this->sortByPhase = $sortByPhase;
         $this->page = $page ? intval($page) : self::DEFAULT_PAGE;
         $this->limit = $limit ? intval($limit) : self::DEFAULT_LIMIT;
     }
@@ -51,6 +70,22 @@ class SetsCommand
     public function getSlug(): string
     {
         return $this->slug;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEventId()
+    {
+        return $this->eventId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSortByPhase()
+    {
+        return $this->sortByPhase;
     }
 
     /**

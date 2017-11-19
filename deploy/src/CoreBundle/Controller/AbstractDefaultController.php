@@ -107,6 +107,7 @@ abstract class AbstractDefaultController extends Controller
     }
 
     /**
+     * @deprecated
      * @param string        $cacheKey
      * @param array         $tags
      * @param string        $view

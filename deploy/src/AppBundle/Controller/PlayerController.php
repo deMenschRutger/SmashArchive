@@ -69,23 +69,37 @@ class PlayerController extends AbstractDefaultController
         $detailsCommand = new DetailsCommand($slug);
         $player = $this->commandBus->handle($detailsCommand);
 
-        $cacheKey = 'views_player_details_'.$slug;
-
-        if ($this->isCached($cacheKey)) {
-            return $this->getFromCache($cacheKey);
-        }
-
-        $setCommand = new SetsCommand($slug, 1, 999999999);
-        $sets = $this->commandBus->handle($setCommand);
-
-        $resultsCommand = new ResultsCommand($slug, $sets);
+        $resultsCommand = new ResultsCommand($slug);
         $results = $this->commandBus->handle($resultsCommand);
 
-        $tags = [ 'player_'.$slug ];
-
-        return $this->renderWithCache($cacheKey, $tags, 'AppBundle:Players:details.html.twig', [
+        return $this->render('AppBundle:Players:details.html.twig', [
             'player'  => $player,
             'results' => $results,
+        ]);
+    }
+
+    /**
+     * @param string $slug
+     * @param string $eventId
+     * @return Response
+     *
+     * @Route("/{slug}/event-results/{eventId}", name="player_event_results")
+     */
+    public function eventResultsAction($slug, $eventId)
+    {
+        $detailsCommand = new DetailsCommand($slug);
+        $player = $this->commandBus->handle($detailsCommand);
+
+        $setCommand = new SetsCommand($slug, $eventId, true);
+        $sets = $this->commandBus->handle($setCommand);
+
+        $resultsCommand = new ResultsCommand($slug, $eventId);
+        $result = $this->commandBus->handle($resultsCommand);
+
+        return $this->render('AppBundle:Players:event-results.html.twig', [
+            'player' => $player,
+            'result' => $result,
+            'sets' => $sets,
         ]);
     }
 }

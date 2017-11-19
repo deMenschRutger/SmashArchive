@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace CoreBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -62,6 +63,36 @@ class ResultRepository extends EntityRepository
      */
     public function findByPlayerSlug($slugs)
     {
+        return $this
+            ->getPlayerResultsQuery($slugs)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * @param string|array $slugs
+     * @param string       $eventId
+     * @return array
+     */
+    public function findByPlayerSlugAndEventId($slugs, $eventId)
+    {
+        return $this
+            ->getPlayerResultsQuery($slugs)
+            ->andWhere('ev.id = :eventId')
+            ->setParameter('eventId', $eventId)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    /**
+     * @param string|array $slugs
+     * @return QueryBuilder
+     */
+    protected function getPlayerResultsQuery($slugs)
+    {
         /** @var EntrantRepository $singlePlayerEntrants */
         $entrantRepository = $this->_em->getRepository('CoreBundle:Entrant');
         $singlePlayerEntrantIds = $entrantRepository->findSinglePlayerEntrantIdsBySlug($slugs);
@@ -69,17 +100,14 @@ class ResultRepository extends EntityRepository
         return $this
             ->_em
             ->createQueryBuilder()
-            ->select('r, en, p, ev, t')
+            ->select('r, en, ev, t')
             ->from('CoreBundle:Result', 'r')
             ->leftJoin('r.event', 'ev')
             ->leftJoin('ev.tournament', 't')
             ->leftJoin('r.entrant', 'en')
-            ->leftJoin('en.players', 'p')
             ->where('en.id IN (:ids)')
             ->orderBy('t.dateStart', 'DESC')
             ->setParameter('ids', $singlePlayerEntrantIds)
-            ->getQuery()
-            ->getResult()
         ;
     }
 }

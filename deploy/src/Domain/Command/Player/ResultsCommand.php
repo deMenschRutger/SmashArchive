@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace Domain\Command\Player;
 
-use Knp\Component\Pager\Pagination\PaginationInterface;
-
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
@@ -14,36 +12,36 @@ class ResultsCommand
     /**
      * @var string
      */
-    private $slug;
+    private $playerSlug;
 
     /**
-     * @var PaginationInterface
+     * @var string
      */
-    private $sets;
+    private $eventId;
 
     /**
-     * @param string              $slug
-     * @param PaginationInterface $sets
+     * @param string $slug
+     * @param string $eventId
      */
-    public function __construct($slug, $sets = null)
+    public function __construct($slug, $eventId = null)
     {
-        $this->slug = $slug;
-        $this->sets = $sets;
+        $this->playerSlug = $slug;
+        $this->eventId = $eventId;
     }
 
     /**
      * @return string
      */
-    public function getSlug()
+    public function getPlayerSlug()
     {
-        return $this->slug;
+        return $this->playerSlug;
     }
 
     /**
-     * @return PaginationInterface
+     * @return string
      */
-    public function getSets()
+    public function getEventId()
     {
-        return $this->sets;
+        return $this->eventId;
     }
 }

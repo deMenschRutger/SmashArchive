@@ -6,6 +6,7 @@ namespace CoreBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -18,30 +19,22 @@ class SetRepository extends EntityRepository
      */
     public function findByPlayerSlug($slugs)
     {
-        /** @var EntrantRepository $singlePlayerEntrants */
-        $entrantRepository = $this->_em->getRepository('CoreBundle:Entrant');
-        $singlePlayerEntrantIds = $entrantRepository->findSinglePlayerEntrantIdsBySlug($slugs);
+        // Returning the query to accommodate pagination.
+        return $this->getPlayerSetsQuery($slugs)->getQuery();
+    }
 
+    /**
+     * @param string|array $slugs
+     * @param string       $eventId
+     * @return Query
+     */
+    public function findByPlayerSlugAndEventId($slugs, $eventId)
+    {
         return $this
-            ->createQueryBuilder('s')
-            ->select('s, pg, ph, ev, g, t, e1, e2, w, wp, l, lp')
-            ->join('s.phaseGroup', 'pg')
-            ->join('pg.phase', 'ph')
-            ->join('ph.event', 'ev')
-            ->join('ev.game', 'g')
-            ->join('ev.tournament', 't')
-            ->leftJoin('s.entrantOne', 'e1')
-            ->leftJoin('s.entrantTwo', 'e2')
-            ->leftJoin('s.winner', 'w')
-            ->leftJoin('w.players', 'wp')
-            ->leftJoin('s.loser', 'l')
-            // Joining loser.players here confuses Doctrine for some reason, see Entrant::getPlayers().
-            ->leftJoin('l.players', 'lp')
-            ->where('e1.id IN (:ids)')
-            ->orWhere('e2.id IN (:ids)')
-            ->setParameter('ids', $singlePlayerEntrantIds)
-            ->orderBy('t.dateStart DESC, ev.id, ph.phaseOrder, s.round')
-            ->getQuery() // Returning the query to accommodate pagination.
+            ->getPlayerSetsQuery($slugs)
+            ->andWhere('ev.id = :eventId')
+            ->setParameter('eventId', $eventId)
+            ->getQuery()
         ;
     }
 
@@ -73,6 +66,38 @@ class SetRepository extends EntityRepository
             ->setParameter(2, $singlePlayerEntrantIds)
             ->getQuery()
             ->getResult()
+        ;
+    }
+
+    /**
+     * @param string|array $slugs
+     * @return QueryBuilder
+     */
+    protected function getPlayerSetsQuery($slugs)
+    {
+        /** @var EntrantRepository $singlePlayerEntrants */
+        $entrantRepository = $this->_em->getRepository('CoreBundle:Entrant');
+        $singlePlayerEntrantIds = $entrantRepository->findSinglePlayerEntrantIdsBySlug($slugs);
+
+        return $this
+            ->createQueryBuilder('s')
+            ->select('s, pg, ph, ev, g, t, e1, e2, w, wp, l, lp')
+            ->join('s.phaseGroup', 'pg')
+            ->join('pg.phase', 'ph')
+            ->join('ph.event', 'ev')
+            ->join('ev.game', 'g')
+            ->join('ev.tournament', 't')
+            ->leftJoin('s.entrantOne', 'e1')
+            ->leftJoin('s.entrantTwo', 'e2')
+            ->leftJoin('s.winner', 'w')
+            ->leftJoin('w.players', 'wp')
+            ->leftJoin('s.loser', 'l')
+            // Joining loser.players here confuses Doctrine for some reason, see Entrant::getPlayers().
+            ->leftJoin('l.players', 'lp')
+            ->where('e1.id IN (:ids)')
+            ->orWhere('e2.id IN (:ids)')
+            ->setParameter('ids', $singlePlayerEntrantIds)
+            ->orderBy('t.dateStart DESC, ev.id, ph.phaseOrder, s.round')
         ;
     }
 }
