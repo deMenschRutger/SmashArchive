@@ -62,7 +62,7 @@ class PhaseProcessor extends AbstractProcessor
         }
 
         $phase = $this->entityManager->getRepository('CoreBundle:Phase')->findOneBy([
-            'smashggId' => $phaseId,
+            'externalId' => $phaseId,
         ]);
 
         if (!$phase instanceof Phase) {

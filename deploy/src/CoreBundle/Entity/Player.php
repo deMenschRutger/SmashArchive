@@ -552,6 +552,16 @@ class Player
     }
 
     /**
+     * @param Entrant $entrant
+     */
+    public function removeEntrant(Entrant $entrant)
+    {
+        if ($this->entrants->contains($entrant)) {
+            $this->entrants->remove($entrant);
+        }
+    }
+
+    /**
      * @return Tournament
      */
     public function getOriginTournament()

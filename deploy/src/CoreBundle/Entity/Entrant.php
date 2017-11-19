@@ -343,6 +343,17 @@ class Entrant
     }
 
     /**
+     * @param Player $player
+     */
+    public function removePlayer(Player $player)
+    {
+        if (!$this->players->contains($player)) {
+            $player->removeEntrant($this);
+            $this->players->remove($player);
+        }
+    }
+
+    /**
      * @param ArrayCollection $players
      */
     public function setPlayers(ArrayCollection $players)

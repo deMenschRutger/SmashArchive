@@ -110,9 +110,8 @@ class PlayerMerger
 
         /** @var Entrant $entrant */
         foreach ($this->sourcePlayer->getEntrants() as $entrant) {
-            $players = $entrant->getPlayers();
-            $players->removeElement($this->sourcePlayer);
-            $players->add($this->targetPlayer);
+            $entrant->removePlayer($this->sourcePlayer);
+            $entrant->addPlayer($this->targetPlayer);
         }
 
         $cacheManager->onPlayerChange($this->sourcePlayer, true);

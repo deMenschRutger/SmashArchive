@@ -66,7 +66,7 @@ class EventProcessor extends AbstractProcessor
 
         // Try to find an existing event in the database.
         $event = $this->entityManager->getRepository('CoreBundle:Event')->findOneBy([
-            'smashggId' => $eventId,
+            'externalId' => $eventId,
         ]);
 
         if (!$event instanceof Event) {

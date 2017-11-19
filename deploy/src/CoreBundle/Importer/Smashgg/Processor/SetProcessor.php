@@ -56,7 +56,7 @@ class SetProcessor extends AbstractProcessor
         }
 
         $set = $this->entityManager->getRepository('CoreBundle:Set')->findOneBy([
-            'smashggId' => $setId,
+            'externalId' => $setId,
         ]);
 
         if (!$set instanceof Set) {

@@ -54,7 +54,7 @@ class PhaseGroupProcessor extends AbstractProcessor
         }
 
         $phaseGroup = $this->entityManager->getRepository('CoreBundle:PhaseGroup')->findOneBy([
-            'smashggId' => $phaseGroupId,
+            'externalId' => $phaseGroupId,
         ]);
 
         if (!$phaseGroup instanceof PhaseGroup) {

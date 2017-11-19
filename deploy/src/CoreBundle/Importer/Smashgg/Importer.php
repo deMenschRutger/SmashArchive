@@ -7,6 +7,7 @@ namespace CoreBundle\Importer\Smashgg;
 use CoreBundle\Entity\Country;
 use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Phase;
+use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Importer\AbstractImporter;
 use CoreBundle\Importer\Smashgg\Processor\EntrantProcessor;
@@ -145,7 +146,7 @@ class Importer extends AbstractImporter
     {
         $smashggTournament = $this->smashgg->getTournament($slug);
         $tournament = $this->getRepository('CoreBundle:Tournament')->findOneBy([
-            'smashggSlug' => $slug,
+            'externalId' => $slug,
         ]);
 
         if (!$tournament instanceof Tournament) {
@@ -343,10 +344,17 @@ class Importer extends AbstractImporter
         $processor = new EntrantProcessor($this->entityManager);
 
         foreach ($groups as $phaseGroupData) {
+            $event = null;
+            $phaseGroup = $this->phaseGroupProcessor->findPhaseGroup($phaseGroupData['id']);
+
+            if ($phaseGroup instanceof PhaseGroup) {
+                $event = $phaseGroup->getPhase()->getEvent();
+            }
+
             $entrants = $this->smashgg->getPhaseGroupEntrants($phaseGroupData['id']);
 
             foreach ($entrants as $entrantData) {
-                $processor->processNew($entrantData, $this->playerProcessor);
+                $processor->processNew($entrantData, $this->playerProcessor, $event);
             }
         }
 

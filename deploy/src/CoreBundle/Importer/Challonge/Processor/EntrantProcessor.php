@@ -54,7 +54,7 @@ class EntrantProcessor extends AbstractProcessor
         }
 
         $entrant = $this->entityManager->getRepository('CoreBundle:Entrant')->findOneBy([
-            'smashggId' => $entrantId,
+            'externalId' => $entrantId,
         ]);
 
         if (!$entrant instanceof Entrant) {
