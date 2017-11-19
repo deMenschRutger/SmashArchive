@@ -151,15 +151,21 @@ class Entrant
      */
     public function getExpandedName()
     {
-        $event = $this->getOriginEvent();
+        $event = 'Unknown event';
+        $tournament = 'Unknown tournament';
 
-        if ($event instanceof Event) {
-            $event = $event->getName();
-        } else {
-            $event = 'Event unknown';
+        $originEvent = $this->getOriginEvent();
+
+        if ($originEvent instanceof Event) {
+            $event = $originEvent->getName();
+            $originTournament = $originEvent->getTournament();
+
+            if ($originTournament instanceof Tournament) {
+                $tournament = $originTournament->getName();
+            }
         }
 
-        return sprintf('%s | %s | #%s', $this->name, $event, $this->getId());
+        return sprintf('%s | %s (%s) | #%s', $this->name, $event, $tournament, $this->getId());
     }
 
     /**
