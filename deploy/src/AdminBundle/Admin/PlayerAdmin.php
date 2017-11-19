@@ -43,7 +43,7 @@ class PlayerAdmin extends AbstractAdmin
      */
     public function postUpdate($player)
     {
-        $this->cacheManager->onPlayerChange($player, true, true);
+        $this->cacheManager->onPlayerChange($player);
     }
 
     /**
@@ -51,7 +51,7 @@ class PlayerAdmin extends AbstractAdmin
      */
     public function preRemove($player)
     {
-        $this->cacheManager->onPlayerChange($player, true, true);
+        $this->cacheManager->onPlayerChange($player);
     }
 
     /**

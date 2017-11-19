@@ -255,22 +255,6 @@ class Player
     }
 
     /**
-     * @return string
-     */
-    public function getResultsCacheTag()
-    {
-        return 'player_results_'.$this->slug;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCacheTag()
-    {
-        return 'player_'.$this->slug;
-    }
-
-    /**
      * @return int
      */
     public function getSmashRankingId()

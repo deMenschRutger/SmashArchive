@@ -39,25 +39,10 @@ class CacheManager
 
     /**
      * @param Player $player
-     * @param bool   $clearResults
-     * @param bool   $clearOpponentResults
      */
-    public function onPlayerChange(Player $player, bool $clearResults = false, bool $clearOpponentResults = false)
+    public function onPlayerChange(Player $player)
     {
-        if ($clearOpponentResults) {
-            $playerRepository = $this->entityManager->getRepository('CoreBundle:Player');
-            $opponents = $playerRepository->findOpponents($player->getSlug());
-
-            foreach ($opponents as $opponent) {
-                $this->onPlayerChange($opponent, true, false);
-            }
-        }
-
-        if ($clearResults) {
-            $this->cache->invalidateTag($player->getResultsCacheTag());
-        }
-
-        $this->cache->invalidateTag($player->getCacheTag());
+        return;
     }
 
     /**
@@ -66,7 +51,7 @@ class CacheManager
     public function onEntrantChange(Entrant $entrant)
     {
         foreach ($entrant->getPlayers() as $player) {
-            $this->onPlayerChange($player, true, true);
+            $this->onPlayerChange($player);
         }
     }
 
@@ -75,24 +60,14 @@ class CacheManager
      */
     public function onTournamentChange(Tournament $tournament)
     {
-        /** @var Player $player */
-        foreach ($tournament->getPlayers() as $player) {
-            $this->cache->invalidateTag($player->getCacheTag());
-            $this->cache->invalidateTag($player->getResultsCacheTag());
-        }
+        return;
     }
 
     /**
      * @param Result[] $results
-     *
-     * @TODO Can the player retrieval and cache clear be optimized?
      */
     public function onResultsChange($results)
     {
-        foreach ($results as $result) {
-            foreach ($result->getPlayers() as $player) {
-                $this->cache->invalidateTag($player->getCacheTag());
-            }
-        }
+        return;
     }
 }

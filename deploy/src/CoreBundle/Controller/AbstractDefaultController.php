@@ -107,24 +107,6 @@ abstract class AbstractDefaultController extends Controller
     }
 
     /**
-     * @deprecated
-     * @param string        $cacheKey
-     * @param array         $tags
-     * @param string        $view
-     * @param array         $parameters
-     * @param Response|null $response
-     * @return Response
-     */
-    public function renderWithCache($cacheKey, array $tags, $view, array $parameters = [], Response $response = null)
-    {
-        $view = $this->render($view, $parameters, $response);
-
-        $this->saveToCache($cacheKey, $view, $tags);
-
-        return $view;
-    }
-
-    /**
      * @param string $name
      * @return ObjectRepository
      */

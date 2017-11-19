@@ -114,8 +114,8 @@ class PlayerMerger
             $entrant->addPlayer($this->targetPlayer);
         }
 
-        $cacheManager->onPlayerChange($this->sourcePlayer, true);
-        $cacheManager->onPlayerChange($this->targetPlayer, true);
+        $cacheManager->onPlayerChange($this->sourcePlayer);
+        $cacheManager->onPlayerChange($this->targetPlayer);
 
         $entityManager->remove($this->sourcePlayer);
     }
