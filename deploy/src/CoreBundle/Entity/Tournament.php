@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="tournament", indexes={
- *     @ORM\Index(name="smashgg_slug_index", columns={"smashgg_slug"}),
+ *     @ORM\Index(name="external_id_index", columns={"external_id"}),
  *     @ORM\Index(name="name_index", columns={"name"}),
  *     @ORM\Index(name="region_index", columns={"region"}),
  *     @ORM\Index(name="city_index", columns={"city"}),
@@ -52,15 +52,6 @@ class Tournament
     private $source = self::SOURCE_CUSTOM;
 
     /**
-     * The original ID from the SmashRanking database.
-     *
-     * @var int
-     *
-     * @ORM\Column(name="original_id", type="integer", nullable=true)
-     */
-    private $originalId;
-
-    /**
      * @var string
      *
      * @Gedmo\Slug(fields={"name"}, updatable=false)
@@ -73,9 +64,9 @@ class Tournament
     /**
      * @var string
      *
-     * @ORM\Column(name="smashgg_slug", type="string", length=255, nullable=true)
+     * @ORM\Column(name="external_id", type="string", length=255, nullable=true)
      */
-    private $smashggSlug;
+    private $externalId;
 
     /**
      * @var string
@@ -238,22 +229,6 @@ class Tournament
     }
 
     /**
-     * @return int
-     */
-    public function getOriginalId()
-    {
-        return $this->originalId;
-    }
-
-    /**
-     * @param int $originalId
-     */
-    public function setOriginalId($originalId)
-    {
-        $this->originalId = $originalId;
-    }
-
-    /**
      * @return string
      */
     public function getSlug()
@@ -264,17 +239,17 @@ class Tournament
     /**
      * @return string
      */
-    public function getSmashggSlug()
+    public function getExternalId()
     {
-        return $this->smashggSlug;
+        return $this->externalId;
     }
 
     /**
-     * @param string $smashggSlug
+     * @param string $externalId
      */
-    public function setSmashggSlug($smashggSlug)
+    public function setExternalId($externalId)
     {
-        $this->smashggSlug = $smashggSlug;
+        $this->externalId = $externalId;
     }
 
     /**

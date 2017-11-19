@@ -43,15 +43,6 @@ class Player
     private $id;
 
     /**
-     * The original ID from the SmashRanking database.
-     *
-     * @var int
-     *
-     * @ORM\Column(name="original_id", type="integer", nullable=true)
-     */
-    private $originalId;
-
-    /**
      * @var string
      *
      * @Gedmo\Slug(fields={"gamerTag"}, updatable=false)
@@ -60,6 +51,13 @@ class Player
      * @Serializer\Groups({"players_overview", "tournaments_results"})
      */
     private $slug;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="smash_ranking_id", type="integer", nullable=true)
+     */
+    private $smashRankingId;
 
     /**
      * @var string
@@ -241,22 +239,6 @@ class Player
     }
 
     /**
-     * @return int
-     */
-    public function getOriginalId()
-    {
-        return $this->originalId;
-    }
-
-    /**
-     * @param int $originalId
-     */
-    public function setOriginalId($originalId)
-    {
-        $this->originalId = $originalId;
-    }
-
-    /**
      * @return string
      */
     public function getSlug()
@@ -286,6 +268,22 @@ class Player
     public function getCacheTag()
     {
         return 'player_'.$this->slug;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSmashRankingId()
+    {
+        return $this->smashRankingId;
+    }
+
+    /**
+     * @param int $smashRankingId
+     */
+    public function setSmashRankingId($smashRankingId)
+    {
+        $this->smashRankingId = $smashRankingId;
     }
 
     /**

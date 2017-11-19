@@ -118,7 +118,7 @@ class TournamentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $tournament->setSmashggSlug($smashggId);
+            $tournament->setExternalId($smashggId);
             $data = $form->getData();
 
             return $this->addImportJob($tournament, Tournament::SOURCE_SMASHGG, [

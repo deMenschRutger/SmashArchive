@@ -10,7 +10,6 @@ use CoreBundle\Entity\Player;
 use CoreBundle\Entity\Result;
 use CoreBundle\Entity\Tournament;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\UnitOfWork;
 use Psr\Cache\CacheItemPoolInterface as Cache;
 
 /**

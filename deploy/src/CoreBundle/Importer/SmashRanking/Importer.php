@@ -226,7 +226,7 @@ class Importer extends AbstractImporter
             }
 
             $entity = new Player();
-            $entity->setOriginalId($playerId);
+            $entity->setSmashRankingId($playerId);
             $entity->setName($player['name'] ? $player['name'] : null);
             $entity->setGamerTag($tag);
             $entity->setNationality($nationality);
@@ -323,7 +323,7 @@ class Importer extends AbstractImporter
             $country = $this->getCountryBySmashRankingId($tournament['country']);
 
             $entity = new Tournament();
-            $entity->setOriginalId($tournamentId);
+            $entity->setExternalId($tournamentId);
             $entity->setName($tournament['name']);
             $entity->setDateStart(new \DateTime($tournament['date']));
             $entity->setCountry($country);

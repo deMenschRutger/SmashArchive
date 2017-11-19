@@ -111,7 +111,7 @@ class Importer extends AbstractImporter
         $this->phaseProcessor = $this->processPhases();
 
         $phaseIds = array_keys($this->phaseProcessor->getAllPhases());
-        $groups = $this->smashgg->getTournamentGroups($this->tournament->getSmashggSlug(), $phaseIds);
+        $groups = $this->smashgg->getTournamentGroups($this->tournament->getExternalId(), $phaseIds);
 
         $this->phaseGroupProcessor = $this->processPhaseGroups($groups);
         $this->playerProcessor = $this->processPlayers($groups);
@@ -151,7 +151,7 @@ class Importer extends AbstractImporter
         if (!$tournament instanceof Tournament) {
             $tournament = new Tournament();
             $tournament->setSource(Tournament::SOURCE_SMASHGG);
-            $tournament->setSmashggSlug($slug);
+            $tournament->setExternalId($slug);
             $tournament->setIsActive(true);
             $tournament->setIsComplete(true);
 
@@ -212,7 +212,7 @@ class Importer extends AbstractImporter
      */
     protected function processGames()
     {
-        $games = $this->smashgg->getTournamentVideogames($this->tournament->getSmashggSlug(), true);
+        $games = $this->smashgg->getTournamentVideogames($this->tournament->getExternalId(), true);
         $processor = new GameProcessor($this->entityManager);
 
         foreach ($games as $gameData) {
@@ -228,7 +228,7 @@ class Importer extends AbstractImporter
      */
     protected function processEvents(array $eventIds)
     {
-        $events = $this->smashgg->getTournamentEvents($this->tournament->getSmashggSlug(), true);
+        $events = $this->smashgg->getTournamentEvents($this->tournament->getExternalId(), true);
         $events = array_filter($events, function ($event) use ($eventIds) {
             return in_array($event['id'], $eventIds);
         });
@@ -250,7 +250,7 @@ class Importer extends AbstractImporter
      */
     protected function processPhases()
     {
-        $phases = $this->smashgg->getTournamentPhases($this->tournament->getSmashggSlug());
+        $phases = $this->smashgg->getTournamentPhases($this->tournament->getExternalId());
         $processor = new PhaseProcessor($this->entityManager);
 
         foreach ($phases as $phaseData) {

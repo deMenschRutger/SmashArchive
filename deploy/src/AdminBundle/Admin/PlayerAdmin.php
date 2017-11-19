@@ -131,6 +131,7 @@ class PlayerAdmin extends AbstractAdmin
             ->add('nationality')
             ->add('mains')
             ->add('secondaries')
+            ->add('smashrankingId')
             ->add('smashggId')
             ->add('isCompeting')
             ->add('isActive')

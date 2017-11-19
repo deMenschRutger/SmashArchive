@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace CoreBundle\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
- * Auto-generated Migration: Please modify to your needs!
+ * @author Rutger Mensch <rutger@rutgermensch.com>
  */
 class Version20171028125315 extends AbstractMigration
 {
@@ -15,7 +17,6 @@ class Version20171028125315 extends AbstractMigration
      */
     public function up(Schema $schema)
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE entrant ADD target_entrant_id INT DEFAULT NULL');
@@ -28,7 +29,6 @@ class Version20171028125315 extends AbstractMigration
      */
     public function down(Schema $schema)
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE entrant DROP FOREIGN KEY FK_5E7BAE15B91345B7');

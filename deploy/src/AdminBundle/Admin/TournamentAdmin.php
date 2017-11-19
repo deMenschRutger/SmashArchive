@@ -108,7 +108,6 @@ class TournamentAdmin extends AbstractAdmin
             ->add('series')
             ->add('isActive')
             ->end()
-            ->end()
             ->with('Additional information')
             ->add('smashggUrl')
             ->add('facebookEventUrl')
@@ -153,6 +152,7 @@ class TournamentAdmin extends AbstractAdmin
         $show
             ->with('Basics')
             ->add('name')
+            ->add('source')
             ->add('slug')
             ->add('location')
             ->add('country')
