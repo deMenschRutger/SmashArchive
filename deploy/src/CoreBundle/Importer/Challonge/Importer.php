@@ -88,7 +88,7 @@ class Importer extends AbstractImporter
      */
     protected function processPhaseGroup(PhaseGroup $phaseGroup)
     {
-        $challongeId = $phaseGroup->getSmashggId();
+        $challongeId = $phaseGroup->getExternalId();
 
         $this->io->writeln('Processing entrants...');
         $entrants = $this->challonge->getParticipants($challongeId);

@@ -67,7 +67,7 @@ class PhaseProcessor extends AbstractProcessor
 
         if (!$phase instanceof Phase) {
             $phase = new Phase();
-            $phase->setSmashggId($phaseId);
+            $phase->setExternalId($phaseId);
 
             $this->entityManager->persist($phase);
         }
@@ -99,7 +99,7 @@ class PhaseProcessor extends AbstractProcessor
 
         /** @var Phase[] $phases */
         foreach ($phases as $phase) {
-            $phaseId = $phase->getSmashggId();
+            $phaseId = $phase->getExternalId();
 
             if ($this->hasPhase($phaseId)) {
                 continue;

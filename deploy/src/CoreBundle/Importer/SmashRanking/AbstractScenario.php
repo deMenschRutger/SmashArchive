@@ -306,7 +306,7 @@ abstract class AbstractScenario
         $resultsPage = $eventData['result_page'] ? $eventData['result_page'] : null;
 
         $phaseGroup = new PhaseGroup();
-        $phaseGroup->setOriginalId($eventId);
+        $phaseGroup->setExternalId($eventId);
         $phaseGroup->setName($name);
         $phaseGroup->setType($phaseGroupType);
         $phaseGroup->setResultsPage($resultsPage);

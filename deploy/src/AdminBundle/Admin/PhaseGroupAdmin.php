@@ -24,7 +24,7 @@ class PhaseGroupAdmin extends AbstractAdmin
         $formMapper
             ->with('Basics')
             ->add('name')
-            ->add('smashggId')
+            ->add('externalId')
             ->add('type', 'choice', [
                 'choices' => [
                     'Single elimination' => PhaseGroup::TYPE_SINGLE_ELIMINATION,

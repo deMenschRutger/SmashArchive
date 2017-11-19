@@ -72,7 +72,7 @@ class EventProcessor extends AbstractProcessor
         if (!$event instanceof Event) {
             // The event does not exist in the database yet, so create it.
             $event = new Event();
-            $event->setSmashggId($eventId);
+            $event->setExternalId($eventId);
 
             $this->entityManager->persist($event);
         }
@@ -97,7 +97,7 @@ class EventProcessor extends AbstractProcessor
         ]);
 
         foreach ($events as $event) {
-            $eventId = $event->getSmashggId();
+            $eventId = $event->getExternalId();
 
             if ($this->hasEvent($eventId)) {
                 continue;

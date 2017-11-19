@@ -438,7 +438,7 @@ class Importer extends AbstractImporter
             $round = $this->rounds[$round];
 
             $set = new Set();
-            $set->setOriginalId($matchId);
+            $set->setExternalId($matchId);
             $set->setPhaseGroup($phaseGroup);
             $set->setRound($round);
             $set->setEntrantOne($entrantOne);

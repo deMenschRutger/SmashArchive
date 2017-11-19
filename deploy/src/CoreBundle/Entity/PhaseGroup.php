@@ -12,7 +12,7 @@ use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="phase_group", indexes={
- *     @ORM\Index(name="smashgg_index", columns={"smashgg_id"}),
+ *     @ORM\Index(name="external_id_index", columns={"external_id"}),
  *     @ORM\Index(name="name_index", columns={"name"}),
  *     @ORM\Index(name="type_index", columns={"type"}),
  *     @ORM\Index(name="created_at_index", columns={"created_at"}),
@@ -41,22 +41,11 @@ class PhaseGroup
     private $id;
 
     /**
-     * The original event ID from the SmashRanking database.
-     *
-     * @var int
-     *
-     * @ORM\Column(name="original_id", type="integer", nullable=true)
-     */
-    private $originalId;
-
-    /**
      * @var string
      *
-     * @ORM\Column(name="smashgg_id", type="string", length=255, nullable=true)
-     *
-     * @TODO Rename to 'externalId'.
+     * @ORM\Column(name="external_id", type="string", length=255, nullable=true)
      */
-    private $smashggId;
+    private $externalId;
 
     /**
      * @var string
@@ -122,35 +111,19 @@ class PhaseGroup
     }
 
     /**
-     * @return int
-     */
-    public function getOriginalId()
-    {
-        return $this->originalId;
-    }
-
-    /**
-     * @param int $originalId
-     */
-    public function setOriginalId($originalId)
-    {
-        $this->originalId = $originalId;
-    }
-
-    /**
      * @return string
      */
-    public function getSmashggId()
+    public function getExternalId()
     {
-        return $this->smashggId;
+        return $this->externalId;
     }
 
     /**
-     * @param string $smashggId
+     * @param string $externalId
      */
-    public function setSmashggId($smashggId)
+    public function setExternalId($externalId)
     {
-        $this->smashggId = $smashggId;
+        $this->externalId = $externalId;
     }
 
     /**

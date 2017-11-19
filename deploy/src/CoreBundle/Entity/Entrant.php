@@ -12,7 +12,7 @@ use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="entrant", indexes={
- *     @ORM\Index(name="smashgg_index", columns={"smashgg_id"}),
+ *     @ORM\Index(name="external_id_index", columns={"external_id"}),
  *     @ORM\Index(name="name_index", columns={"name"}),
  *     @ORM\Index(name="created_at_index", columns={"created_at"}),
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
@@ -37,11 +37,9 @@ class Entrant
     /**
      * @var string
      *
-     * @ORM\Column(name="smashgg_id", type="integer", nullable=true)
-     *
-     * @TODO Rename to 'externalId'.
+     * @ORM\Column(name="external_id", type="string", length=255, nullable=true)
      */
-    private $smashggId;
+    private $externalId;
 
     /**
      * @var string
@@ -127,17 +125,17 @@ class Entrant
     /**
      * @return string
      */
-    public function getSmashggId()
+    public function getExternalId()
     {
-        return $this->smashggId;
+        return $this->externalId;
     }
 
     /**
-     * @param string $smashggId
+     * @param string $externalId
      */
-    public function setSmashggId($smashggId)
+    public function setExternalId($externalId)
     {
-        $this->smashggId = $smashggId;
+        $this->externalId = $externalId;
     }
 
     /**

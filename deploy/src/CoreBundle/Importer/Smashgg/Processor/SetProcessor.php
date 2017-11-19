@@ -61,7 +61,7 @@ class SetProcessor extends AbstractProcessor
 
         if (!$set instanceof Set) {
             $set = new Set();
-            $set->setSmashggId($setId);
+            $set->setExternalId($setId);
 
             $this->entityManager->persist($set);
         }
@@ -128,7 +128,7 @@ class SetProcessor extends AbstractProcessor
 
         /** @var Set[] $sets */
         foreach ($sets as $set) {
-            $setId = $set->getSmashggId();
+            $setId = $set->getExternalId();
 
             if ($this->hasSet($setId)) {
                 continue;

@@ -59,7 +59,7 @@ class EntrantProcessor extends AbstractProcessor
 
         if (!$entrant instanceof Entrant) {
             $entrant = new Entrant();
-            $entrant->setSmashggId($entrantId);
+            $entrant->setExternalId($entrantId);
 
             $this->entityManager->persist($entrant);
         }
