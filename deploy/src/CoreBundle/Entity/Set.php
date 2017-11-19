@@ -58,6 +58,8 @@ class Set
      * @var string
      *
      * @ORM\Column(name="round_name", type="string", length=255, nullable=true)
+     *
+     * @Serializer\Groups({"players_sets"})
      */
     private $roundName;
 

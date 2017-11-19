@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace CoreBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="characters", uniqueConstraints={
@@ -20,6 +21,8 @@ class Character
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Serializer\Groups({"players_overview"})
      */
     private $id;
 
@@ -27,12 +30,16 @@ class Character
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     *
+     * @Serializer\Groups({"players_overview"})
      */
     private $name;
 
     /**
      * @ORM\ManyToOne(targetEntity="Game", inversedBy="characters")
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
+     * @Serializer\Groups({"players_overview"})
      */
     private $game;
 

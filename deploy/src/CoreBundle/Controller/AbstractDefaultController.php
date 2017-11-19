@@ -12,7 +12,6 @@ use League\Tactician\CommandBus;
 use MediaMonks\RestApiBundle\Response\OffsetPaginatedResponse;
 use Psr\Cache\CacheItemPoolInterface as Cache;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>

@@ -48,7 +48,7 @@ class Player
      * @Gedmo\Slug(fields={"gamerTag"}, updatable=false)
      * @ORM\Column(name="slug", type="string", length=255, unique=true)
      *
-     * @Serializer\Groups({"players_overview", "tournaments_results"})
+     * @Serializer\Groups({"players_overview", "tournaments_results", "tournaments_overview", "tournaments_details"})
      */
     private $slug;
 
@@ -71,7 +71,7 @@ class Player
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
      *
-     * @Serializer\Groups({"players_overview"})
+     * @Serializer\Groups({"players_overview", "tournaments_details"})
      *
      * @TODO The serializer doesn't serialize null values.
      */
@@ -82,7 +82,7 @@ class Player
      *
      * @ORM\Column(name="gamer_tag", type="string")
      *
-     * @Serializer\Groups({"players_overview", "tournaments_results"})
+     * @Serializer\Groups({"players_overview", "tournaments_results", "tournaments_overview", "tournaments_details"})
      */
     private $gamerTag;
 
@@ -92,7 +92,7 @@ class Player
      * @ORM\ManyToOne(targetEntity="Country", inversedBy="playersNationalities")
      * @ORM\JoinColumn(onDelete="SET NULL")
      *
-     * @Serializer\Groups({"players_overview"})
+     * @Serializer\Groups({"players_overview", "tournaments_details"})
      */
     private $nationality;
 
@@ -102,7 +102,7 @@ class Player
      * @ORM\ManyToOne(targetEntity="Country", inversedBy="playersCountries")
      * @ORM\JoinColumn(onDelete="SET NULL")
      *
-     * @Serializer\Groups({"players_overview"})
+     * @Serializer\Groups({"players_overview", "tournaments_details"})
      */
     private $country;
 
@@ -111,7 +111,7 @@ class Player
      *
      * @ORM\Column(name="region", type="string", length=255, nullable=true)
      *
-     * @Serializer\Groups({"players_overview"})
+     * @Serializer\Groups({"players_overview", "tournaments_details"})
      */
     private $region;
 
@@ -120,7 +120,7 @@ class Player
      *
      * @ORM\Column(name="city", type="string", length=255, nullable=true)
      *
-     * @Serializer\Groups({"players_overview"})
+     * @Serializer\Groups({"players_overview", "tournaments_details"})
      */
     private $city;
 
@@ -167,6 +167,8 @@ class Player
      *     @ORM\JoinColumn(name="character_id", referencedColumnName="id", onDelete="CASCADE")
      *  }
      * )
+     *
+     * @Serializer\Groups({"players_overview"})
      */
     private $mains;
 
@@ -181,6 +183,8 @@ class Player
      *     @ORM\JoinColumn(name="character_id", referencedColumnName="id", onDelete="CASCADE")
      *  }
      * )
+     *
+     * @Serializer\Groups({"players_overview"})
      */
     private $secondaries;
 

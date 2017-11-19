@@ -51,7 +51,7 @@ class PlayerController extends AbstractDefaultController
         $page = $request->get('page');
         $limit = $request->get('limit');
 
-        $command = new SetsCommand($slug, $page, $limit);
+        $command = new SetsCommand($slug, null, false, $page, $limit);
         $sets = $this->commandBus->handle($command);
 
         return $this->buildPaginatedResponse($sets, 'players_sets');

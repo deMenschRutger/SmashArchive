@@ -48,6 +48,8 @@ class Tournament
      * @var string
      *
      * @ORM\Column(name="source", type="string", length=255)
+     *
+     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $source = self::SOURCE_CUSTOM;
 
@@ -144,6 +146,8 @@ class Tournament
      * @var int
      *
      * @ORM\Column(name="entrant_count", type="integer", nullable=true)
+     *
+     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $entrantCount;
 
@@ -175,6 +179,8 @@ class Tournament
      *
      * @ORM\ManyToMany(targetEntity="Player", inversedBy="tournamentsOrganized")
      * @ORM\JoinTable(name="tournaments_organizers")
+     *
+     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $organizers;
 
