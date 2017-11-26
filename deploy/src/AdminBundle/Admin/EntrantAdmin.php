@@ -60,10 +60,11 @@ class EntrantAdmin extends AbstractAdmin
         $rootAlias = $query->getRootAliases()[0];
 
         $query
-            ->select($rootAlias.', p, pe, oe, t')
+            ->select($rootAlias.', p, pe, op, oe, t')
             ->leftJoin($rootAlias.'.players', 'p')
             ->leftJoin($rootAlias.'.parentEntrant', 'pe')
-            ->leftJoin($rootAlias.'.originEvent', 'oe')
+            ->leftJoin($rootAlias.'.originPhase', 'op')
+            ->leftJoin('op.event', 'oe')
             ->leftJoin('oe.tournament', 't');
         ;
 
@@ -104,7 +105,7 @@ class EntrantAdmin extends AbstractAdmin
 
         $queryBuilder
             ->where("{$rootAlias}.{$property} LIKE :name")
-            ->andWhere("{$rootAlias}.originEvent IS NOT NULL")
+            ->andWhere("{$rootAlias}.originPhase IS NOT NULL")
             ->setParameter('name', '%'.$value.'%')
         ;
     }
@@ -166,8 +167,8 @@ class EntrantAdmin extends AbstractAdmin
         $datagridMapper
             ->add('name')
             ->add('isNew')
-            ->add('originEvent.name', null, [
-                'label' => 'Origin event',
+            ->add('originPhase.name', null, [
+                'label' => 'Origin phase',
             ])
             ->add('originTournament', 'doctrine_orm_callback', [
                 'callback'   => [$this, 'filterTournamentName'],
@@ -200,8 +201,14 @@ class EntrantAdmin extends AbstractAdmin
                 'label' => 'Parent',
             ])
             ->add('players')
-            ->add('originEventExpandedName', null, [
-                'label' => 'Origin event',
+            ->add('originPhase.name', null, [
+                'label' => 'Phase',
+            ])
+            ->add('originPhase.event.name', null, [
+                'label' => 'Event',
+            ])
+            ->add('originPhase.event.tournament.name', null, [
+                'label' => 'Tournament',
             ])
             ->add('isNew', null, [
                 'editable' => true,

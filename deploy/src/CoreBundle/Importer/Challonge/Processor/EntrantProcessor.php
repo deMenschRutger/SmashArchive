@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace CoreBundle\Importer\Challonge\Processor;
 
 use CoreBundle\Entity\Entrant;
-use CoreBundle\Entity\Event;
+use CoreBundle\Entity\Phase;
 use CoreBundle\Importer\AbstractProcessor;
 use Reflex\Challonge\Models\Participant;
 
@@ -43,9 +43,9 @@ class EntrantProcessor extends AbstractProcessor
 
     /**
      * @param Participant $entrantData
-     * @param Event       $event
+     * @param Phase       $phase
      */
-    public function processNew(Participant $entrantData, Event $event)
+    public function processNew(Participant $entrantData, Phase $phase)
     {
         $entrantId = $entrantData->{'id'};
 
@@ -65,7 +65,7 @@ class EntrantProcessor extends AbstractProcessor
         }
 
         $entrant->setName($entrantData->{'name'});
-        $entrant->setOriginEvent($event);
+        $entrant->setOriginPhase($phase);
 
         $this->entrants[$entrantId] = $entrant;
     }

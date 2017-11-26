@@ -344,17 +344,17 @@ class Importer extends AbstractImporter
         $processor = new EntrantProcessor($this->entityManager);
 
         foreach ($groups as $phaseGroupData) {
-            $event = null;
+            $phase = null;
             $phaseGroup = $this->phaseGroupProcessor->findPhaseGroup($phaseGroupData['id']);
 
             if ($phaseGroup instanceof PhaseGroup) {
-                $event = $phaseGroup->getPhase()->getEvent();
+                $phase = $phaseGroup->getPhase();
             }
 
             $entrants = $this->smashgg->getPhaseGroupEntrants($phaseGroupData['id']);
 
             foreach ($entrants as $entrantData) {
-                $processor->processNew($entrantData, $this->playerProcessor, $event);
+                $processor->processNew($entrantData, $this->playerProcessor, $phase);
             }
         }
 

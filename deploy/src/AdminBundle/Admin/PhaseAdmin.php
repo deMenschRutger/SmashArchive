@@ -89,8 +89,8 @@ class PhaseAdmin extends AbstractAdmin
     {
         $datagridMapper
             ->add('name')
-            ->add('event')
-            ->add('event.tournament', null, [
+            ->add('event.name')
+            ->add('event.tournament.name', null, [
                 'label' => 'Tournament',
             ])
         ;

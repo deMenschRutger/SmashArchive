@@ -6,6 +6,7 @@ namespace CoreBundle\Importer\Smashgg\Processor;
 
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Event;
+use CoreBundle\Entity\Phase;
 use CoreBundle\Importer\AbstractProcessor;
 
 /**
@@ -45,11 +46,11 @@ class EntrantProcessor extends AbstractProcessor
     /**
      * @param array           $entrantData
      * @param PlayerProcessor $playerProcessor
-     * @param Event           $event
+     * @param Phase           $phase
      *
      * @TODO Also remove players that are no longer part of the entrant.
      */
-    public function processNew(array $entrantData, PlayerProcessor $playerProcessor, Event $event = null)
+    public function processNew(array $entrantData, PlayerProcessor $playerProcessor, Phase $phase = null)
     {
         $entrantId = $entrantData['id'];
 
@@ -70,7 +71,7 @@ class EntrantProcessor extends AbstractProcessor
         }
 
         $entrant->setName($entrantData['name']);
-        $entrant->setOriginEvent($event);
+        $entrant->setOriginPhase($phase);
 
         foreach ($entrantData['playerIds'] as $playerId) {
             $player = $playerProcessor->findPlayer($playerId);

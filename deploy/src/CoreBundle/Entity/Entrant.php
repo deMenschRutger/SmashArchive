@@ -58,14 +58,14 @@ class Entrant
     private $isNew = true;
 
     /**
-     * The event that resulted in the player becoming a part of the database.
+     * The phase that - when imported - resulted in the player becoming a part of the database.
      *
-     * @var Event
+     * @var Phase
      *
-     * @ORM\ManyToOne(targetEntity="Event")
+     * @ORM\ManyToOne(targetEntity="Phase")
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
-    private $originEvent;
+    private $originPhase;
 
     /**
      * @var Entrant
@@ -151,21 +151,26 @@ class Entrant
      */
     public function getExpandedName()
     {
-        $event = 'Unknown event';
-        $tournament = 'Unknown tournament';
+        $id = $this->getId();
+        $phase = $this->getOriginPhase();
 
-        $originEvent = $this->getOriginEvent();
-
-        if ($originEvent instanceof Event) {
-            $event = $originEvent->getName();
-            $originTournament = $originEvent->getTournament();
-
-            if ($originTournament instanceof Tournament) {
-                $tournament = $originTournament->getName();
-            }
+        if (!$phase instanceof Phase) {
+            return sprintf('%s (#%s) | unknown phase | unknown event | unknown tournament', $this->name, $id);
         }
 
-        return sprintf('%s | %s (%s) | #%s', $this->name, $event, $tournament, $this->getId());
+        $event = $phase->getEvent();
+
+        if (!$event instanceof Event) {
+            return sprintf('%s (#%s) | %s | unknown event | unknown tournament', $this->name, $id, $phase->getName());
+        }
+
+        $tournament = $event->getTournament();
+
+        if (!$tournament instanceof Tournament) {
+            return sprintf('%s (#%s) | %s | %s | unknown tournament', $this->name, $id, $phase->getName(), $event->getName());
+        }
+
+        return sprintf('%s (#%s) | %s | %s | %s', $this->name, $id, $phase->getName(), $event->getName(), $tournament->getName());
     }
 
     /**
@@ -215,31 +220,31 @@ class Entrant
     }
 
     /**
-     * @return Event
+     * @return Phase
      */
-    public function getOriginEvent()
+    public function getOriginPhase()
     {
-        return $this->originEvent;
+        return $this->originPhase;
     }
 
     /**
      * @return string
      */
-    public function getOriginEventExpandedName()
+    public function getOriginPhaseExpandedName()
     {
-        if (!$this->originEvent instanceof Event) {
+        if (!$this->originPhase instanceof Phase) {
             return null;
         }
 
-        return $this->originEvent->getExpandedName();
+        return $this->originPhase->getName();
     }
 
     /**
-     * @param Event $originEvent
+     * @param Phase $originPhase
      */
-    public function setOriginEvent(Event $originEvent)
+    public function setOriginPhase($originPhase)
     {
-        $this->originEvent = $originEvent;
+        $this->originPhase = $originPhase;
     }
 
     /**
@@ -394,6 +399,12 @@ class Entrant
      */
     public function getTournament()
     {
+        $originPhase = $this->getOriginPhase();
+
+        if ($originPhase instanceof Phase) {
+            return $originPhase->getEvent()->getTournament();
+        }
+
         $sets = $this->getEntrantOneSets();
 
         if (count($sets) === 0) {
