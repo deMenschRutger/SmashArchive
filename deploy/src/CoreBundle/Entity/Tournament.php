@@ -145,11 +145,11 @@ class Tournament
     /**
      * @var int
      *
-     * @ORM\Column(name="entrant_count", type="integer", nullable=true)
+     * @ORM\Column(name="player_count", type="integer", nullable=true)
      *
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
-    private $entrantCount;
+    private $playerCount;
 
     /**
      * @var bool
@@ -383,17 +383,17 @@ class Tournament
     /**
      * @return int
      */
-    public function getEntrantCount()
+    public function getPlayerCount()
     {
-        return $this->entrantCount;
+        return $this->playerCount;
     }
 
     /**
      * @return void
      */
-    public function setEntrantCount()
+    public function setPlayerCount()
     {
-        $this->entrantCount = count($this->getPlayers());
+        $this->playerCount = count($this->getPlayers());
     }
 
     /**

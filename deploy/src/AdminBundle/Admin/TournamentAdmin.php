@@ -160,6 +160,7 @@ class TournamentAdmin extends AbstractAdmin
             ->add('city')
             ->add('dateStart')
             ->add('organizers')
+            ->add('playerCount')
             ->add('isActive')
             ->end()
             ->with('Additional information')

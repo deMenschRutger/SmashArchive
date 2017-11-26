@@ -126,11 +126,11 @@ class Importer extends AbstractImporter
         $this->io->writeln('Flushing the entity manager...');
         $this->entityManager->flush();
 
-        $this->io->writeln('Counting entrants for the tournament...');
+        $this->io->writeln('Counting confirmed players for the tournament...');
         $this->entityManager->clear();
 
         $this->tournament = $this->getRepository('CoreBundle:Tournament')->find($this->tournament->getId());
-        $this->tournament->setEntrantCount();
+        $this->tournament->setPlayerCount();
 
         $this->io->writeln('Flushing the entity manager...');
         $this->entityManager->flush();

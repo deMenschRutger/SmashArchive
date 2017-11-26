@@ -60,6 +60,15 @@ class Event
     private $description;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="entrant_count", type="integer", nullable=true)
+     *
+     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     */
+    private $entrantCount;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Tournament", inversedBy="events")
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
@@ -166,6 +175,22 @@ class Event
     public function setDescription($description)
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return int
+     */
+    public function getEntrantCount()
+    {
+        return $this->entrantCount;
+    }
+
+    /**
+     * @param int $entrantCount
+     */
+    public function setEntrantCount($entrantCount)
+    {
+        $this->entrantCount = $entrantCount;
     }
 
     /**

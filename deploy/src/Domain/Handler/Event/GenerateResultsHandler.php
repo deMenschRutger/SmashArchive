@@ -70,7 +70,16 @@ class GenerateResultsHandler extends AbstractHandler
         }
 
         $this->io->writeln('Flushing entity manager...');
+        $this->entityManager->flush();
 
+        $this->io->writeln('Counting confirmed players for the tournament...');
+        $event->getTournament()->setPlayerCount();
+
+        $this->io->writeln('Counting unique entrants...');
+        $entrantCount = $eventRepository->countUniqueEntrants($command->getEventId());
+        $event->setEntrantCount($entrantCount);
+
+        $this->io->writeln('Flushing entity manager...');
         $this->entityManager->flush();
         $this->entityManager->clear();
 

@@ -59,6 +59,26 @@ class EventRepository extends EntityRepository
     }
 
     /**
+     * @param int $eventId
+     * @return int
+     */
+    public function countUniqueEntrants($eventId)
+    {
+        return (int) $this
+            ->_em
+            ->createQueryBuilder()
+            ->select('COUNT(en.id)')
+            ->from('CoreBundle:Entrant', 'en')
+            ->join('en.originEvent', 'ev')
+            ->where('ev.id = :id')
+            ->andWhere('en.parentEntrant IS NULL')
+            ->setParameter('id', $eventId)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
+    /**
      * @param Event $event
      */
     public function deleteResults(Event $event)

@@ -173,7 +173,7 @@ class Importer extends AbstractImporter
         $this->entityManager->flush();
 
         $this->io->text('Counting entrants per tournament...');
-        $this->countEntrants();
+        $this->countPlayers();
 
         $this->io->text('Flushing entity manager...');
         $this->entityManager->flush();
@@ -526,11 +526,11 @@ class Importer extends AbstractImporter
     /**
      * @return void
      */
-    protected function countEntrants()
+    protected function countPlayers()
     {
         /** @var Tournament $tournament */
         foreach ($this->tournaments as $tournament) {
-            $tournament->setEntrantCount();
+            $tournament->setPlayerCount();
         }
     }
 }
