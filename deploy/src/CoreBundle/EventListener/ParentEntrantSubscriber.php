@@ -16,6 +16,19 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 class ParentEntrantSubscriber implements EventSubscriber
 {
     /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    /**
      * @return array
      */
     public function getSubscribedEvents()
@@ -58,21 +71,21 @@ class ParentEntrantSubscriber implements EventSubscriber
                 $newParentEntrant = $entity;
             }
 
-            $this->updateParentEntrantSets($oldParentEntrant, $newParentEntrant, $entity->getOriginPhase(), $entityManager);
+            $this->updateParentEntrantSets($oldParentEntrant, $newParentEntrant, $entity->getOriginPhase());
         }
 
         $unitOfWork->computeChangeSets();
     }
 
     /**
-     * @param Entrant                $oldParentEntrant
-     * @param Entrant                $newParentEntrant
-     * @param Phase                  $originPhase
-     * @param EntityManagerInterface $entityManager
+     * @param Entrant $oldParentEntrant
+     * @param Entrant $newParentEntrant
+     * @param Phase   $originPhase
      */
-    protected function updateParentEntrantSets($oldParentEntrant, $newParentEntrant, $originPhase, $entityManager)
+    protected function updateParentEntrantSets($oldParentEntrant, $newParentEntrant, $originPhase)
     {
-        $sets = $entityManager
+        $sets = $this
+            ->entityManager
             ->getRepository('CoreBundle:Set')
             ->findByEntrantIdAndPhaseId($oldParentEntrant->getId(), $originPhase->getId())
         ;

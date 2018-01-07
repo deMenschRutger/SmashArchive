@@ -22,6 +22,8 @@ services:
 
     core.doctrine.subscriber.parent_entrant:
         class: CoreBundle\EventListener\ParentEntrantSubscriber
+        arguments:
+            - '@doctrine.orm.entity_manager'
         tags:
             - { name: doctrine.event_subscriber, connection: default }
 
