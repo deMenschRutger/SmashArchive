@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Admin;
 
-use CoreBundle\Entity\Player;
-use CoreBundle\Utility\CacheManager;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -15,43 +13,14 @@ use Sonata\AdminBundle\Show\ShowMapper;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class PlayerAdmin extends AbstractAdmin
+class PlayerProfileAdmin extends AbstractAdmin
 {
-    /**
-     * @var CacheManager
-     */
-    protected $cacheManager;
-
     /**
      * @var array
      */
     protected $datagridValues = [
-        '_sort_by' => 'name',
+        '_sort_by' => 'gamerTag',
     ];
-
-    /**
-     * @param CacheManager $cacheManager
-     */
-    public function setCacheManager($cacheManager)
-    {
-        $this->cacheManager = $cacheManager;
-    }
-
-    /**
-     * @param Player $player
-     */
-    public function postUpdate($player)
-    {
-        $this->cacheManager->onPlayerChange($player);
-    }
-
-    /**
-     * @param Player $player
-     */
-    public function preRemove($player)
-    {
-        $this->cacheManager->onPlayerChange($player);
-    }
 
     /**
      * @param FormMapper $formMapper
@@ -59,18 +28,21 @@ class PlayerAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
+            ->with('Basics')
+            ->add('gamerTag')
             ->add('name')
-            ->add('type') // TODO Make this a choice field.
-            ->add('externalId', null, [
-                'disabled' => true,
-            ])
-            ->add('originTournament', 'sonata_type_model_autocomplete', [
-                'property' => 'name',
-            ])
-            ->add('playerProfile', 'sonata_type_model_autocomplete', [
-                'minimum_input_length' => 2,
-                'property' => 'gamerTag',
-            ])
+            ->add('region')
+            ->add('city')
+            ->add('country')
+            ->add('nationality')
+            ->end()
+            ->with('Characters')
+            ->add('mains')
+            ->add('secondaries')
+            ->end()
+            ->with('Status')
+            ->add('isActive')
+            ->end()
         ;
     }
 
@@ -80,9 +52,13 @@ class PlayerAdmin extends AbstractAdmin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
+            ->add('gamerTag')
             ->add('name')
-            ->add('originTournament.name')
-            ->add('playerProfile.gamerTag')
+            ->add('region')
+            ->add('city')
+            ->add('country')
+            ->add('nationality')
+            ->add('isActive')
         ;
     }
 
@@ -93,11 +69,17 @@ class PlayerAdmin extends AbstractAdmin
     {
         $show
             ->add('id')
+            ->add('slug')
+            ->add('gamerTag')
             ->add('name')
-            ->add('type')
-            ->add('externalId')
-            ->add('originTournament')
-            ->add('playerProfile')
+            ->add('region')
+            ->add('city')
+            ->add('country')
+            ->add('nationality')
+            ->add('mains')
+            ->add('secondaries')
+            ->add('isCompeting')
+            ->add('isActive')
             ->add('createdAt')
             ->add('updatedAt')
         ;
@@ -109,10 +91,10 @@ class PlayerAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('name')
-            ->add('type')
-            ->add('originTournament')
-            ->add('playerProfile')
+            ->addIdentifier('gamerTag')
+            ->add('name')
+            ->add('region')
+            ->add('country')
         ;
 
         $listMapper->add(

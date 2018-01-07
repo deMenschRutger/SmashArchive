@@ -6,6 +6,7 @@ security:
             - ROLE_ADMIN_PHASE_ALL
             - ROLE_ADMIN_PHASE_GROUP_ALL
             - ROLE_ADMIN_PLAYER_ALL
+            - ROLE_ADMIN_PLAYER_PROFILE_ALL
             - ROLE_ADMIN_TOURNAMENT_ALL
             - ROLE_MANAGER
         ROLE_SUPER_ADMIN:
