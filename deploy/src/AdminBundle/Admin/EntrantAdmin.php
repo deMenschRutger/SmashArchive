@@ -128,8 +128,8 @@ class EntrantAdmin extends AbstractAdmin
             ->add('parentEntrant', 'sonata_type_model_autocomplete', [
                 'label' => 'Parent',
                 'help' => join([
-                    'Please note: configuring a parent entrant and saving this form will assign all matches played by this entrant to the',
-                    ' parent entrant. This action can not be undone.',
+                    'Please note: configuring a parent entrant and saving this form will assign all matches played by this entrant to the ',
+                    'parent entrant.',
                 ]),
                 'minimum_input_length' => 2,
                 'property' => 'name',

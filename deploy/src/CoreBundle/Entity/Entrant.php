@@ -267,28 +267,6 @@ class Entrant
      */
     public function setParentEntrant($parentEntrant)
     {
-        if ($parentEntrant instanceof Entrant && $this->parentEntrant !== $parentEntrant) {
-            foreach ($this->getEntrantOneSets() as $set) {
-                $set->setEntrantOne($parentEntrant);
-
-                if ($set->getWinner() === $this) {
-                    $set->setWinner($parentEntrant);
-                } elseif ($set->getLoser() === $this) {
-                    $set->setLoser($parentEntrant);
-                }
-            }
-
-            foreach ($this->getEntrantTwoSets() as $set) {
-                $set->setEntrantTwo($parentEntrant);
-
-                if ($set->getWinner() === $this) {
-                    $set->setWinner($parentEntrant);
-                } elseif ($set->getLoser() === $this) {
-                    $set->setLoser($parentEntrant);
-                }
-            }
-        }
-
         $this->parentEntrant = $parentEntrant;
     }
 

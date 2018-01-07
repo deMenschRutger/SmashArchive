@@ -7,12 +7,6 @@ services:
         calls:
             - [ 'setKey', [ '%encryption_key%' ] ]
 
-    core.service.cache.manager:
-        class: CoreBundle\Utility\CacheManager
-        arguments:
-            - '@cache.provider.filesystem'
-            - '@doctrine.orm.entity_manager'
-
     core.security.provider.user:
         class: CoreBundle\Security\Core\User\HWIOAuthUserProvider\UserProvider
         arguments:
@@ -25,6 +19,17 @@ services:
         class: CoreBundle\Tactician\Middleware\StopwatchMiddleware
         arguments:
             - '@debug.stopwatch'
+
+    core.doctrine.subscriber.parent_entrant:
+        class: CoreBundle\EventListener\ParentEntrantSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+
+    core.service.cache.manager:
+        class: CoreBundle\Utility\CacheManager
+        arguments:
+            - '@cache.provider.filesystem'
+            - '@doctrine.orm.entity_manager'
 
     core.service.smashgg:
         class: CoreBundle\Service\Smashgg\Smashgg

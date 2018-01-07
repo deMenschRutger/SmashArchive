@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Repository;
 
+use CoreBundle\Entity\Set;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -35,6 +36,33 @@ class SetRepository extends EntityRepository
             ->andWhere('ev.id = :eventId')
             ->setParameter('eventId', $eventId)
             ->getQuery()
+        ;
+    }
+
+    /**
+     * @param string $entrantId
+     * @param string $phaseId
+     * @return Set[]
+     */
+    public function findByEntrantIdAndPhaseId($entrantId, $phaseId)
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+
+        return $queryBuilder
+            ->select('s, pg, ph, e1, e2')
+            ->join('s.phaseGroup', 'pg')
+            ->join('pg.phase', 'ph')
+            ->leftJoin('s.entrantOne', 'e1')
+            ->leftJoin('s.entrantTwo', 'e2')
+            ->where('ph.id = :phaseId')
+            ->andWhere($queryBuilder->expr()->orX(
+                $queryBuilder->expr()->eq('e1.id', ':id'),
+                $queryBuilder->expr()->eq('e2.id', ':id')
+            ))
+            ->setParameter('id', $entrantId)
+            ->setParameter('phaseId', $phaseId)
+            ->getQuery()
+            ->getResult()
         ;
     }
 
