@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace AdminBundle\Admin;
 
 use CoreBundle\Entity\Entrant;
+use CoreBundle\Entity\Event;
+use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\Player;
 use CoreBundle\Utility\CacheManager;
 use Doctrine\ORM\QueryBuilder;
@@ -100,6 +102,8 @@ class EntrantAdmin extends AbstractAdmin
 
     /**
      * @param FormMapper $formMapper
+     *
+     * @TODO Fix the autocomplete on the players association.
      */
     protected function configureFormFields(FormMapper $formMapper)
     {
@@ -117,10 +121,10 @@ class EntrantAdmin extends AbstractAdmin
             ->add('players', 'sonata_type_model_autocomplete', [
                 'minimum_input_length' => 2,
                 'multiple' => true,
-                'property' => 'gamerTag',
+                'property' => 'name',
                 'required' => false,
                 'to_string_callback' => function (Player $entity) {
-                    return $entity->getExpandedGamerTag();
+                    return $entity->getName();
                 },
             ])
             ->end()
@@ -128,8 +132,8 @@ class EntrantAdmin extends AbstractAdmin
             ->add('parentEntrant', 'sonata_type_model_autocomplete', [
                 'label' => 'Parent',
                 'help' => join([
-                    'Please note: configuring a parent entrant and saving this form will assign all matches played by this entrant to the ',
-                    'parent entrant.',
+                    'Please note: configuring a parent entrant and saving this form will assign all matches played by this entrant to ',
+                    'the parent entrant.',
                 ]),
                 'minimum_input_length' => 2,
                 'property' => 'name',
@@ -138,7 +142,7 @@ class EntrantAdmin extends AbstractAdmin
                     'name' => 'admin_core_event_entrants',
                     'parameters' => [
                         'id' => $event->getId(),
-                        'exclude' => [$entrant->getId()],
+                        'exclude' => [$entrant->getId()], // TODO Exclude all players from the corresponding phase.
                     ],
                 ],
                 'to_string_callback' => function (Entrant $entity) {

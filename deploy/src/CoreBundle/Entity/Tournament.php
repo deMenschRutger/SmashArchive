@@ -181,6 +181,8 @@ class Tournament
      * @ORM\JoinTable(name="tournaments_organizers")
      *
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     *
+     * @TODO Should be associated with PlayerProfile instead of Player.
      */
     private $organizers;
 
