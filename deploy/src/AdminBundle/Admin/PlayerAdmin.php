@@ -111,7 +111,7 @@ class PlayerAdmin extends AbstractAdmin
             ->add('nationality')
             ->add('isActive')
             ->add('isNew')
-            ->add('originTournament')
+            ->add('originTournament.name')
         ;
     }
 
