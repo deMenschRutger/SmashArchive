@@ -8,6 +8,7 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
 
 /**
@@ -15,6 +16,14 @@ use Sonata\AdminBundle\Show\ShowMapper;
  */
 class EventAdmin extends AbstractAdmin
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function configureRoutes(RouteCollection $collection)
+    {
+        $collection->add('entrants', $this->getRouterIdParameter().'/entrants');
+    }
+
     /**
      * @param FormMapper $formMapper
      */

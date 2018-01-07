@@ -5,12 +5,39 @@ declare(strict_types = 1);
 namespace CoreBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
 class EntrantRepository extends EntityRepository
 {
+    /**
+     * @param int    $eventId
+     * @param string $name
+     * @return Query
+     */
+    public function findByEventId($eventId, $name = null)
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('en')
+            ->select('en')
+            ->join('en.originPhase', 'p')
+            ->join('p.event', 'e')
+            ->where('e.id = :eventId')
+            ->setParameter('eventId', $eventId)
+        ;
+
+        if ($name) {
+            $queryBuilder
+                ->andWhere('en.name LIKE :name')
+                ->setParameter('name', "%{$name}%")
+            ;
+        }
+
+        return $queryBuilder->getQuery();
+    }
+
     /**
      * @param string|array $slugs
      * @return array

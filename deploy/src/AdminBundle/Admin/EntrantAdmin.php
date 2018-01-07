@@ -123,6 +123,10 @@ class EntrantAdmin extends AbstractAdmin
      */
     protected function configureFormFields(FormMapper $formMapper)
     {
+        /** @var Entrant $entrant */
+        $entrant = $this->getSubject();
+        $event = $entrant->getOriginPhase()->getEvent();
+
         $formMapper
             ->with('Basics')
             ->add('id', null, [
@@ -146,11 +150,18 @@ class EntrantAdmin extends AbstractAdmin
                 'label' => 'Parent',
                 'help' => join([
                     'Please note: configuring a parent entrant and saving this form will assign all matches played by this entrant to the',
-                    'parent entrant. This action can not be undone.',
+                    ' parent entrant. This action can not be undone.',
                 ]),
                 'minimum_input_length' => 2,
                 'property' => 'name',
                 'required' => false,
+                'route' => [
+                    'name' => 'admin_core_event_entrants',
+                    'parameters' => [
+                        'id' => $event->getId(),
+                        'id' => $event->getId(),
+                    ],
+                ],
                 'to_string_callback' => function (Entrant $entity) {
                     return $entity->getExpandedName();
                 },
