@@ -15,9 +15,10 @@ class EntrantRepository extends EntityRepository
     /**
      * @param int    $eventId
      * @param string $name
+     * @param array  $exclude
      * @return Query
      */
-    public function findByEventId($eventId, $name = null)
+    public function findByEventId($eventId, $name = null, $exclude = null)
     {
         $queryBuilder = $this
             ->createQueryBuilder('en')
@@ -32,6 +33,13 @@ class EntrantRepository extends EntityRepository
             $queryBuilder
                 ->andWhere('en.name LIKE :name')
                 ->setParameter('name', "%{$name}%")
+            ;
+        }
+
+        if (is_array($exclude)) {
+            $queryBuilder
+                ->andWhere('en.id NOT IN (:exclude)')
+                ->setParameter('exclude', $exclude)
             ;
         }
 

@@ -22,11 +22,12 @@ class EventController extends AbstractController
     public function entrantsAction(Request $request, $id)
     {
         $name = $request->query->get('q');
+        $exclude = $request->query->get('exclude');
         $page = $request->query->getInt('_page');
         $limit = $request->query->getInt('_per_page');
 
         $paginator = $this->get('knp_paginator');
-        $query = $this->getEntityManager()->getRepository('CoreBundle:Entrant')->findByEventId($id, $name);
+        $query = $this->getEntityManager()->getRepository('CoreBundle:Entrant')->findByEventId($id, $name, $exclude);
         $entrants = $paginator->paginate($query, $page, $limit);
 
         $items = [];

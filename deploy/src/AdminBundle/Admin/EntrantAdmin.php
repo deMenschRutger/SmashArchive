@@ -91,26 +91,6 @@ class EntrantAdmin extends AbstractAdmin
     }
 
     /**
-     * @param AbstractAdmin $admin
-     * @param string        $property
-     * @param mixed         $value
-     */
-    public function completeParentEntrant(AbstractAdmin $admin, $property, $value)
-    {
-        $datagrid = $admin->getDatagrid();
-
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $datagrid->getQuery();
-        $rootAlias = $queryBuilder->getRootAlias();
-
-        $queryBuilder
-            ->where("{$rootAlias}.{$property} LIKE :name")
-            ->andWhere("{$rootAlias}.originPhase IS NOT NULL")
-            ->setParameter('name', '%'.$value.'%')
-        ;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function configureRoutes(RouteCollection $collection)
@@ -146,7 +126,6 @@ class EntrantAdmin extends AbstractAdmin
             ->end()
             ->with('Parent Entrant')
             ->add('parentEntrant', 'sonata_type_model_autocomplete', [
-                'callback' => [$this, 'completeParentEntrant'],
                 'label' => 'Parent',
                 'help' => join([
                     'Please note: configuring a parent entrant and saving this form will assign all matches played by this entrant to the',
@@ -159,7 +138,7 @@ class EntrantAdmin extends AbstractAdmin
                     'name' => 'admin_core_event_entrants',
                     'parameters' => [
                         'id' => $event->getId(),
-                        'id' => $event->getId(),
+                        'exclude' => [$entrant->getId()],
                     ],
                 ],
                 'to_string_callback' => function (Entrant $entity) {
