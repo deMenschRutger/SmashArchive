@@ -9,6 +9,7 @@ use CoreBundle\Entity\Country;
 use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Player;
+use CoreBundle\Entity\PlayerProfile;
 use CoreBundle\Entity\Series;
 use CoreBundle\Entity\Set;
 use CoreBundle\Entity\Tournament;
@@ -225,44 +226,50 @@ class Importer extends AbstractImporter
                 $tag = $tagMatches[1];
             }
 
-            $entity = new Player();
-            $entity->setSmashRankingId($playerId);
-            $entity->setName($player['name'] ? $player['name'] : null);
-            $entity->setGamerTag($tag);
-            $entity->setNationality($nationality);
-            $entity->setCountry($country);
-            $entity->setRegion($player['region'] ? $player['region'] : null);
-            $entity->setCity($player['city'] ?  $player['city'] : null);
-            $entity->setIsActive(!$player['hide']);
-            $entity->setIsNew(false);
+            $profile = new PlayerProfile();
+            $profile->setName($player['name'] ? $player['name'] : null);
+            $profile->setGamerTag($tag);
+            $profile->setNationality($nationality);
+            $profile->setCountry($country);
+            $profile->setRegion($player['region'] ? $player['region'] : null);
+            $profile->setCity($player['city'] ?  $player['city'] : null);
+            $profile->setIsActive(!$player['hide']);
 
             if ($player['smashwiki']) {
-                $entity->setProperty('smashwiki_url', $player['smashwiki']);
+                $profile->setProperty('smashwiki_url', $player['smashwiki']);
             }
 
             if ($player['twitter']) {
-                $entity->setProperty('twitter_url', $player['twitter']);
+                $profile->setProperty('twitter_url', $player['twitter']);
             }
 
             if ($player['twitch']) {
-                $entity->setProperty('twitch_url', $player['twitch']);
+                $profile->setProperty('twitch_url', $player['twitch']);
             }
 
             if ($player['youtube']) {
-                $entity->setProperty('youtube_url', $player['youtube']);
+                $profile->setProperty('youtube_url', $player['youtube']);
             }
 
             if ($player['main']) {
                 $character = $this->getCharacterBySmashRankingId($player['main']);
-                $entity->addMain($character);
+                $profile->addMain($character);
             }
 
             if ($player['secondary']) {
                 $character = $this->getCharacterBySmashRankingId($player['secondary']);
-                $entity->addSecondary($character);
+                $profile->addSecondary($character);
             }
 
+            $entity = new Player();
+            $entity->setName($player['name'] ? $player['name'] : null);
+            $entity->setType(Player::SOURCE_SMASHRANKING);
+            $entity->setExternalId($playerId);
+            $entity->setPlayerProfile($profile);
+
+            $this->entityManager->persist($profile);
             $this->entityManager->persist($entity);
+
             $player = $entity;
         }
 
@@ -511,7 +518,7 @@ class Importer extends AbstractImporter
         $player = $this->getPlayerById($playerId);
 
         $entrant = new Entrant();
-        $entrant->setName($player->getGamerTag());
+        $entrant->setName($player->getName());
         $entrant->setIsNew(false);
         $entrant->addPlayer($player);
         $player->addEntrant($entrant);

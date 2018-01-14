@@ -119,9 +119,9 @@
 {% macro entrantWithPath(entrant) %}
 
     {% if entrant %}
-        {% if entrant.isSinglePlayer %}
+        {% if entrant.isSinglePlayer and entrant.hasPlayerProfiles %}
 
-            <a href="{{ path('player_details', { 'slug': entrant.firstPlayer.slug } )}}">{{ entrant.name }}</a>
+            <a href="{{ path('player_details', { 'slug': entrant.firstPlayer.playerProfile.slug } )}}">{{ entrant.name }}</a>
 
         {% else %}
 

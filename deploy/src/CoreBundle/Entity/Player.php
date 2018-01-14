@@ -74,6 +74,8 @@ class Player
      *
      * @ORM\ManyToOne(targetEntity="Tournament")
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
+     * @TODO Do not cascade on delete, legitimate players could be deleted otherwise.
      */
     private $originTournament;
 
@@ -203,6 +205,14 @@ class Player
     public function getPlayerProfile()
     {
         return $this->playerProfile;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPlayerProfile()
+    {
+        return $this->playerProfile instanceof PlayerProfile;
     }
 
     /**

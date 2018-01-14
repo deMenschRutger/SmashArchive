@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Domain\Handler\Player;
 
-use CoreBundle\Entity\Player;
+use CoreBundle\Entity\PlayerProfile;
 use Domain\Command\Player\DetailsCommand;
 use Domain\Handler\AbstractHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -16,15 +16,15 @@ class DetailsHandler extends AbstractHandler
 {
     /**
      * @param DetailsCommand $command
-     * @return Player
+     * @return PlayerProfile
      */
     public function handle(DetailsCommand $command)
     {
-        $player = $this
+        $profile = $this
             ->getEntityManager()
             ->createQueryBuilder()
             ->select('p, c, m, s, gm, sm')
-            ->from('CoreBundle:Player', 'p')
+            ->from('CoreBundle:PlayerProfile', 'p')
             ->leftJoin('p.country', 'c')
             ->leftJoin('p.mains', 'm')
             ->leftJoin('m.game', 'gm')
@@ -36,10 +36,10 @@ class DetailsHandler extends AbstractHandler
             ->getOneOrNullResult()
         ;
 
-        if (!$player instanceof Player) {
+        if (!$profile instanceof PlayerProfile) {
             throw new NotFoundHttpException('The player could not be found.');
         }
 
-        return $player;
+        return $profile;
     }
 }

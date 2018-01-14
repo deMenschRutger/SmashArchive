@@ -182,7 +182,7 @@ class Entrant
 
         if ($players->count() > 0) {
             $players = $players->map(function (Player $player) {
-                return $player->getGamerTag();
+                return $player->getPlayerProfile()->getGamerTag();
             })->toArray();
 
             $joined = join(',', $players);
@@ -317,6 +317,11 @@ class Entrant
      */
     public function getFirstPlayer()
     {
+
+
+        dump($this->getPlayers());
+
+
         return $this->getPlayers()->first();
     }
 
@@ -370,6 +375,20 @@ class Entrant
     public function isTeam()
     {
         return count($this->getPlayers()) > 1;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPlayerProfiles()
+    {
+        foreach ($this->getPlayers() as $player) {
+            if (!$player->hasPlayerProfile()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

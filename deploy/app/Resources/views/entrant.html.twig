@@ -2,7 +2,7 @@
 
     {% if entrant.isSinglePlayer %}
 
-        <a href="{{ url('player_details', { 'slug': entrant.firstPlayer.slug }) }}">
+        <a href="{{ url('player_details', { 'slug': entrant.firstPlayer.playerProfile.slug }) }}">
             {{ entrant.nameWithPlayers }}
         </a>
 
@@ -12,8 +12,8 @@
 
         {% for player in entrant.getPlayers() %}
 
-            <a href="{{ url('player_details', { 'slug': player.slug }) }}">
-                {{ player.gamerTag }}
+            <a href="{{ url('player_details', { 'slug': player.playerProfile.slug }) }}">
+                {{ player.playerProfile.gamerTag }}
             </a>
 
         {% endfor %}

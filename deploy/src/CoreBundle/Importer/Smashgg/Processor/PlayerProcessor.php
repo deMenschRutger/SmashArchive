@@ -6,6 +6,7 @@ namespace CoreBundle\Importer\Smashgg\Processor;
 
 use CoreBundle\Entity\Country;
 use CoreBundle\Entity\Player;
+use CoreBundle\Entity\PlayerProfile;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Importer\AbstractProcessor;
 
@@ -55,24 +56,30 @@ class PlayerProcessor extends AbstractProcessor
         }
 
         $player = $this->entityManager->getRepository('CoreBundle:Player')->findOneBy([
-            'smashggId' => $playerId,
+            'externalId' => $playerId,
+            'type'       => Player::SOURCE_SMASHGG,
         ]);
 
         if (!$player instanceof Player) {
             $player = new Player();
-            $player->setSmashggId($playerId);
-            $player->setGamerTag($playerData['gamerTag']);
+            $player->setName($playerData['gamerTag']);
             $player->setOriginTournament($originTournament);
+            $player->setType(Player::SOURCE_SMASHGG);
+            $player->setExternalId($playerId);
 
             $this->entityManager->persist($player);
         }
 
-        if ($player->getRegion() === null && $playerData['region']) {
-            $player->setRegion($playerData['region']);
-        }
+        $profile = $player->getPlayerProfile();
 
-        if (!$player->getCountry() instanceof Country && $playerData['country']) {
-            $player->setCountry($country);
+        if ($profile instanceof PlayerProfile) {
+            if ($profile->getRegion() === null && $playerData['region']) {
+                $profile->setRegion($playerData['region']);
+            }
+
+            if (!$profile->getCountry() instanceof Country && $playerData['country']) {
+                $profile->setCountry($country);
+            }
         }
 
         $this->players[$playerId] = $player;

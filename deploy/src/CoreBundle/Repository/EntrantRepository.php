@@ -62,8 +62,9 @@ class EntrantRepository extends EntityRepository
             ->select('e.id')
             ->from('CoreBundle:Entrant', 'e')
             ->leftJoin('e.players', 'p')
+            ->leftJoin('p.playerProfile', 'pp')
             ->groupBy('e.id')
-            ->where('p.slug IN (:slugs)')
+            ->where('pp.slug IN (:slugs)')
         ;
 
         $queryBuilder = $this->_em->createQueryBuilder();
