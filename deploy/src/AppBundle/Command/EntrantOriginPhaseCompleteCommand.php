@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace AppBundle\Command;
 
-use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Set;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -55,7 +54,7 @@ class EntrantOriginPhaseCompleteCommand extends ContainerAwareCommand
         $entrants = $this
             ->entityManager
             ->createQueryBuilder()
-            ->select('en.id')
+            ->select('en')
             ->from('CoreBundle:Entrant', 'en')
             ->leftJoin('en.originPhase', 'op')
             ->where('en.originPhase IS NULL')
@@ -68,31 +67,22 @@ class EntrantOriginPhaseCompleteCommand extends ContainerAwareCommand
         $io->progressStart(count($entrants));
 
         foreach ($entrants as $entrant) {
-            $entrantId = $entrant['id'];
-            $sets = $setRepository->findByEntrantId($entrantId);
+            $set = $setRepository->findFirstByEntrant($entrant);
 
-            if (count($sets) === 0) {
+            if (!$set instanceof Set) {
                 continue;
             }
 
-            /** @var Set $set */
-            $set = current($sets);
-            $phaseGroup = $set->getPhaseGroup();
-
-            if (!$phaseGroup instanceof PhaseGroup) {
-                continue;
-            }
-
-            $originPhase = $phaseGroup->getPhase();
+            $originPhase = $set->getPhaseGroup()->getPhase();
 
             $this
                 ->entityManager
                 ->createQueryBuilder()
                 ->update('CoreBundle:Entrant', 'en')
                 ->set('en.originPhase', ':originPhase')
-                ->where('en.id = :id')
+                ->where('en = :entrant')
                 ->setParameter('originPhase', $originPhase)
-                ->setParameter('id', $entrantId)
+                ->setParameter('entrant', $entrant)
                 ->getQuery()
                 ->execute()
             ;

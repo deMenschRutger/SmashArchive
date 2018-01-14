@@ -81,7 +81,7 @@ class SetRepository extends EntityRepository
             ->getQuery()
             ->setMaxResults(1)
             ->getOneOrNullResult()
-            ;
+        ;
     }
 
     /**
