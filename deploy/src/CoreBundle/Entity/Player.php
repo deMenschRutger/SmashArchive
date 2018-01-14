@@ -234,4 +234,32 @@ class Player
     {
         $this->playerProfile = $playerProfile;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getSlug()
+    {
+        $playerProfile = $this->getPlayerProfile();
+
+        if ($playerProfile instanceof PlayerProfile) {
+            return $playerProfile->getSlug();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getGamerTag()
+    {
+        $playerProfile = $this->getPlayerProfile();
+
+        if ($playerProfile instanceof PlayerProfile) {
+            return $playerProfile->getGamerTag();
+        }
+
+        return null;
+    }
 }

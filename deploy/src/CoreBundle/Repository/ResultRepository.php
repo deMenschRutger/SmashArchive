@@ -21,10 +21,11 @@ class ResultRepository extends EntityRepository
         return $this
             ->_em
             ->createQueryBuilder()
-            ->select('r, en, p')
+            ->select('r, en, pl, pp')
             ->from('CoreBundle:Result', 'r')
             ->join('r.entrant', 'en')
-            ->leftJoin('en.players', 'p')
+            ->leftJoin('en.players', 'pl')
+            ->leftJoin('pl.playerProfile', 'pp')
             ->join('r.event', 'e')
             ->join('e.tournament', 't')
             ->where('t.id = :id')
@@ -44,10 +45,11 @@ class ResultRepository extends EntityRepository
         return $this
             ->_em
             ->createQueryBuilder()
-            ->select('r, en, p')
+            ->select('r, en, pl, pp')
             ->from('CoreBundle:Result', 'r')
             ->join('r.entrant', 'en')
-            ->join('en.players', 'p')
+            ->join('en.players', 'pl')
+            ->join('pl.playerProfile', 'pp')
             ->join('r.event', 'e')
             ->where('e.id = :id')
             ->setParameter('id', $eventId)

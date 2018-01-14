@@ -228,19 +228,6 @@ class Entrant
     }
 
     /**
-     * @return string|null
-     * @deprecated
-     */
-    public function getOriginPhaseExpandedName()
-    {
-        if (!$this->originPhase instanceof Phase) {
-            return null;
-        }
-
-        return $this->originPhase->getName();
-    }
-
-    /**
      * @return Event|null
      */
     public function getOriginEvent()
@@ -340,14 +327,6 @@ class Entrant
     }
 
     /**
-     * @return Player
-     */
-    public function getFirstPlayer()
-    {
-        return $this->getPlayers()->first();
-    }
-
-    /**
      * @param Player $player
      */
     public function addPlayer(Player $player)
@@ -411,6 +390,26 @@ class Entrant
     public function isTeam()
     {
         return count($this->getPlayers()) > 1;
+    }
+
+    /**
+     * Return the slug of the player profile if this is a single player entrant.
+     *
+     * @return string|null
+     */
+    public function getSlug()
+    {
+        if (!$this->isSinglePlayer()) {
+            return null;
+        }
+
+        $playerProfile = $this->getPlayers()->first()->getPlayerProfile();
+
+        if ($playerProfile instanceof PlayerProfile) {
+            return $playerProfile->getSlug();
+        }
+
+        return null;
     }
 
     /**
