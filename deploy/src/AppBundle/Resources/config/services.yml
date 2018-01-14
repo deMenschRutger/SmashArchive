@@ -25,6 +25,13 @@ services:
         tags:
             - { name: console.command }
 
+    command.entrant.origin_phase.complete:
+        class: AppBundle\Command\EntrantOriginPhaseCompleteCommand
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+        tags:
+            - { name: console.command }
+
     command.smashranking.import:
         class: AppBundle\Command\SmashRankingImportCommand
         arguments: ["@doctrine.orm.default_entity_manager"]
