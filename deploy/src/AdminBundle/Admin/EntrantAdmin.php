@@ -139,7 +139,7 @@ class EntrantAdmin extends AbstractAdmin
                     'name' => 'admin_core_event_entrants',
                     'parameters' => [
                         'id' => $originPhase instanceof Phase ? $originPhase->getEvent()->getId() : null,
-                        'exclude' => [$entrant->getId()], // TODO Exclude all players from the corresponding phase.
+                        'exclude' => $originPhase instanceof Phase ? [$originPhase->getId()] : null,
                     ],
                 ],
                 'to_string_callback' => function (Entrant $entity) {

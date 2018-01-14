@@ -39,7 +39,7 @@ class EntrantRepository extends EntityRepository
 
         if (is_array($exclude)) {
             $queryBuilder
-                ->andWhere('en.id NOT IN (:exclude)')
+                ->andWhere('p.id NOT IN (:exclude)')
                 ->setParameter('exclude', $exclude)
             ;
         }
