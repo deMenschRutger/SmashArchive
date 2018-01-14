@@ -71,6 +71,7 @@ class Entrant
      * @var Entrant
      *
      * @ORM\OneToOne(targetEntity="Entrant")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $parentEntrant;
 

@@ -73,9 +73,7 @@ class Player
      * The tournament that resulted in the player becoming a part of the database.
      *
      * @ORM\ManyToOne(targetEntity="Tournament")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     *
-     * @TODO Do not cascade on delete, legitimate players could be deleted otherwise.
+     * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $originTournament;
 
