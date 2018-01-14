@@ -176,7 +176,15 @@ class EntrantAdmin extends AbstractAdmin
     {
         $show
             ->add('name')
-            ->add('tournament')
+            ->add('isNew')
+            ->add('externalId')
+            ->add('players')
+            ->add('parentEntrant')
+            ->add('originPhase.name', null, [
+                'label' => 'Origin Phase',
+            ])
+            ->add('originEvent')
+            ->add('originTournament')
         ;
     }
 

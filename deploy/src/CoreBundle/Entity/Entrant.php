@@ -411,29 +411,4 @@ class Entrant
 
         return null;
     }
-
-    /**
-     * @return string
-     * @deprecated
-     */
-    public function getTournament()
-    {
-        $originPhase = $this->getOriginPhase();
-
-        if ($originPhase instanceof Phase) {
-            return $originPhase->getEvent()->getTournament();
-        }
-
-        $sets = $this->getEntrantOneSets();
-
-        if (count($sets) === 0) {
-            $sets = $this->getEntrantTwoSets();
-        }
-
-        if (count($sets) === 0) {
-            return null;
-        }
-
-        return $sets->first()->getPhaseGroup()->getPhase()->getEvent()->getTournament()->getName();
-    }
 }
