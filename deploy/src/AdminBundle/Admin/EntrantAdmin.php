@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace AdminBundle\Admin;
 
 use CoreBundle\Entity\Entrant;
-use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\Player;
 use CoreBundle\Utility\CacheManager;
@@ -102,14 +101,12 @@ class EntrantAdmin extends AbstractAdmin
 
     /**
      * @param FormMapper $formMapper
-     *
-     * @TODO Fix the autocomplete on the players association.
      */
     protected function configureFormFields(FormMapper $formMapper)
     {
         /** @var Entrant $entrant */
         $entrant = $this->getSubject();
-        $event = $entrant->getOriginPhase()->getEvent();
+        $originPhase = $entrant->getOriginPhase();
 
         $formMapper
             ->with('Basics')
@@ -124,7 +121,7 @@ class EntrantAdmin extends AbstractAdmin
                 'property' => 'name',
                 'required' => false,
                 'to_string_callback' => function (Player $entity) {
-                    return $entity->getName();
+                    return $entity->getExpandedName();
                 },
             ])
             ->end()
@@ -141,7 +138,7 @@ class EntrantAdmin extends AbstractAdmin
                 'route' => [
                     'name' => 'admin_core_event_entrants',
                     'parameters' => [
-                        'id' => $event->getId(),
+                        'id' => $originPhase instanceof Phase ? $originPhase->getEvent()->getId() : null,
                         'exclude' => [$entrant->getId()], // TODO Exclude all players from the corresponding phase.
                     ],
                 ],

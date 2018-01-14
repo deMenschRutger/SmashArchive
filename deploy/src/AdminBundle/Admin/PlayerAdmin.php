@@ -60,16 +60,26 @@ class PlayerAdmin extends AbstractAdmin
     {
         $formMapper
             ->add('name')
-            ->add('type') // TODO Make this a choice field.
+            ->add('type', 'choice', [
+                'choices' => [
+                    'custom'          => Player::SOURCE_CUSTOM,
+                    'smash.gg'        => Player::SOURCE_SMASHGG,
+                    'Challonge'       => Player::SOURCE_CHALLONGE,
+                    'TIO'             => Player::SOURCE_TIO,
+                    'smashranking.eu' => Player::SOURCE_SMASHRANKING,
+                ],
+            ])
             ->add('externalId', null, [
                 'disabled' => true,
             ])
             ->add('originTournament', 'sonata_type_model_autocomplete', [
                 'property' => 'name',
+                'required' => false,
             ])
             ->add('playerProfile', 'sonata_type_model_autocomplete', [
                 'minimum_input_length' => 2,
-                'property' => 'gamerTag',
+                'property'             => 'gamerTag',
+                'required'             => false,
             ])
         ;
     }

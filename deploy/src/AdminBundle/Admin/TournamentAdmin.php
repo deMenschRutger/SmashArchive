@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace AdminBundle\Admin;
 
-use CoreBundle\Entity\Player;
+use CoreBundle\Entity\PlayerProfile;
 use CoreBundle\Entity\Tournament;
 use CoreBundle\Utility\CacheManager;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -101,7 +101,7 @@ class TournamentAdmin extends AbstractAdmin
                 'multiple' => true,
                 'property' => 'gamerTag',
                 'required' => false,
-                'to_string_callback' => function (Player $entity) {
+                'to_string_callback' => function (PlayerProfile $entity) {
                     return $entity->getExpandedGamerTag();
                 },
             ])

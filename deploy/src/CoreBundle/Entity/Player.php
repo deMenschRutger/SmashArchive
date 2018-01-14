@@ -148,6 +148,20 @@ class Player
     }
 
     /**
+     * @return string
+     */
+    public function getExpandedName()
+    {
+        $name = sprintf('%s - %s', $this->getName(), $this->getType());
+
+        if ($this->getExternalId()) {
+            $name .= sprintf(' (#%s)', $this->getExternalId());
+        }
+
+        return $name;
+    }
+
+    /**
      * @param string $name
      */
     public function setName($name)
