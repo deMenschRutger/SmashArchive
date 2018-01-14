@@ -71,6 +71,29 @@ class EntrantRepository extends EntityRepository
     }
 
     /**
+     * @param string $slug
+     * @return Entrant
+     */
+    public function findFirstByPlayerSlug($slug)
+    {
+        return $this
+            ->createQueryBuilder('en')
+            ->select('en, pl, pp, ph, ev, t')
+            ->join('en.players', 'pl')
+            ->join('pl.playerProfile', 'pp')
+            ->join('en.originPhase', 'ph')
+            ->join('ph.event', 'ev')
+            ->join('ev.tournament', 't')
+            ->where('pp.slug = :slug')
+            ->orderBy('t.dateStart', 'ASC')
+            ->setParameter('slug', $slug)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    /**
      * @param string|array $slugs
      * @return array
      */

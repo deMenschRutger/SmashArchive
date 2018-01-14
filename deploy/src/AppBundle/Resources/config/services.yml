@@ -17,6 +17,12 @@ services:
         tags:
             - { name: console.command }
 
+    command.smashranking.import:
+        class: AppBundle\Command\SmashRankingImportCommand
+        arguments: ["@doctrine.orm.default_entity_manager"]
+        tags:
+            - { name: console.command }
+
     command.event.results.generate:
         class: AppBundle\Command\EventGenerateResultsCommand
         arguments:
@@ -32,9 +38,10 @@ services:
         tags:
             - { name: console.command }
 
-    command.smashranking.import:
-        class: AppBundle\Command\SmashRankingImportCommand
-        arguments: ["@doctrine.orm.default_entity_manager"]
+    command.player.origin_tournament.complete:
+        class: AppBundle\Command\PlayerOriginTournamentCompleteCommand
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
         tags:
             - { name: console.command }
 

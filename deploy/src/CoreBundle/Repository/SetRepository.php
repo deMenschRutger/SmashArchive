@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Repository;
 
+use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Set;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
@@ -56,6 +57,31 @@ class SetRepository extends EntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    /**
+     * @param Entrant $entrant
+     * @return Set
+     */
+    public function findFirstByEntrant(Entrant $entrant)
+    {
+        return $this
+            ->createQueryBuilder('s')
+            ->select('s, pg, ph, ev, t, e1, e2')
+            ->join('s.phaseGroup', 'pg')
+            ->join('pg.phase', 'ph')
+            ->join('ph.event', 'ev')
+            ->join('ev.tournament', 't')
+            ->leftJoin('s.entrantOne', 'e1')
+            ->leftJoin('s.entrantTwo', 'e2')
+            ->where('e1 = :entrant')
+            ->orWhere('e2 = :entrant')
+            ->orderBy('t.dateStart', 'ASC')
+            ->setParameter('entrant', $entrant)
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult()
+            ;
     }
 
     /**
