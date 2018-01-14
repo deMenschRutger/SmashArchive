@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Repository;
 
+use CoreBundle\Entity\Entrant;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 
@@ -44,6 +45,29 @@ class EntrantRepository extends EntityRepository
         }
 
         return $queryBuilder->getQuery();
+    }
+
+    /**
+     * @param string $slug
+     * @return Entrant[]
+     */
+    public function findByPlayerSlug($slug)
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('en')
+            ->select('en, pl, pp, ph, ev, t')
+            ->join('en.players', 'pl')
+            ->join('pl.playerProfile', 'pp')
+            ->join('en.originPhase', 'ph')
+            ->join('ph.event', 'ev')
+            ->join('ev.tournament', 't')
+            ->where('pp.slug = :slug')
+            ->orderBy('t.dateStart', 'DESC')
+            ->setParameter('slug', $slug)
+            ->setMaxResults(20)
+        ;
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
     /**

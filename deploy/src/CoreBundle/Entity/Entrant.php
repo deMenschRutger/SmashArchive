@@ -221,7 +221,7 @@ class Entrant
     }
 
     /**
-     * @return Phase
+     * @return Phase|null
      */
     public function getOriginPhase()
     {
@@ -229,7 +229,8 @@ class Entrant
     }
 
     /**
-     * @return string
+     * @return string|null
+     * @deprecated
      */
     public function getOriginPhaseExpandedName()
     {
@@ -238,6 +239,32 @@ class Entrant
         }
 
         return $this->originPhase->getName();
+    }
+
+    /**
+     * @return Event|null
+     */
+    public function getOriginEvent()
+    {
+        if ($this->originPhase instanceof Phase) {
+            return $this->originPhase->getEvent();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return Tournament|null
+     */
+    public function getOriginTournament()
+    {
+        $originEvent = $this->getOriginEvent();
+
+        if ($originEvent instanceof Event) {
+            return $originEvent->getTournament();
+        }
+
+        return null;
     }
 
     /**
@@ -288,9 +315,9 @@ class Entrant
     }
 
     /**
-     * @return Collection
+     * @return ArrayCollection
      */
-    public function getPlayers(): Collection
+    public function getPlayers(): ArrayCollection
     {
         // This is a workaround for confusing behaviour in Doctrine where it loads certain associations multiple times.
         $unique = new ArrayCollection();
@@ -318,11 +345,6 @@ class Entrant
      */
     public function getFirstPlayer()
     {
-
-
-        dump($this->getPlayers());
-
-
         return $this->getPlayers()->first();
     }
 
@@ -365,6 +387,20 @@ class Entrant
     /**
      * @return bool
      */
+    public function hasPlayerProfiles()
+    {
+        foreach ($this->getPlayers() as $player) {
+            if (!$player->hasPlayerProfile()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
     public function isSinglePlayer()
     {
         return count($this->getPlayers()) === 1;
@@ -379,21 +415,8 @@ class Entrant
     }
 
     /**
-     * @return bool
-     */
-    public function hasPlayerProfiles()
-    {
-        foreach ($this->getPlayers() as $player) {
-            if (!$player->hasPlayerProfile()) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * @return string
+     * @deprecated
      */
     public function getTournament()
     {

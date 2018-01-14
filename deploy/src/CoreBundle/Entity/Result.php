@@ -60,6 +60,14 @@ class Result
     }
 
     /**
+     * @return bool
+     */
+    public function hasEvent(): bool
+    {
+        return $this->event instanceof Event;
+    }
+
+    /**
      * @param Event $event
      */
     public function setEvent(Event $event)
@@ -109,7 +117,7 @@ class Result
     /**
      * @return int
      */
-    public function getRank(): int
+    public function getRank()
     {
         return $this->rank;
     }
