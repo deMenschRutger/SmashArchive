@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace AdminBundle\Admin;
 
 use CoreBundle\Entity\Player;
+use CoreBundle\Entity\PlayerProfile;
 use CoreBundle\Utility\CacheManager;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -80,6 +81,9 @@ class PlayerAdmin extends AbstractAdmin
                 'minimum_input_length' => 2,
                 'property'             => 'gamerTag',
                 'required'             => false,
+                'to_string_callback'   => function (PlayerProfile $entity) {
+                    return $entity->getExpandedGamerTag();
+                },
             ])
         ;
     }

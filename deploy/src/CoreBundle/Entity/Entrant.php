@@ -180,16 +180,26 @@ class Entrant
     {
         $players = $this->getPlayers();
 
-        if ($players->count() > 0) {
-            $players = $players->map(function (Player $player) {
-                return $player->getPlayerProfile()->getGamerTag();
-            })->toArray();
+        if ($players->count() === 0) {
+            return $this->getName();
+        }
 
-            $joined = join(',', $players);
+        $players = $players->map(function (Player $player) {
+            $playerProfile = $player->getPlayerProfile();
 
-            if ($joined !== $this->getName()) {
-                return sprintf('%s (%s)', $this->getName(), $joined);
-            }
+            return $playerProfile instanceof PlayerProfile ? $playerProfile : null;
+        })->toArray();
+
+        $players = array_filter($players);
+
+        if (count($players) === 0) {
+            return $this->getName();
+        }
+
+        $joined = join(',', $players);
+
+        if ($joined !== $this->getName()) {
+            return sprintf('%s (%s)', $this->getName(), $joined);
         }
 
         return $this->getName();
