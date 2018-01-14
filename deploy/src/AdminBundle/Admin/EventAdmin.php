@@ -32,7 +32,6 @@ class EventAdmin extends AbstractAdmin
         $formMapper
             ->with('Basics')
             ->add('name')
-            ->add('description')
             ->add('game')
             ->end()
         ;
