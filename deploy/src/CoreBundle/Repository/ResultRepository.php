@@ -61,36 +61,6 @@ class ResultRepository extends EntityRepository
 
     /**
      * @param string|array $slugs
-     * @return array
-     */
-    public function findByPlayerSlug($slugs)
-    {
-        return $this
-            ->getPlayerResultsQuery($slugs)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-
-    /**
-     * @param string|array $slugs
-     * @param string       $eventId
-     * @return array
-     */
-    public function findByPlayerSlugAndEventId($slugs, $eventId)
-    {
-        return $this
-            ->getPlayerResultsQuery($slugs)
-            ->andWhere('ev.id = :eventId')
-            ->setParameter('eventId', $eventId)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-
-    /**
-     * @param string|array $slugs
      * @return QueryBuilder
      */
     protected function getPlayerResultsQuery($slugs)

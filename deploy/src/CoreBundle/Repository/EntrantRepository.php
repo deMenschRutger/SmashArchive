@@ -49,9 +49,10 @@ class EntrantRepository extends EntityRepository
 
     /**
      * @param string $slug
+     * @param int    $eventId
      * @return Entrant[]
      */
-    public function findByPlayerSlug($slug)
+    public function findByPlayerSlug($slug, $eventId = null)
     {
         $queryBuilder = $this
             ->createQueryBuilder('en')
@@ -64,8 +65,11 @@ class EntrantRepository extends EntityRepository
             ->where('pp.slug = :slug')
             ->orderBy('t.dateStart', 'DESC')
             ->setParameter('slug', $slug)
-            ->setMaxResults(20)
         ;
+
+        if ($eventId) {
+            $queryBuilder->andWhere('ev.id = :eventId')->setParameter('eventId', $eventId);
+        }
 
         return $queryBuilder->getQuery()->getResult();
     }

@@ -36,7 +36,7 @@ class ResultsHandler extends AbstractHandler
     {
         /** @var EntrantRepository $entrantRepository */
         $entrantRepository = $this->getRepository('CoreBundle:Entrant');
-        $entrants = $entrantRepository->findByPlayerSlug($command->getPlayerSlug());
+        $entrants = $entrantRepository->findByPlayerSlug($command->getPlayerSlug(), $command->getEventId());
         $results = [];
 
         foreach ($entrants as $entrant) {

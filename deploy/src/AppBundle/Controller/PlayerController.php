@@ -98,8 +98,8 @@ class PlayerController extends AbstractDefaultController
 
         return $this->render('AppBundle:Players:event-results.html.twig', [
             'player' => $player,
-            'result' => $result,
-            'sets' => $sets,
+            'result' => current($result),
+            'sets'   => $sets,
         ]);
     }
 }
