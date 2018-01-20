@@ -29,6 +29,10 @@ class Bracket extends AbstractBracket
      */
     public function getIterableBracket()
     {
+        if (count($this->getRounds()) === 0) {
+            return [];
+        }
+
         $bracket = $this->generateVirtualBracket();
         $roundsRequired = $this->getRoundsRequired();
 
