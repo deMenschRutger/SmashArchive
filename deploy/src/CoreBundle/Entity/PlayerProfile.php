@@ -138,7 +138,7 @@ class PlayerProfile
      * @ORM\JoinTable(
      *  name="players_mains",
      *  joinColumns={
-     *     @ORM\JoinColumn(name="player_id", referencedColumnName="id", onDelete="CASCADE")
+     *     @ORM\JoinColumn(name="player_profile_id", referencedColumnName="id", onDelete="CASCADE")
      *  },
      *  inverseJoinColumns={
      *     @ORM\JoinColumn(name="character_id", referencedColumnName="id", onDelete="CASCADE")
@@ -154,7 +154,7 @@ class PlayerProfile
      * @ORM\JoinTable(
      *  name="players_secondaries",
      *  joinColumns={
-     *     @ORM\JoinColumn(name="player_id", referencedColumnName="id", onDelete="CASCADE")
+     *     @ORM\JoinColumn(name="player_profile_id", referencedColumnName="id", onDelete="CASCADE")
      *  },
      *  inverseJoinColumns={
      *     @ORM\JoinColumn(name="character_id", referencedColumnName="id", onDelete="CASCADE")

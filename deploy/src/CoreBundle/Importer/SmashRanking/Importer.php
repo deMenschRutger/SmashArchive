@@ -7,6 +7,7 @@ namespace CoreBundle\Importer\SmashRanking;
 use CoreBundle\Entity\Character;
 use CoreBundle\Entity\Country;
 use CoreBundle\Entity\Entrant;
+use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Player;
 use CoreBundle\Entity\PlayerProfile;
@@ -262,7 +263,7 @@ class Importer extends AbstractImporter
             }
 
             $entity = new Player();
-            $entity->setName($player['name'] ? $player['name'] : null);
+            $entity->setName($tag);
             $entity->setType(Player::SOURCE_SMASHRANKING);
             $entity->setExternalId($playerId);
             $entity->setPlayerProfile($profile);
@@ -342,6 +343,13 @@ class Importer extends AbstractImporter
 
             if ($tournament['serie'] && array_key_exists($tournament['serie'], $this->tournamentSeries)) {
                 $entity->setSeries($this->tournamentSeries[$tournament['serie']]);
+            }
+
+            if ($tournament['tos'] && count($tournament['tos']) > 0) {
+                foreach ($tournament['tos'] as $toId) {
+                    $player = $this->getPlayerById($toId);
+                    $entity->addOrganizer($player->getPlayerProfile());
+                }
             }
 
             $this->entityManager->persist($entity);
@@ -424,12 +432,12 @@ class Importer extends AbstractImporter
 
             /** @var PhaseGroup $phaseGroup */
             $phaseGroup = $this->phaseGroups[$eventId];
-            $event = $phaseGroup->getPhase()->getEvent();
-            $tournament = $event->getTournament();
+            $phase = $phaseGroup->getPhase();
+            $tournament = $phase->getEvent()->getTournament();
             $tournamentId = array_search($tournament, $this->tournaments);
 
-            $entrantOne = $this->getEntrant($match['winner'], $tournamentId);
-            $entrantTwo = $this->getEntrant($match['loser'], $tournamentId);
+            $entrantOne = $this->getEntrant($match['winner'], $tournamentId, $phase);
+            $entrantTwo = $this->getEntrant($match['loser'], $tournamentId, $phase);
             $round = $match['round'];
 
             if ($round === null) {
@@ -507,9 +515,10 @@ class Importer extends AbstractImporter
     /**
      * @param integer $playerId
      * @param integer $tournamentId
+     * @param Phase   $originPhase
      * @return Entrant|bool
      */
-    protected function getEntrant($playerId, $tournamentId)
+    protected function getEntrant($playerId, $tournamentId, Phase $originPhase)
     {
         if (isset($this->entrants[$tournamentId][$playerId])) {
             return $this->entrants[$tournamentId][$playerId];
@@ -517,10 +526,15 @@ class Importer extends AbstractImporter
 
         $player = $this->getPlayerById($playerId);
 
+        if ($player->getOriginTournament() === null) {
+            $player->setOriginTournament($originPhase->getEvent()->getTournament());
+        }
+
         $entrant = new Entrant();
-        $entrant->setName($player->getName());
+        $entrant->setName($player->getGamerTag());
         $entrant->setIsNew(false);
         $entrant->addPlayer($player);
+        $entrant->setOriginPhase($originPhase);
         $player->addEntrant($entrant);
 
         $this->entityManager->persist($entrant);
