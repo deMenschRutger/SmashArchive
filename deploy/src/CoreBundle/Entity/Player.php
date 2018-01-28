@@ -36,8 +36,6 @@ class Player
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     *
-     * @Serializer\Groups({"players_overview"})
      */
     private $id;
 
@@ -59,8 +57,6 @@ class Player
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
-     *
-     * @Serializer\Groups({"players_overview", "tournaments_details"})
      */
     private $name;
 
@@ -237,6 +233,9 @@ class Player
 
     /**
      * @return string|null
+     *
+     * @Serializer\Groups({"tournaments_results"})
+     * @Serializer\VirtualProperty()
      */
     public function getSlug()
     {
@@ -251,6 +250,9 @@ class Player
 
     /**
      * @return string|null
+     *
+     * @Serializer\Groups({"tournaments_results"})
+     * @Serializer\VirtualProperty()
      */
     public function getGamerTag()
     {

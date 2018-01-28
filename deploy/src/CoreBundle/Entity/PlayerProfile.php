@@ -46,7 +46,7 @@ class PlayerProfile
      * @Gedmo\Slug(fields={"gamerTag"}, updatable=false)
      * @ORM\Column(name="slug", type="string", length=255, unique=true)
      *
-     * @Serializer\Groups({"players_overview", "tournaments_results", "tournaments_overview", "tournaments_details"})
+     * @Serializer\Groups({"players_overview", "tournaments_overview", "tournaments_details"})
      */
     private $slug;
 
@@ -66,7 +66,7 @@ class PlayerProfile
      *
      * @ORM\Column(name="gamer_tag", type="string")
      *
-     * @Serializer\Groups({"players_overview", "tournaments_results", "tournaments_overview", "tournaments_details"})
+     * @Serializer\Groups({"players_overview", "tournaments_overview", "tournaments_details"})
      */
     private $gamerTag;
 

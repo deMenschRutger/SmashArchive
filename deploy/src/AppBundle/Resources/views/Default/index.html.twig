@@ -8,15 +8,15 @@
     <p>
         If you're reading this it means you have access to an early version of the SmashArchive project. The
         purpose of this early version is to confirm that the data from the previous SmashRanking project has been
-        imported correctly. Most additional functionality is not yet in place, and the UI is just a basic Bootstrap
-        UI so far. There's no need to report minor issues right now, since I'm already aware of many of them. That
-        being said, if you encounter some major bugs like pages not functioning at all, or results being completely
-        wrong, please let me know.
+        imported correctly and that new data can be imported from smash.gg and Challonge. Obviously the project
+        is far from done (especially the UI is very basic so far), but the most import functionality is now in
+        place and being tested. There's no need to send us feature requests right now since we still have a lot to
+        do, but if you encounter a bug please let us know.
     </p>
     <p>
-        That being said, most of the data can already be accessed through an API. This is also just a concept, but it
-        can serve as a starting point for discussing what data the API actually needs to expose and in what format.
-        Below you will find some examples of API URLs.
+        That being said, most of the data can already be accessed through an API. This is just a concept, but it can
+        serve as a starting point for discussing what data the API actually needs to expose and in what format. Below
+        you will find some examples of API URLs.
     </p>
     <br>
     <p>
@@ -76,20 +76,19 @@
         </a>
     </p>
     <br>
-    <h4>Current issues</h4>
+    <h4>Known issues</h4>
     <ul>
         <li>
-            The bracket pages are a work in progress and will probably contain flaws. This does not necessarily mean that the underlying
-            data is flawed.
+            The way tournament details and results are presented are a work in progress and will probably contain flaws. This does not
+            necessarily mean that the underlying data is flawed. For example, the rank of a player in a specific tournament currently
+            does not show up on his results page, results of events might not show up in the correct order, and the brackets could be
+            difficult to read.
         </li>
         <li>
-            It is not yet possible to generate results for phase groups using the Swiss system. They will be ignored on the result pages.
+            It is not yet possible to generate results for phase groups using the Swiss system.
         </li>
         <li>
             The filtering functionality on the tournament and player overview pages is still pretty limited.
-        </li>
-        <li>
-            Some pages could be slow. This will be improved later by adding pagination and/or caching.
         </li>
     </ul>
 
