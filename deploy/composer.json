@@ -27,6 +27,7 @@
         "symfony/polyfill-apcu": "^1.0",
         "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^3.0.2",
+        "sensio/generator-bundle": "^3.0",
         "incenteev/composer-parameter-handler": "^2.0",
         "swiftmailer/swiftmailer": "^5.4.5",
         "guzzlehttp/guzzle": "^6.2",
@@ -50,7 +51,6 @@
         "team-reflex/challonge-php": "^1.0"
     },
     "require-dev": {
-        "sensio/generator-bundle": "^3.0",
         "symfony/phpunit-bridge": "^3.0"
     },
     "scripts": {
