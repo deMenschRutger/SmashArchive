@@ -81,7 +81,7 @@ class Country
      */
     public function __toString()
     {
-        return $this->name ? $this->getName() : '';
+        return $this->name ? $this->getName() : 'New country';
     }
 
     /**

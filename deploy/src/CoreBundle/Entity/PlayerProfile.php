@@ -191,7 +191,7 @@ class PlayerProfile
      */
     public function __toString()
     {
-        return $this->getGamerTag();
+        return $this->gamerTag ? $this->getGamerTag() : 'New player profile';
     }
 
     /**

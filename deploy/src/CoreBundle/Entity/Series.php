@@ -61,7 +61,7 @@ class Series
      */
     public function __toString()
     {
-        return $this->getName();
+        return $this->name ? $this->getName() : 'New series';
     }
 
     /**

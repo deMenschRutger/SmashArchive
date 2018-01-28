@@ -103,6 +103,14 @@ class PhaseGroup
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->name ? $this->getName() : 'New phase group';
+    }
+
+    /**
      * @return int
      */
     public function getId()

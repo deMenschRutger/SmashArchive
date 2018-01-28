@@ -92,7 +92,7 @@ class Player
      */
     public function __toString()
     {
-        return $this->getName();
+        return $this->name ? $this->getName() : 'New player';
     }
 
     /**
