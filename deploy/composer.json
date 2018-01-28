@@ -27,7 +27,7 @@
         "symfony/polyfill-apcu": "^1.0",
         "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^3.0.2",
-        "sensio/generator-bundle": "^3.0",
+        "sensio/generator-bundle": "^3.1",
         "incenteev/composer-parameter-handler": "^2.0",
         "swiftmailer/swiftmailer": "^5.4.5",
         "guzzlehttp/guzzle": "^6.2",
@@ -44,11 +44,12 @@
         "zendframework/zend-crypt": "^3.2",
         "friendsofsymfony/user-bundle": "~2.0",
         "kevinrob/guzzle-cache-middleware": "^2.0",
-        "cache/cache-bundle": "^0.5.0",
         "sentry/sentry-symfony": "^0.8.0",
         "pda/pheanstalk": "^3.1",
         "leezy/pheanstalk-bundle": "^3.2",
-        "team-reflex/challonge-php": "^1.0"
+        "team-reflex/challonge-php": "^1.0",
+        "cache/cache-bundle": "~0.5.0",
+        "cache/adapter-bundle": "~0.5.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^3.0"
