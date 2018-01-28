@@ -49,7 +49,8 @@
         "leezy/pheanstalk-bundle": "^3.2",
         "team-reflex/challonge-php": "^1.0",
         "cache/cache-bundle": "~0.5.0",
-        "cache/adapter-bundle": "~0.5.0"
+        "cache/adapter-bundle": "~0.5.0",
+        "cache/doctrine-adapter": "~0.6.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^3.0"
