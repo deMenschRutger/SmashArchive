@@ -6,7 +6,6 @@ namespace CoreBundle\Entity;
 
 use CoreBundle\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -44,7 +43,7 @@ class Entrant
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
      *
      * @Serializer\Groups({"players_sets"})
      */
@@ -71,6 +70,7 @@ class Entrant
      * @var Entrant
      *
      * @ORM\OneToOne(targetEntity="Entrant")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $parentEntrant;
 
@@ -180,16 +180,26 @@ class Entrant
     {
         $players = $this->getPlayers();
 
-        if ($players->count() > 0) {
-            $players = $players->map(function (Player $player) {
-                return $player->getGamerTag();
-            })->toArray();
+        if ($players->count() === 0) {
+            return $this->getName();
+        }
 
-            $joined = join(',', $players);
+        $players = $players->map(function (Player $player) {
+            $playerProfile = $player->getPlayerProfile();
 
-            if ($joined !== $this->getName()) {
-                return sprintf('%s (%s)', $this->getName(), $joined);
-            }
+            return $playerProfile instanceof PlayerProfile ? $playerProfile : null;
+        })->toArray();
+
+        $players = array_filter($players);
+
+        if (count($players) === 0) {
+            return $this->getName();
+        }
+
+        $joined = join(',', $players);
+
+        if ($joined !== $this->getName()) {
+            return sprintf('%s (%s)', $this->getName(), $joined);
         }
 
         return $this->getName();
@@ -220,7 +230,7 @@ class Entrant
     }
 
     /**
-     * @return Phase
+     * @return Phase|null
      */
     public function getOriginPhase()
     {
@@ -228,15 +238,29 @@ class Entrant
     }
 
     /**
-     * @return string
+     * @return Event|null
      */
-    public function getOriginPhaseExpandedName()
+    public function getOriginEvent()
     {
-        if (!$this->originPhase instanceof Phase) {
-            return null;
+        if ($this->originPhase instanceof Phase) {
+            return $this->originPhase->getEvent();
         }
 
-        return $this->originPhase->getName();
+        return null;
+    }
+
+    /**
+     * @return Tournament|null
+     */
+    public function getOriginTournament()
+    {
+        $originEvent = $this->getOriginEvent();
+
+        if ($originEvent instanceof Event) {
+            return $originEvent->getTournament();
+        }
+
+        return null;
     }
 
     /**
@@ -287,9 +311,9 @@ class Entrant
     }
 
     /**
-     * @return Collection
+     * @return ArrayCollection
      */
-    public function getPlayers(): Collection
+    public function getPlayers(): ArrayCollection
     {
         // This is a workaround for confusing behaviour in Doctrine where it loads certain associations multiple times.
         $unique = new ArrayCollection();
@@ -310,14 +334,6 @@ class Entrant
     public function hasPlayer(Player $player)
     {
         return $this->players->contains($player);
-    }
-
-    /**
-     * @return Player
-     */
-    public function getFirstPlayer()
-    {
-        return $this->getPlayers()->first();
     }
 
     /**
@@ -359,6 +375,20 @@ class Entrant
     /**
      * @return bool
      */
+    public function hasPlayerProfiles()
+    {
+        foreach ($this->getPlayers() as $player) {
+            if (!$player->hasPlayerProfile()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
     public function isSinglePlayer()
     {
         return count($this->getPlayers()) === 1;
@@ -373,26 +403,22 @@ class Entrant
     }
 
     /**
-     * @return string
+     * Return the slug of the player profile if this is a single player entrant.
+     *
+     * @return string|null
      */
-    public function getTournament()
+    public function getSlug()
     {
-        $originPhase = $this->getOriginPhase();
-
-        if ($originPhase instanceof Phase) {
-            return $originPhase->getEvent()->getTournament();
-        }
-
-        $sets = $this->getEntrantOneSets();
-
-        if (count($sets) === 0) {
-            $sets = $this->getEntrantTwoSets();
-        }
-
-        if (count($sets) === 0) {
+        if (!$this->isSinglePlayer()) {
             return null;
         }
 
-        return $sets->first()->getPhaseGroup()->getPhase()->getEvent()->getTournament()->getName();
+        $playerProfile = $this->getPlayers()->first()->getPlayerProfile();
+
+        if ($playerProfile instanceof PlayerProfile) {
+            return $playerProfile->getSlug();
+        }
+
+        return null;
     }
 }

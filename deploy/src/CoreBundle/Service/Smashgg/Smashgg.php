@@ -25,7 +25,10 @@ class Smashgg
 {
     const VALID_GAME_IDS = [
         1, // Super Smash Bros. Melee,
+        2, // Project M
         3, // Super Smash Bros. for Wii U,
+        4, // Super Smash Bros.
+        5, // Super Smash Bros. Brawl
     ];
 
     /**

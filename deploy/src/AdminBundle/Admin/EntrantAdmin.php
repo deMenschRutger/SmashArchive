@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace AdminBundle\Admin;
 
 use CoreBundle\Entity\Entrant;
+use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\Player;
 use CoreBundle\Utility\CacheManager;
 use Doctrine\ORM\QueryBuilder;
@@ -105,7 +106,7 @@ class EntrantAdmin extends AbstractAdmin
     {
         /** @var Entrant $entrant */
         $entrant = $this->getSubject();
-        $event = $entrant->getOriginPhase()->getEvent();
+        $originPhase = $entrant->getOriginPhase();
 
         $formMapper
             ->with('Basics')
@@ -117,10 +118,10 @@ class EntrantAdmin extends AbstractAdmin
             ->add('players', 'sonata_type_model_autocomplete', [
                 'minimum_input_length' => 2,
                 'multiple' => true,
-                'property' => 'gamerTag',
+                'property' => 'name',
                 'required' => false,
                 'to_string_callback' => function (Player $entity) {
-                    return $entity->getExpandedGamerTag();
+                    return $entity->getExpandedName();
                 },
             ])
             ->end()
@@ -128,8 +129,8 @@ class EntrantAdmin extends AbstractAdmin
             ->add('parentEntrant', 'sonata_type_model_autocomplete', [
                 'label' => 'Parent',
                 'help' => join([
-                    'Please note: configuring a parent entrant and saving this form will assign all matches played by this entrant to the ',
-                    'parent entrant.',
+                    'Please note: configuring a parent entrant and saving this form will assign all matches played by this entrant to ',
+                    'the parent entrant.',
                 ]),
                 'minimum_input_length' => 2,
                 'property' => 'name',
@@ -137,8 +138,8 @@ class EntrantAdmin extends AbstractAdmin
                 'route' => [
                     'name' => 'admin_core_event_entrants',
                     'parameters' => [
-                        'id' => $event->getId(),
-                        'exclude' => [$entrant->getId()],
+                        'id' => $originPhase instanceof Phase ? $originPhase->getEvent()->getId() : null,
+                        'exclude' => $originPhase instanceof Phase ? [$originPhase->getId()] : null,
                     ],
                 ],
                 'to_string_callback' => function (Entrant $entity) {
@@ -175,7 +176,15 @@ class EntrantAdmin extends AbstractAdmin
     {
         $show
             ->add('name')
-            ->add('tournament')
+            ->add('isNew')
+            ->add('externalId')
+            ->add('players')
+            ->add('parentEntrant')
+            ->add('originPhase.name', null, [
+                'label' => 'Origin Phase',
+            ])
+            ->add('originEvent')
+            ->add('originTournament')
         ;
     }
 

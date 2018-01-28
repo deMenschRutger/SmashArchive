@@ -177,7 +177,7 @@ class Tournament
     /**
      * @var Player[]
      *
-     * @ORM\ManyToMany(targetEntity="Player", inversedBy="tournamentsOrganized")
+     * @ORM\ManyToMany(targetEntity="PlayerProfile", inversedBy="tournamentsOrganized")
      * @ORM\JoinTable(name="tournaments_organizers")
      *
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
@@ -491,7 +491,7 @@ class Tournament
     }
 
     /**
-     * @return Collection|Player[]
+     * @return Collection|PlayerProfile[]
      */
     public function getOrganizers(): Collection
     {
@@ -499,9 +499,9 @@ class Tournament
     }
 
     /**
-     * @param Player $organizer
+     * @param PlayerProfile $organizer
      */
-    public function addOrganizer(Player $organizer)
+    public function addOrganizer(PlayerProfile $organizer)
     {
         $this->organizers[] = $organizer;
     }

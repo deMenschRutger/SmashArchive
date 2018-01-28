@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Repository;
 
+use CoreBundle\Entity\Tournament;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -13,7 +14,7 @@ class TournamentRepository extends EntityRepository
 {
     /**
      * @param string $slug
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return Tournament|null
      *
      * @TODO This is a relatively heavy query and a candidate for caching.
      */
@@ -22,10 +23,11 @@ class TournamentRepository extends EntityRepository
         return $this
             ->_em
             ->createQueryBuilder()
-            ->select('t, e, c, g, p, pg')
+            ->select('t, e, c, g, p, pg, to')
             ->from('CoreBundle:Tournament', 't')
             ->leftJoin('t.country', 'c')
             ->leftJoin('t.events', 'e')
+            ->leftJoin('t.organizers', 'to')
             ->leftJoin('e.game', 'g')
             ->leftJoin('e.phases', 'p')
             ->leftJoin('p.phaseGroups', 'pg')

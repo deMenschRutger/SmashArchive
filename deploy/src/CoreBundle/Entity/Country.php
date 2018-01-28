@@ -48,14 +48,14 @@ class Country
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Player", mappedBy="nationality")
+     * @ORM\OneToMany(targetEntity="PlayerProfile", mappedBy="nationality")
      */
     private $playersNationalities;
 
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="Player", mappedBy="country")
+     * @ORM\OneToMany(targetEntity="PlayerProfile", mappedBy="country")
      */
     private $playersCountries;
 

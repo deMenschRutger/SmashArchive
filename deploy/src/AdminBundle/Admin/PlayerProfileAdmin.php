@@ -8,21 +8,19 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
-use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class EventAdmin extends AbstractAdmin
+class PlayerProfileAdmin extends AbstractAdmin
 {
     /**
-     * {@inheritdoc}
+     * @var array
      */
-    protected function configureRoutes(RouteCollection $collection)
-    {
-        $collection->add('entrants', $this->getRouterIdParameter().'/entrants');
-    }
+    protected $datagridValues = [
+        '_sort_by' => 'gamerTag',
+    ];
 
     /**
      * @param FormMapper $formMapper
@@ -31,8 +29,19 @@ class EventAdmin extends AbstractAdmin
     {
         $formMapper
             ->with('Basics')
+            ->add('gamerTag')
             ->add('name')
-            ->add('game')
+            ->add('region')
+            ->add('city')
+            ->add('country')
+            ->add('nationality')
+            ->end()
+            ->with('Characters')
+            ->add('mains')
+            ->add('secondaries')
+            ->end()
+            ->with('Status')
+            ->add('isActive')
             ->end()
         ;
     }
@@ -43,7 +52,13 @@ class EventAdmin extends AbstractAdmin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
+            ->add('gamerTag')
             ->add('name')
+            ->add('region')
+            ->add('city')
+            ->add('country')
+            ->add('nationality')
+            ->add('isActive')
         ;
     }
 
@@ -53,7 +68,20 @@ class EventAdmin extends AbstractAdmin
     protected function configureShowFields(ShowMapper $show)
     {
         $show
+            ->add('id')
+            ->add('slug')
+            ->add('gamerTag')
             ->add('name')
+            ->add('region')
+            ->add('city')
+            ->add('country')
+            ->add('nationality')
+            ->add('mains')
+            ->add('secondaries')
+            ->add('isCompeting')
+            ->add('isActive')
+            ->add('createdAt')
+            ->add('updatedAt')
         ;
     }
 
@@ -63,7 +91,10 @@ class EventAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('name')
+            ->addIdentifier('gamerTag')
+            ->add('name')
+            ->add('region')
+            ->add('country')
         ;
 
         $listMapper->add(

@@ -42,11 +42,9 @@ class OverviewHandler extends AbstractHandler
             ->getEntityManager()
             ->createQueryBuilder()
             ->select('p, c')
-            ->from('CoreBundle:Player', 'p')
+            ->from('CoreBundle:PlayerProfile', 'p')
             ->leftJoin('p.country', 'c')
             ->orderBy('p.gamerTag')
-            ->where('p.isNew = :isNew')
-            ->setParameter('isNew', false)
         ;
 
         if ($tag) {

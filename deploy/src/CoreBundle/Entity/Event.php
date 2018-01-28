@@ -51,15 +51,6 @@ class Event
     private $name;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="description", type="text", nullable=true)
-     *
-     * @Serializer\Groups({"tournaments_details"})
-     */
-    private $description;
-
-    /**
      * @var int
      *
      * @ORM\Column(name="entrant_count", type="integer", nullable=true)
@@ -159,22 +150,6 @@ class Event
     public function setName(string $name)
     {
         $this->name = $name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
     }
 
     /**

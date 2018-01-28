@@ -5,12 +5,12 @@ declare(strict_types = 1);
 namespace AdminBundle\Admin;
 
 use CoreBundle\Entity\Player;
+use CoreBundle\Entity\PlayerProfile;
 use CoreBundle\Utility\CacheManager;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
-use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
 
 /**
@@ -27,7 +27,7 @@ class PlayerAdmin extends AbstractAdmin
      * @var array
      */
     protected $datagridValues = [
-        '_sort_by' => 'gamerTag',
+        '_sort_by' => 'name',
     ];
 
     /**
@@ -55,45 +55,36 @@ class PlayerAdmin extends AbstractAdmin
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function configureRoutes(RouteCollection $collection)
-    {
-        $collection->add('merge', $this->getRouterIdParameter().'/merge');
-    }
-
-    /**
      * @param FormMapper $formMapper
      */
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->with('Basics')
-            ->add('gamerTag')
             ->add('name')
-            ->add('region')
-            ->add('city')
-            ->add('country')
-            ->add('nationality')
-            ->end()
-            ->with('Characters')
-            ->add('mains')
-            ->add('secondaries')
-            ->end()
-            ->with('Status')
-            ->add('isActive')
-            ->add('isNew')
-            ->end()
-            ->with('Merge with player')
-            ->add('targetPlayer', 'sonata_type_model_autocomplete', [
-                'minimum_input_length' => 2,
-                'property' => 'gamerTag',
+            ->add('type', 'choice', [
+                'choices' => [
+                    'custom'          => Player::SOURCE_CUSTOM,
+                    'smash.gg'        => Player::SOURCE_SMASHGG,
+                    'Challonge'       => Player::SOURCE_CHALLONGE,
+                    'TIO'             => Player::SOURCE_TIO,
+                    'smashranking.eu' => Player::SOURCE_SMASHRANKING,
+                ],
+            ])
+            ->add('externalId', null, [
+                'disabled' => true,
+            ])
+            ->add('originTournament', 'sonata_type_model_autocomplete', [
+                'property' => 'name',
                 'required' => false,
-                'to_string_callback' => function (Player $entity) {
+            ])
+            ->add('playerProfile', 'sonata_type_model_autocomplete', [
+                'minimum_input_length' => 2,
+                'property'             => 'gamerTag',
+                'required'             => false,
+                'to_string_callback'   => function (PlayerProfile $entity) {
                     return $entity->getExpandedGamerTag();
                 },
             ])
-            ->end()
         ;
     }
 
@@ -103,15 +94,9 @@ class PlayerAdmin extends AbstractAdmin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('gamerTag')
             ->add('name')
-            ->add('region')
-            ->add('city')
-            ->add('country')
-            ->add('nationality')
-            ->add('isActive')
-            ->add('isNew')
-            ->add('originTournament')
+            ->add('originTournament.name')
+            ->add('playerProfile.gamerTag')
         ;
     }
 
@@ -122,21 +107,11 @@ class PlayerAdmin extends AbstractAdmin
     {
         $show
             ->add('id')
-            ->add('slug')
-            ->add('gamerTag')
             ->add('name')
-            ->add('region')
-            ->add('city')
-            ->add('country')
-            ->add('nationality')
-            ->add('mains')
-            ->add('secondaries')
-            ->add('smashrankingId')
-            ->add('smashggId')
-            ->add('isCompeting')
-            ->add('isActive')
-            ->add('isNew')
+            ->add('type')
+            ->add('externalId')
             ->add('originTournament')
+            ->add('playerProfile')
             ->add('createdAt')
             ->add('updatedAt')
         ;
@@ -148,10 +123,10 @@ class PlayerAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('gamerTag')
-            ->add('name')
-            ->add('country')
-            ->add('isNew')
+            ->addIdentifier('name')
+            ->add('type')
+            ->add('originTournament')
+            ->add('playerProfile')
         ;
 
         $listMapper->add(
@@ -161,9 +136,6 @@ class PlayerAdmin extends AbstractAdmin
                 'actions' => [
                     'edit' => [],
                     'show' => [],
-                    'merge' => [
-                        'template' => 'AdminBundle:Player:list__action_merge.html.twig',
-                    ],
                     'delete' => [],
                 ],
                 'label' => 'Actions',

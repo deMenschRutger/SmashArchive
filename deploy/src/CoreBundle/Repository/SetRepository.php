@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Repository;
 
+use CoreBundle\Entity\Entrant;
 use CoreBundle\Entity\Set;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
@@ -15,28 +16,20 @@ use Doctrine\ORM\QueryBuilder;
 class SetRepository extends EntityRepository
 {
     /**
-     * @param string|array $slugs
-     * @return Query
+     * @param int|array $entrantIds
+     * @return Set[]
      */
-    public function findByPlayerSlug($slugs)
+    public function findByEntrantId($entrantIds)
     {
-        // Returning the query to accommodate pagination.
-        return $this->getPlayerSetsQuery($slugs)->getQuery();
-    }
+        if (!is_array($entrantIds)) {
+            $entrantIds = [$entrantIds];
+        }
 
-    /**
-     * @param string|array $slugs
-     * @param string       $eventId
-     * @return Query
-     */
-    public function findByPlayerSlugAndEventId($slugs, $eventId)
-    {
         return $this
-            ->getPlayerSetsQuery($slugs)
-            ->andWhere('ev.id = :eventId')
-            ->setParameter('eventId', $eventId)
+            ->getEntrantSetsQuery($entrantIds)
+            ->orderBy('t.dateStart ASC, ev.id, ph.phaseOrder, s.round')
             ->getQuery()
-        ;
+            ->getResult();
     }
 
     /**
@@ -63,6 +56,56 @@ class SetRepository extends EntityRepository
             ->setParameter('phaseId', $phaseId)
             ->getQuery()
             ->getResult()
+        ;
+    }
+
+    /**
+     * @param Entrant $entrant
+     * @return Set
+     */
+    public function findFirstByEntrant(Entrant $entrant)
+    {
+        return $this
+            ->createQueryBuilder('s')
+            ->select('s, pg, ph, ev, t, e1, e2')
+            ->join('s.phaseGroup', 'pg')
+            ->join('pg.phase', 'ph')
+            ->join('ph.event', 'ev')
+            ->join('ev.tournament', 't')
+            ->leftJoin('s.entrantOne', 'e1')
+            ->leftJoin('s.entrantTwo', 'e2')
+            ->where('e1 = :entrant')
+            ->orWhere('e2 = :entrant')
+            ->orderBy('t.dateStart', 'ASC')
+            ->setParameter('entrant', $entrant)
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult()
+        ;
+    }
+
+    /**
+     * @param string|array $slugs
+     * @return Query
+     */
+    public function findByPlayerSlug($slugs)
+    {
+        // Returning the query to accommodate pagination.
+        return $this->getPlayerSetsQuery($slugs)->getQuery();
+    }
+
+    /**
+     * @param string|array $slugs
+     * @param string       $eventId
+     * @return Query
+     */
+    public function findByPlayerSlugAndEventId($slugs, $eventId)
+    {
+        return $this
+            ->getPlayerSetsQuery($slugs)
+            ->andWhere('ev.id = :eventId')
+            ->setParameter('eventId', $eventId)
+            ->getQuery()
         ;
     }
 
@@ -98,15 +141,11 @@ class SetRepository extends EntityRepository
     }
 
     /**
-     * @param string|array $slugs
+     * @param array $entrantIds
      * @return QueryBuilder
      */
-    protected function getPlayerSetsQuery($slugs)
+    protected function getEntrantSetsQuery(array $entrantIds)
     {
-        /** @var EntrantRepository $singlePlayerEntrants */
-        $entrantRepository = $this->_em->getRepository('CoreBundle:Entrant');
-        $singlePlayerEntrantIds = $entrantRepository->findSinglePlayerEntrantIdsBySlug($slugs);
-
         return $this
             ->createQueryBuilder('s')
             ->select('s, pg, ph, ev, g, t, e1, e2, w, wp, l, lp')
@@ -124,7 +163,22 @@ class SetRepository extends EntityRepository
             ->leftJoin('l.players', 'lp')
             ->where('e1.id IN (:ids)')
             ->orWhere('e2.id IN (:ids)')
-            ->setParameter('ids', $singlePlayerEntrantIds)
+            ->setParameter('ids', $entrantIds)
+        ;
+    }
+
+    /**
+     * @param string|array $slugs
+     * @return QueryBuilder
+     */
+    protected function getPlayerSetsQuery($slugs)
+    {
+        /** @var EntrantRepository $singlePlayerEntrants */
+        $entrantRepository = $this->_em->getRepository('CoreBundle:Entrant');
+        $singlePlayerEntrantIds = $entrantRepository->findSinglePlayerEntrantIdsBySlug($slugs);
+
+        return $this
+            ->getEntrantSetsQuery($singlePlayerEntrantIds)
             ->orderBy('t.dateStart DESC, ev.id, ph.phaseOrder, s.round')
         ;
     }

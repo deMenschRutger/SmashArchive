@@ -79,7 +79,6 @@ class EventProcessor extends AbstractProcessor
 
         $event->setTournament($tournament);
         $event->setName($eventData['name']);
-        $event->setDescription($eventData['description']);
         $event->setGame($game);
 
         $this->events[$eventId] = $event;

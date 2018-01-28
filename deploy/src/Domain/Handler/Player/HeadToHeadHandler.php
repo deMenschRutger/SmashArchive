@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace Domain\Handler\Player;
 
 use CoreBundle\Entity\Set;
-use CoreBundle\Repository\PlayerRepository;
+use CoreBundle\Repository\PlayerProfileRepository;
 use CoreBundle\Repository\SetRepository;
 use Domain\Command\Player\HeadToHeadCommand;
 use Domain\Handler\AbstractHandler;
@@ -25,14 +25,14 @@ class HeadToHeadHandler extends AbstractHandler
         $playerOneSlug = $command->getPlayerOneSlug();
         $playerTwoSlug = $command->getPlayerTwoSlug();
 
-        /** @var PlayerRepository $playerRepository */
-        $playerRepository = $this->getRepository('CoreBundle:Player');
+        /** @var PlayerProfileRepository $playerProfileRepository */
+        $playerProfileRepository = $this->getRepository('CoreBundle:PlayerProfile');
 
-        if (!$playerRepository->exists($playerOneSlug)) {
+        if (!$playerProfileRepository->exists($playerOneSlug)) {
             throw new NotFoundHttpException("The player '{$playerOneSlug}' could not be found.");
         }
 
-        if (!$playerRepository->exists($playerTwoSlug)) {
+        if (!$playerProfileRepository->exists($playerTwoSlug)) {
             throw new NotFoundHttpException("The player '{$playerTwoSlug}' could not be found.");
         }
 

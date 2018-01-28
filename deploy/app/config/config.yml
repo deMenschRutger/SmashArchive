@@ -155,8 +155,9 @@ sonata_admin:
             admin.player:
                 label: Players
                 icon: '<i class="fa fa-gamepad"></i>'
-                on_top: true
+                on_top: false
                 items:
+                    - admin.player_profile
                     - admin.player
             admin.country:
                 label: Countries

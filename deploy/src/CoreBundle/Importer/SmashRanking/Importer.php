@@ -7,8 +7,10 @@ namespace CoreBundle\Importer\SmashRanking;
 use CoreBundle\Entity\Character;
 use CoreBundle\Entity\Country;
 use CoreBundle\Entity\Entrant;
+use CoreBundle\Entity\Phase;
 use CoreBundle\Entity\PhaseGroup;
 use CoreBundle\Entity\Player;
+use CoreBundle\Entity\PlayerProfile;
 use CoreBundle\Entity\Series;
 use CoreBundle\Entity\Set;
 use CoreBundle\Entity\Tournament;
@@ -225,44 +227,50 @@ class Importer extends AbstractImporter
                 $tag = $tagMatches[1];
             }
 
-            $entity = new Player();
-            $entity->setSmashRankingId($playerId);
-            $entity->setName($player['name'] ? $player['name'] : null);
-            $entity->setGamerTag($tag);
-            $entity->setNationality($nationality);
-            $entity->setCountry($country);
-            $entity->setRegion($player['region'] ? $player['region'] : null);
-            $entity->setCity($player['city'] ?  $player['city'] : null);
-            $entity->setIsActive(!$player['hide']);
-            $entity->setIsNew(false);
+            $profile = new PlayerProfile();
+            $profile->setName($player['name'] ? $player['name'] : null);
+            $profile->setGamerTag($tag);
+            $profile->setNationality($nationality);
+            $profile->setCountry($country);
+            $profile->setRegion($player['region'] ? $player['region'] : null);
+            $profile->setCity($player['city'] ?  $player['city'] : null);
+            $profile->setIsActive(!$player['hide']);
 
             if ($player['smashwiki']) {
-                $entity->setProperty('smashwiki_url', $player['smashwiki']);
+                $profile->setProperty('smashwiki_url', $player['smashwiki']);
             }
 
             if ($player['twitter']) {
-                $entity->setProperty('twitter_url', $player['twitter']);
+                $profile->setProperty('twitter_url', $player['twitter']);
             }
 
             if ($player['twitch']) {
-                $entity->setProperty('twitch_url', $player['twitch']);
+                $profile->setProperty('twitch_url', $player['twitch']);
             }
 
             if ($player['youtube']) {
-                $entity->setProperty('youtube_url', $player['youtube']);
+                $profile->setProperty('youtube_url', $player['youtube']);
             }
 
             if ($player['main']) {
                 $character = $this->getCharacterBySmashRankingId($player['main']);
-                $entity->addMain($character);
+                $profile->addMain($character);
             }
 
             if ($player['secondary']) {
                 $character = $this->getCharacterBySmashRankingId($player['secondary']);
-                $entity->addSecondary($character);
+                $profile->addSecondary($character);
             }
 
+            $entity = new Player();
+            $entity->setName($tag);
+            $entity->setType(Player::SOURCE_SMASHRANKING);
+            $entity->setExternalId($playerId);
+            $entity->setPlayerProfile($profile);
+
+            $this->entityManager->persist($profile);
             $this->entityManager->persist($entity);
+
             $player = $entity;
         }
 
@@ -335,6 +343,13 @@ class Importer extends AbstractImporter
 
             if ($tournament['serie'] && array_key_exists($tournament['serie'], $this->tournamentSeries)) {
                 $entity->setSeries($this->tournamentSeries[$tournament['serie']]);
+            }
+
+            if ($tournament['tos'] && count($tournament['tos']) > 0) {
+                foreach ($tournament['tos'] as $toId) {
+                    $player = $this->getPlayerById($toId);
+                    $entity->addOrganizer($player->getPlayerProfile());
+                }
             }
 
             $this->entityManager->persist($entity);
@@ -417,12 +432,12 @@ class Importer extends AbstractImporter
 
             /** @var PhaseGroup $phaseGroup */
             $phaseGroup = $this->phaseGroups[$eventId];
-            $event = $phaseGroup->getPhase()->getEvent();
-            $tournament = $event->getTournament();
+            $phase = $phaseGroup->getPhase();
+            $tournament = $phase->getEvent()->getTournament();
             $tournamentId = array_search($tournament, $this->tournaments);
 
-            $entrantOne = $this->getEntrant($match['winner'], $tournamentId);
-            $entrantTwo = $this->getEntrant($match['loser'], $tournamentId);
+            $entrantOne = $this->getEntrant($match['winner'], $tournamentId, $phase);
+            $entrantTwo = $this->getEntrant($match['loser'], $tournamentId, $phase);
             $round = $match['round'];
 
             if ($round === null) {
@@ -500,9 +515,10 @@ class Importer extends AbstractImporter
     /**
      * @param integer $playerId
      * @param integer $tournamentId
+     * @param Phase   $originPhase
      * @return Entrant|bool
      */
-    protected function getEntrant($playerId, $tournamentId)
+    protected function getEntrant($playerId, $tournamentId, Phase $originPhase)
     {
         if (isset($this->entrants[$tournamentId][$playerId])) {
             return $this->entrants[$tournamentId][$playerId];
@@ -510,10 +526,15 @@ class Importer extends AbstractImporter
 
         $player = $this->getPlayerById($playerId);
 
+        if ($player->getOriginTournament() === null) {
+            $player->setOriginTournament($originPhase->getEvent()->getTournament());
+        }
+
         $entrant = new Entrant();
         $entrant->setName($player->getGamerTag());
         $entrant->setIsNew(false);
         $entrant->addPlayer($player);
+        $entrant->setOriginPhase($originPhase);
         $player->addEntrant($entrant);
 
         $this->entityManager->persist($entrant);

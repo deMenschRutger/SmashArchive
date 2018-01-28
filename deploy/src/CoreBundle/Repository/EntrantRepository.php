@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace CoreBundle\Repository;
 
+use CoreBundle\Entity\Entrant;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 
@@ -38,12 +39,62 @@ class EntrantRepository extends EntityRepository
 
         if (is_array($exclude)) {
             $queryBuilder
-                ->andWhere('en.id NOT IN (:exclude)')
+                ->andWhere('p.id NOT IN (:exclude)')
                 ->setParameter('exclude', $exclude)
             ;
         }
 
         return $queryBuilder->getQuery();
+    }
+
+    /**
+     * @param string $slug
+     * @param int    $eventId
+     * @return Entrant[]
+     */
+    public function findByPlayerSlug($slug, $eventId = null)
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('en')
+            ->select('en, pl, pp, ph, ev, t')
+            ->join('en.players', 'pl')
+            ->join('pl.playerProfile', 'pp')
+            ->join('en.originPhase', 'ph')
+            ->join('ph.event', 'ev')
+            ->join('ev.tournament', 't')
+            ->where('pp.slug = :slug')
+            ->orderBy('t.dateStart', 'DESC')
+            ->setParameter('slug', $slug)
+        ;
+
+        if ($eventId) {
+            $queryBuilder->andWhere('ev.id = :eventId')->setParameter('eventId', $eventId);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @param string $slug
+     * @return Entrant
+     */
+    public function findFirstByPlayerSlug($slug)
+    {
+        return $this
+            ->createQueryBuilder('en')
+            ->select('en, pl, pp, ph, ev, t')
+            ->join('en.players', 'pl')
+            ->join('pl.playerProfile', 'pp')
+            ->join('en.originPhase', 'ph')
+            ->join('ph.event', 'ev')
+            ->join('ev.tournament', 't')
+            ->where('pp.slug = :slug')
+            ->orderBy('t.dateStart', 'ASC')
+            ->setParameter('slug', $slug)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
     /**
@@ -62,8 +113,9 @@ class EntrantRepository extends EntityRepository
             ->select('e.id')
             ->from('CoreBundle:Entrant', 'e')
             ->leftJoin('e.players', 'p')
+            ->leftJoin('p.playerProfile', 'pp')
             ->groupBy('e.id')
-            ->where('p.slug IN (:slugs)')
+            ->where('pp.slug IN (:slugs)')
         ;
 
         $queryBuilder = $this->_em->createQueryBuilder();

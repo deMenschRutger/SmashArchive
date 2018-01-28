@@ -39,11 +39,17 @@ services:
 
     admin.player:
         class: AdminBundle\Admin\PlayerAdmin
-        arguments: [~, CoreBundle\Entity\Player, AdminBundle:Player ]
+        arguments: [~, CoreBundle\Entity\Player, ~]
         tags:
             - { name: sonata.admin, manager_type: orm, label: Players, pager_type: simple }
         calls:
           - ['setCacheManager', ['@core.service.cache.manager']]
+
+    admin.player_profile:
+        class: AdminBundle\Admin\PlayerProfileAdmin
+        arguments: [~, CoreBundle\Entity\PlayerProfile, ~]
+        tags:
+            - { name: sonata.admin, manager_type: orm, label: Profiles, pager_type: simple }
 
     admin.series:
         class: AdminBundle\Admin\SeriesAdmin

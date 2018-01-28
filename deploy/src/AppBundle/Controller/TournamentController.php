@@ -74,6 +74,7 @@ class TournamentController extends AbstractDefaultController
         $command = new DetailsCommand($slug, true);
         $tournament = $this->commandBus->handle($command);
 
+        // TODO Add a limit, since we're only showing the top 8 here.
         $command = new ResultsCommand($tournament->getId());
         $results = $this->commandBus->handle($command);
 

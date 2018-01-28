@@ -96,6 +96,10 @@ class Bracket extends SingleEliminationBracket
      */
     public function getGrandFinalsSets()
     {
+        if (count($this->grandFinals) === 0) {
+            return[];
+        }
+
         $round = key($this->grandFinals);
         $sets = [];
 
@@ -210,6 +214,10 @@ class Bracket extends SingleEliminationBracket
     protected function processSets()
     {
         parent::processSets();
+
+        if (count($this->setsByRound) === 0) {
+            return;
+        }
 
         end($this->setsByRound);
         $round = key($this->setsByRound);
