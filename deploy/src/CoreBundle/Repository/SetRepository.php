@@ -159,13 +159,11 @@ class SetRepository extends EntityRepository
             ->leftJoin('e1.players', 'p1')
             ->leftJoin('p1.playerProfile', 'pp1')
             ->leftJoin('s.entrantTwo', 'e2')
+            // Joining entrant.players here confuses Doctrine for some reason, see Entrant::getPlayers().
             ->leftJoin('e2.players', 'p2')
             ->leftJoin('p2.playerProfile', 'pp2')
             ->leftJoin('s.winner', 'w')
-//            ->leftJoin('w.players', 'wp')
             ->leftJoin('s.loser', 'l')
-            // Joining loser.players here confuses Doctrine for some reason, see Entrant::getPlayers().
-//            ->leftJoin('l.players', 'lp')
             ->where('e1.id IN (:ids)')
             ->orWhere('e2.id IN (:ids)')
             ->setParameter('ids', $entrantIds)
