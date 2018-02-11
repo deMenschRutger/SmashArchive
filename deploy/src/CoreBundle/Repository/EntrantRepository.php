@@ -54,6 +54,8 @@ class EntrantRepository extends EntityRepository
      */
     public function findByProfileSlug($slug, $eventId = null)
     {
+        $ids = $this->findIdByProfileSlugs($slug, 'all');
+
         $queryBuilder = $this
             ->createQueryBuilder('en')
             ->select('en, pl, pp, ph, ev, t')
@@ -62,9 +64,9 @@ class EntrantRepository extends EntityRepository
             ->join('en.originPhase', 'ph')
             ->join('ph.event', 'ev')
             ->join('ev.tournament', 't')
-            ->where('pp.slug = :slug')
+            ->where('en.id IN (:ids)')
             ->orderBy('t.dateStart', 'DESC')
-            ->setParameter('slug', $slug)
+            ->setParameter('ids', $ids)
         ;
 
         if ($eventId) {
@@ -124,7 +126,7 @@ class EntrantRepository extends EntityRepository
                 ->setParameter('slugs', $slugs)
                 ->getQuery()
                 ->getResult()
-                ;
+            ;
         }
 
         $queryBuilder = $this->_em->createQueryBuilder();

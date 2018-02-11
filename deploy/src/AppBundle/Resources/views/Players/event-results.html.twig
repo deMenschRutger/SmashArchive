@@ -11,7 +11,24 @@
         <div class="panel-body">
             <p>
                 Rank: {{ result.rank ? result.rank : '?' }}
-                (<a href="{{ path('tournaments_summary', { 'slug': result.event.tournament.slug }) }}">Tournament details</a>)
+
+                {% if result.players|length > 1 %}
+
+                    <br>
+                    With
+
+                    {% for partner in result.getPlayers(player.slug) %}
+
+                        <a href="{{ path('player_details', {
+                            'slug': partner.slug
+                        }) }}">{{ partner.gamerTag }}</a>
+
+                    {% endfor %}
+                {% endif %}
+
+                <br>
+                <br>
+                <a href="{{ path('tournaments_summary', { 'slug': result.event.tournament.slug }) }}">Tournament details</a>
             </p>
             <br>
 

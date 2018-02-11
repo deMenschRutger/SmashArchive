@@ -96,14 +96,23 @@ class Result
     }
 
     /**
+     * @param string $excludePlayerSlug
      * @return Collection
      *
      * @Serializer\Groups({"tournaments_results"})
      * @Serializer\VirtualProperty()
      */
-    public function getPlayers()
+    public function getPlayers($excludePlayerSlug = null)
     {
-        return $this->getEntrant()->getPlayers();
+        $players = $this->getEntrant()->getPlayers();
+
+        if ($excludePlayerSlug) {
+            return $players->filter(function (Player $player) use ($excludePlayerSlug) {
+                return $player->getSlug() !== $excludePlayerSlug;
+            });
+        }
+
+        return $players;
     }
 
     /**

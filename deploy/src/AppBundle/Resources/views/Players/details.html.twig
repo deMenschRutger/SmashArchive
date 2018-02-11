@@ -20,6 +20,20 @@
                     <p>
                         Rank: {{ result.rank ? result.rank : '?' }}
 
+                    {% if result.players|length > 1 %}
+
+                        <br>
+                        With
+
+                        {% for partner in result.getPlayers(player.slug) %}
+
+                            <a href="{{ path('player_details', {
+                                'slug': partner.slug
+                            }) }}">{{ partner.gamerTag }}</a>
+
+                        {% endfor %}
+                    {% endif %}
+
                     {% if result.hasEvent %}
 
                         <br>
