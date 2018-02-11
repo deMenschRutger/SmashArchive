@@ -12,7 +12,7 @@ class ResultsCommand
     /**
      * @var string
      */
-    private $playerSlug;
+    private $profileSlug;
 
     /**
      * @var string
@@ -25,16 +25,16 @@ class ResultsCommand
      */
     public function __construct($slug, $eventId = null)
     {
-        $this->playerSlug = $slug;
+        $this->profileSlug = $slug;
         $this->eventId = $eventId;
     }
 
     /**
      * @return string
      */
-    public function getPlayerSlug()
+    public function getProfileSlug()
     {
-        return $this->playerSlug;
+        return $this->profileSlug;
     }
 
     /**

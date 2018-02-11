@@ -135,7 +135,7 @@ class Result
     /**
      * @param int $rank
      */
-    public function setRank(int $rank)
+    public function setRank($rank)
     {
         $this->rank = $rank;
     }

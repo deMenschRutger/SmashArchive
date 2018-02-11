@@ -10,7 +10,7 @@
     <div>
         <div class="panel-body">
             <p>
-                Rank: {{ result.rank }}
+                Rank: {{ result.rank ? result.rank : '?' }}
                 (<a href="{{ path('tournaments_summary', { 'slug': result.event.tournament.slug }) }}">Tournament details</a>)
             </p>
             <br>

@@ -52,7 +52,7 @@ class EntrantRepository extends EntityRepository
      * @param int    $eventId
      * @return Entrant[]
      */
-    public function findByPlayerSlug($slug, $eventId = null)
+    public function findByProfileSlug($slug, $eventId = null)
     {
         $queryBuilder = $this
             ->createQueryBuilder('en')

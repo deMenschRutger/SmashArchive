@@ -57,4 +57,32 @@ class ResultRepository extends EntityRepository
             ->getResult()
         ;
     }
+
+    /**
+     * @param string $slug
+     * @param int    $eventId
+     * @return array
+     */
+    public function findForProfile($slug, $eventId = null)
+    {
+        $queryBuilder = $this
+            ->_em
+            ->createQueryBuilder()
+            ->select('r, en, pl, pp')
+            ->from('CoreBundle:Result', 'r')
+            ->join('r.entrant', 'en')
+            ->join('en.players', 'pl')
+            ->join('pl.playerProfile', 'pp')
+            ->join('r.event', 'ev')
+            ->where('pp.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->orderBy('r.rank, en.name')
+        ;
+
+        if ($eventId) {
+            $queryBuilder->andWhere('ev.id = :eventId')->setParameter('eventId', $eventId);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }
