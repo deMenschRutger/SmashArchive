@@ -234,7 +234,7 @@ class Player
     /**
      * @return string|null
      *
-     * @Serializer\Groups({"tournaments_results"})
+     * @Serializer\Groups({"tournaments_results", "players_sets"})
      * @Serializer\VirtualProperty()
      */
     public function getSlug()
@@ -251,7 +251,7 @@ class Player
     /**
      * @return string|null
      *
-     * @Serializer\Groups({"tournaments_results"})
+     * @Serializer\Groups({"tournaments_results", "players_sets"})
      * @Serializer\VirtualProperty()
      */
     public function getGamerTag()

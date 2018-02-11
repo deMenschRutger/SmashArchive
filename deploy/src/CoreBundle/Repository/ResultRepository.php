@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace CoreBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -56,30 +55,6 @@ class ResultRepository extends EntityRepository
             ->orderBy('r.rank, en.name')
             ->getQuery()
             ->getResult()
-        ;
-    }
-
-    /**
-     * @param string|array $slugs
-     * @return QueryBuilder
-     */
-    protected function getPlayerResultsQuery($slugs)
-    {
-        /** @var EntrantRepository $singlePlayerEntrants */
-        $entrantRepository = $this->_em->getRepository('CoreBundle:Entrant');
-        $singlePlayerEntrantIds = $entrantRepository->findSinglePlayerEntrantIdsBySlug($slugs);
-
-        return $this
-            ->_em
-            ->createQueryBuilder()
-            ->select('r, en, ev, t')
-            ->from('CoreBundle:Result', 'r')
-            ->leftJoin('r.event', 'ev')
-            ->leftJoin('ev.tournament', 't')
-            ->leftJoin('r.entrant', 'en')
-            ->where('en.id IN (:ids)')
-            ->orderBy('t.dateStart', 'DESC')
-            ->setParameter('ids', $singlePlayerEntrantIds)
         ;
     }
 }

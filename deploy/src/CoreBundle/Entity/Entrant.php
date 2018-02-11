@@ -87,6 +87,8 @@ class Entrant
     /**
      * @ORM\ManyToMany(targetEntity="Player", inversedBy="entrants")
      * @ORM\JoinTable(name="entrants_players")
+     *
+     * @Serializer\Groups({"players_sets"})
      */
     private $players;
 

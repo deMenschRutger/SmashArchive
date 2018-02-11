@@ -99,9 +99,10 @@ class EntrantRepository extends EntityRepository
 
     /**
      * @param string|array $slugs
+     * @param string       $eventType
      * @return array
      */
-    public function findSinglePlayerEntrantIdsBySlug($slugs)
+    public function findIdByProfileSlugs($slugs, $eventType)
     {
         if (!is_array($slugs)) {
             $slugs = [$slugs];
@@ -118,24 +119,32 @@ class EntrantRepository extends EntityRepository
             ->where('pp.slug IN (:slugs)')
         ;
 
-        $queryBuilder = $this->_em->createQueryBuilder();
+        if ($eventType !== 'singles' && $eventType !== 'teams') {
+            return $entrantIdsQuery
+                ->setParameter('slugs', $slugs)
+                ->getQuery()
+                ->getResult()
+                ;
+        }
 
-        $singlePlayerEntrants = $queryBuilder
+        $queryBuilder = $this->_em->createQueryBuilder();
+        $queryBuilder
             ->select('e2.id')
             ->from('CoreBundle:Entrant', 'e2')
             ->leftJoin('e2.players', 'p2')
             ->where(
                 $queryBuilder->expr()->in('e2.id', $entrantIdsQuery->getDQL())
             )
-            ->setParameter('slugs', $slugs)
             ->groupBy('e2.id')
-            ->having('COUNT(p2.id) = 1')
-            ->getQuery()
-            ->getResult()
+            ->setParameter('slugs', $slugs)
         ;
 
-        return array_map(function ($value) {
-            return $value['id'];
-        }, $singlePlayerEntrants);
+        if ($eventType === 'singles') {
+            $queryBuilder->having('COUNT(p2.id) = 1');
+        } elseif ($eventType === 'teams') {
+            $queryBuilder->having('COUNT(p2.id) = 2');
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace CoreBundle\Importer\Smashgg\Processor;
 
 use CoreBundle\Entity\Entrant;
-use CoreBundle\Entity\Event;
 use CoreBundle\Entity\Phase;
 use CoreBundle\Importer\AbstractProcessor;
 

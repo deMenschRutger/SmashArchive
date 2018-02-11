@@ -15,22 +15,6 @@ class PlayerProfileRepository extends EntityRepository
      * @param string $slug
      * @return int
      */
-    public function findPlayerIdBySlug(string $slug)
-    {
-        return (int) $this
-            ->createQueryBuilder('p')
-            ->select('p.id')
-            ->where('p.slug = :slug')
-            ->setParameter('slug', $slug)
-            ->getQuery()
-            ->getSingleScalarResult()
-        ;
-    }
-
-    /**
-     * @param string $slug
-     * @return int
-     */
     public function exists(string $slug)
     {
         $result = $this

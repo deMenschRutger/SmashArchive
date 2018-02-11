@@ -45,9 +45,10 @@ class SetsHandler extends AbstractHandler
         $repository = $this->getRepository('CoreBundle:Set');
 
         if ($eventId) {
-            $query = $repository->findByPlayerSlugAndEventId($slug, $eventId);
+            $query = $repository->findByProfileSlugAndEventId($slug, $eventId);
         } else {
-            $query = $repository->findByPlayerSlug($slug);
+            // TODO Add option to filter by even type.
+            $query = $repository->findByProfileSlug($slug, 'all');
         }
 
         if ($command->getSortByPhase()) {

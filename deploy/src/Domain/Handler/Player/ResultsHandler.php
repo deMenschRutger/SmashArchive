@@ -39,6 +39,25 @@ class ResultsHandler extends AbstractHandler
         $entrants = $entrantRepository->findByPlayerSlug($command->getPlayerSlug(), $command->getEventId());
         $results = [];
 
+
+
+
+        /** @var ResultRepository $resultRepository */
+//        $resultRepository = $this->getRepository('CoreBundle:Result');
+//        $ranks = $resultRepository->fi();
+//
+//        $slug = $command->getPlayerSlug();
+//        $eventId = $command->getEventId();
+//
+//        if ($eventId) {
+//            return $repository->findByPlayerSlugAndEventId($slug, $eventId);
+//        } else {
+//            return $repository->findByPlayerSlug($slug);
+//        }
+
+
+
+
         foreach ($entrants as $entrant) {
             $result = new Result();
             $result->setEntrant($entrant);
@@ -47,23 +66,12 @@ class ResultsHandler extends AbstractHandler
 
             if ($event instanceof Event) {
                 $result->setEvent($event);
+//                $result->setRank(1);
             }
 
             $results[] = $result;
         }
 
         return $results;
-
-        /** @var ResultRepository $repository */
-        /*$repository = $this->getRepository('CoreBundle:Result');
-
-        $slug = $command->getPlayerSlug();
-        $eventId = $command->getEventId();
-
-        if ($eventId) {
-            return $repository->findByPlayerSlugAndEventId($slug, $eventId);
-        } else {
-            return $repository->findByPlayerSlug($slug);
-        }*/
     }
 }
