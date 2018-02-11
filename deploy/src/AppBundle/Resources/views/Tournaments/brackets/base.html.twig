@@ -11,7 +11,7 @@
             <a href="{{ path('tournaments_overview') }}">Tournaments</a>
         </li>
         <li>
-            <a href="{{ path('tournaments_details', { 'slug': tournament.slug }) }}">{{ tournament.name }}</a>
+            <a href="{{ path('tournaments_summary', { 'slug': tournament.slug }) }}">{{ tournament.name }}</a>
         </li>
         <li class="active">
             <a href="{{ path('tournaments_brackets', { 'slug': tournament.slug }) }}">

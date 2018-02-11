@@ -14,8 +14,20 @@
 
         <ul class="list-group">
             <li class="list-group-item">
-                <a href="{{ path('tournaments_details', { 'slug': tournament.slug }) }}">Details</a>
+                <a href="{{ path('tournaments_summary', { 'slug': tournament.slug }) }}">Summary</a>
             </li>
+
+        {% if tournament.events|length > 0 %}
+
+            <li class="list-group-item">
+                <a href="{{ path('tournaments_results', {
+                    'slug': tournament.slug,
+                    'eventId': tournament.events[0].id,
+                }) }}">Results</a>
+            </li>
+
+        {% endif %}
+
             <li class="list-group-item">
                 <a href="{{ path('tournaments_brackets', { 'slug': tournament.slug }) }}">Brackets</a>
             </li>

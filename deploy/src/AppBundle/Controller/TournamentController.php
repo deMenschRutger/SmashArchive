@@ -67,9 +67,9 @@ class TournamentController extends AbstractDefaultController
      * @param string $slug
      * @return Response
      *
-     * @Route("/{slug}", name="tournaments_details")
+     * @Route("/{slug}", name="tournaments_summary")
      */
-    public function detailsAction($slug)
+    public function summaryAction($slug)
     {
         $command = new DetailsCommand($slug, true);
         $tournament = $this->commandBus->handle($command);
@@ -78,7 +78,7 @@ class TournamentController extends AbstractDefaultController
         $command = new ResultsCommand($tournament->getId());
         $results = $this->commandBus->handle($command);
 
-        return $this->render('AppBundle:Tournaments:details.html.twig', [
+        return $this->render('AppBundle:Tournaments:summary.html.twig', [
             'results' => $results,
             'tournament' => $tournament,
         ]);
