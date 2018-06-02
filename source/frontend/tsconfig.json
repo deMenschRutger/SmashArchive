@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
+    "lib": ["dom", "es2015"],
     "module": "es2015",
     "moduleResolution": "node",
     "newLine": "LF",
     "noImplicitReturns": true,
+    "noImplicitThis": false,
     "noUnusedParameters": true,
     "removeComments": true,
     "sourceMap": false,

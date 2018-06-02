@@ -4,6 +4,7 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 module.exports = {
     entry: './src/index.ts',
     externals: {
+        axios: 'axios',
         vue: 'Vue',
         'vue-router': 'VueRouter',
     },

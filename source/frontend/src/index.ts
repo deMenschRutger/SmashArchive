@@ -22,7 +22,7 @@ new Vue({
 
 (window as any).fbAsyncInit = function () {
     FB.init({
-        appId: '1878227255734015',
+        appId: '1878227255734015', // TODO Make this dynamic.
         xfbml: false,
         version: 'v3.0',
     });
