@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import * as components from './components';
+import './components';
 
 (window as any).fbAsyncInit = function() {
     FB.init({
@@ -10,6 +10,5 @@ import * as components from './components';
 
     new Vue({
         el: '#app',
-        components: components,
     });
 };

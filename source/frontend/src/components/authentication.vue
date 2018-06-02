@@ -8,9 +8,7 @@
 
 import Vue from 'vue';
 
-export default Vue.extend({
-    name: 'authentication',
-
+export default Vue.component('authentication', {
     methods: {
         login: function () {
             console.log('login');
