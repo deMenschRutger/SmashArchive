@@ -1,0 +1,19 @@
+{
+  "name": "smasharchive",
+  "version": "0.1.0",
+  "author": "Rutger Mensch",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "lodash": "~4.17.10",
+    "vue": "~2.5.16"
+  },
+  "devDependencies": {
+    "@types/facebook-js-sdk": "~2.8.4",
+    "@types/lodash": "~4.14.109",
+    "ts-loader": "~4.3.0",
+    "typescript": "~2.8.3",
+    "webpack": "~4.9.1",
+    "webpack-cli": "~2.1.4"
+  }
+}

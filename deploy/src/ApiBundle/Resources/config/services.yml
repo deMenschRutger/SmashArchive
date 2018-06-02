@@ -16,3 +16,9 @@ services:
         calls:
             - ['setContainer', ['@service_container']]
             - ['setCommandBus', ['@tactician.commandbus']]
+
+    api.controller.user:
+        class: ApiBundle\Controller\UserController
+        calls:
+            - ['setContainer', ['@service_container']]
+            - ['setCommandBus', ['@tactician.commandbus']]

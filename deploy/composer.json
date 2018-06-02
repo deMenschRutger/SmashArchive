@@ -50,7 +50,8 @@
         "team-reflex/challonge-php": "^1.0",
         "cache/cache-bundle": "~0.5.0",
         "cache/adapter-bundle": "~0.5.0",
-        "cache/doctrine-adapter": "~0.6.0"
+        "cache/doctrine-adapter": "~0.6.0",
+        "facebook/graph-sdk": "^5.6"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^3.0"
