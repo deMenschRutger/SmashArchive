@@ -3,6 +3,10 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
     entry: './src/index.ts',
+    externals: {
+        vue: 'Vue',
+        'vue-router': 'VueRouter',
+    },
     mode: 'development',
     module: {
         rules: [
