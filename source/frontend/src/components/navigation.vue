@@ -9,7 +9,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">SmashArchive</a>
+                <router-link to="/" class="navbar-brand">SmashArchive</router-link>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
@@ -17,7 +17,7 @@
                         <router-link to="/tournaments">Tournaments</router-link>
                     </li>
                     <li>
-                        <a href="#">Players</a>
+                        <router-link to="/players">Players</router-link>
                     </li>
                     <authentication></authentication>
                 </ul>

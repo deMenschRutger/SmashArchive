@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  *
- * @Route("/players", service="app.controller.player")
+ * Route("/players", service="app.controller.player")
  */
 class PlayerController extends AbstractDefaultController
 {
@@ -25,7 +25,7 @@ class PlayerController extends AbstractDefaultController
      * @param Request $request
      * @return Response
      *
-     * @Route("/", name="players_overview")
+     * Route("/", name="players_overview")
      */
     public function overviewAction(Request $request)
     {
@@ -62,7 +62,7 @@ class PlayerController extends AbstractDefaultController
      * @param string $slug
      * @return Response
      *
-     * @Route("/{slug}/", name="player_details")
+     * Route("/{slug}/", name="player_details")
      */
     public function detailsAction($slug)
     {
@@ -83,7 +83,7 @@ class PlayerController extends AbstractDefaultController
      * @param string $eventId
      * @return Response
      *
-     * @Route("/{slug}/event-results/{eventId}", name="player_event_results")
+     * Route("/{slug}/event-results/{eventId}", name="player_event_results")
      */
     public function eventResultsAction($slug, $eventId)
     {

@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  *
- * @Route("/tournaments", service="app.controller.tournament")
+ * Route("/tournaments", service="app.controller.tournament")
  */
 class TournamentController extends AbstractDefaultController
 {
@@ -30,7 +30,7 @@ class TournamentController extends AbstractDefaultController
      * @param Request $request
      * @return Response
      *
-     * @Route("/", name="tournaments_overview")
+     * Route("/", name="tournaments_overview")
      */
     public function indexAction(Request $request)
     {
@@ -67,7 +67,7 @@ class TournamentController extends AbstractDefaultController
      * @param string $slug
      * @return Response
      *
-     * @Route("/{slug}", name="tournaments_summary")
+     * Route("/{slug}", name="tournaments_summary")
      */
     public function summaryAction($slug)
     {
@@ -88,7 +88,7 @@ class TournamentController extends AbstractDefaultController
      * @param string $slug
      * @return Response
      *
-     * @Route("/{slug}/brackets", name="tournaments_brackets")
+     * Route("/{slug}/brackets", name="tournaments_brackets")
      */
     public function bracketsAction($slug)
     {
@@ -104,7 +104,7 @@ class TournamentController extends AbstractDefaultController
      * @param string $phaseGroupId
      * @return Response
      *
-     * @Route("/{slug}/brackets/{phaseGroupId}", name="tournaments_brackets_details")
+     * Route("/{slug}/brackets/{phaseGroupId}", name="tournaments_brackets_details")
      */
     public function bracketDetailsAction($phaseGroupId)
     {
@@ -151,7 +151,7 @@ class TournamentController extends AbstractDefaultController
      * @param string $eventId
      * @return Response
      *
-     * @Route("/{slug}/results/{eventId}", name="tournaments_results")
+     * Route("/{slug}/results/{eventId}", name="tournaments_results")
      *
      * @TODO Only retrieve the results of the selected event instead of results for all tournament events.
      */

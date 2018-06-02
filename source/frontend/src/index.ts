@@ -5,10 +5,13 @@ import * as components from './components';
 Vue.use(VueRouter);
 
 const routes = [
+    { path: '/', component: components.home },
+    { path: '/players', component: components.players },
     { path: '/tournaments', component: components.tournaments }
 ];
 
 const router = new VueRouter({
+    mode: 'history',
     routes,
 });
 
