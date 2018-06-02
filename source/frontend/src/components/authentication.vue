@@ -21,7 +21,3 @@ export default Vue.component('authentication', {
 });
 
 </script>
-
-<style scoped>
-
-</style>

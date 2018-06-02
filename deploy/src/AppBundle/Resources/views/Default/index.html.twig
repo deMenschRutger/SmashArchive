@@ -2,7 +2,25 @@
 
 {% block body %}
 
-    <p>
+    <div id="app">
+        <navigation></navigation>
+        <div class="container">
+            <router-view></router-view>
+        </div>
+    </div>
+    <script src="{{ asset('dist/bundle.js') }}"></script>
+    <script> (function(d, s, id){
+            let js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+
+
+    {#<p>
         Hello smasher!
     </p>
     <p>
@@ -90,6 +108,6 @@
         <li>
             The filtering functionality on the tournament and player overview pages is still pretty limited.
         </li>
-    </ul>
+    </ul>#}
 
 {% endblock %}

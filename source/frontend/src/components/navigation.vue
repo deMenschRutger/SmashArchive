@@ -14,7 +14,7 @@
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="#">Tournaments</a>
+                        <router-link to="/tournaments">Tournaments</router-link>
                     </li>
                     <li>
                         <a href="#">Players</a>
@@ -34,7 +34,3 @@ export default Vue.component('navigation', {
 });
 
 </script>
-
-<style scoped>
-
-</style>

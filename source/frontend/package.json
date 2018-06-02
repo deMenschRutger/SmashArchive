@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "lodash": "~4.17.10",
-    "vue": "~2.5.16"
+    "vue": "~2.5.16",
+    "vue-router": "~3.0.1"
   },
   "devDependencies": {
     "@types/facebook-js-sdk": "~2.8.4",
