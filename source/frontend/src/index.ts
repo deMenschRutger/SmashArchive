@@ -7,23 +7,23 @@ Vue.use(VueRouter);
 const routes = [
     { path: '/', component: components.home },
     { path: '/players', component: components.players },
-    { path: '/tournaments', component: components.tournaments }
+    { path: '/tournaments', component: components.tournaments },
 ];
 
 const router = new VueRouter({
-    mode: 'history',
     routes,
+    mode: 'history',
 });
 
 new Vue({
-    el: '#app',
     router,
+    el: '#app',
 });
 
-(window as any).fbAsyncInit = function() {
+(window as any).fbAsyncInit = function () {
     FB.init({
         appId: '1878227255734015',
         xfbml: false,
-        version: 'v3.0'
+        version: 'v3.0',
     });
 };

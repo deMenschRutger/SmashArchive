@@ -10,4 +10,4 @@ export {
     navigation,
     players,
     tournaments,
-}
+};
