@@ -1,4 +1,5 @@
 const path = require('path');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
     entry: './src/index.ts',
@@ -6,14 +7,21 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.vue$/,
+                loader: 'vue-loader'
+            },
+            {
                 test: /\.ts$/,
-                use: 'ts-loader',
-                exclude: /node_modules/
+                loader: 'ts-loader',
+                exclude: /node_modules/,
+                options: {
+                    appendTsSuffixTo: [/\.vue$/],
+                }
             }
-        ]
+        ],
     },
     resolve: {
-        extensions: [ '.ts' ],
+        extensions: [ '.ts', '.vue' ],
         alias: {
             'vue$': 'vue/dist/vue.esm.js'
         }
@@ -22,5 +30,8 @@ module.exports = {
         filename: 'bundle.js',
         path: path.resolve(__dirname, '../../deploy/web/dist')
     },
-    watch: true,
+    plugins: [
+        new VueLoaderPlugin(),
+    ],
+    watch: true
 };

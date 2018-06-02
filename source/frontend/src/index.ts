@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import * as components from './components';
 
 (window as any).fbAsyncInit = function() {
     FB.init({
@@ -7,25 +8,8 @@ import Vue from 'vue';
         version: 'v3.0'
     });
 
-    const template = `<li>
-        <a href="#" @click.prevent="login">Login</a>
-    </li>`;
-
-    Vue.component('login', {
-        template: template,
-
-        methods: {
-            login: function () {
-                console.log('login');
-
-                FB.getLoginStatus(function (response: any) {
-                    console.log(response);
-                });
-            }
-        }
-    });
-
     new Vue({
         el: '#app',
+        components: components,
     });
 };
