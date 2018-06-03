@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import * as components from './components';
+import { UserStore } from './store';
 
 Vue.use(VueRouter);
 
@@ -26,4 +27,6 @@ new Vue({
         xfbml: false,
         version: 'v3.0',
     });
+
+    UserStore.init();
 };
