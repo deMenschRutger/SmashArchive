@@ -34,6 +34,8 @@ const store: UserStore = {
         await this.reconnect();
 
         this.state.authentication.initialized = true;
+
+        console.log(this.state.authentication);
     },
 
     /**
@@ -53,8 +55,6 @@ const store: UserStore = {
         if (response.data.data.accessToken) {
             this.state.authentication.accessToken = response.data.data.accessToken;
         }
-
-        console.log(this.state.authentication);
     },
 
     /**

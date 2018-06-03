@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "001741e63e0c26fdb3b3c6023cd6daff",
+    "content-hash": "68295e63e250f74c97706175ca594d04",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -408,6 +408,125 @@
                 "parser"
             ],
             "time": "2014-09-09T13:34:57+00:00"
+        },
+        {
+            "name": "mediamonks/rest-api",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mediamonks/php-rest-api.git",
+                "reference": "dfa8b06b922f8be0bdd6704ca9447540f49287ba"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mediamonks/php-rest-api/zipball/dfa8b06b922f8be0bdd6704ca9447540f49287ba",
+                "reference": "dfa8b06b922f8be0bdd6704ca9447540f49287ba",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.4|^7.0",
+                "symfony/http-kernel": "^2.7|^3.0|^4.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^0.9.4",
+                "phpunit/phpunit": "^4.8",
+                "symfony/form": "^2.7|^3.0|^4.0",
+                "symfony/validator": "^2.7|^3.0|^4.0"
+            },
+            "suggest": {
+                "jms/serializer": "Use JMS Serializer as a serializer"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MediaMonks\\RestApi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Robert Slootjes",
+                    "email": "robert@mediamonks.com",
+                    "homepage": "https://github.com/slootjes"
+                }
+            ],
+            "description": "MediaMonks Rest API",
+            "homepage": "https://www.mediamonks.com/",
+            "keywords": [
+                "api",
+                "bundle",
+                "rest",
+                "symfony"
+            ],
+            "time": "2017-11-30T14:07:26+00:00"
+        },
+        {
+            "name": "mediamonks/rest-api-bundle",
+            "version": "3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mediamonks/symfony-rest-api-bundle.git",
+                "reference": "3b729ef15738b0a40c4cb4e3948b2ccfa602243d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mediamonks/symfony-rest-api-bundle/zipball/3b729ef15738b0a40c4cb4e3948b2ccfa602243d",
+                "reference": "3b729ef15738b0a40c4cb4e3948b2ccfa602243d",
+                "shasum": ""
+            },
+            "require": {
+                "mediamonks/rest-api": "^1.0",
+                "php": "^5.6|^7.0"
+            },
+            "require-dev": {
+                "matthiasnoback/symfony-dependency-injection-test": "^1.0",
+                "mockery/mockery": "^0.9.4",
+                "phpunit/phpunit": "~5.0",
+                "sensio/framework-extra-bundle": "^3.0|^4.0|^5.0",
+                "symfony/symfony": "^2.7|^3.0|^4.0"
+            },
+            "suggest": {
+                "jms/serializer-bundle": "Use JMS Serializer as a serializer"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MediaMonks\\RestApiBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Robert Slootjes",
+                    "email": "robert@mediamonks.com",
+                    "homepage": "https://github.com/slootjes"
+                }
+            ],
+            "description": "MediaMonks Rest API Symfony Bundle",
+            "homepage": "https://www.mediamonks.com/",
+            "keywords": [
+                "api",
+                "bundle",
+                "rest",
+                "symfony"
+            ],
+            "time": "2018-01-02T10:50:19+00:00"
         },
         {
             "name": "psr/cache",
