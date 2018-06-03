@@ -33,7 +33,7 @@ module.exports = {
     },
     output: {
         filename: 'bundle.js',
-        path: path.resolve(__dirname, '../../deploy/web/dist')
+        path: path.resolve(__dirname, '../../source/symfony/public/dist')
     },
     plugins: [
         new VueLoaderPlugin(),
