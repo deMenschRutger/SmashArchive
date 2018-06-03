@@ -7,6 +7,7 @@ namespace ApiBundle\Controller;
 use CoreBundle\Controller\AbstractDefaultController;
 use Facebook\Facebook;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -16,11 +17,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class UserController extends AbstractDefaultController
 {
     /**
+     * @param Request $request
+     *
      * @return array
      *
      * @Route("/login/")
      */
-    public function loginAction()
+    public function loginAction(Request $request)
     {
         $facebook = new Facebook([
             'app_id' => $this->getParameter('facebook_app_id'),
@@ -28,6 +31,11 @@ class UserController extends AbstractDefaultController
             'default_graph_version' => 'v3.0',
         ]);
 
-        return [];
+        $accessToken = $request->get('accessToken');
+        $response = $facebook->get('/me', $accessToken);
+
+        return [
+            'accessToken' => 'customAccessToken',
+        ];
     }
 }

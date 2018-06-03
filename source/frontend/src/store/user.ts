@@ -1,20 +1,23 @@
+import axios, { AxiosResponse } from 'axios';
 import * as Facebook from '../service/facebook';
 
 export interface UserStore {
     state: {
         authentication: {
+            accessToken: string | null;
             initialized: boolean;
-            authenticated: boolean;
         };
     };
     init: () => Promise<void>;
+    reconnect: () => Promise<void>;
+    login: () => Promise<void>;
 }
 
 const store: UserStore = {
     state: {
         authentication: {
+            accessToken: null,
             initialized: false,
-            authenticated: false,
         },
     },
 
@@ -22,13 +25,45 @@ const store: UserStore = {
      * @return {Promise<void>}
      */
     async init (): Promise<void> {
-        const loginStatus: facebook.AuthResponse = await Facebook.getLoginStatus();
+        if (this.state.authentication.accessToken) {
+            this.state.authentication.initialized = true;
 
-        if (loginStatus.status === 'connected') {
-            this.state.authentication.authenticated = true;
+            return;
         }
 
+        await this.reconnect();
+
         this.state.authentication.initialized = true;
+    },
+
+    /**
+     * @return {Promise<void>}
+     */
+    async reconnect (): Promise<void> {
+        const loginStatus: facebook.AuthResponse = await Facebook.getLoginStatus();
+
+        if (loginStatus.status !== 'connected') {
+            return;
+        }
+
+        const response: AxiosResponse = await axios.post('/api/v0.1/users/login/', {
+            accessToken: loginStatus.authResponse.accessToken,
+        });
+
+        if (response.data.data.accessToken) {
+            this.state.authentication.accessToken = response.data.data.accessToken;
+        }
+
+        console.log(this.state.authentication);
+    },
+
+    /**
+     * @return {Promise<void>}
+     */
+    async login (): Promise<void> {
+        await Facebook.login();
+
+        return this.reconnect();
     },
 };
 
