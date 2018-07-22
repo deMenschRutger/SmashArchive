@@ -4,15 +4,30 @@ declare(strict_types = 1);
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
+ *
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\Table(name="users")
  */
 class User implements UserInterface
 {
     /**
+     * @var int
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
      * @var string
+     *
+     * @ORM\Column(type="string", nullable=true, unique=true, length=180)
      */
     protected $username;
 
