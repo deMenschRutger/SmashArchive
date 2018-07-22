@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Controller\Api;
 
 use Doctrine\ORM\EntityRepository;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -18,7 +19,10 @@ class AbstractController extends Controller
      */
     protected function getUser(): UserInterface
     {
-        return $this->container->get('security.token_storage')->getToken()->getUser();
+        /** @var JWTUser $jwtUser */
+        $jwtUser = $this->container->get('security.token_storage')->getToken()->getUser();
+
+        return $this->getRepository('App:User')->find($jwtUser->getUsername());
     }
 
     /**

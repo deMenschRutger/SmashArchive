@@ -17,6 +17,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *         @ORM\UniqueConstraint(name="provider_provider_id", columns={"provider", "provider_id"}),
  *     }
  * )
+ *
+ * @TODO Encrypt the username and provider ID fields.
  */
 class User implements UserInterface
 {
@@ -61,6 +63,16 @@ class User implements UserInterface
     public function getId(): int
     {
         return $this->id;
+    }
+
+    /**
+     * This method exists to accommodate the JWT builder.
+     *
+     * @return int
+     */
+    public function getSub(): int
+    {
+        return $this->getId();
     }
 
     /**

@@ -10,6 +10,7 @@ use Facebook\Facebook;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -82,15 +83,20 @@ class UserController extends AbstractController
     }
 
     /**
-     * @return array
+     * @return User
      *
      * @Sensio\Route("/me/")
      * @Sensio\Method("GET")
      */
-    public function me(): array
+    public function me(): User
     {
-        return [
-            'username' => $this->getUser()->getUsername(),
-        ];
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            throw new NotFoundHttpException('The user could not be found.');
+        }
+
+        // TODO Use the JMS serializer to serialize certain fields.
+        return $user;
     }
 }

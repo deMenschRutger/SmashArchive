@@ -25,6 +25,7 @@ const store: UserStore = {
      * @return {Promise<void>}
      */
     async init (): Promise<void> {
+        // TODO Check if the access token has expired.
         if (this.state.authentication.accessToken) {
             this.state.authentication.initialized = true;
 
