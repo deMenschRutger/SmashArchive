@@ -26,6 +26,21 @@
     "doctrine/lexer": {
         "version": "v1.0.1"
     },
+    "facebook/graph-sdk": {
+        "version": "5.6.3"
+    },
+    "lcobucci/jwt": {
+        "version": "3.2.2"
+    },
+    "lexik/jwt-authentication-bundle": {
+        "version": "2.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "2.5",
+            "ref": "509b1542f3180a1cfe248ade8b7bf5092c2d4127"
+        }
+    },
     "mediamonks/rest-api": {
         "version": "1.0.1"
     },
@@ -37,6 +52,9 @@
             "version": "3.0",
             "ref": "794dac5ae364209f19ca7ac82e318b203b14ea70"
         }
+    },
+    "namshi/jose": {
+        "version": "7.2.3"
     },
     "psr/cache": {
         "version": "1.0.1"
@@ -128,6 +146,9 @@
     "symfony/http-kernel": {
         "version": "v4.1.0"
     },
+    "symfony/inflector": {
+        "version": "v4.1.1"
+    },
     "symfony/lts": {
         "version": "4-dev"
     },
@@ -143,6 +164,9 @@
     "symfony/profiler-pack": {
         "version": "v1.0.3"
     },
+    "symfony/property-access": {
+        "version": "v4.1.1"
+    },
     "symfony/routing": {
         "version": "4.0",
         "recipe": {
@@ -150,6 +174,18 @@
             "branch": "master",
             "version": "4.0",
             "ref": "cda8b550123383d25827705d05a42acf6819fe4e"
+        }
+    },
+    "symfony/security": {
+        "version": "v4.1.1"
+    },
+    "symfony/security-bundle": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "f8a63faa0d9521526499c0a8f403c9964ecb0527"
         }
     },
     "symfony/stopwatch": {

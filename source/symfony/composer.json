@@ -5,6 +5,8 @@
         "php": "^7.1.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "facebook/graph-sdk": "^5.6",
+        "lexik/jwt-authentication-bundle": "^2.5",
         "mediamonks/rest-api-bundle": "^3.1",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/asset": "^4.1",

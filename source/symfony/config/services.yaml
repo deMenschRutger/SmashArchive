@@ -25,3 +25,9 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    Facebook\Facebook:
+        arguments:
+            -
+                app_id: '%env(resolve:FACEBOOK_APP_ID)%'
+                app_secret: '%env(resolve:FACEBOOK_APP_SECRET)%'
+                default_graph_version: v3.0

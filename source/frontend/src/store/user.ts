@@ -53,6 +53,7 @@ const store: UserStore = {
         });
 
         if (response.data.data.accessToken) {
+            // TODO Store the access token in local storage?
             this.state.authentication.accessToken = response.data.data.accessToken;
         }
     },
