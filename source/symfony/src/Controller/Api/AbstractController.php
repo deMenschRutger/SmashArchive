@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Controller\Api;
 
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -18,5 +19,15 @@ class AbstractController extends Controller
     protected function getUser(): UserInterface
     {
         return $this->container->get('security.token_storage')->getToken()->getUser();
+    }
+
+    /**
+     * @param string $entityName
+     *
+     * @return EntityRepository
+     */
+    protected function getRepository($entityName): EntityRepository
+    {
+        return $this->container->get('doctrine.orm.entity_manager')->getRepository($entityName);
     }
 }

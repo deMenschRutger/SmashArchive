@@ -11,7 +11,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @author Rutger Mensch <rutger@rutgermensch.com>
  *
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @ORM\Table(name="users")
+ * @ORM\Table(
+ *     name="users",
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(name="provider_provider_id", columns={"provider", "provider_id"}),
+ *     }
+ * )
  */
 class User implements UserInterface
 {
@@ -27,19 +32,36 @@ class User implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", nullable=true, unique=true, length=180)
+     * @ORM\Column(type="string", length=255)
      */
     protected $username;
 
     /**
      * @var string
+     *
+     * @ORM\Column(type="string", length=32)
      */
-    protected $password;
+    protected $provider;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=128)
+     */
+    protected $providerId;
 
     /**
      * @var array
      */
     protected $roles = [];
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
 
     /**
      * @return string
@@ -60,17 +82,41 @@ class User implements UserInterface
     /**
      * @return string
      */
-    public function getPassword(): string
+    public function getProvider(): string
     {
-        return $this->password;
+        return $this->provider;
     }
 
     /**
-     * @param string $password
+     * @param string $provider
      */
-    public function setPassword(string $password): void
+    public function setProvider(string $provider): void
     {
-        $this->password = $password;
+        $this->provider = $provider;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProviderId(): string
+    {
+        return $this->providerId;
+    }
+
+    /**
+     * @param string $providerId
+     */
+    public function setProviderId(string $providerId): void
+    {
+        $this->providerId = $providerId;
+    }
+
+    /**
+     * @return void
+     */
+    public function getPassword(): void
+    {
+        return;
     }
 
     /**
