@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -18,6 +19,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  *     }
  * )
  *
+ * @Serializer\ExclusionPolicy("all")
+ *
  * @TODO Encrypt the username and provider ID fields.
  */
 class User implements UserInterface
@@ -28,6 +31,8 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Serializer\Expose()
      */
     protected $id;
 
@@ -35,6 +40,8 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(type="string", length=255)
+     *
+     * @Serializer\Expose()
      */
     protected $username;
 

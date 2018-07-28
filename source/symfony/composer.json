@@ -6,6 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "facebook/graph-sdk": "^5.6",
+        "jms/serializer-bundle": "^2.4",
         "lexik/jwt-authentication-bundle": "^2.5",
         "mediamonks/rest-api-bundle": "^3.1",
         "sensio/framework-extra-bundle": "^5.1",

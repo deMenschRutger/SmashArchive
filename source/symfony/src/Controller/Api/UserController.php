@@ -96,7 +96,6 @@ class UserController extends AbstractController
             throw new NotFoundHttpException('The user could not be found.');
         }
 
-        // TODO Use the JMS serializer to serialize certain fields.
         return $user;
     }
 }

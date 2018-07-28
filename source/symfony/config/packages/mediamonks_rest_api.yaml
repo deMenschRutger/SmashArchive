@@ -1,3 +1,4 @@
 mediamonks_rest_api:
+    serializer: jms
     request_matcher:
         path: /api
