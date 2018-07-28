@@ -12,16 +12,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @author Rutger Mensch <rutger@rutgermensch.com>
  *
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @ORM\Table(
- *     name="users",
- *     uniqueConstraints={
- *         @ORM\UniqueConstraint(name="provider_provider_id", columns={"provider", "provider_id"}),
- *     }
- * )
+ * @ORM\Table(name="users")
  *
  * @Serializer\ExclusionPolicy("all")
- *
- * @TODO Encrypt the username and provider ID fields.
  */
 class User implements UserInterface
 {
@@ -39,7 +32,7 @@ class User implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="encrypted")
      *
      * @Serializer\Expose()
      */
@@ -48,16 +41,23 @@ class User implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=32)
+     * @ORM\Column(type="string", length=255)
      */
     protected $provider;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=128)
+     * @ORM\Column(type="encrypted")
      */
     protected $providerId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="hashed", length=64, unique=true)
+     */
+    protected $providerHash;
 
     /**
      * @var array
@@ -128,6 +128,22 @@ class User implements UserInterface
     public function setProviderId(string $providerId): void
     {
         $this->providerId = $providerId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProviderHash(): string
+    {
+        return $this->providerHash;
+    }
+
+    /**
+     * @return void
+     */
+    public function setProviderHash(): void
+    {
+        $this->providerHash = $this->getProvider().'_'.$this->getProviderId();
     }
 
     /**

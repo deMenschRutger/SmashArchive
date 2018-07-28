@@ -31,3 +31,14 @@ services:
                 app_id: '%env(resolve:FACEBOOK_APP_ID)%'
                 app_secret: '%env(resolve:FACEBOOK_APP_SECRET)%'
                 default_graph_version: v3.0
+
+    Zend\Crypt\BlockCipher:
+        public: true
+        factory: 'Zend\Crypt\BlockCipher::factory'
+        arguments:
+            - 'openssl'
+            -
+                algo: 'aes'
+                mode: 'gcm'
+        calls:
+            - [ 'setKey', [ '%env(resolve:ENCRYPTION_KEY)' ] ]

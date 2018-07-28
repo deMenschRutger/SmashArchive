@@ -17,7 +17,8 @@
         "symfony/lts": "^4@dev",
         "symfony/orm-pack": "^1.0",
         "symfony/twig-bundle": "^4.1",
-        "symfony/yaml": "^4.1"
+        "symfony/yaml": "^4.1",
+        "zendframework/zend-crypt": "^3.3"
     },
     "require-dev": {
         "sensiolabs/security-checker": "^4.1",

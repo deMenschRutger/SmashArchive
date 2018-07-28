@@ -63,8 +63,7 @@ class UserController extends AbstractController
         $graphUser = $this->facebook->get('/me', $fbAccessToken)->getGraphUser();
 
         $user = $this->getRepository('App:User')->findOneBy([
-            'provider'   => 'facebook',
-            'providerId' => $graphUser->getId(),
+            'providerHash' => 'facebook_'.$graphUser->getId(),
         ]);
 
         if (!$user instanceof User) {
@@ -72,6 +71,7 @@ class UserController extends AbstractController
             $user->setUsername($graphUser->getName());
             $user->setProvider('facebook');
             $user->setProviderId($graphUser->getId());
+            $user->setProviderHash();
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();

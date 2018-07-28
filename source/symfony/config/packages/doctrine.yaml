@@ -15,6 +15,12 @@ doctrine:
             charset: utf8mb4
             collate: utf8mb4_unicode_ci
         url: 'mysql://%env(resolve:DB_USERNAME)%:%env(resolve:DB_PASSWORD)%@%env(resolve:DB_HOST)%:3306/%env(resolve:DB_NAME)%'
+        types:
+            encrypted: App\Doctrine\DBAL\Types\EncryptedType
+            hashed: App\Doctrine\DBAL\Types\HashedType
+        mapping_types:
+            encrypted: encrypted
+            hashed: hashed
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
         naming_strategy: doctrine.orm.naming_strategy.underscore
