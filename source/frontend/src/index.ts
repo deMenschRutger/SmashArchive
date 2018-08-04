@@ -29,6 +29,4 @@ new Vue({
     });
 
     await UserStore.init();
-
-    console.log(UserStore.state);
 };

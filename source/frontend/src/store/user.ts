@@ -13,7 +13,9 @@ export interface UserStore {
     init: () => Promise<void>;
     tokenIsValid: (accessToken: string) => boolean;
     reconnect: () => Promise<void>;
+    clearSession: () => void;
     login: () => Promise<void>;
+    logout: () => Promise<void>;
 }
 
 const store: UserStore = {
@@ -40,8 +42,6 @@ const store: UserStore = {
         await this.reconnect();
 
         this.state.authentication.initialized = true;
-
-        console.log(this.state.authentication);
     },
 
     /**
@@ -66,6 +66,8 @@ const store: UserStore = {
      * @return {Promise<void>}
      */
     async reconnect(): Promise<void> {
+        this.clearSession();
+
         const loginStatus: facebook.AuthResponse = await Facebook.getLoginStatus();
 
         if (loginStatus.status !== 'connected') {
@@ -83,12 +85,30 @@ const store: UserStore = {
     },
 
     /**
+     * @return {void}
+     */
+    clearSession(): void {
+        localStorage.removeItem('app/accessToken');
+        this.state.authentication.accessToken = null;
+    },
+
+    /**
      * @return {Promise<void>}
      */
     async login(): Promise<void> {
         await Facebook.login();
 
         return this.reconnect();
+    },
+
+    /**
+     * @return {Promise<void>}
+     */
+    async logout(): Promise<void> {
+        await Facebook.getLoginStatus();
+        await Facebook.logout();
+
+        this.clearSession();
     },
 };
 

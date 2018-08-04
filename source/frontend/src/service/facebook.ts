@@ -23,3 +23,18 @@ export const login = function (): Promise<facebook.AuthResponse> {
         });
     });
 };
+
+/**
+ * @return {Promise<Object>}
+ */
+export const logout = function (): Promise<facebook.AuthResponse> {
+    return new Promise((resolve: Function, reject: Function) => {
+        FB.logout((response: facebook.AuthResponse) => {
+            if (response.authResponse) {
+                resolve(response);
+            } else {
+                reject(response);
+            }
+        });
+    });
+};

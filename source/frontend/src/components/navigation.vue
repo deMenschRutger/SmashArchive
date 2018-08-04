@@ -19,8 +19,8 @@
                     <li>
                         <router-link to="/players">Players</router-link>
                     </li>
-                    <authentication></authentication>
                 </ul>
+                <authentication></authentication>
             </div>
         </div>
     </nav>
