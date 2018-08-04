@@ -36,7 +36,7 @@ class Phase
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="external_id", type="string", length=255, nullable=true)
      */
@@ -71,7 +71,7 @@ class Phase
     private $event;
 
     /**
-     * @var PhaseGroup[]|ArrayCollection
+     * @var PhaseGroup[]
      *
      * @ORM\OneToMany(targetEntity="PhaseGroup", mappedBy="phase", cascade={"persist"}, orphanRemoval=true)
      *

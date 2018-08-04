@@ -35,7 +35,7 @@ class Event
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="external_id", type="string", length=255, nullable=true)
      */
@@ -51,7 +51,7 @@ class Event
     private $name;
 
     /**
-     * @var int
+     * @var int|null
      *
      * @ORM\Column(name="entrant_count", type="integer", nullable=true)
      *
@@ -89,11 +89,11 @@ class Event
     private $phases;
 
     /**
-     * @var Result[]
+     * @var Ranking[]
      *
-     * @ORM\OneToMany(targetEntity="Result", mappedBy="event")
+     * @ORM\OneToMany(targetEntity="Ranking", mappedBy="event")
      */
-    private $results;
+    private $rankings;
 
     /**
      *
@@ -101,7 +101,7 @@ class Event
     public function __construct()
     {
         $this->phases = new ArrayCollection();
-        $this->results = new ArrayCollection();
+        $this->rankings = new ArrayCollection();
     }
 
     /**
@@ -209,11 +209,11 @@ class Event
     }
 
     /**
-     * @return Result[]|ArrayCollection
+     * @return Ranking[]|ArrayCollection
      */
-    public function getResults(): array
+    public function getRankings(): array
     {
-        return $this->results;
+        return $this->rankings;
     }
 
     /**

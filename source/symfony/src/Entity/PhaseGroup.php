@@ -6,7 +6,6 @@ namespace App\Entity;
 
 use CoreBundle\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -41,7 +40,7 @@ class PhaseGroup
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="external_id", type="string", length=255, nullable=true)
      */
@@ -57,7 +56,7 @@ class PhaseGroup
     private $name;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="results_page", type="text", nullable=true)
      *
@@ -66,7 +65,7 @@ class PhaseGroup
     private $resultsPage;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="smash_ranking_info", type="text", nullable=true)
      */
@@ -82,6 +81,8 @@ class PhaseGroup
     private $type;
 
     /**
+     * @var Phase|null
+     *
      * @ORM\ManyToOne(targetEntity="Phase", inversedBy="phaseGroups")
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
@@ -90,6 +91,8 @@ class PhaseGroup
     private $phase;
 
     /**
+     * @var Set[]
+     *
      * @ORM\OneToMany(targetEntity="Set", mappedBy="phaseGroup")
      */
     private $sets;
@@ -111,9 +114,9 @@ class PhaseGroup
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getExternalId(): string
+    public function getExternalId(): ?string
     {
         return $this->externalId;
     }

@@ -34,7 +34,7 @@ class Game
     private $id;
 
     /**
-     * @var int
+     * @var int|null
      *
      * @ORM\Column(name="smashgg_id", type="integer", nullable=true)
      */
@@ -66,7 +66,7 @@ class Game
     private $characters;
 
     /**
-     * @var EVent[]
+     * @var Event[]
      *
      * @ORM\OneToMany(targetEntity="Event", mappedBy="game")
      */

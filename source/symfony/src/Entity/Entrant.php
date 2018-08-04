@@ -34,14 +34,14 @@ class Entrant
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="external_id", type="string", length=255, nullable=true)
      */
     private $externalId;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
      *
@@ -93,9 +93,9 @@ class Entrant
     private $players;
 
     /**
-     * @ORM\OneToMany(targetEntity="Result", mappedBy="entrant")
+     * @ORM\OneToMany(targetEntity="Ranking", mappedBy="entrant")
      */
-    private $results;
+    private $rankings;
 
     /**
      *
@@ -105,7 +105,7 @@ class Entrant
         $this->entrantOneSets = new ArrayCollection();
         $this->entrantTwoSets = new ArrayCollection();
         $this->players = new ArrayCollection();
-        $this->results = new ArrayCollection();
+        $this->rankings = new ArrayCollection();
     }
 
     /**
@@ -179,9 +179,9 @@ class Entrant
         }
 
         $players = $players->map(function (Player $player) {
-            $playerProfile = $player->getPlayerProfile();
+            $profile = $player->getProfile();
 
-            return $playerProfile instanceof PlayerProfile ? $playerProfile : null;
+            return $profile instanceof Profile ? $profile : null;
         })->toArray();
 
         $players = array_filter($players);
@@ -398,7 +398,7 @@ class Entrant
     }
 
     /**
-     * Return the slug of the player profile if this is a single player entrant.
+     * Return the slug of the profile if this is a single player entrant.
      *
      * @return string|null
      */
@@ -408,10 +408,10 @@ class Entrant
             return null;
         }
 
-        $playerProfile = $this->getPlayers()->first()->getPlayerProfile();
+        $profile = $this->getPlayers()->first()->getPlayerProfile();
 
-        if ($playerProfile instanceof PlayerProfile) {
-            return $playerProfile->getSlug();
+        if ($profile instanceof Profile) {
+            return $profile->getSlug();
         }
 
         return null;
