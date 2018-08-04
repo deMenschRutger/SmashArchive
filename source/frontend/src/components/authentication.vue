@@ -1,7 +1,7 @@
 <template>
-    <ul class="nav navbar-nav navbar-right" v-if="UserStore.state.authentication.accessToken">
+    <ul class="nav navbar-nav navbar-right" v-if="UserStore.hasSession()">
         <li>
-            <a href="#">Welcome user</a>
+            <a href="#">Welcome {{ UserStore.state.profile.username }}</a>
         </li>
         <li>
             <a href="#" @click.prevent="logout">Logout</a>

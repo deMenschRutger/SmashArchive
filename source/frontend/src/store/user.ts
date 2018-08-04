@@ -1,7 +1,7 @@
-import axios, { AxiosResponse } from 'axios';
 import * as jwt from 'jsonwebtoken';
 import * as _ from 'lodash';
 import * as Facebook from '../service/facebook';
+import smashArchive from '../service/smasharchive';
 
 export interface UserStore {
     state: {
@@ -9,13 +9,19 @@ export interface UserStore {
             accessToken: string | null;
             initialized: boolean;
         };
+        profile: {
+            id: number | null;
+            username: string | null;
+        }
     };
     init: () => Promise<void>;
     tokenIsValid: (accessToken: string) => boolean;
     reconnect: () => Promise<void>;
+    hasSession: () => void;
     clearSession: () => void;
     login: () => Promise<void>;
     logout: () => Promise<void>;
+    updateProfile: () => Promise<void>;
 }
 
 const store: UserStore = {
@@ -23,6 +29,10 @@ const store: UserStore = {
         authentication: {
             accessToken: null,
             initialized: false,
+        },
+        profile: {
+            id: null,
+            username: null,
         },
     },
 
@@ -34,14 +44,13 @@ const store: UserStore = {
 
         if (accessToken && this.tokenIsValid(accessToken)) {
             this.state.authentication.accessToken = accessToken;
-            this.state.authentication.initialized = true;
-
-            return;
+        } else {
+            await this.reconnect();
         }
 
-        await this.reconnect();
-
         this.state.authentication.initialized = true;
+
+        return this.updateProfile();
     },
 
     /**
@@ -74,14 +83,21 @@ const store: UserStore = {
             return;
         }
 
-        const response: AxiosResponse = await axios.post('/api/v0.1/users/login/', {
-            accessToken: loginStatus.authResponse.accessToken,
-        });
+        const response: any = await smashArchive.users.login(
+            loginStatus.authResponse.accessToken,
+        );
 
-        if (response.data.data.accessToken) {
-            localStorage.setItem('app/accessToken', response.data.data.accessToken);
-            this.state.authentication.accessToken = response.data.data.accessToken;
+        if (response.accessToken) {
+            localStorage.setItem('app/accessToken', response.accessToken);
+            this.state.authentication.accessToken = response.accessToken;
         }
+    },
+
+    /**
+     * @return {boolean}
+     */
+    hasSession(): boolean {
+        return !!this.state.authentication.accessToken;
     },
 
     /**
@@ -89,7 +105,13 @@ const store: UserStore = {
      */
     clearSession(): void {
         localStorage.removeItem('app/accessToken');
+
         this.state.authentication.accessToken = null;
+
+        this.state.profile = {
+            id: null,
+            username: null,
+        };
     },
 
     /**
@@ -97,8 +119,9 @@ const store: UserStore = {
      */
     async login(): Promise<void> {
         await Facebook.login();
+        await this.reconnect();
 
-        return this.reconnect();
+        return this.updateProfile();
     },
 
     /**
@@ -109,6 +132,19 @@ const store: UserStore = {
         await Facebook.logout();
 
         this.clearSession();
+    },
+
+    /**
+     * @return {Promise<void>}
+     */
+    async updateProfile(): Promise<void> {
+        if (!this.hasSession()) {
+            return;
+        }
+
+        const accessToken: string = <string>this.state.authentication.accessToken;
+
+        this.state.profile = await smashArchive.users.me(accessToken);
     },
 };
 
