@@ -1,4 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
+import * as jwt from 'jsonwebtoken';
+import * as _ from 'lodash';
 import * as Facebook from '../service/facebook';
 
 export interface UserStore {
@@ -9,6 +11,7 @@ export interface UserStore {
         };
     };
     init: () => Promise<void>;
+    tokenIsValid: (accessToken: string) => boolean;
     reconnect: () => Promise<void>;
     login: () => Promise<void>;
 }
@@ -24,9 +27,11 @@ const store: UserStore = {
     /**
      * @return {Promise<void>}
      */
-    async init (): Promise<void> {
-        // TODO Check if the access token has expired.
-        if (this.state.authentication.accessToken) {
+    async init(): Promise<void> {
+        const accessToken: string | null = localStorage.getItem('app/accessToken');
+
+        if (accessToken && this.tokenIsValid(accessToken)) {
+            this.state.authentication.accessToken = accessToken;
             this.state.authentication.initialized = true;
 
             return;
@@ -40,9 +45,27 @@ const store: UserStore = {
     },
 
     /**
+     * @param {string} accessToken
+     *
+     * @return {boolean}
+     */
+    tokenIsValid(accessToken: string): boolean {
+        const decodedToken: any = jwt.decode(accessToken);
+
+        if (!_.has(decodedToken, 'exp')) {
+            return false;
+        }
+
+        const expiresAt: number = decodedToken.exp * 1000;
+        const now: number = Date.now();
+
+        return expiresAt > now;
+    },
+
+    /**
      * @return {Promise<void>}
      */
-    async reconnect (): Promise<void> {
+    async reconnect(): Promise<void> {
         const loginStatus: facebook.AuthResponse = await Facebook.getLoginStatus();
 
         if (loginStatus.status !== 'connected') {
@@ -54,7 +77,7 @@ const store: UserStore = {
         });
 
         if (response.data.data.accessToken) {
-            // TODO Store the access token in local storage?
+            localStorage.setItem('app/accessToken', response.data.data.accessToken);
             this.state.authentication.accessToken = response.data.data.accessToken;
         }
     },
@@ -62,7 +85,7 @@ const store: UserStore = {
     /**
      * @return {Promise<void>}
      */
-    async login (): Promise<void> {
+    async login(): Promise<void> {
         await Facebook.login();
 
         return this.reconnect();

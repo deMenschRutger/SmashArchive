@@ -3,8 +3,10 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
     entry: './src/index.ts',
+    // TODO Also include jsonwebtoken as an external (doesn't have a minified version).
     externals: {
         axios: 'axios',
+        lodash: '_',
         vue: 'Vue',
         'vue-router': 'VueRouter',
     },
@@ -26,7 +28,7 @@ module.exports = {
         ],
     },
     resolve: {
-        extensions: [ '.ts', '.vue' ],
+        extensions: [ '.ts', '.js', '.vue' ],
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
         }

@@ -21,12 +21,14 @@ new Vue({
     el: '#app',
 });
 
-(window as any).fbAsyncInit = function () {
+(window as any).fbAsyncInit = async function () {
     FB.init({
         appId: '1878227255734015', // TODO Make this dynamic.
         xfbml: false,
         version: 'v3.0',
     });
 
-    UserStore.init();
+    await UserStore.init();
+
+    console.log(UserStore.state);
 };
