@@ -93,9 +93,9 @@ class Entrant
     private $players;
 
     /**
-     * @ORM\OneToMany(targetEntity="Ranking", mappedBy="entrant")
+     * @ORM\OneToMany(targetEntity="Rank", mappedBy="entrant")
      */
-    private $rankings;
+    private $ranks;
 
     /**
      *
@@ -105,7 +105,7 @@ class Entrant
         $this->entrantOneSets = new ArrayCollection();
         $this->entrantTwoSets = new ArrayCollection();
         $this->players = new ArrayCollection();
-        $this->rankings = new ArrayCollection();
+        $this->ranks = new ArrayCollection();
     }
 
     /**

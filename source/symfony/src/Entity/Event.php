@@ -89,11 +89,11 @@ class Event
     private $phases;
 
     /**
-     * @var Ranking[]
+     * @var Rank[]
      *
-     * @ORM\OneToMany(targetEntity="Ranking", mappedBy="event")
+     * @ORM\OneToMany(targetEntity="Rank", mappedBy="event")
      */
-    private $rankings;
+    private $ranks;
 
     /**
      *
@@ -101,7 +101,7 @@ class Event
     public function __construct()
     {
         $this->phases = new ArrayCollection();
-        $this->rankings = new ArrayCollection();
+        $this->ranks = new ArrayCollection();
     }
 
     /**
@@ -209,11 +209,11 @@ class Event
     }
 
     /**
-     * @return Ranking[]|ArrayCollection
+     * @return Rank[]|ArrayCollection
      */
-    public function getRankings(): array
+    public function getRanks(): array
     {
-        return $this->rankings;
+        return $this->ranks;
     }
 
     /**

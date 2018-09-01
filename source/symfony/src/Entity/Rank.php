@@ -9,18 +9,18 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
 /**
- * @ORM\Table(name="ranking", indexes={
+ * @ORM\Table(name="rank", indexes={
  *     @ORM\Index(name="rank_index", columns={"rank"}),
  * })
  * @ORM\Entity(repositoryClass="CoreBundle\Repository\ResultRepository")
  */
-class Ranking
+class Rank
 {
     /**
      * @var Event|null
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Event", inversedBy="rankings")
+     * @ORM\ManyToOne(targetEntity="Event", inversedBy="ranks")
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $event;
@@ -29,7 +29,7 @@ class Ranking
      * @var Entrant|null
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="rankings")
+     * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="ranks")
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $entrant;
