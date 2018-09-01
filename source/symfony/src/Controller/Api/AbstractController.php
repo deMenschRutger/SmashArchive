@@ -7,7 +7,6 @@ namespace App\Controller\Api;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
-use League\Tactician\CommandBus;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser;
 use MediaMonks\RestApi\Response\OffsetPaginatedResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -34,14 +33,6 @@ class AbstractController extends Controller
     protected function getRepository($entityName): ObjectRepository
     {
         return $this->getEntityManager()->getRepository($entityName);
-    }
-
-    /**
-     * @return CommandBus
-     */
-    protected function getCommandBus(): CommandBus
-    {
-        return $this->get('tactician.commandbus');
     }
 
     /**

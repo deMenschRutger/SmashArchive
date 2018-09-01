@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Controller\Api;
 
 use App\Bus\Command\Tournament\OverviewCommand;
+use League\Tactician\CommandBus;
 use MediaMonks\RestApi\Response\PaginatedResponseInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +17,18 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class TournamentController extends AbstractController
 {
+    /**
+     * @var CommandBus
+     */
+    protected $bus;
+
+    /**
+     * @param CommandBus $bus
+     */
+    public function __construct(CommandBus $bus)
+    {
+        $this->bus = $bus;
+    }
     /**
      * @param Request $request
      *
@@ -31,7 +44,7 @@ class TournamentController extends AbstractController
         $limit = $request->get('limit');
 
         $command = new OverviewCommand($name, $location, $page, $limit, 'dateStart', 'desc');
-        $pagination = $this->getCommandBus()->handle($command);
+        $pagination = $this->bus->handle($command);
 
         return $this->buildPaginatedResponse($pagination, 'tournaments_overview');
     }

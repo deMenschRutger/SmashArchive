@@ -42,7 +42,7 @@ export default Vue.component('tournaments', {
     },
 
     created: async function () {
-        const response: AxiosResponse = await axios.get('/api/v0.1/tournaments/');
+        const response: AxiosResponse = await axios.get('/api/tournaments/');
 
         this.tournaments = response.data.data;
     }
