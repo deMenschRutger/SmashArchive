@@ -20,6 +20,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class UserController extends AbstractController
 {
     /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
      * @var JWTTokenManagerInterface
      */
     private $jwtManager;

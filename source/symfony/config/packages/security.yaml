@@ -9,7 +9,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         login:
-            pattern:  ^/api/v(.*)/users/login
+            pattern:  ^/api/users/login
             stateless: true
             anonymous: true
         api:

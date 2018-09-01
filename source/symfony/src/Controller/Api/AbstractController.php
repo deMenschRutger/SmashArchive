@@ -11,7 +11,6 @@ use League\Tactician\CommandBus;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser;
 use MediaMonks\RestApi\Response\OffsetPaginatedResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -20,38 +19,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class AbstractController extends Controller
 {
     /**
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
-    /**
-     * @var CommandBus
-     */
-    protected $bus;
-
-    /**
-     * @var TokenStorageInterface
-     */
-    protected $tokenStorage;
-
-    /**
-     * @param EntityManagerInterface $entityManager
-     * @param CommandBus             $bus
-     * @param TokenStorageInterface  $tokenStorage
-     */
-    public function __construct(EntityManagerInterface $entityManager, CommandBus $bus, TokenStorageInterface $tokenStorage)
-    {
-        $this->entityManager = $entityManager;
-        $this->bus = $bus;
-        $this->tokenStorage = $tokenStorage;
-    }
-
-    /**
      * @return EntityManagerInterface
      */
     protected function getEntityManager(): EntityManagerInterface
     {
-        return $this->entityManager;
+        return $this->get('doctrine.orm.entity_manager');
     }
 
     /**
@@ -69,7 +41,7 @@ class AbstractController extends Controller
      */
     protected function getCommandBus(): CommandBus
     {
-        return $this->bus;
+        return $this->get('tactician.commandbus');
     }
 
     /**
@@ -78,7 +50,7 @@ class AbstractController extends Controller
     protected function getUser(): UserInterface
     {
         /** @var JWTUser $jwtUser */
-        $jwtUser = $this->tokenStorage->getToken()->getUser();
+        $jwtUser = $this->get('security.token_storage')->getToken()->getUser();
 
         return $this->getRepository('App:User')->find($jwtUser->getUsername());
     }
@@ -97,7 +69,6 @@ class AbstractController extends Controller
             $data[] = $item;
         }
 
-        // TODO Why can't we inject this dependency?
         $this->get('mediamonks_rest_api.serializer.jms_groups')->setGroups($groups);
 
         $paginationData = $pagination->getPaginationData();

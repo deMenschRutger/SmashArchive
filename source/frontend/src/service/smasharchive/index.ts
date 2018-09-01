@@ -12,7 +12,7 @@ class SmashArchive {
 
     constructor () {
         const agent: AxiosInstance = axios.create({
-            baseURL: 'http://localhost:8000/api/v0.1/',
+            baseURL: 'http://localhost:8000/api/',
         });
 
         this.users = new Users(agent)
