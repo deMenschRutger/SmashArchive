@@ -282,33 +282,33 @@ class Set
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getWinnerScore(): int
+    public function getWinnerScore(): ?int
     {
         return $this->winnerScore;
     }
 
     /**
-     * @param int $winnerScore
+     * @param int|null $winnerScore
      */
-    public function setWinnerScore(int $winnerScore): void
+    public function setWinnerScore(?int $winnerScore): void
     {
         $this->winnerScore = $winnerScore;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getLoserScore(): int
+    public function getLoserScore(): ?int
     {
         return $this->loserScore;
     }
 
     /**
-     * @param int $loserScore
+     * @param int|null $loserScore
      */
-    public function setLoserScore(int $loserScore): void
+    public function setLoserScore(?int $loserScore): void
     {
         $this->loserScore = $loserScore;
     }

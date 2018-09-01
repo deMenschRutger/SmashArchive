@@ -89,7 +89,7 @@ class EventGenerateRanksCommand extends ContainerAwareCommand
                 return;
             }
 
-            $eventIds = $this->entityManager->getRepository('CoreBundle:Event')->getAllEventIds();
+            $eventIds = $this->entityManager->getRepository('App:Event')->getAllEventIds();
 
             $io->progressStart(count($eventIds));
 

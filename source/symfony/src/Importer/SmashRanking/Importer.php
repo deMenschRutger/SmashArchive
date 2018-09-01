@@ -15,7 +15,7 @@ use App\Entity\Series;
 use App\Entity\Set;
 use App\Entity\Tournament;
 use App\Importer\AbstractImporter;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Webmozart\Assert\Assert;
 
@@ -106,20 +106,20 @@ class Importer extends AbstractImporter
      * @var array
      */
     protected $scenarios = [
-        'NoPhasesMultipleEvents'       => true, // Cleared (273 tournaments)
-        'NoPhasesSingleEventBracket'   => true, // Cleared (1057 tournaments)
-        'NoPhasesSingleEventNoBracket' => true, // Cleared (11 tournaments)
-        'PhasesMultipleEvents'         => true, // Cleared (114 tournaments)
+//        'NoPhasesMultipleEvents'       => true, // Cleared (273 tournaments)
+//        'NoPhasesSingleEventBracket'   => true, // Cleared (1057 tournaments)
+//        'NoPhasesSingleEventNoBracket' => true, // Cleared (11 tournaments)
+//        'PhasesMultipleEvents'         => true, // Cleared (114 tournaments)
         'PhasesSingleEventBracket'     => true, // Cleared (75 tournaments)
-        'PhasesSingleEventNoBracket'   => true, // Cleared (1 tournament)
+//        'PhasesSingleEventNoBracket'   => true, // Cleared (1 tournament)
     ];
 
     /**
-     * @param SymfonyStyle  $io
-     * @param string        $contentDirPath
-     * @param EntityManager $entityManager
+     * @param SymfonyStyle           $io
+     * @param string                 $contentDirPath
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(SymfonyStyle $io, string $contentDirPath, EntityManager $entityManager)
+    public function __construct(SymfonyStyle $io, string $contentDirPath, EntityManagerInterface $entityManager)
     {
         $this->setIo($io);
         $this->contentDirPath = $contentDirPath;
@@ -254,12 +254,18 @@ class Importer extends AbstractImporter
 
             if ($player['main']) {
                 $character = $this->getCharacterBySmashRankingId($player['main']);
-                $profile->addMain($character);
+
+                if ($character instanceof Character) {
+                    $profile->addMain($character);
+                }
             }
 
             if ($player['secondary']) {
                 $character = $this->getCharacterBySmashRankingId($player['secondary']);
-                $profile->addSecondary($character);
+
+                if ($character instanceof Character) {
+                    $profile->addSecondary($character);
+                }
             }
 
             $entity = new Player();
