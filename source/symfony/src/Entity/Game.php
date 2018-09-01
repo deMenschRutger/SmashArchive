@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -16,7 +17,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="created_at_index", columns={"created_at"}),
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\GameRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\GameRepository")
  */
 class Game
 {
@@ -137,17 +138,17 @@ class Game
     }
 
     /**
-     * @return Character[]|ArrayCollection
+     * @return Character[]|Collection
      */
-    public function getCharacters(): array
+    public function getCharacters(): Collection
     {
         return $this->characters;
     }
 
     /**
-     * @return Event[]|ArrayCollection
+     * @return Event[]|Collection
      */
-    public function getEvents(): array
+    public function getEvents(): Collection
     {
         return $this->events;
     }

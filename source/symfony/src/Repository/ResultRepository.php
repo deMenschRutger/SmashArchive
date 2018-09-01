@@ -21,7 +21,7 @@ class ResultRepository extends EntityRepository
             ->_em
             ->createQueryBuilder()
             ->select('r, en, pl, pp')
-            ->from('CoreBundle:Result', 'r')
+            ->from('App:Result', 'r')
             ->join('r.entrant', 'en')
             ->leftJoin('en.players', 'pl')
             ->leftJoin('pl.playerProfile', 'pp')
@@ -45,7 +45,7 @@ class ResultRepository extends EntityRepository
             ->_em
             ->createQueryBuilder()
             ->select('r, en, pl, pp')
-            ->from('CoreBundle:Result', 'r')
+            ->from('App:Result', 'r')
             ->join('r.entrant', 'en')
             ->join('en.players', 'pl')
             ->join('pl.playerProfile', 'pp')
@@ -69,7 +69,7 @@ class ResultRepository extends EntityRepository
             ->_em
             ->createQueryBuilder()
             ->select('r, en, pl, pp')
-            ->from('CoreBundle:Result', 'r')
+            ->from('App:Result', 'r')
             ->join('r.entrant', 'en')
             ->join('en.players', 'pl')
             ->join('pl.playerProfile', 'pp')

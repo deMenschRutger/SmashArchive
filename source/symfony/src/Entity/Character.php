@@ -11,7 +11,7 @@ use JMS\Serializer\Annotation as Serializer;
  * @ORM\Table(name="characters", uniqueConstraints={
  *  @ORM\UniqueConstraint(name="name_game_unique", columns={"name", "game_id"})
  * })
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\CharacterRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\CharacterRepository")
  */
 class Character
 {

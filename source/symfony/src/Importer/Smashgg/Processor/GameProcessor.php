@@ -50,7 +50,7 @@ class GameProcessor extends AbstractProcessor
             return;
         }
 
-        $game = $this->entityManager->getRepository('CoreBundle:Game')->findOneBy([
+        $game = $this->entityManager->getRepository('App:Game')->findOneBy([
             'smashggId' => $gameId,
         ]);
 

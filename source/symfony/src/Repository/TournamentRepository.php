@@ -24,7 +24,7 @@ class TournamentRepository extends EntityRepository
             ->_em
             ->createQueryBuilder()
             ->select('t, e, c, g, p, pg, to')
-            ->from('CoreBundle:Tournament', 't')
+            ->from('App:Tournament', 't')
             ->leftJoin('t.country', 'c')
             ->leftJoin('t.events', 'e')
             ->leftJoin('t.organizers', 'to')

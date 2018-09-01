@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -17,7 +18,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="created_at_index", columns={"created_at"}),
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\PlayerRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\PlayerRepository")
  */
 class Player
 {
@@ -83,6 +84,14 @@ class Player
      * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $profile;
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return 'Player #'.$this->getId();
+    }
 
     /**
      *
@@ -163,9 +172,9 @@ class Player
     }
 
     /**
-     * @return Entrant[]|ArrayCollection
+     * @return Entrant[]|Collection
      */
-    public function getEntrants(): array
+    public function getEntrants(): Collection
     {
         return $this->entrants;
     }

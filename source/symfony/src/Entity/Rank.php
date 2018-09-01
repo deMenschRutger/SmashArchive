@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -12,7 +12,7 @@ use JMS\Serializer\Annotation as Serializer;
  * @ORM\Table(name="rank", indexes={
  *     @ORM\Index(name="rank_index", columns={"rank"}),
  * })
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\ResultRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\ResultRepository")
  */
 class Rank
 {
@@ -90,12 +90,12 @@ class Rank
     /**
      * @param string|null $excludePlayerSlug
      *
-     * @return Player[]|ArrayCollection
+     * @return Player[]|Collection
      *
      * @Serializer\Groups({"tournaments_results"})
      * @Serializer\VirtualProperty()
      */
-    public function getPlayers($excludePlayerSlug = null): array
+    public function getPlayers($excludePlayerSlug = null): Collection
     {
         $players = $this->getEntrant()->getPlayers();
 

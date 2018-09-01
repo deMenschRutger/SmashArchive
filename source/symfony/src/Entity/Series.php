@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
@@ -12,7 +13,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Table(name="series", indexes={
  *     @ORM\Index(name="name_index", columns={"name"}),
  * })
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\SeriesRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\SeriesRepository")
  */
 class Series
 {
@@ -88,9 +89,9 @@ class Series
     }
 
     /**
-     * @return Tournament[]|ArrayCollection
+     * @return Tournament[]|Collection
      */
-    public function getTournaments(): array
+    public function getTournaments(): Collection
     {
         return $this->tournaments;
     }

@@ -17,7 +17,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="created_at_index", columns={"created_at"}),
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\EventRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
  */
 class Event
 {
@@ -209,9 +209,9 @@ class Event
     }
 
     /**
-     * @return Rank[]|ArrayCollection
+     * @return Rank[]|Collection
      */
-    public function getRanks(): array
+    public function getRanks(): Collection
     {
         return $this->ranks;
     }

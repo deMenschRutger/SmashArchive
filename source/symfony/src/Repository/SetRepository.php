@@ -101,7 +101,7 @@ class SetRepository extends EntityRepository
     public function findHeadToHeadSets(string $playerOneSlug, string $playerTwoSlug)
     {
         /** @var EntrantRepository $singlePlayerEntrants */
-        $entrantRepository = $this->_em->getRepository('CoreBundle:Entrant');
+        $entrantRepository = $this->_em->getRepository('App:Entrant');
         $singlePlayerEntrantIds = $entrantRepository->findIdByProfileSlugs([$playerOneSlug, $playerTwoSlug], 'singles');
 
         return $this
@@ -132,7 +132,7 @@ class SetRepository extends EntityRepository
     protected function getProfileSetsQuery($slugs, $eventType)
     {
         /** @var EntrantRepository $entrantRepository */
-        $entrantRepository = $this->_em->getRepository('CoreBundle:Entrant');
+        $entrantRepository = $this->_em->getRepository('App:Entrant');
         $entrantIds = $entrantRepository->findIdByProfileSlugs($slugs, $eventType);
 
         return $this

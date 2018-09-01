@@ -55,7 +55,7 @@ class PlayerProcessor extends AbstractProcessor
             return;
         }
 
-        $player = $this->entityManager->getRepository('CoreBundle:Player')->findOneBy([
+        $player = $this->entityManager->getRepository('App:Player')->findOneBy([
             'externalId' => $playerId,
             'type'       => Player::SOURCE_SMASHGG,
         ]);
@@ -65,12 +65,12 @@ class PlayerProcessor extends AbstractProcessor
             $player->setName($playerData['gamerTag']);
             $player->setOriginTournament($originTournament);
             $player->setType(Player::SOURCE_SMASHGG);
-            $player->setExternalId($playerId);
+            $player->setExternalId(strval($playerId));
 
             $this->entityManager->persist($player);
         }
 
-        $profile = $player->getPlayerProfile();
+        $profile = $player->getProfile();
 
         if ($profile instanceof Profile) {
             if ($profile->getRegion() === null && $playerData['region']) {

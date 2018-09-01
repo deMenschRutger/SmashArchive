@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Importer;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Tactician\CommandBus;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -20,7 +20,7 @@ abstract class AbstractImporter
     protected $io;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 
@@ -46,7 +46,7 @@ abstract class AbstractImporter
     }
 
     /**
-     * @return EntityManager
+     * @return EntityManagerInterface
      */
     public function getEntityManager()
     {
@@ -54,16 +54,17 @@ abstract class AbstractImporter
     }
 
     /**
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      */
-    public function setEntityManager(EntityManager $entityManager)
+    public function setEntityManager(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
 
     /**
      * @param string $name
-     * @return EntityRepository
+     *
+     * @return ObjectRepository
      */
     public function getRepository(string $name)
     {

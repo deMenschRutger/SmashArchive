@@ -61,13 +61,13 @@ class PhaseProcessor extends AbstractProcessor
             return;
         }
 
-        $phase = $this->entityManager->getRepository('CoreBundle:Phase')->findOneBy([
+        $phase = $this->entityManager->getRepository('App:Phase')->findOneBy([
             'externalId' => $phaseId,
         ]);
 
         if (!$phase instanceof Phase) {
             $phase = new Phase();
-            $phase->setExternalId($phaseId);
+            $phase->setExternalId(strval($phaseId));
 
             $this->entityManager->persist($phase);
         }
@@ -88,7 +88,7 @@ class PhaseProcessor extends AbstractProcessor
             ->entityManager
             ->createQueryBuilder()
             ->select('p')
-            ->from('CoreBundle:Phase', 'p')
+            ->from('App:Phase', 'p')
             ->join('p.event', 'e')
             ->join('e.tournament', 't')
             ->where('t.id = :tournamentId')

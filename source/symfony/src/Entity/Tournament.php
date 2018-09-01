@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
@@ -20,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     @ORM\Index(name="date_start_index", columns={"date_start"}),
  *     @ORM\Index(name="is_active_index", columns={"is_active"})
  * })
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\TournamentRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\TournamentRepository")
  */
 class Tournament
 {
@@ -202,9 +203,9 @@ class Tournament
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -483,9 +484,9 @@ class Tournament
     }
 
     /**
-     * @return Profile[]|ArrayCollection
+     * @return Profile[]|Collection
      */
-    public function getOrganizers(): array
+    public function getOrganizers(): Collection
     {
         return $this->organizers;
     }
@@ -511,9 +512,9 @@ class Tournament
     }
 
     /**
-     * @return Event[]|ArrayCollection
+     * @return Event[]|Collection
      */
-    public function getEvents(): array
+    public function getEvents(): Collection
     {
         return $this->events;
     }

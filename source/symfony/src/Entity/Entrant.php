@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -16,7 +17,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="created_at_index", columns={"created_at"}),
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\EntrantRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\EntrantRepository")
  */
 class Entrant
 {
@@ -96,6 +97,14 @@ class Entrant
      * @ORM\OneToMany(targetEntity="Rank", mappedBy="entrant")
      */
     private $ranks;
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return 'Entrant #'.$this->getId();
+    }
 
     /**
      *
@@ -289,17 +298,17 @@ class Entrant
     }
 
     /**
-     * @return Set[]|ArrayCollection
+     * @return Set[]|Collection
      */
-    public function getEntrantOneSets(): array
+    public function getEntrantOneSets(): Collection
     {
         return $this->entrantOneSets;
     }
 
     /**
-     * @return Set[]|ArrayCollection
+     * @return Set[]|Collection
      */
-    public function getEntrantTwoSets(): array
+    public function getEntrantTwoSets(): Collection
     {
         return $this->entrantTwoSets;
     }

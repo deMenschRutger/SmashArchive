@@ -18,7 +18,7 @@ use App\Importer\Smashgg\Processor\PhaseProcessor;
 use App\Importer\Smashgg\Processor\PlayerProcessor;
 use App\Importer\Smashgg\Processor\SetProcessor;
 use App\Service\Smashgg\Smashgg;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -67,11 +67,11 @@ class Importer extends AbstractImporter
     protected $entrantProcessor;
 
     /**
-     * @param SymfonyStyle  $io
-     * @param EntityManager $entityManager
-     * @param Smashgg       $smashgg
+     * @param SymfonyStyle           $io
+     * @param EntityManagerInterface $entityManager
+     * @param Smashgg                $smashgg
      */
-    public function __construct(SymfonyStyle $io, EntityManager $entityManager, Smashgg $smashgg)
+    public function __construct(SymfonyStyle $io, EntityManagerInterface $entityManager, Smashgg $smashgg)
     {
         $this->setIo($io);
         $this->setEntityManager($entityManager);
@@ -129,7 +129,7 @@ class Importer extends AbstractImporter
         $this->io->writeln('Counting confirmed players for the tournament...');
         $this->entityManager->clear();
 
-        $this->tournament = $this->getRepository('CoreBundle:Tournament')->find($this->tournament->getId());
+        $this->tournament = $this->getRepository('App:Tournament')->find($this->tournament->getId());
         $this->tournament->setPlayerCount();
 
         $this->io->writeln('Flushing the entity manager...');
@@ -145,14 +145,14 @@ class Importer extends AbstractImporter
     protected function getTournament($slug)
     {
         $smashggTournament = $this->smashgg->getTournament($slug);
-        $tournament = $this->getRepository('CoreBundle:Tournament')->findOneBy([
+        $tournament = $this->getRepository('App:Tournament')->findOneBy([
             'externalId' => $slug,
         ]);
 
         if (!$tournament instanceof Tournament) {
             $tournament = new Tournament();
             $tournament->setSource(Tournament::SOURCE_SMASHGG);
-            $tournament->setExternalId($slug);
+            $tournament->setExternalId(strval($slug));
             $tournament->setIsActive(true);
             $tournament->setIsComplete(true);
 
@@ -181,7 +181,7 @@ class Importer extends AbstractImporter
      */
     protected function findCountry($name, $code = null)
     {
-        $countryRepository = $this->getRepository('CoreBundle:Country');
+        $countryRepository = $this->getRepository('App:Country');
 
         if ($code) {
             $country = $countryRepository->findOneBy([

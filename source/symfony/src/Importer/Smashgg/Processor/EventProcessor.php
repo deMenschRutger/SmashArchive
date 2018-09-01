@@ -65,14 +65,14 @@ class EventProcessor extends AbstractProcessor
         }
 
         // Try to find an existing event in the database.
-        $event = $this->entityManager->getRepository('CoreBundle:Event')->findOneBy([
+        $event = $this->entityManager->getRepository('App:Event')->findOneBy([
             'externalId' => $eventId,
         ]);
 
         if (!$event instanceof Event) {
             // The event does not exist in the database yet, so create it.
             $event = new Event();
-            $event->setExternalId($eventId);
+            $event->setExternalId(strval($eventId));
 
             $this->entityManager->persist($event);
         }
@@ -91,7 +91,7 @@ class EventProcessor extends AbstractProcessor
      */
     public function cleanUp(Tournament $tournament)
     {
-        $events = $this->entityManager->getRepository('CoreBundle:Event')->findBy([
+        $events = $this->entityManager->getRepository('App:Event')->findBy([
             'tournament' => $tournament,
         ]);
 

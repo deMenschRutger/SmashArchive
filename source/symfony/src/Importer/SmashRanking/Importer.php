@@ -265,7 +265,7 @@ class Importer extends AbstractImporter
             $entity = new Player();
             $entity->setName($tag);
             $entity->setType(Player::SOURCE_SMASHRANKING);
-            $entity->setExternalId($playerId);
+            $entity->setExternalId(strval($playerId));
             $entity->setProfile($profile);
 
             $this->entityManager->persist($profile);
@@ -331,7 +331,7 @@ class Importer extends AbstractImporter
             $country = $this->getCountryBySmashRankingId($tournament['country']);
 
             $entity = new Tournament();
-            $entity->setExternalId($tournamentId);
+            $entity->setExternalId(strval($tournamentId));
             $entity->setName($tournament['name']);
             $entity->setDateStart(new \DateTime($tournament['date']));
             $entity->setCountry($country);
@@ -397,7 +397,7 @@ class Importer extends AbstractImporter
 
         foreach ($this->countries as $countryId => $country) {
             if ($countryId == $id) {
-                return $this->entityManager->getRepository('CoreBundle:Country')->findOneBy([
+                return $this->entityManager->getRepository('App:Country')->findOneBy([
                     'code' => $country['short'],
                 ]);
             }
@@ -412,7 +412,7 @@ class Importer extends AbstractImporter
      */
     protected function getCharacterBySmashRankingId($id)
     {
-        return $this->entityManager->find('CoreBundle:Character', $id);
+        return $this->entityManager->find('App:Character', $id);
     }
 
     /**
@@ -453,7 +453,7 @@ class Importer extends AbstractImporter
             $round = $this->rounds[$round];
 
             $set = new Set();
-            $set->setExternalId($matchId);
+            $set->setExternalId(strval($matchId));
             $set->setPhaseGroup($phaseGroup);
             $set->setRound($round);
             $set->setEntrantOne($entrantOne);

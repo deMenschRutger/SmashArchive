@@ -33,6 +33,10 @@ services:
                 app_secret: '%env(resolve:FACEBOOK_APP_SECRET)%'
                 default_graph_version: v3.0
 
+    Reflex\Challonge\Challonge:
+        arguments:
+            - '%env(resolve:CHALLONGE_API_KEY)%'
+
     Zend\Crypt\BlockCipher:
         public: true
         factory: 'Zend\Crypt\BlockCipher::factory'

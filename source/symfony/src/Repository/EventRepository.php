@@ -42,7 +42,7 @@ class EventRepository extends EntityRepository
             ->_em
             ->createQueryBuilder()
             ->select('p, pg, s, en1, en2, w, l')
-            ->from('CoreBundle:Phase', 'p')
+            ->from('App:Phase', 'p')
             ->join('p.phaseGroups', 'pg')
             ->join('pg.sets', 's')
             ->leftJoin('s.entrantOne', 'en1')
@@ -68,7 +68,7 @@ class EventRepository extends EntityRepository
             ->_em
             ->createQueryBuilder()
             ->select('COUNT(en.id)')
-            ->from('CoreBundle:Entrant', 'en')
+            ->from('App:Entrant', 'en')
             ->join('en.originPhase', 'op')
             ->join('op.event', 'ev')
             ->where('ev.id = :id')
@@ -84,7 +84,7 @@ class EventRepository extends EntityRepository
      */
     public function deleteResults(Event $event)
     {
-        $results = $this->_em->getRepository('CoreBundle:Result')->findBy([
+        $results = $this->_em->getRepository('App:Result')->findBy([
             'event' => $event,
         ]);
 

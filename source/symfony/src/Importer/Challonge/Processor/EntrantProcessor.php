@@ -53,13 +53,13 @@ class EntrantProcessor extends AbstractProcessor
             return;
         }
 
-        $entrant = $this->entityManager->getRepository('CoreBundle:Entrant')->findOneBy([
+        $entrant = $this->entityManager->getRepository('App:Entrant')->findOneBy([
             'externalId' => $entrantId,
         ]);
 
         if (!$entrant instanceof Entrant) {
             $entrant = new Entrant();
-            $entrant->setExternalId($entrantId);
+            $entrant->setExternalId(strval($entrantId));
 
             $this->entityManager->persist($entrant);
         }

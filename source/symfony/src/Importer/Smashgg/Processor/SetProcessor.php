@@ -55,13 +55,13 @@ class SetProcessor extends AbstractProcessor
             return;
         }
 
-        $set = $this->entityManager->getRepository('CoreBundle:Set')->findOneBy([
+        $set = $this->entityManager->getRepository('App:Set')->findOneBy([
             'externalId' => $setId,
         ]);
 
         if (!$set instanceof Set) {
             $set = new Set();
-            $set->setExternalId($setId);
+            $set->setExternalId(strval($setId));
 
             $this->entityManager->persist($set);
         }
@@ -115,7 +115,7 @@ class SetProcessor extends AbstractProcessor
             ->entityManager
             ->createQueryBuilder()
             ->select('s')
-            ->from('CoreBundle:Set', 's')
+            ->from('App:Set', 's')
             ->join('s.phaseGroup', 'pg')
             ->join('pg.phase', 'p')
             ->join('p.event', 'e')

@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
@@ -22,7 +23,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="created_at_index", columns={"created_at"}),
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\PlayerProfileRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\PlayerProfileRepository")
  */
 class Profile
 {
@@ -404,9 +405,9 @@ class Profile
     }
 
     /**
-     * @return Character[]|ArrayCollection
+     * @return Character[]|Collection
      */
-    public function getMains(): array
+    public function getMains(): Collection
     {
         return $this->mains;
     }
@@ -420,9 +421,9 @@ class Profile
     }
 
     /**
-     * @return Character[]|ArrayCollection
+     * @return Character[]|Collection
      */
-    public function getSecondaries(): array
+    public function getSecondaries(): Collection
     {
         return $this->secondaries;
     }

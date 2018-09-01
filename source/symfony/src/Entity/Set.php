@@ -16,7 +16,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="created_at_index", columns={"created_at"}),
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
- * @ORM\Entity(repositoryClass="CoreBundle\Repository\SetRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\SetRepository")
  */
 class Set
 {

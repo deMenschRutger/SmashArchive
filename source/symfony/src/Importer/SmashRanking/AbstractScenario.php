@@ -96,7 +96,7 @@ abstract class AbstractScenario
         $this->importer = $importer;
         $this->io = $io;
         $this->entityManager = $entityManager;
-        $this->melee = $this->entityManager->find('CoreBundle:Game', 1);
+        $this->melee = $this->entityManager->find('App:Game', 1);
     }
 
     /**

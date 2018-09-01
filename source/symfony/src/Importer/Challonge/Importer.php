@@ -10,7 +10,7 @@ use App\Entity\Tournament;
 use App\Importer\AbstractImporter;
 use App\Importer\Challonge\Processor\EntrantProcessor;
 use App\Importer\Challonge\Processor\SetProcessor;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Reflex\Challonge\Challonge;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -35,11 +35,11 @@ class Importer extends AbstractImporter
     protected $entrantProcessor;
 
     /**
-     * @param SymfonyStyle  $io
-     * @param EntityManager $entityManager
-     * @param Challonge     $challonge
+     * @param SymfonyStyle           $io
+     * @param EntityManagerInterface $entityManager
+     * @param Challonge              $challonge
      */
-    public function __construct(SymfonyStyle $io, EntityManager $entityManager, Challonge $challonge)
+    public function __construct(SymfonyStyle $io, EntityManagerInterface $entityManager, Challonge $challonge)
     {
         $this->setIo($io);
         $this->setEntityManager($entityManager);
@@ -56,7 +56,7 @@ class Importer extends AbstractImporter
         $this->io->writeln('Retrieving tournament...');
 
         // TODO Improve the query (load more entities).
-        $this->tournament = $this->getRepository('CoreBundle:Tournament')->findOneBy([
+        $this->tournament = $this->getRepository('App:Tournament')->findOneBy([
             'slug' => $slug,
         ]);
 

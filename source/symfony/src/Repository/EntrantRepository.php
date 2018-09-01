@@ -114,7 +114,7 @@ class EntrantRepository extends EntityRepository
             ->getEntityManager()
             ->createQueryBuilder()
             ->select('e.id')
-            ->from('CoreBundle:Entrant', 'e')
+            ->from('App:Entrant', 'e')
             ->leftJoin('e.players', 'p')
             ->leftJoin('p.playerProfile', 'pp')
             ->groupBy('e.id')
@@ -132,7 +132,7 @@ class EntrantRepository extends EntityRepository
         $queryBuilder = $this->_em->createQueryBuilder();
         $queryBuilder
             ->select('e2.id')
-            ->from('CoreBundle:Entrant', 'e2')
+            ->from('App:Entrant', 'e2')
             ->leftJoin('e2.players', 'p2')
             ->where(
                 $queryBuilder->expr()->in('e2.id', $entrantIdsQuery->getDQL())
