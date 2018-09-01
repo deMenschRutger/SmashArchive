@@ -23,7 +23,7 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="created_at_index", columns={"created_at"}),
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
- * @ORM\Entity(repositoryClass="App\Repository\PlayerProfileRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\ProfileRepository")
  */
 class Profile
 {

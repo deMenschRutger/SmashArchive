@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityRepository;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class PlayerProfileRepository extends EntityRepository
+class ProfileRepository extends EntityRepository
 {
     /**
      * @param string $slug

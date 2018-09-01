@@ -10,6 +10,7 @@
         "jms/serializer-bundle": "^2.4",
         "kevinrob/guzzle-cache-middleware": "^3.2",
         "league/tactician": "^1.0",
+        "league/tactician-bundle": "^1.1",
         "lexik/jwt-authentication-bundle": "^2.5",
         "mediamonks/rest-api-bundle": "^3.1",
         "sensio/framework-extra-bundle": "^5.1",

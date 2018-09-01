@@ -172,6 +172,14 @@ class Set
     private $loserRank;
 
     /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return 'Set #'.$this->getId();
+    }
+
+    /**
      * @return int
      */
     public function getId(): int

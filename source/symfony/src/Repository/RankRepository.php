@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityRepository;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class ResultRepository extends EntityRepository
+class RankRepository extends EntityRepository
 {
     /**
      * @param int $tournamentId
@@ -21,7 +21,7 @@ class ResultRepository extends EntityRepository
             ->_em
             ->createQueryBuilder()
             ->select('r, en, pl, pp')
-            ->from('App:Result', 'r')
+            ->from('App:Rank', 'r')
             ->join('r.entrant', 'en')
             ->leftJoin('en.players', 'pl')
             ->leftJoin('pl.playerProfile', 'pp')
@@ -45,7 +45,7 @@ class ResultRepository extends EntityRepository
             ->_em
             ->createQueryBuilder()
             ->select('r, en, pl, pp')
-            ->from('App:Result', 'r')
+            ->from('App:Rank', 'r')
             ->join('r.entrant', 'en')
             ->join('en.players', 'pl')
             ->join('pl.playerProfile', 'pp')
@@ -69,7 +69,7 @@ class ResultRepository extends EntityRepository
             ->_em
             ->createQueryBuilder()
             ->select('r, en, pl, pp')
-            ->from('App:Result', 'r')
+            ->from('App:Rank', 'r')
             ->join('r.entrant', 'en')
             ->join('en.players', 'pl')
             ->join('pl.playerProfile', 'pp')

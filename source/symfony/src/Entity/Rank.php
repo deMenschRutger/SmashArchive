@@ -12,7 +12,7 @@ use JMS\Serializer\Annotation as Serializer;
  * @ORM\Table(name="rank", indexes={
  *     @ORM\Index(name="rank_index", columns={"rank"}),
  * })
- * @ORM\Entity(repositoryClass="App\Repository\ResultRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\RankRepository")
  */
 class Rank
 {

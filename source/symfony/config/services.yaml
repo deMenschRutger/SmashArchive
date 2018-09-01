@@ -47,3 +47,10 @@ services:
                 mode: 'gcm'
         calls:
             - [ 'setKey', [ '%env(resolve:ENCRYPTION_KEY)' ] ]
+
+    # Tactician bus handlers
+    App\Bus\Handler\Event\GenerateRanksHandler:
+        tags:
+            - { name: "tactician.handler", command: App\Bus\Command\Event\GenerateRanksCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]

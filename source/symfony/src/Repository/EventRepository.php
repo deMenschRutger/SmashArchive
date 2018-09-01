@@ -82,14 +82,14 @@ class EventRepository extends EntityRepository
     /**
      * @param Event $event
      */
-    public function deleteResults(Event $event)
+    public function deleteRanks(Event $event)
     {
-        $results = $this->_em->getRepository('App:Result')->findBy([
+        $ranks = $this->_em->getRepository('App:Rank')->findBy([
             'event' => $event,
         ]);
 
-        foreach ($results as $result) {
-            $this->_em->remove($result);
+        foreach ($ranks as $rank) {
+            $this->_em->remove($rank);
         }
 
         $this->_em->flush();
