@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Repository;
 
-use CoreBundle\Entity\Entrant;
+use App\Entity\Entrant;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 

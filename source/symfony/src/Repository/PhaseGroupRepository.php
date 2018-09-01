@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Repository;
 
-use CoreBundle\Entity\PhaseGroup;
+use App\Entity\PhaseGroup;
 use Doctrine\ORM\EntityRepository;
 
 /**

@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Repository;
 
-use CoreBundle\Entity\Event;
+use App\Entity\Event;
 use Doctrine\ORM\EntityRepository;
 
 /**

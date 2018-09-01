@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace App\Repository;
 
-use CoreBundle\Entity\Entrant;
-use CoreBundle\Entity\Set;
+use App\Entity\Entrant;
+use App\Entity\Set;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
