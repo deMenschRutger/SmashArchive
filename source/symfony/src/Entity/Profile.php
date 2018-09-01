@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Entity;
 
-use CoreBundle\Entity\Traits\TimestampableTrait;
+use App\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -43,7 +43,7 @@ class Profile
      * @var string
      *
      * @Gedmo\Slug(fields={"gamerTag"}, updatable=false)
-     * @ORM\Column(name="slug", type="string", length=255, unique=true)
+     * @ORM\Column(name="slug", type="string", length=128, unique=true)
      *
      * @Serializer\Groups({"players_overview", "tournaments_overview", "tournaments_details"})
      */
@@ -178,7 +178,7 @@ class Profile
     /**
      * @var Player[]
      *
-     * @ORM\OneToMany(targetEntity="Player", mappedBy="playerProfile")
+     * @ORM\OneToMany(targetEntity="Player", mappedBy="profile")
      */
     private $players;
 

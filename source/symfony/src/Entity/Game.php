@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Entity;
 
-use CoreBundle\Entity\Traits\TimestampableTrait;
+use App\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
@@ -43,7 +43,7 @@ class Game
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @ORM\Column(name="name", type="string", length=128, unique=true)
      *
      * @Serializer\Groups({"players_sets", "tournaments_details", "players_overview"})
      */
@@ -61,7 +61,7 @@ class Game
     /**
      * @var Character[]
      *
-     * @ORM\OneToMany(targetEntity="CoreBundle\Entity\Character", mappedBy="game")
+     * @ORM\OneToMany(targetEntity="Character", mappedBy="game")
      */
     private $characters;
 

@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Entity;
 
-use CoreBundle\Entity\Traits\TimestampableTrait;
+use App\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -56,7 +56,7 @@ class Tournament
      * @var string
      *
      * @Gedmo\Slug(fields={"name"}, updatable=false)
-     * @ORM\Column(name="slug", type="string", length=255, unique=true)
+     * @ORM\Column(name="slug", type="string", length=128, unique=true)
      *
      * @Serializer\Groups({"players_sets", "tournaments_overview", "tournaments_details"})
      */
@@ -176,7 +176,7 @@ class Tournament
     /**
      * @var Player[]
      *
-     * @ORM\ManyToMany(targetEntity="PlayerProfile", inversedBy="tournamentsOrganized")
+     * @ORM\ManyToMany(targetEntity="Profile", inversedBy="tournamentsOrganized")
      * @ORM\JoinTable(name="tournaments_organizers")
      *
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})

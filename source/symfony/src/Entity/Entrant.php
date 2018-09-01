@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Entity;
 
-use CoreBundle\Entity\Traits\TimestampableTrait;
+use App\Entity\Traits\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;

@@ -29,7 +29,7 @@ class Character
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(name="name", type="string", length=128)
      *
      * @Serializer\Groups({"players_overview"})
      */

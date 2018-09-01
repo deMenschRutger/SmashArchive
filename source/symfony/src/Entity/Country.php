@@ -30,7 +30,7 @@ class Country
     /**
      * @var string
      *
-     * @ORM\Column(name="code", type="string", length=255, unique=true)
+     * @ORM\Column(name="code", type="string", length=4, unique=true)
      *
      * @Serializer\Groups({"players_overview", "tournaments_overview", "tournaments_details"})
      */
@@ -48,14 +48,14 @@ class Country
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="PlayerProfile", mappedBy="nationality")
+     * @ORM\OneToMany(targetEntity="Profile", mappedBy="nationality")
      */
     private $playersNationalities;
 
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="PlayerProfile", mappedBy="country")
+     * @ORM\OneToMany(targetEntity="Profile", mappedBy="country")
      */
     private $playersCountries;
 
