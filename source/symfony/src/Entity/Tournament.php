@@ -22,6 +22,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     @ORM\Index(name="is_active_index", columns={"is_active"})
  * })
  * @ORM\Entity(repositoryClass="App\Repository\TournamentRepository")
+ *
+ * @Serializer\ExclusionPolicy("all")
  */
 class Tournament
 {
@@ -40,6 +42,7 @@ class Tournament
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_sets", "tournaments_overview", "tournaments_details"})
      */
     private $id;
@@ -49,6 +52,7 @@ class Tournament
      *
      * @ORM\Column(name="source", type="string", length=255)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $source = self::SOURCE_CUSTOM;
@@ -59,6 +63,7 @@ class Tournament
      * @Gedmo\Slug(fields={"name"}, updatable=false)
      * @ORM\Column(name="slug", type="string", length=128, unique=true)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_sets", "tournaments_overview", "tournaments_details"})
      */
     private $slug;
@@ -75,6 +80,7 @@ class Tournament
      *
      * @ORM\Column(name="name", type="string", length=255)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_sets", "tournaments_overview", "tournaments_details"})
      */
     private $name;
@@ -85,6 +91,7 @@ class Tournament
      * @ORM\ManyToOne(targetEntity="Country", inversedBy="tournaments")
      * @ORM\JoinColumn(onDelete="SET NULL")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $country;
@@ -94,6 +101,7 @@ class Tournament
      *
      * @ORM\Column(name="region", type="string", length=255, nullable=true)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $region;
@@ -103,6 +111,7 @@ class Tournament
      *
      * @ORM\Column(name="city", type="string", length=255, nullable=true)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $city;
@@ -114,6 +123,7 @@ class Tournament
      *
      * @ORM\Column(name="date_start", type="date", nullable=true)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $dateStart;
@@ -147,6 +157,7 @@ class Tournament
      *
      * @ORM\Column(name="player_count", type="integer", nullable=true)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $playerCount;
@@ -156,6 +167,7 @@ class Tournament
      *
      * @ORM\Column(name="is_complete", type="boolean")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $isComplete = false;
@@ -180,6 +192,7 @@ class Tournament
      * @ORM\ManyToMany(targetEntity="Profile", inversedBy="tournamentsOrganized")
      * @ORM\JoinTable(name="tournaments_organizers")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $organizers;
@@ -189,6 +202,7 @@ class Tournament
      *
      * @ORM\OneToMany(targetEntity="Event", mappedBy="tournament", cascade={"persist"}, orphanRemoval=true)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"tournaments_details"})
      */
     private $events;

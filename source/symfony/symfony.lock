@@ -113,6 +113,12 @@
     "kevinrob/guzzle-cache-middleware": {
         "version": "v3.2.1"
     },
+    "knplabs/knp-components": {
+        "version": "v1.3.9"
+    },
+    "knplabs/knp-paginator-bundle": {
+        "version": "v2.8.0"
+    },
     "lcobucci/jwt": {
         "version": "3.2.2"
     },

@@ -48,9 +48,21 @@ services:
         calls:
             - [ 'setKey', [ '%env(resolve:ENCRYPTION_KEY)' ] ]
 
+    mediamonks_rest_api.serializer.jms_groups:
+        class: App\Serializer\JMSSerializer
+        arguments:
+            - '@jms_serializer'
+        public: true
+
     # Tactician bus handlers
     App\Bus\Handler\Event\GenerateRanksHandler:
         tags:
             - { name: "tactician.handler", command: App\Bus\Command\Event\GenerateRanksCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    App\Bus\Handler\TournamentHandler:
+        tags:
+            - { name: "tactician.handler", command: App\Bus\Command\Tournament\OverviewCommand }
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]

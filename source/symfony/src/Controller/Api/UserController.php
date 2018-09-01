@@ -15,15 +15,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  *
- * @Sensio\Route("/api/v0.1/users")
+ * @Sensio\Route("/api/users")
  */
 class UserController extends AbstractController
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
-
     /**
      * @var JWTTokenManagerInterface
      */

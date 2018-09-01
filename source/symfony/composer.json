@@ -9,6 +9,7 @@
         "guzzlehttp/guzzle": "^6.3",
         "jms/serializer-bundle": "^2.4",
         "kevinrob/guzzle-cache-middleware": "^3.2",
+        "knplabs/knp-paginator-bundle": "^2.8",
         "league/tactician": "^1.0",
         "league/tactician-bundle": "^1.1",
         "lexik/jwt-authentication-bundle": "^2.5",
