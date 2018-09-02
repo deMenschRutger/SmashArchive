@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class TournamentHandler extends AbstractHandler
+final class TournamentHandler extends AbstractHandler
 {
     /**
      * @var PaginatorInterface

@@ -58,9 +58,9 @@ class EntrantRepository extends EntityRepository
 
         $queryBuilder = $this
             ->createQueryBuilder('en')
-            ->select('en, pl, pp, ph, ev, t')
+            ->select('en, pl, pr, ph, ev, t')
             ->join('en.players', 'pl')
-            ->join('pl.playerProfile', 'pp')
+            ->join('pl.profile', 'pr')
             ->join('en.originPhase', 'ph')
             ->join('ph.event', 'ev')
             ->join('ev.tournament', 't')
@@ -84,13 +84,13 @@ class EntrantRepository extends EntityRepository
     {
         return $this
             ->createQueryBuilder('en')
-            ->select('en, pl, pp, ph, ev, t')
+            ->select('en, pl, pr, ph, ev, t')
             ->join('en.players', 'pl')
-            ->join('pl.playerProfile', 'pp')
+            ->join('pl.profile', 'pr')
             ->join('en.originPhase', 'ph')
             ->join('ph.event', 'ev')
             ->join('ev.tournament', 't')
-            ->where('pp.slug = :slug')
+            ->where('pr.slug = :slug')
             ->orderBy('t.dateStart', 'ASC')
             ->setParameter('slug', $slug)
             ->setMaxResults(1)
@@ -116,9 +116,9 @@ class EntrantRepository extends EntityRepository
             ->select('e.id')
             ->from('App:Entrant', 'e')
             ->leftJoin('e.players', 'p')
-            ->leftJoin('p.playerProfile', 'pp')
+            ->leftJoin('p.profile', 'pr')
             ->groupBy('e.id')
-            ->where('pp.slug IN (:slugs)')
+            ->where('pr.slug IN (:slugs)')
         ;
 
         if ($eventType !== 'singles' && $eventType !== 'teams') {

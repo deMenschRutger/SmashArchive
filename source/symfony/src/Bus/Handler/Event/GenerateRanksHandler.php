@@ -18,7 +18,7 @@ use App\Repository\EventRepository;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class GenerateRanksHandler extends AbstractHandler
+final class GenerateRanksHandler extends AbstractHandler
 {
     /**
      * @var Rank[]

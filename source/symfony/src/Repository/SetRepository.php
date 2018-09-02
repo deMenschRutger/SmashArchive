@@ -106,15 +106,15 @@ class SetRepository extends EntityRepository
 
         return $this
             ->createQueryBuilder('s')
-            ->select('s, e1, e2, w, l, p1, p2, pp1, pp2')
+            ->select('s, e1, e2, w, l, p1, p2, pr1, pr2')
             ->join('s.entrantOne', 'e1')
             ->join('s.entrantTwo', 'e2')
             ->join('s.winner', 'w')
             ->join('s.loser', 'l')
             ->join('e1.players', 'p1')
-            ->join('p1.playerProfile', 'pp1')
+            ->join('p1.profile', 'pr1')
             ->join('e2.players', 'p2')
-            ->join('p2.playerProfile', 'pp2')
+            ->join('p2.profile', 'pr2')
             ->where('e1.id IN (?1)')
             ->andWhere('e2.id IN (?2)')
             ->setParameter(1, $singlePlayerEntrantIds)
@@ -149,7 +149,7 @@ class SetRepository extends EntityRepository
     {
         return $this
             ->createQueryBuilder('s')
-            ->select('s, pg, ph, ev, g, t, e1, p1, pp1, e2, p2, pp2, w, l')
+            ->select('s, pg, ph, ev, g, t, e1, p1, pr1, e2, p2, pr2, w, l')
             ->join('s.phaseGroup', 'pg')
             ->join('pg.phase', 'ph')
             ->join('ph.event', 'ev')
@@ -157,11 +157,11 @@ class SetRepository extends EntityRepository
             ->join('ev.tournament', 't')
             ->leftJoin('s.entrantOne', 'e1')
             ->leftJoin('e1.players', 'p1')
-            ->leftJoin('p1.playerProfile', 'pp1')
+            ->leftJoin('p1.profile', 'pr1')
             ->leftJoin('s.entrantTwo', 'e2')
             // Joining entrant.players here confuses Doctrine for some reason, see Entrant::getPlayers().
             ->leftJoin('e2.players', 'p2')
-            ->leftJoin('p2.playerProfile', 'pp2')
+            ->leftJoin('p2.profile', 'pr2')
             ->leftJoin('s.winner', 'w')
             ->leftJoin('s.loser', 'l')
             ->where('e1.id IN (:ids)')
