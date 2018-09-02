@@ -10,13 +10,13 @@ use App\Bus\Command\Tournament\RanksCommand;
 use App\Entity\Tournament;
 use League\Tactician\CommandBus;
 use MediaMonks\RestApi\Response\PaginatedResponseInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  *
- * @Route("/api/tournaments")
+ * @Sensio\Route("/api/tournaments")
  */
 class TournamentController extends AbstractController
 {
@@ -38,7 +38,8 @@ class TournamentController extends AbstractController
      *
      * @return PaginatedResponseInterface
      *
-     * @Route("/", name="api_tournaments_overview")
+     * @Sensio\Route("/", name="api_tournaments_overview")
+     * @Sensio\Method("GET")
      */
     public function indexAction(Request $request)
     {
@@ -60,7 +61,8 @@ class TournamentController extends AbstractController
      *
      * @return Tournament
      *
-     * @Route("/{slug}/", name="api_tournaments_details")
+     * @Sensio\Route("/{slug}/", name="api_tournaments_details")
+     * @Sensio\Method("GET")
      */
     public function detailsAction($slug)
     {
@@ -76,7 +78,8 @@ class TournamentController extends AbstractController
      *
      * @return array
      *
-     * @Route("/events/{eventId}/ranks/", name="api_tournaments_ranks")
+     * @Sensio\Route("/events/{eventId}/ranks/", name="api_tournaments_ranks")
+     * @Sensio\Method("GET")
      */
     public function ranksAction($eventId)
     {

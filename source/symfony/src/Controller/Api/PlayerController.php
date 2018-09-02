@@ -10,13 +10,13 @@ use App\Bus\Command\Player\SetsCommand;
 use League\Tactician\CommandBus;
 use MediaMonks\RestApi\Response\OffsetPaginatedResponse;
 use MediaMonks\RestApi\Response\PaginatedResponseInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  *
- * @Route("/api/players")
+ * @Sensio\Route("/api/players")
  */
 class PlayerController extends AbstractController
 {
@@ -38,7 +38,7 @@ class PlayerController extends AbstractController
      *
      * @return PaginatedResponseInterface
      *
-     * @Route("/", name="api_players_overview")
+     * @Sensio\Route("/", name="api_players_overview")
      */
     public function indexAction(Request $request)
     {
@@ -61,7 +61,7 @@ class PlayerController extends AbstractController
      *
      * @return array|OffsetPaginatedResponse
      *
-     * @Route("/{slug}/sets/", name="api_players_sets")
+     * @Sensio\Route("/{slug}/sets/", name="api_players_sets")
      *
      * @TODO This endpoint never seems to return any sets.
      */
@@ -84,7 +84,7 @@ class PlayerController extends AbstractController
      *
      * @return array
      *
-     * @Route("/{playerOneSlug}/head-to-head/{playerTwoSlug}/", name="api_players_head_to_head")
+     * @Sensio\Route("/{playerOneSlug}/head-to-head/{playerTwoSlug}/", name="api_players_head_to_head")
      */
     public function headToHeadAction($playerOneSlug, $playerTwoSlug)
     {

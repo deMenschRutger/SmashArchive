@@ -3,7 +3,7 @@
         <div class="col-md-3 well">
             <h3>Tournaments</h3>
             <br>
-            Filters
+            __filters__
         </div>
         <div class="col-md-9">
             <table class="table">
@@ -12,7 +12,6 @@
                         <th>Name</th>
                         <th>Location</th>
                         <th>Date</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -23,7 +22,9 @@
                 </tbody>
             </table>
             <div class="text-center">
-                Pagination
+                __pagination__
+                <br>
+                <br>
             </div>
         </div>
     </div>

@@ -3,7 +3,7 @@ import { AxiosInstance, AxiosResponse } from 'axios';
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-export default class Tournaments {
+export default class Players {
     /**
      * @param {Object} agent
      */
@@ -13,7 +13,7 @@ export default class Tournaments {
      * @return {Promise<*>}
      */
     public async getAll (): Promise<any> {
-        const response: AxiosResponse = await this.agent.get('/tournaments/');
+        const response: AxiosResponse = await this.agent.get('/players/');
 
         return response.data;
     }
