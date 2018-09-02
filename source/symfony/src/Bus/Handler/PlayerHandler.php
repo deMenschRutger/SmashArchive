@@ -4,11 +4,19 @@ declare(strict_types = 1);
 
 namespace App\Bus\Handler;
 
+use App\Bus\Command\Player\DetailsCommand;
 use App\Bus\Command\Player\HeadToHeadCommand;
 use App\Bus\Command\Player\OverviewCommand;
+use App\Bus\Command\Player\RanksCommand;
 use App\Bus\Command\Player\SetsCommand;
+use App\Entity\Entrant;
+use App\Entity\Event;
+use App\Entity\Profile;
+use App\Entity\Rank;
 use App\Entity\Set;
+use App\Repository\EntrantRepository;
 use App\Repository\ProfileRepository;
+use App\Repository\RankRepository;
 use App\Repository\SetRepository;
 use Doctrine\ORM\Query;
 use Knp\Component\Pager\Pagination\PaginationInterface;
@@ -24,6 +32,16 @@ final class PlayerHandler extends AbstractHandler
      * @var PaginatorInterface
      */
     protected $paginator;
+
+    /**
+     * @var array
+     */
+    protected $events = [];
+
+    /**
+     * @var array
+     */
+    protected $setsByEventId = [];
 
     /**
      * @param PaginatorInterface $paginator
@@ -70,6 +88,36 @@ final class PlayerHandler extends AbstractHandler
     }
 
     /**
+     * @param DetailsCommand $command
+     *
+     * @return Profile
+     */
+    public function handleDetailsCommand(DetailsCommand $command)
+    {
+        $profile = $this
+            ->getEntityManager()
+            ->createQueryBuilder()
+            ->select('p, c, m, s, gm, sm')
+            ->from('App:Profile', 'p')
+            ->leftJoin('p.country', 'c')
+            ->leftJoin('p.mains', 'm')
+            ->leftJoin('m.game', 'gm')
+            ->leftJoin('p.secondaries', 's')
+            ->leftJoin('s.game', 'sm')
+            ->where('p.slug = :slug')
+            ->setParameter('slug', $command->getSlug())
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+
+        if (!$profile instanceof Profile) {
+            throw new NotFoundHttpException('The player could not be found.');
+        }
+
+        return $profile;
+    }
+
+    /**
      * @param SetsCommand $command
      *
      * @return PaginationInterface|array
@@ -96,6 +144,45 @@ final class PlayerHandler extends AbstractHandler
         }
 
         return $this->paginator->paginate($query, $page, $limit);
+    }
+
+    /**
+     * @param RanksCommand $command
+     *
+     * @return array
+     */
+    public function handleRanksCommand(RanksCommand $command)
+    {
+        $slug = $command->getProfileSlug();
+        $eventId = $command->getEventId();
+
+        /** @var EntrantRepository $entrantRepository */
+        $entrantRepository = $this->getRepository('App:Entrant');
+        $entrants = $entrantRepository->findByProfileSlug($slug, $eventId);
+
+        /** @var RankRepository $rankRepository */
+        $rankRepository = $this->getRepository('App:Rank');
+        $ranks = $rankRepository->findForProfile($slug, $eventId);
+
+        $entities = [];
+
+        foreach ($entrants as $entrant) {
+            $entity = new Rank();
+            $entity->setEntrant($entrant);
+
+            $event = $entrant->getOriginEvent();
+
+            if ($event instanceof Event) {
+                $rank = $this->findRank($entrant, $event, $ranks);
+
+                $entity->setEvent($event);
+                $entity->setRank($rank);
+            }
+
+            $entities[] = $entity;
+        }
+
+        return $entities;
     }
 
     /**
@@ -176,5 +263,23 @@ final class PlayerHandler extends AbstractHandler
         }
 
         return $setsByPhaseId;
+    }
+
+    /**
+     * @param Entrant  $entrant
+     * @param Event    $event
+     * @param Rank[]   $ranks
+     *
+     * @return int|null
+     */
+    protected function findRank(Entrant $entrant, Event $event, array $ranks)
+    {
+        foreach ($ranks as $rank) {
+            if ($rank->getEntrant() === $entrant && $rank->getEvent() === $event) {
+                return $rank->getRank();
+            }
+        }
+
+        return null;
     }
 }
