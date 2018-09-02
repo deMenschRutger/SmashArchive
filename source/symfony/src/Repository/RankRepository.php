@@ -20,11 +20,11 @@ class RankRepository extends EntityRepository
         return $this
             ->_em
             ->createQueryBuilder()
-            ->select('r, en, pl, pp')
+            ->select('r, en, pl, pr')
             ->from('App:Rank', 'r')
             ->join('r.entrant', 'en')
             ->leftJoin('en.players', 'pl')
-            ->leftJoin('pl.playerProfile', 'pp')
+            ->leftJoin('pl.profile', 'pr')
             ->join('r.event', 'e')
             ->join('e.tournament', 't')
             ->where('t.id = :id')
@@ -44,11 +44,11 @@ class RankRepository extends EntityRepository
         return $this
             ->_em
             ->createQueryBuilder()
-            ->select('r, en, pl, pp')
+            ->select('r, en, pl, pr')
             ->from('App:Rank', 'r')
             ->join('r.entrant', 'en')
             ->join('en.players', 'pl')
-            ->join('pl.playerProfile', 'pp')
+            ->join('pl.profile', 'pr')
             ->join('r.event', 'e')
             ->where('e.id = :id')
             ->setParameter('id', $eventId)
@@ -68,13 +68,13 @@ class RankRepository extends EntityRepository
         $queryBuilder = $this
             ->_em
             ->createQueryBuilder()
-            ->select('r, en, pl, pp')
+            ->select('r, en, pl, pr')
             ->from('App:Rank', 'r')
             ->join('r.entrant', 'en')
             ->join('en.players', 'pl')
-            ->join('pl.playerProfile', 'pp')
+            ->join('pl.profile', 'pr')
             ->join('r.event', 'ev')
-            ->where('pp.slug = :slug')
+            ->where('pr.slug = :slug')
             ->setParameter('slug', $slug)
             ->orderBy('r.rank, en.name')
         ;
