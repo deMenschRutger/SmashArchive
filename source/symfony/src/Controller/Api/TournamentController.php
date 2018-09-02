@@ -4,7 +4,9 @@ declare(strict_types = 1);
 
 namespace App\Controller\Api;
 
+use App\Bus\Command\Tournament\DetailsCommand;
 use App\Bus\Command\Tournament\OverviewCommand;
+use App\Entity\Tournament;
 use League\Tactician\CommandBus;
 use MediaMonks\RestApi\Response\PaginatedResponseInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -46,6 +48,24 @@ class TournamentController extends AbstractController
         $command = new OverviewCommand($name, $location, $page, $limit, 'dateStart', 'desc');
         $pagination = $this->bus->handle($command);
 
-        return $this->buildPaginatedResponse($pagination, 'tournaments_overview');
+        $this->setSerializationGroups('tournaments_overview');
+
+        return $this->buildPaginatedResponse($pagination);
+    }
+
+    /**
+     * @param string $slug
+     *
+     * @return Tournament
+     *
+     * @Route("/{slug}/", name="api_tournaments_details")
+     */
+    public function detailsAction($slug)
+    {
+        $this->setSerializationGroups('tournaments_details');
+
+        $command = new DetailsCommand($slug);
+
+        return $this->bus->handle($command);
     }
 }

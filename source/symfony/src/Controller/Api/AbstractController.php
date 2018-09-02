@@ -47,20 +47,25 @@ class AbstractController extends Controller
     }
 
     /**
+     * @param array|string $groups
+     */
+    protected function setSerializationGroups($groups)
+    {
+        $this->get('mediamonks_rest_api.serializer.jms_groups')->setGroups($groups);
+    }
+
+    /**
      * @param SlidingPagination $pagination
-     * @param array|string      $groups
      *
      * @return OffsetPaginatedResponse
      */
-    protected function buildPaginatedResponse(SlidingPagination $pagination, $groups)
+    protected function buildPaginatedResponse(SlidingPagination $pagination)
     {
         $data = [];
 
         foreach ($pagination as $item) {
             $data[] = $item;
         }
-
-        $this->get('mediamonks_rest_api.serializer.jms_groups')->setGroups($groups);
 
         $paginationData = $pagination->getPaginationData();
         $offset = $paginationData['firstItemNumber'] - 1;

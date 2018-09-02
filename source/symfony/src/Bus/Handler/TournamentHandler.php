@@ -4,9 +4,13 @@ declare(strict_types = 1);
 
 namespace App\Bus\Handler;
 
+use App\Bus\Command\Tournament\DetailsCommand;
 use App\Bus\Command\Tournament\OverviewCommand;
+use App\Entity\Tournament;
+use App\Repository\TournamentRepository;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -28,9 +32,10 @@ class TournamentHandler extends AbstractHandler
 
     /**
      * @param OverviewCommand $command
+     *
      * @return PaginationInterface
      */
-    public function handle(OverviewCommand $command)
+    public function handleOverviewCommand(OverviewCommand $command)
     {
         $name = $command->getName();
         $location = $command->getLocation();
@@ -61,5 +66,23 @@ class TournamentHandler extends AbstractHandler
         }
 
         return $this->paginator->paginate($queryBuilder->getQuery(), $page, $limit);
+    }
+
+    /**
+     * @param DetailsCommand $command
+     *
+     * @return Tournament
+     */
+    public function handleDetailsCommand(DetailsCommand $command)
+    {
+        /** @var TournamentRepository $tournamentRepository */
+        $tournamentRepository = $this->getRepository('App:Tournament');
+        $tournament = $tournamentRepository->findWithDetails($command->getSlug());
+
+        if (!$tournament instanceof Tournament) {
+            throw new NotFoundHttpException('The tournament could not be found.');
+        }
+
+        return $tournament;
     }
 }

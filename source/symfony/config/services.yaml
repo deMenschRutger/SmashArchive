@@ -57,12 +57,12 @@ services:
     # Tactician bus handlers
     App\Bus\Handler\Event\GenerateRanksHandler:
         tags:
-            - { name: "tactician.handler", command: App\Bus\Command\Event\GenerateRanksCommand }
+            - { name: "tactician.handler", typehints: true }
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
 
     App\Bus\Handler\TournamentHandler:
         tags:
-            - { name: "tactician.handler", command: App\Bus\Command\Tournament\OverviewCommand }
+            - { name: "tactician.handler", typehints: true }
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
