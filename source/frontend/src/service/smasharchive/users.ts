@@ -14,7 +14,7 @@ export default class Users {
      *
      * @return {Promise<*>}
      */
-    public async login(accessToken: string): Promise<any> {
+    public async login (accessToken: string): Promise<any> {
         const response: AxiosResponse = await this.agent.post('/users/login/', {
             accessToken: accessToken,
         });
@@ -27,7 +27,7 @@ export default class Users {
      *
      * @return {Promise<*>}
      */
-    public async me(accessToken: string): Promise<any> {
+    public async me (accessToken: string): Promise<any> {
         const response: AxiosResponse = await this.agent.get('/users/me/', {
             headers: {
                 Authorization: 'Bearer ' + accessToken,

@@ -31,8 +31,8 @@
 
 <script lang="ts">
 
-import axios, { AxiosResponse } from 'axios';
 import Vue from 'vue';
+import { TournamentStore } from '../store';
 
 export default Vue.component('tournaments', {
     data: () => {
@@ -41,10 +41,8 @@ export default Vue.component('tournaments', {
         }
     },
 
-    created: async function () {
-        const response: AxiosResponse = await axios.get('/api/tournaments/');
-
-        this.tournaments = response.data.data;
+    created: async function (): Promise<void> {
+        this.tournaments = await TournamentStore.getTournaments();
     }
 });
 
