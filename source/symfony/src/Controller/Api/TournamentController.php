@@ -32,6 +32,7 @@ class TournamentController extends AbstractController
     {
         $this->bus = $bus;
     }
+
     /**
      * @param Request $request
      *
@@ -41,10 +42,10 @@ class TournamentController extends AbstractController
      */
     public function indexAction(Request $request)
     {
-        $name = $request->get('name');
-        $location = $request->get('location');
-        $page = $request->get('page');
-        $limit = $request->get('limit');
+        $name = $request->query->get('name');
+        $location = $request->query->get('location');
+        $page = $request->query->getInt('page', null);
+        $limit = $request->query->getInt('limit', null);
 
         $command = new OverviewCommand($name, $location, $page, $limit, 'dateStart', 'desc');
         $pagination = $this->bus->handle($command);

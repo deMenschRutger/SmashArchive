@@ -61,6 +61,12 @@ services:
         calls:
             - ['setEntityManager', ['@doctrine.orm.entity_manager']]
 
+    App\Bus\Handler\PlayerHandler:
+        tags:
+            - { name: "tactician.handler", typehints: true }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
     App\Bus\Handler\TournamentHandler:
         tags:
             - { name: "tactician.handler", typehints: true }

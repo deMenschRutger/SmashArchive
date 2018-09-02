@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace App\Bus\Command\Tournament;
+namespace App\Bus\Command\Player;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -17,7 +17,7 @@ class OverviewCommand
     /**
      * @var string
      */
-    private $name;
+    private $tag;
 
     /**
      * @var string
@@ -39,53 +39,33 @@ class OverviewCommand
     private $limit;
 
     /**
-     * @var string
-     *
-     * @Assert\Choice({"name", "dateStart"})
-     */
-    private $sort;
-
-    /**
-     * @var string
-     *
-     * @Assert\Choice({"asc", "desc"})
-     */
-    private $order;
-
-    /**
-     * @param string $name
+     * @param string $tag
      * @param string $location
      * @param int    $page
      * @param int    $limit
-     * @param string $sort
-     * @param string $order
-g    */
+     */
     public function __construct(
-        ?string $name = null,
+        ?string $tag = null,
         ?string $location = null,
         ?int $page = null,
-        ?int $limit = null,
-        string $sort = 'name',
-        string $order = 'asc'
+        ?int $limit = null
     ) {
-        $this->name = $name;
+        $this->tag = $tag;
         $this->location = $location;
         $this->page = $page ? $page : self::DEFAULT_PAGE;
         $this->limit = $limit ? $limit : self::DEFAULT_LIMIT;
-        $this->sort = $sort;
-        $this->order = $order;
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getName(): ?string
+    public function getTag(): ?string
     {
-        return $this->name;
+        return $this->tag;
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     public function getLocation(): ?string
     {
@@ -106,21 +86,5 @@ g    */
     public function getLimit(): int
     {
         return $this->limit;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSort(): string
-    {
-        return $this->sort;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOrder(): string
-    {
-        return $this->order;
     }
 }
