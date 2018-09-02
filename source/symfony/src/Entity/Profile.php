@@ -56,8 +56,6 @@ class Profile
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
      *
      * @Serializer\Groups({"players_overview", "tournaments_details"})
-     *
-     * @TODO The serializer doesn't serialize null values.
      */
     private $name;
 

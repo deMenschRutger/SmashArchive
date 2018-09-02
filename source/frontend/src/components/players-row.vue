@@ -1,7 +1,7 @@
 <template>
     <tr>
         <td>
-            <a href="#">{{ player.gamer_tag }}</a>
+            <a href="#">{{ player.gamerTag }}</a>
         </td>
         <td>{{ player.location }}</td>
     </tr>

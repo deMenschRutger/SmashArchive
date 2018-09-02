@@ -2,3 +2,5 @@ jms_serializer:
     default_context:
         serialization:
             serialize_null: true
+    property_naming:
+        id: jms_serializer.identical_property_naming_strategy
