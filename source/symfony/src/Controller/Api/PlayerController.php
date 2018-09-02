@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Controller\Api;
 
+use App\Bus\Command\Player\HeadToHeadCommand;
 use App\Bus\Command\Player\OverviewCommand;
 use App\Bus\Command\Player\SetsCommand;
 use League\Tactician\CommandBus;
@@ -75,5 +76,20 @@ class PlayerController extends AbstractController
         $this->setSerializationGroups('players_sets');
 
         return $this->buildPaginatedResponse($sets);
+    }
+
+    /**
+     * @param string $playerOneSlug
+     * @param string $playerTwoSlug
+     *
+     * @return array
+     *
+     * @Route("/{playerOneSlug}/head-to-head/{playerTwoSlug}/", name="api_players_head_to_head")
+     */
+    public function headToHeadAction($playerOneSlug, $playerTwoSlug)
+    {
+        $command = new HeadToHeadCommand($playerOneSlug, $playerTwoSlug);
+
+        return $this->bus->handle($command);
     }
 }
