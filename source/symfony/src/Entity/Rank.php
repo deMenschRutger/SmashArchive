@@ -13,6 +13,8 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="rank_index", columns={"rank"}),
  * })
  * @ORM\Entity(repositoryClass="App\Repository\RankRepository")
+ *
+ * @Serializer\ExclusionPolicy("all")
  */
 class Rank
 {
@@ -39,7 +41,8 @@ class Rank
      *
      * @ORM\Column(name="rank", type="integer")
      *
-     * @Serializer\Groups({"tournaments_results"})
+     * @Serializer\Expose()
+     * @Serializer\Groups({"tournaments_standings"})
      */
     private $rank;
 
@@ -78,7 +81,7 @@ class Rank
     /**
      * @return string
      *
-     * @Serializer\Groups({"tournaments_results"})
+     * @Serializer\Groups({"tournaments_standings"})
      * @Serializer\SerializedName("entrant")
      * @Serializer\VirtualProperty()
      */
@@ -92,7 +95,7 @@ class Rank
      *
      * @return Player[]|Collection
      *
-     * @Serializer\Groups({"tournaments_results"})
+     * @Serializer\Groups({"tournaments_standings"})
      * @Serializer\VirtualProperty()
      */
     public function getPlayers($excludePlayerSlug = null): Collection

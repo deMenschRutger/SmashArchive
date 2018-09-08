@@ -19,6 +19,8 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
  * @ORM\Entity(repositoryClass="App\Repository\PlayerRepository")
+ *
+ * @Serializer\ExclusionPolicy("all")
  */
 class Player
 {
@@ -240,7 +242,7 @@ class Player
     /**
      * @return string|null
      *
-     * @Serializer\Groups({"tournaments_results", "players_sets"})
+     * @Serializer\Groups({"tournaments_standings", "players_sets"})
      * @Serializer\VirtualProperty()
      */
     public function getSlug(): ?string
@@ -257,7 +259,7 @@ class Player
     /**
      * @return string|null
      *
-     * @Serializer\Groups({"tournaments_results", "players_sets"})
+     * @Serializer\Groups({"tournaments_standings", "players_sets"})
      * @Serializer\VirtualProperty()
      */
     public function getGamerTag()
@@ -268,6 +270,6 @@ class Player
             return $profile->getGamerTag();
         }
 
-        return null;
+        return $this->getName();
     }
 }

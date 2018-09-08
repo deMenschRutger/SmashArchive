@@ -9,7 +9,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class GenerateRanksCommand
+class GenerateStandingsCommand
 {
     /**
      * @var int

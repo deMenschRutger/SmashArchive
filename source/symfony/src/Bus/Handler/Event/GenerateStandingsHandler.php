@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Bus\Handler\Event;
 
-use App\Bus\Command\Event\GenerateRanksCommand;
+use App\Bus\Command\Event\GenerateStandingsCommand;
 use App\Bus\Handler\AbstractHandler;
 use App\Bracket\SingleElimination\Bracket as SingleEliminationBracket;
 use App\Bracket\DoubleElimination\Bracket as DoubleEliminationBracket;
@@ -18,7 +18,7 @@ use App\Repository\EventRepository;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-final class GenerateRanksHandler extends AbstractHandler
+final class GenerateStandingsHandler extends AbstractHandler
 {
     /**
      * @var Rank[]
@@ -26,15 +26,15 @@ final class GenerateRanksHandler extends AbstractHandler
     protected $combinedRanks = [];
 
     /**
-     * @param GenerateRanksCommand $command
+     * @param GenerateStandingsCommand $command
      */
-    public function handle(GenerateRanksCommand $command): void
+    public function handleGenerateStandingsCommand(GenerateStandingsCommand $command): void
     {
         $this->entityManager->getConfiguration()->setSQLLogger(null);
         $eventId = $command->getEventId();
 
         $this->setIo($command->getIo());
-        $this->io->writeln(sprintf('Generating rankings for event #%s...', $eventId));
+        $this->io->writeln(sprintf('Generating standings for event #%s...', $eventId));
 
         /** @var EventRepository $eventRepository */
         $eventRepository = $this->getRepository('App:Event');

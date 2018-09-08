@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Command;
 
-use App\Bus\Command\Event\GenerateRanksCommand;
+use App\Bus\Command\Event\GenerateStandingsCommand;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Tactician\CommandBus;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class EventGenerateRanksCommand extends ContainerAwareCommand
+class EventGenerateStandingsCommand extends ContainerAwareCommand
 {
     /**
      * @var CommandBus
@@ -46,18 +46,18 @@ class EventGenerateRanksCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('app:event:rankings:generate')
-            ->setDescription('Generate the rankings for an event.')
+            ->setName('app:event:standings:generate')
+            ->setDescription('Generate the standings for an event.')
             ->addOption(
                 'event-id',
-                'i',
+                'i', // -e is already taken by Symfony.
                 InputArgument::OPTIONAL,
-                'The ID of the event you wish to generate rankings for.'
+                'The ID of the event you wish to generate standings for.'
             )->addOption(
                 'all',
                 'a',
                 InputArgument::OPTIONAL,
-                'Pass true if you want ranks to be (re)generated for all events.'
+                'Pass true if you want standings to be (re)generated for all events.'
             )
         ;
     }
@@ -65,7 +65,6 @@ class EventGenerateRanksCommand extends ContainerAwareCommand
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -75,16 +74,16 @@ class EventGenerateRanksCommand extends ContainerAwareCommand
         $all = boolval($input->getOption('all'));
 
         if ($eventId > 0) {
-            $command = new GenerateRanksCommand($eventId, $io);
+            $command = new GenerateStandingsCommand($eventId, $io);
             $this->commandBus->handle($command);
         } elseif ($all) {
             $confirmed = $io->confirm(
-                'Regenerating all rankings could take a long time. Are you sure you wish to continue?',
+                'Regenerating all standings could take a long time. Are you sure you wish to continue?',
                 false
             );
 
             if (!$confirmed) {
-                $io->warning('The rankings generation was aborted.');
+                $io->warning('The standings generation was aborted.');
 
                 return;
             }
@@ -96,7 +95,7 @@ class EventGenerateRanksCommand extends ContainerAwareCommand
             foreach ($eventIds as $eventId) {
                 $output->setVerbosity(OutputInterface::VERBOSITY_QUIET);
 
-                $command = new GenerateRanksCommand($eventId, $io);
+                $command = new GenerateStandingsCommand($eventId, $io);
                 $this->commandBus->handle($command);
 
                 $output->setVerbosity(OutputInterface::VERBOSITY_NORMAL);
@@ -108,6 +107,6 @@ class EventGenerateRanksCommand extends ContainerAwareCommand
             throw new \InvalidArgumentException("You need to specify either an event ID or the 'all' flag.");
         }
 
-        $io->success('The rankings were successfully generated!');
+        $io->success('The standings were successfully generated!');
     }
 }

@@ -48,6 +48,10 @@ services:
         calls:
             - [ 'setKey', [ '%env(resolve:ENCRYPTION_KEY)' ] ]
 
+    JMS\Serializer\Naming\SerializedNameAnnotationStrategy:
+        arguments:
+            - '@jms_serializer.identical_property_naming_strategy'
+
     mediamonks_rest_api.serializer.jms_groups:
         class: App\Serializer\JMSSerializer
         arguments:
@@ -55,7 +59,7 @@ services:
         public: true
 
     # Tactician bus handlers
-    App\Bus\Handler\Event\GenerateRanksHandler:
+    App\Bus\Handler\Event\GenerateStandingsHandler:
         tags:
             - { name: "tactician.handler", typehints: true }
         calls:

@@ -6,7 +6,7 @@ namespace App\Controller\Api;
 
 use App\Bus\Command\Tournament\DetailsCommand;
 use App\Bus\Command\Tournament\OverviewCommand;
-use App\Bus\Command\Tournament\RanksCommand;
+use App\Bus\Command\Tournament\StandingsCommand;
 use App\Entity\Tournament;
 use League\Tactician\CommandBus;
 use MediaMonks\RestApi\Response\PaginatedResponseInterface;
@@ -78,14 +78,14 @@ class TournamentController extends AbstractController
      *
      * @return array
      *
-     * @Sensio\Route("/events/{eventId}/ranks/", name="api_tournaments_ranks")
+     * @Sensio\Route("/events/{eventId}/standings/", name="api_tournaments_standings")
      * @Sensio\Method("GET")
      */
-    public function ranksAction($eventId)
+    public function standingsAction($eventId)
     {
-        $this->setSerializationGroups('tournaments_results');
+        $this->setSerializationGroups('tournaments_standings');
 
-        $command = new RanksCommand(null, intval($eventId));
+        $command = new StandingsCommand(null, intval($eventId));
 
         return $this->bus->handle($command);
     }

@@ -7,7 +7,7 @@ namespace App\Bus\Command\Tournament;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class RanksCommand
+class StandingsCommand
 {
     /**
      * @var int

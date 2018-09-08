@@ -6,7 +6,7 @@ namespace App\Bus\Handler;
 
 use App\Bus\Command\Tournament\DetailsCommand;
 use App\Bus\Command\Tournament\OverviewCommand;
-use App\Bus\Command\Tournament\RanksCommand;
+use App\Bus\Command\Tournament\StandingsCommand;
 use App\Entity\Rank;
 use App\Entity\Tournament;
 use App\Repository\RankRepository;
@@ -90,11 +90,11 @@ final class TournamentHandler extends AbstractHandler
     }
 
     /**
-     * @param RanksCommand $command
+     * @param StandingsCommand $command
      *
      * @return array
      */
-    public function handleRanksCommand(RanksCommand $command)
+    public function handleStandingsCommand(StandingsCommand $command)
     {
         /** @var RankRepository $rankRepository */
         $rankRepository = $this->getRepository('App:Rank');
