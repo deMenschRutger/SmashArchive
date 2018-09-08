@@ -1,0 +1,9 @@
+# Library documentation: http://tactician.thephpleague.com/
+# Bundle documentation: https://github.com/thephpleague/tactician-bundle/blob/v1.0/README.md
+tactician:
+    commandbus:
+        default:
+            middleware:
+                - tactician.middleware.validator
+                - tactician.middleware.command_handler
+    method_inflector: tactician.handler.method_name_inflector.handle_class_name
