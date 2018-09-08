@@ -1,0 +1,47 @@
+imports:
+    - { resource: config.yml }
+
+doctrine:
+    orm:
+        metadata_cache_driver: apcu
+        result_cache_driver: apcu
+        query_cache_driver: apcu
+
+cache_adapter:
+    providers:
+        filesystem:
+            factory: 'cache.factory.doctrine_filesystem'
+            options:
+                directory: "%kernel.root_dir%/../var/cache/%kernel.environment%/doctrine/filesystem"
+
+monolog:
+    handlers:
+        error:
+            type: "rotating_file"
+            path: "%kernel.logs_dir%/%kernel.environment%/error/errors.log"
+            level: "error"
+            formatter: "monolog.formatter.json"
+            max_files: 60
+        filter_for_info:
+            type: "fingers_crossed"
+            action_level: "error"
+            buffer_size: 200
+            channels: ["!event"]
+            handler: "info"
+        info:
+            type: "rotating_file"
+            path: "%kernel.logs_dir%/%kernel.environment%/info/info.log"
+            level: "debug"
+            formatter: "monolog.formatter.json"
+            max_files: 60
+        filter_for_sentry:
+            type: "fingers_crossed"
+            action_level: "error"
+            buffer_size: 200
+            handler: "sentry"
+            excluded_404s:
+                - "(.*)"
+        sentry:
+            type: "raven"
+            dsn: "%sentry_dsn%"
+            level: "error"

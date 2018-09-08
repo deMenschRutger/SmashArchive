@@ -1,0 +1,137 @@
+{% macro bracketSet(set) %}
+    {% import _self as macros %}
+
+    {% if not set.wasNotPlayed %}
+
+    <div class="bracket-set">
+        <div class="bracket-set-entrant-one">
+            <div class="bracket-set-entrant-name pull-left">
+
+                {% if set.entrantOne and set.isWinner(set.entrantOne) %}
+                    <strong>{{ macros.entrantWithPath(set.entrantOne) }}</strong>
+                {% else %}
+                    {{ macros.entrantWithPath(set.entrantOne) }}
+                {% endif %}
+
+            </div>
+            <div class="bracket-set-entrant-score pull-left">
+
+                {% if set.winnerScore is not null %}
+
+                    {% if set.entrantOne and set.isWinner(set.entrantOne) %}
+                        <strong>{{ set.winnerScore }}</strong>
+                    {% else %}
+                        {{ set.loserScore }}
+                    {% endif %}
+
+                {% else %}
+
+                    {% if set.entrantOne and set.isWinner(set.entrantOne) %}
+                        <strong>W</strong>
+                    {% else %}
+                        L
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+        </div>
+        <div class="bracket-set-entrant-two">
+            <div class="bracket-set-entrant-name pull-left">
+
+                {% if set.entrantTwo and set.isWinner(set.entrantTwo) %}
+                    <strong>{{ macros.entrantWithPath(set.entrantTwo) }}</strong>
+                {% else %}
+                    {{ macros.entrantWithPath(set.entrantTwo) }}
+                {% endif %}
+
+            </div>
+            <div class="bracket-set-entrant-score pull-left">
+
+                {% if set.winnerScore is not null %}
+
+                    {% if set.entrantTwo and set.isWinner(set.entrantTwo) %}
+                        <strong>{{ set.winnerScore }}</strong>
+                    {% else %}
+                        {{ set.loserScore }}
+                    {% endif %}
+
+                {% else %}
+
+                    {% if set.entrantTwo and set.isWinner(set.entrantTwo) %}
+                        <strong>W</strong>
+                    {% else %}
+                        L
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+{% endmacro %}
+
+
+{% macro roundRobinSet(bracket, entrant, opponent) %}
+    {% import _self as macros %}
+
+    {% if entrant == opponent %}
+
+        <td>N/A</td>
+
+    {% else %}
+
+        {% set set = bracket.getSet(entrant, opponent) %}
+
+        {% if set.hasResultWithScore %}
+
+        <td>
+            {% if set.isWinner(opponent) %}
+                {{ set.loserScore }} - <strong>{{ set.winnerScore }}</strong>
+            {% else %}
+                <strong>{{ set.winnerScore }}</strong> - {{ set.loserScore }}
+            {% endif %}
+        </td>
+
+        {% elseif set.hasResult %}
+
+        <td>
+            {% if set.isWinner(opponent) %}
+                L
+            {% else %}
+                <strong>W</strong>
+            {% endif %}
+        </td>
+
+        {% else %}
+
+        <td>N/A</td>
+
+        {% endif %}
+
+    {% endif %}
+
+{% endmacro %}
+
+
+{% macro entrantWithPath(entrant) %}
+
+    {% if entrant %}
+        {% if entrant.isSinglePlayer and entrant.hasPlayerProfiles %}
+
+            <a href="{{ path('player_details', { 'slug': entrant.slug } )}}">{{ entrant.name }}</a>
+
+        {% else %}
+
+            {{ entrant.name }}
+
+        {% endif %}
+    {% else %}
+
+        bye
+
+    {% endif %}
+
+{% endmacro %}

@@ -1,0 +1,203 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: security.yml }
+    - { resource: services.yml }
+    - { resource: "@AdminBundle/Resources/config/services.yml" }
+    - { resource: "@ApiBundle/Resources/config/services.yml" }
+    - { resource: "@AppBundle/Resources/config/services.yml" }
+    - { resource: "@CoreBundle/Resources/config/services.yml" }
+
+parameters:
+    locale: en
+
+framework:
+    translator:      { fallbacks: ["%locale%"] }
+    secret:          "%secret%"
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: ~
+    form:            ~
+    csrf_protection: ~
+    validation:      { enable_annotations: true }
+    templating:
+        engines: ['twig']
+    default_locale:  "%locale%"
+    trusted_hosts:   ~
+    trusted_proxies: ~
+    session:
+        handler_id:  session.handler.native_file
+        save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+    fragments:       ~
+    http_method_override: true
+    assets: ~
+    php_errors:
+        log: true
+
+# Twig Configuration
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        driver:   pdo_mysql
+        host:     "%database_host%"
+        port:     "%database_port%"
+        dbname:   "%database_name%"
+        user:     "%database_user%"
+        password: "%database_password%"
+        charset:  "utf8mb4"
+        types:
+            encrypted: CoreBundle\Doctrine\DBAL\Types\Encrypted
+        mapping_types:
+            encrypted: encrypted
+
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        entity_managers:
+            default:
+                naming_strategy: doctrine.orm.naming_strategy.underscore
+                auto_mapping: true
+
+doctrine_migrations:
+    dir_name: "%kernel.root_dir%/../src/CoreBundle/Migrations"
+    namespace: CoreBundle\Migrations
+    table_name: migration_versions
+    name: Application Migrations
+
+stof_doctrine_extensions:
+    orm:
+        default:
+            timestampable: true
+
+# Caching
+cache_adapter:
+    providers:
+        filesystem:
+            factory: 'cache.factory.void'
+
+# Swiftmailer Configuration
+swiftmailer:
+    transport: "%mailer_transport%"
+    host:      "%mailer_host%"
+    username:  "%mailer_user%"
+    password:  "%mailer_password%"
+    spool:     { type: memory }
+
+# Command bus
+tactician:
+    commandbus:
+        default:
+            middleware:
+                - 'core.tactician.middleware.stopwatch'
+                - 'tactician.middleware.validator'
+                - 'tactician.middleware.command_handler'
+
+# FoSUserBundle
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: CoreBundle\Entity\User
+    from_email:
+        address: "none"
+        sender_name: "none"
+
+# HWIOAuth
+hwi_oauth:
+    firewall_names: [ main ]
+    resource_owners:
+        facebook:
+            type: facebook
+            client_id: "%facebook_app_id%"
+            client_secret: "%facebook_app_secret%"
+            scope: "public_profile"
+        twitter:
+            type: twitter
+            client_id: "%twitter_app_id%"
+            client_secret: "%twitter_app_secret%"
+
+# Pagination
+knp_paginator:
+    template:
+        pagination: "KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig"
+
+# Pheanstalk
+leezy_pheanstalk:
+    pheanstalks:
+        primary:
+            server: localhost
+            default: true
+
+# Sonata
+sonata_block:
+    default_contexts: [cms]
+    blocks:
+        sonata.admin.block.admin_list:
+            contexts: [admin]
+
+sonata_admin:
+    title: SmashArchive
+    security:
+        handler: sonata.admin.security.handler.role
+    options:
+        title_mode: single_text
+    show_mosaic_button: false
+    persist_filters: true
+    dashboard:
+        groups:
+            admin.character:
+                label: Characters
+                icon: '<i class="fa fa-balance-scale"></i>'
+                on_top: true
+                items:
+                    - admin.character
+            admin.player:
+                label: Players
+                icon: '<i class="fa fa-gamepad"></i>'
+                on_top: false
+                items:
+                    - admin.player_profile
+                    - admin.player
+            admin.country:
+                label: Countries
+                icon: '<i class="fa fa-globe"></i>'
+                on_top: true
+                items:
+                    - admin.country
+            admin.series:
+                label: Series
+                icon: '<i class="fa fa-link"></i>'
+                on_top: true
+                items:
+                    - admin.series
+            admin.tournament:
+                label: Tournaments
+                icon: '<i class="fa fa-calendar"></i>'
+                on_top: true
+                items:
+                    - admin.tournament
+            admin.phase:
+                label: Phases
+                icon: '<i class="fa fa-database"></i>'
+                on_top: true
+                items:
+                    - admin.phase
+            admin.entrant:
+                label: Entrants
+                icon: '<i class="fa fa-user-plus"></i>'
+                on_top: true
+                items:
+                    - admin.entrant
+            admin.user:
+                label: Users
+                icon: '<i class="fa fa-users"></i>'
+                on_top: true
+                items:
+                    - admin.user
+            admin.job:
+                label: Jobs
+                icon: '<i class="fa fa-tasks"></i>'
+                on_top: true
+                items:
+                    - admin.job

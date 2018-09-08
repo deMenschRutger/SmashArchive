@@ -1,0 +1,95 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block body %}
+
+    <p>
+        Hello smasher!
+    </p>
+    <p>
+        If you're reading this it means you have access to an early version of the SmashArchive project. The
+        purpose of this early version is to confirm that the data from the previous SmashRanking project has been
+        imported correctly and that new data can be imported from smash.gg and Challonge. Obviously the project
+        is far from done (especially the UI is very basic so far), but the most import functionality is now in
+        place and being tested. There's no need to send us feature requests right now since we still have a lot to
+        do, but if you encounter a bug please let us know.
+    </p>
+    <p>
+        That being said, most of the data can already be accessed through an API. This is just a concept, but it can
+        serve as a starting point for discussing what data the API actually needs to expose and in what format. Below
+        you will find some examples of API URLs.
+    </p>
+    <br>
+    <p>
+        <strong>Player overview</strong>
+        <br>
+        <a href="{{ url('api_players_overview') }}">
+            /api/v0.1/players/
+        </a>
+    </p>
+    <p>
+        <strong>Player overview (with pagination)</strong>
+        <br>
+        <a href="{{ url('api_players_overview', { 'page': 2 }) }}">
+            /api/v0.1/players/?page=2
+        </a>
+    </p>
+    <p>
+        <strong>Player sets</strong>
+        <br>
+        <a href="{{ url('api_players_sets', { 'slug': 'armada' }) }}">
+            /api/v0.1/players/:slug/sets/
+        </a>
+    </p>
+    <p>
+        <strong>Players head-to-head</strong>
+        <br>
+        <a href="{{ url('api_players_head_to_head', { 'playerOneSlug': 'amsah', 'playerTwoSlug': 'zgetto' }) }}">
+            /api/v0.1/players/:player-one-slug/head-to-head/:player-two-slug
+        </a>
+    </p>
+    <p>
+        <strong>Tournament overview</strong>
+        <br>
+        <a href="{{ url('api_tournaments_overview') }}">
+            /api/v0.1/tournaments/
+        </a>
+    </p>
+    <p>
+        <strong>Tournament overview (with name filtering)</strong>
+        <br>
+        <a href="{{ url('api_tournaments_overview', { 'name': 'avalon' }) }}">
+            /api/v0.1/tournaments/?name=avalon
+        </a>
+    </p>
+    <p>
+        <strong>Tournament details</strong>
+        <br>
+        <a href="{{ url('api_tournaments_details', { 'slug': 'avalon-iii' }) }}">
+            /api/v0.1/tournaments/avalon-iii/
+        </a>
+    </p>
+    <p>
+        <strong>Tournament results</strong>
+        <br>
+        <a href="{{ url('api_tournaments_results', { 'eventId': 404 }) }}">
+            /api/v0.1/tournaments/events/:event-id/results/
+        </a>
+    </p>
+    <br>
+    <h4>Known issues</h4>
+    <ul>
+        <li>
+            The way tournament details and results are presented are a work in progress and will probably contain flaws. This does not
+            necessarily mean that the underlying data is flawed. For example, the rank of a player in a specific tournament currently
+            does not show up on his results page, results of events might not show up in the correct order, and the brackets could be
+            difficult to read.
+        </li>
+        <li>
+            It is not yet possible to generate results for phase groups using the Swiss system.
+        </li>
+        <li>
+            The filtering functionality on the tournament and player overview pages is still pretty limited.
+        </li>
+    </ul>
+
+{% endblock %}

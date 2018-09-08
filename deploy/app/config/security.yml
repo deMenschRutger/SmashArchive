@@ -1,0 +1,49 @@
+security:
+    role_hierarchy:
+        ROLE_ADMIN:
+            - ROLE_ADMIN_ENTRANT_ALL
+            - ROLE_ADMIN_EVENT_ALL
+            - ROLE_ADMIN_PHASE_ALL
+            - ROLE_ADMIN_PHASE_GROUP_ALL
+            - ROLE_ADMIN_PLAYER_ALL
+            - ROLE_ADMIN_PLAYER_PROFILE_ALL
+            - ROLE_ADMIN_TOURNAMENT_ALL
+            - ROLE_MANAGER
+        ROLE_SUPER_ADMIN:
+            - ROLE_ADMIN
+
+    access_decision_manager:
+        strategy: unanimous
+
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username_email
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            pattern: ^/
+            oauth:
+                resource_owners:
+                    facebook: "/login/check-facebook"
+                    twitter: "/login/check-twitter"
+                login_path: "/login"
+                failure_path: "/login"
+                oauth_user_provider:
+                    service: core.security.provider.user
+            remember_me:
+                secret: '%secret%'
+                lifetime: 15552000
+                path: /
+                always_remember_me: true
+            logout:
+                path: /logout
+                target: /
+            anonymous: true
+
+    access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin, roles: ROLE_MANAGER }

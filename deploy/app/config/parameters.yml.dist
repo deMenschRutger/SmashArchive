@@ -1,0 +1,35 @@
+# This file is a "template" of what your parameters.yml file should look like
+# Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
+# http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
+parameters:
+    database_host:     127.0.0.1
+    database_port:     ~
+    database_name:     symfony
+    database_user:     root
+    database_password: ~
+
+    mailer_transport: smtp
+    mailer_host:      127.0.0.1
+    mailer_user:      ~
+    mailer_password:  ~
+
+    # A secret key that's used to generate certain security-related tokens
+    secret:            ThisTokenIsNotSoSecretChangeIt
+
+    # A secret key used to encrypt data.
+    encryption_key:  ThisTokenIsNotSoSecretChangeIt
+    encryption_salt: ThisTokenIsNotSoSecretChangeIt
+
+    # Facebook app credentials
+    facebook_app_id:     facebook_app_id
+    facebook_app_secret: facebook_app_secret
+
+    # Twitter app credentials
+    twitter_app_id:     twitter_app_id
+    twitter_app_secret: twitter_app_secret
+
+    # Sentry configuration
+    sentry_dsn: ~
+
+    # Challonge configuration
+    challonge_api_key: ~

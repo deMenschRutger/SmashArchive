@@ -1,0 +1,75 @@
+{% extends 'AppBundle:Tournaments:base.html.twig' %}
+
+{% block tournament %}
+
+<h2>Brackets</h2>
+<br>
+<div>
+    <ul class="nav nav-tabs" role="tablist">
+
+        {% for index, event in tournament.events %}
+
+        <li role="presentation" {{ index == 0 ? 'class="active"' : '' }}>
+            <a href="#event-{{ event.id }}" aria-controls="event-{{ event.id }}" role="tab"
+                data-toggle="tab">
+                {{ event.name }}
+            </a>
+        </li>
+
+        {% endfor %}
+
+    </ul>
+    <div class="tab-content">
+
+        {% for index, event in tournament.events %}
+
+        <div role="tabpanel" class="tab-pane  {{ index == 0 ? 'active' : '' }}" id="event-{{ event.id }}">
+            <br>
+
+            {% if event.phases|length > 0 %}
+
+                {% for phase in event.phases %}
+
+                <h4>{{ phase.name }}</h4>
+
+                    {% if event.phases|length > 0 %}
+
+                    <ul>
+
+                        {% for phaseGroup in phase.phaseGroups %}
+
+                            <li>
+                                <a href="{{ path('tournaments_brackets_details', {
+                                    'slug': tournament.slug,
+                                    'phaseGroupId': phaseGroup.id,
+                                }) }}">
+                                    {{ phaseGroup.name }}
+                                </a>
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                    {% else %}
+
+                        No phase groups found for this phase.
+
+                    {% endif %}
+
+                {% endfor %}
+
+            {% else %}
+
+                No phases found.
+
+            {% endif %}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}

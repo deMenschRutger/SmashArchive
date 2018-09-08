@@ -1,0 +1,48 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block body %}
+
+    <div class="row row-padding">
+        <div class="col-md-offset-3 col-md-6">
+            <h1 class="text-center">Registration</h1>
+            <br>
+            <p>
+                In order to use SmashArchive, please tell us who you are by logging in with one of the following
+                login providers.
+            </p>
+        </div>
+
+    {% if error is defined and error %}
+
+        <div class="col-md-12">
+            <div class="alert alert-danger" role="alert">{{ error }}</div>
+        </div>
+
+    {% endif %}
+
+    {% block hwi_oauth_content %}
+
+        <div class="col-md-12 text-center">
+            <br>
+            <a class="btn btn-default" href="{{ hwi_oauth_login_url('facebook') }}">
+                {#<img src="{{ asset('images/logos/facebook.png') }}" />#}
+                <span>{{ 'facebook' | trans({}, 'HWIOAuthBundle') }}</span>
+            </a>
+            <a class="btn btn-default" href="{{ hwi_oauth_login_url('twitter') }}">
+                {#<img src="{{ asset('images/logos/twitter.png') }}" />#}
+                <span>{{ 'twitter' | trans({}, 'HWIOAuthBundle') }}</span>
+            </a>
+        </div>
+
+    {% endblock hwi_oauth_content %}
+
+        <div class="col-md-offset-3 col-md-6">
+            <br>
+            <p>
+                <strong>Please note:</strong> we will not be able to post to or modify your social media
+                account in any way. The only permission we are asking is the permission to uniquely identify you.
+            </p>
+        </div>
+    </div>
+
+{% endblock body %}

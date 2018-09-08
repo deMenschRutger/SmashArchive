@@ -1,0 +1,107 @@
+{% extends 'AppBundle:Players:base.html.twig' %}
+
+{% block player %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Results for <strong>{{ result.event.name }}</strong> at <strong>{{ result.event.tournament.name }}</strong>
+        ({{ result.event.tournament.dateStart.format('Y-m-d') }})
+    </div>
+    <div>
+        <div class="panel-body">
+            <p>
+                Rank: {{ result.rank ? result.rank : '?' }}
+
+                {% if result.players|length > 1 %}
+
+                    <br>
+                    With
+
+                    {% for partner in result.getPlayers(player.slug) %}
+
+                        <a href="{{ path('player_details', {
+                            'slug': partner.slug
+                        }) }}">{{ partner.gamerTag }}</a>
+
+                    {% endfor %}
+                {% endif %}
+
+                <br>
+                <br>
+                <a href="{{ path('tournaments_summary', { 'slug': result.event.tournament.slug }) }}">Tournament details</a>
+            </p>
+            <br>
+
+        {% for phaseId, phase in sets %}
+
+            <h4>
+                {{ phase.name }}
+
+                {% if phase.sets|length > 0 %}
+
+                    - <a href="{{ path('tournaments_brackets_details', {
+                    'slug': result.event.tournament.slug,
+                    'phaseGroupId': phase.sets[0].phaseGroup.id,
+                }) }}">{{ phase.sets[0].phaseGroup.name }}</a>
+
+                {% endif %}
+            </h4>
+            <br>
+
+            {% for set in sort_player_sets(phase.sets) %}
+                {% if set.wasPlayed %}
+
+                    <div class="row">
+                        <div class="col-md-3">
+
+                            {% if set.entrantOne and set.isWinner(set.entrantOne) %}
+                                <strong>{{ include('entrant.html.twig', { 'entrant': set.entrantOne }) }}</strong>
+                            {% else %}
+                                {{ include('entrant.html.twig', { 'entrant': set.entrantOne }) }}
+                            {% endif %}
+
+                        </div>
+                        <div class="col-md-1 text-center">
+
+                            {% if not set.entrantOneScore is null %}
+                                {{ set.entrantOneScore }}
+                            {% else %}
+                                {{ set.entrantOne and set.isWinner(set.entrantOne) ? 'W' : 'L' }}
+                            {% endif %}
+
+                        </div>
+                        <div class="col-md-3">
+
+                            {% if set.entrantTwo and set.isWinner(set.entrantTwo) %}
+                                <strong>{{ include('entrant.html.twig', { 'entrant': set.entrantTwo }) }}</strong>
+                            {% else %}
+                                {{ include('entrant.html.twig', { 'entrant': set.entrantTwo }) }}
+                            {% endif %}
+
+                        </div>
+                        <div class="col-md-1 text-center">
+
+                            {% if not set.entrantTwoScore is null %}
+                                {{ set.entrantTwoScore }}
+                            {% else %}
+                                {{ set.entrantTwo and set.isWinner(set.entrantTwo) ? 'W' : 'L' }}
+                            {% endif %}
+
+                        </div>
+                        <div class="col-md-4">
+                            {{ set.roundName }}
+                        </div>
+                    </div>
+
+                {% endif %}
+            {% endfor %}
+
+            <br>
+
+        {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

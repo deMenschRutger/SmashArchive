@@ -1,0 +1,15 @@
+{% extends 'SonataAdminBundle::standard_layout.html.twig' %}
+
+{% form_theme form '@SonataAdmin/Form/form_admin_fields.html.twig' %}
+
+{% import "SonataAdminBundle:CRUD:base_edit_form_macro.html.twig" as form_helper %}
+
+{% block sonata_admin_content %}
+
+    <div class="sonata-ba-form">
+        {{ form_start(form) }}
+        {{ form_helper.render_groups(admin, form, ['default'], false) }}
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}

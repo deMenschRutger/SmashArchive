@@ -1,0 +1,61 @@
+{% extends 'AppBundle:Tournaments/brackets:base.html.twig' %}
+
+{% import '@App/Tournaments/brackets/macros.html.twig' as macros %}
+
+{% block bracket %}
+
+    <div class="col-md-12" style="width: 2000px;">
+        <br>
+
+        {% for sets in bracket.iterableBracket %}
+
+            <div class="pull-left">
+                <h4>{{ sets|length > 0 ? sets[0].roundName : 'Unknown Round' }}</h4>
+                <br>
+
+            {% for set in sets %}
+
+                {{ macros.bracketSet(set) }}
+
+            {% endfor %}
+
+            </div>
+
+        {% endfor %}
+
+        {% for set in bracket.grandFinalsSets %}
+            {% if not set.wasNotPlayed %}
+
+            <div class="pull-left">
+                <h4>{{ set.roundName }}</h4>
+                <br>
+
+                {{ macros.bracketSet(set) }}
+            </div>
+
+            {% endif %}
+        {% endfor %}
+
+    </div>
+    <div class="col-md-12" style="width: 5000px;">
+        <br>
+
+        {% for sets in bracket.iterableLosersBracket %}
+
+            <div class="pull-left">
+                <h4>{{ sets|length > 0 ? sets[0].roundName : 'Unknown Round' }}</h4>
+                <br>
+
+            {% for set in sets %}
+
+                {{ macros.bracketSet(set) }}
+
+            {% endfor %}
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endblock %}

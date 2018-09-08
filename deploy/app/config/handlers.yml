@@ -1,0 +1,89 @@
+services:
+    bus.handler.player.overview:
+        class: Domain\Handler\Player\OverviewHandler
+        arguments:
+            - '@knp_paginator'
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Player\OverviewCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    bus.handler.player.details:
+        class: Domain\Handler\Player\DetailsHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Player\DetailsCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    bus.handler.player.sets:
+        class: Domain\Handler\Player\SetsHandler
+        arguments:
+            - '@knp_paginator'
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Player\SetsCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    bus.handler.player.results:
+        class: Domain\Handler\Player\ResultsHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Player\ResultsCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+            - ['setCache', ['@cache.provider.filesystem']]
+
+    bus.handler.player.head_to_head:
+        class: Domain\Handler\Player\HeadToHeadHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Player\HeadToHeadCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    bus.handler.tournament.overview:
+        class: Domain\Handler\Tournament\OverviewHandler
+        arguments:
+            - '@knp_paginator'
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Tournament\OverviewCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    bus.handler.tournament.details:
+        class: Domain\Handler\Tournament\DetailsHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Tournament\DetailsCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    bus.handler.tournament.event.results:
+        class: Domain\Handler\Tournament\ResultsHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Tournament\ResultsCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    bus.handler.tournament.event.generate_results:
+        class: Domain\Handler\Event\GenerateResultsHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\Event\GenerateResultsCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+            - ['setCacheManager', ['@core.service.cache.manager']]
+
+    bus.handler.work_queue.add_job:
+        class: Domain\Handler\WorkQueue\AddJobHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\WorkQueue\AddJobCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+            - ['setPheanstalk', ['@leezy.pheanstalk']]
+
+    bus.handler.work_queue.process_job:
+        class: Domain\Handler\WorkQueue\ProcessJobHandler
+        tags:
+            - { name: "tactician.handler", command: Domain\Command\WorkQueue\ProcessJobCommand }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+            - ['setSmashgg', ['@core.service.smashgg']]
+            - ['setChallonge', ['@core.service.challonge']]
+            - ['setCommandBus', ['@tactician.commandbus']]

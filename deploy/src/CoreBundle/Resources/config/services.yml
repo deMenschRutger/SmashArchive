@@ -1,0 +1,42 @@
+services:
+    core.utils.encryption:
+        class: Zend\Crypt\BlockCipher
+        factory: 'Zend\Crypt\BlockCipher::factory'
+        arguments:
+            - 'mcrypt'
+        calls:
+            - [ 'setKey', [ '%encryption_key%' ] ]
+
+    core.security.provider.user:
+        class: CoreBundle\Security\Core\User\HWIOAuthUserProvider\UserProvider
+        arguments:
+            - '@fos_user.user_manager'
+            -
+                facebook: facebookId
+                twitter: twitterId
+
+    core.tactician.middleware.stopwatch:
+        class: CoreBundle\Tactician\Middleware\StopwatchMiddleware
+        arguments:
+            - '@debug.stopwatch'
+
+    core.doctrine.subscriber.parent_entrant:
+        class: CoreBundle\EventListener\ParentEntrantSubscriber
+        arguments:
+            - '@doctrine.orm.entity_manager'
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+
+    core.service.cache.manager:
+        class: CoreBundle\Utility\CacheManager
+        arguments:
+            - '@cache.provider.filesystem'
+            - '@doctrine.orm.entity_manager'
+
+    core.service.smashgg:
+        class: CoreBundle\Service\Smashgg\Smashgg
+
+    core.service.challonge:
+        class: Reflex\Challonge\Challonge
+        arguments:
+            - '%challonge_api_key%'

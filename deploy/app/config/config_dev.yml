@@ -1,0 +1,44 @@
+imports:
+    - { resource: config.yml }
+
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/routing_dev.yml"
+        strict_requirements: true
+    profiler: { only_exceptions: false }
+
+web_profiler:
+    toolbar: true
+    intercept_redirects: false
+
+cache_adapter:
+    providers:
+        filesystem:
+            factory: 'cache.factory.doctrine_filesystem'
+            options:
+                directory: "%kernel.root_dir%/../var/cache/%kernel.environment%/doctrine/filesystem"
+
+monolog:
+    handlers:
+        error:
+            type: "rotating_file"
+            path: "%kernel.logs_dir%/%kernel.environment%/error/errors.log"
+            level: "error"
+            formatter: "monolog.formatter.json"
+            max_files: 60
+        info:
+            type: "rotating_file"
+            path: "%kernel.logs_dir%/%kernel.environment%/info/info.log"
+            level: "debug"
+            channels: ["!event", "!doctrine"]
+            formatter: "monolog.formatter.json"
+            max_files: 60
+        filter_for_sentry:
+            type: "fingers_crossed"
+            action_level: "error"
+            buffer_size: 200
+            handler: "sentry"
+            excluded_404s:
+                - "(.*)"
+        sentry:
+             type: "null"

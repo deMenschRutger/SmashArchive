@@ -1,0 +1,53 @@
+{% if entrant %}
+
+    {% if entrant.isSinglePlayer %}
+
+        {% if entrant.hasPlayerProfiles %}
+
+            <a href="{{ url('player_details', { 'slug': entrant.slug }) }}">
+                {{ entrant.nameWithPlayers }}
+            </a>
+
+        {% else %}
+
+            {{ entrant.nameWithPlayers }}
+
+        {% endif %}
+
+
+    {% elseif entrant.isTeam %}
+
+        {{ entrant.name }}
+
+        {% if entrant.hasPlayerProfiles %}
+
+            (
+
+            {% for player in entrant.getPlayers() %}
+
+                {% if player.hasPlayerProfile %}
+
+                    <a href="{{ url('player_details', { 'slug': player.slug }) }}">
+                        {{ player.gamerTag }}
+                    </a>
+
+                {% else %}
+
+                    {{ player.gamerTag }}
+
+                {% endif %}
+
+
+            {% endfor %}
+
+            )
+
+        {% endif %}
+
+    {% else %}
+
+        {{ entrant.name }}
+
+    {% endif %}
+
+{% endif %}

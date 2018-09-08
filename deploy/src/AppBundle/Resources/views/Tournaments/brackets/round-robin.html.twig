@@ -1,0 +1,45 @@
+{% extends 'AppBundle:Tournaments/brackets:base.html.twig' %}
+
+{% import '@App/Tournaments/brackets/macros.html.twig' as macros %}
+
+{% block bracket %}
+
+    <div class="col-md-12">
+        <br>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+
+                {% for entrant in bracket.entrants %}
+
+                    <th>{{ macros.entrantWithPath(entrant) }}</th>
+
+                {% endfor %}
+
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+
+            {% for entrant in bracket.entrants %}
+
+                <tr>
+                    <td>{{ macros.entrantWithPath(entrant) }}</td>
+
+                    {% for opponent in bracket.entrants %}
+                        {{ macros.roundRobinSet(bracket, entrant, opponent) }}
+                    {% endfor %}
+
+                    <td>{{ bracket.getScoreForEntrant(entrant) }}</td>
+                    <td>{{ bracket.getResultForEntrant(entrant) }}</td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

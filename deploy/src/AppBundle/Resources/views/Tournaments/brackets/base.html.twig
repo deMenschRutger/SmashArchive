@@ -1,0 +1,32 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block body %}
+
+<div class="row">
+    <ol class="breadcrumb">
+        <li>
+            <a href="{{ path('homepage') }}">Home</a>
+        </li>
+        <li>
+            <a href="{{ path('tournaments_overview') }}">Tournaments</a>
+        </li>
+        <li>
+            <a href="{{ path('tournaments_summary', { 'slug': tournament.slug }) }}">{{ tournament.name }}</a>
+        </li>
+        <li class="active">
+            <a href="{{ path('tournaments_brackets', { 'slug': tournament.slug }) }}">
+                {{ phaseGroup.phase.event.name }}
+            </a>
+        </li>
+        <li class="active">
+            {{ phaseGroup.phase.name }}
+        </li>
+    </ol>
+    <div class="col-md-12">
+        <h2>{{ tournament.name }} - {{ phaseGroup.extendedName }}</h2>
+    </div>
+
+    {% block bracket %}{% endblock %}
+</div>
+
+{% endblock %}

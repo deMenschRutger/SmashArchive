@@ -1,0 +1,57 @@
+{% extends 'AppBundle:Players:base.html.twig' %}
+
+{% block player %}
+
+    {% for eventId, result in results %}
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+
+            {% if result.hasEvent %}
+
+                Result for <strong>{{ result.event.name }}</strong> at <strong>{{ result.event.tournament.name }}</strong>
+                ({{ result.event.tournament.dateStart.format('Y-m-d') }})
+
+            {% endif %}
+
+            </div>
+            <div>
+                <div class="panel-body">
+                    <p>
+                        Rank: {{ result.rank ? result.rank : '?' }}
+
+                    {% if result.players|length > 1 %}
+
+                        <br>
+                        With
+
+                        {% for partner in result.getPlayers(player.slug) %}
+
+                            <a href="{{ path('player_details', {
+                                'slug': partner.slug
+                            }) }}">{{ partner.gamerTag }}</a>
+
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if result.hasEvent %}
+
+                        <br>
+                        <br>
+                        <a href="{{ path('player_event_results', {
+                            'slug': player.slug,
+                            'eventId': result.event.id
+                        }) }}">Detailed results</a>
+                        <br>
+                        <a href="{{ path('tournaments_summary', { 'slug': result.event.tournament.slug }) }}">Tournament details</a>
+
+                    {% endif %}
+
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
+
+{% endblock %}
