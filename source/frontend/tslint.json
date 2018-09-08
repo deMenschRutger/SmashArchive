@@ -1,0 +1,8 @@
+{
+  "extends": "tslint-config-airbnb",
+  "rules": {
+    "cyclomatic-complexity": [true, 5],
+    "import-name": false,
+    "ter-indent": [true, 4]
+  }
+}

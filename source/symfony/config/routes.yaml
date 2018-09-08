@@ -1,0 +1,9 @@
+app:
+    path: /
+    controller: App\Controller\Front\DefaultController::index
+
+default:
+    path: /{req}
+    controller: App\Controller\Front\DefaultController::index
+    requirements:
+        req: (tournaments|players)

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{% block title %}SmashArchive{% endblock %}</title>
+
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+              rel="stylesheet"
+              integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+              crossorigin="anonymous">
+
+        <style>
+
+            body {
+                padding-top: 80px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <navigation></navigation>
+            <div class="container">
+                <router-view></router-view>
+            </div>
+        </div>
+
+        <script src="https://unpkg.com/axios@0.18.0/dist/axios.min.js"></script>
+        <script src="https://unpkg.com/lodash@4.17.10/lodash.min.js"></script>
+        <script src="https://unpkg.com/vue@2.5.16/dist/vue.min.js"></script>
+        <script src="https://unpkg.com/vue-router@3.0.1/dist/vue-router.js"></script>
+        <script src="{{ asset('dist/bundle.js') }}"></script>
+        <script> (function(d, s, id){
+                let js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) {return;}
+                js = d.createElement(s); js.id = id;
+                js.src = "https://connect.facebook.net/en_US/sdk.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+        </script>
+    </body>
+</html>
