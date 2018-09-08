@@ -21,6 +21,7 @@ class EventProcessor extends AbstractProcessor
 
     /**
      * @param int $eventId
+     *
      * @return bool
      */
     public function hasEvent($eventId)
@@ -30,6 +31,7 @@ class EventProcessor extends AbstractProcessor
 
     /**
      * @param int $eventId
+     *
      * @return Event
      */
     public function findEvent($eventId)

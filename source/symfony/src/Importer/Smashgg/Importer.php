@@ -89,6 +89,7 @@ class Importer extends AbstractImporter
      *
      * @param string $smashggId
      * @param array  $eventIds
+     *
      * @return Tournament
      */
     public function import($smashggId, $eventIds)
@@ -140,6 +141,7 @@ class Importer extends AbstractImporter
 
     /**
      * @param string $slug
+     *
      * @return Tournament
      */
     protected function getTournament($slug)
@@ -159,16 +161,23 @@ class Importer extends AbstractImporter
             $this->entityManager->persist($tournament);
         }
 
-        $dateStart = new \DateTime();
-        $dateStart->setTimestamp($smashggTournament['startAt']);
-        $country = $this->findCountry(null, $smashggTournament['countryCode']);
+        if (!$tournament->getName()) {
+            $tournament->setName($smashggTournament['name']);
+        }
 
-        $tournament->setName($smashggTournament['name']);
-        $tournament->setCity($smashggTournament['city']);
-        $tournament->setDateStart($dateStart);
+        if (!$tournament->getDateStart()) {
+            $dateStart = new \DateTime();
+            $dateStart->setTimestamp($smashggTournament['startAt']);
+            $tournament->setDateStart($dateStart);
+        }
 
-        if ($country) {
+        if (!$tournament->getCountry()) {
+            $country = $this->findCountry(null, $smashggTournament['countryCode']);
             $tournament->setCountry($country);
+        }
+
+        if (!$tournament->getCity()) {
+            $tournament->setCity($smashggTournament['city']);
         }
 
         return $tournament;
@@ -177,6 +186,7 @@ class Importer extends AbstractImporter
     /**
      * @param string $name
      * @param string $code
+     *
      * @return Country|null
      */
     protected function findCountry($name, $code = null)
@@ -225,6 +235,7 @@ class Importer extends AbstractImporter
 
     /**
      * @param array $eventIds
+     *
      * @return EventProcessor
      */
     protected function processEvents(array $eventIds)
@@ -272,6 +283,7 @@ class Importer extends AbstractImporter
 
     /**
      * @param array $groups
+     *
      * @return PhaseGroupProcessor
      */
     protected function processPhaseGroups(array $groups)
@@ -306,6 +318,7 @@ class Importer extends AbstractImporter
 
     /**
      * @param array $groups
+     *
      * @return PlayerProcessor
      */
     protected function processPlayers(array $groups)
@@ -337,6 +350,7 @@ class Importer extends AbstractImporter
 
     /**
      * @param array $groups
+     *
      * @return EntrantProcessor
      */
     protected function processEntrants(array $groups)
@@ -363,6 +377,7 @@ class Importer extends AbstractImporter
 
     /**
      * @param array $groups
+     *
      * @return SetProcessor
      */
     protected function processSets(array $groups)

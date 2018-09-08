@@ -75,7 +75,6 @@ class SmashRankingImportCommand extends ContainerAwareCommand
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -95,8 +94,6 @@ class SmashRankingImportCommand extends ContainerAwareCommand
 
     /**
      * This method will turn the entire export of the SmashRanking database into more manageable chunks.
-     *
-     * @return void
      */
     protected function splitModels()
     {
