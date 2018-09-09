@@ -63,8 +63,6 @@ class PlayerController extends AbstractController
      * @return array|OffsetPaginatedResponse
      *
      * @Sensio\Route("/{slug}/sets/", name="api_players_sets")
-     *
-     * @TODO This endpoint never seems to return any sets.
      */
     public function setsAction(Request $request, $slug)
     {
