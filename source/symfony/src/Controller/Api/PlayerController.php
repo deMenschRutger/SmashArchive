@@ -6,6 +6,7 @@ namespace App\Controller\Api;
 
 use App\Bus\Command\Player\HeadToHeadCommand;
 use App\Bus\Command\Player\OverviewCommand;
+use App\Bus\Command\Player\RanksCommand;
 use App\Bus\Command\Player\SetsCommand;
 use League\Tactician\CommandBus;
 use MediaMonks\RestApi\Response\OffsetPaginatedResponse;
@@ -76,6 +77,23 @@ class PlayerController extends AbstractController
         $this->setSerializationGroups('players_sets');
 
         return $this->buildPaginatedResponse($sets);
+    }
+
+    /**
+     * @param string $slug
+     *
+     * @return array
+     *
+     * @Sensio\Route("/{slug}/ranks/", name="api_players_ranks")
+     */
+    public function ranksAction($slug)
+    {
+        $command = new RanksCommand($slug);
+        $sets = $this->bus->handle($command);
+
+        $this->setSerializationGroups('players_ranks');
+
+        return $sets;
     }
 
     /**

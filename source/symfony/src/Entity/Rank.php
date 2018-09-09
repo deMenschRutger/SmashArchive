@@ -24,6 +24,9 @@ class Rank
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Event", inversedBy="ranks")
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
+     * @Serializer\Expose
+     * @Serializer\Groups({"players_ranks"})
      */
     private $event;
 
@@ -41,8 +44,8 @@ class Rank
      *
      * @ORM\Column(name="rank", type="integer")
      *
-     * @Serializer\Expose()
-     * @Serializer\Groups({"tournaments_standings"})
+     * @Serializer\Expose
+     * @Serializer\Groups({"players_ranks", "tournaments_standings"})
      */
     private $rank;
 
@@ -81,7 +84,7 @@ class Rank
     /**
      * @return string
      *
-     * @Serializer\Groups({"tournaments_standings"})
+     * @Serializer\Groups({"players_ranks", "tournaments_standings"})
      * @Serializer\SerializedName("entrant")
      * @Serializer\VirtualProperty()
      */
@@ -95,7 +98,7 @@ class Rank
      *
      * @return Player[]|Collection
      *
-     * @Serializer\Groups({"tournaments_standings"})
+     * @Serializer\Groups({"players_ranks", "tournaments_standings"})
      * @Serializer\VirtualProperty()
      */
     public function getPlayers($excludePlayerSlug = null): Collection
