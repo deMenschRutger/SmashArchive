@@ -25,7 +25,7 @@ class Character
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_overview"})
+     * @Serializer\Groups({"players_overview", "players_details"})
      */
     private $id;
 
@@ -35,7 +35,7 @@ class Character
      * @ORM\Column(name="name", type="string", length=128)
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_overview"})
+     * @Serializer\Groups({"players_overview", "players_details"})
      */
     private $name;
 
@@ -46,7 +46,7 @@ class Character
      * @ORM\JoinColumn(onDelete="SET NULL")
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_overview"})
+     * @Serializer\Groups({"players_overview", "players_details"})
      */
     private $game;
 

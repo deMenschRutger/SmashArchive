@@ -4,8 +4,10 @@ declare(strict_types = 1);
 
 namespace App\Controller\Api;
 
+use App\Bus\Command\Player\DetailsCommand;
 use App\Bus\Command\Player\HeadToHeadCommand;
 use App\Bus\Command\Player\OverviewCommand;
+use App\Bus\Command\Player\RanksCommand;
 use App\Bus\Command\Player\SetsCommand;
 use League\Tactician\CommandBus;
 use MediaMonks\RestApi\Response\OffsetPaginatedResponse;
@@ -56,14 +58,29 @@ class PlayerController extends AbstractController
     }
 
     /**
+     * @param string $slug
+     *
+     * @return array
+     *
+     * @Sensio\Route("/{slug}/", name="api_players_details")
+     */
+    public function detailsAction($slug)
+    {
+        $command = new DetailsCommand($slug);
+        $sets = $this->bus->handle($command);
+
+        $this->setSerializationGroups('players_details');
+
+        return $sets;
+    }
+
+    /**
      * @param Request $request
      * @param string  $slug
      *
      * @return array|OffsetPaginatedResponse
      *
      * @Sensio\Route("/{slug}/sets/", name="api_players_sets")
-     *
-     * @TODO This endpoint never seems to return any sets.
      */
     public function setsAction(Request $request, $slug)
     {
@@ -76,6 +93,25 @@ class PlayerController extends AbstractController
         $this->setSerializationGroups('players_sets');
 
         return $this->buildPaginatedResponse($sets);
+    }
+
+    /**
+     * @param string $slug
+     *
+     * @return array
+     *
+     * @Sensio\Route("/{slug}/ranks/", name="api_players_ranks")
+     *
+     * @TODO Add pagination.
+     */
+    public function ranksAction($slug)
+    {
+        $command = new RanksCommand($slug);
+        $sets = $this->bus->handle($command);
+
+        $this->setSerializationGroups('players_ranks');
+
+        return $sets;
     }
 
     /**

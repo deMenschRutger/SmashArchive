@@ -92,9 +92,6 @@ class Entrant
     /**
      * @ORM\ManyToMany(targetEntity="Player", inversedBy="entrants")
      * @ORM\JoinTable(name="entrants_players")
-     *
-     * @Serializer\Expose
-     * @Serializer\Groups({"players_sets"})
      */
     private $players;
 
@@ -320,6 +317,9 @@ class Entrant
 
     /**
      * @return ArrayCollection
+     *
+     * @Serializer\Groups({"players_sets"})
+     * @Serializer\VirtualProperty()
      */
     public function getPlayers(): ArrayCollection
     {
