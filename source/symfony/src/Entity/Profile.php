@@ -24,6 +24,8 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
  * @ORM\Entity(repositoryClass="App\Repository\ProfileRepository")
+ *
+ * @Serializer\ExclusionPolicy("all")
  */
 class Profile
 {
@@ -36,6 +38,7 @@ class Profile
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview"})
      */
     private $id;
@@ -46,6 +49,7 @@ class Profile
      * @Gedmo\Slug(fields={"gamerTag"}, updatable=false)
      * @ORM\Column(name="slug", type="string", length=128, unique=true)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview", "tournaments_overview", "tournaments_details"})
      */
     private $slug;
@@ -55,6 +59,7 @@ class Profile
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview", "tournaments_details"})
      */
     private $name;
@@ -64,6 +69,7 @@ class Profile
      *
      * @ORM\Column(name="gamer_tag", type="string")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview", "tournaments_overview", "tournaments_details"})
      */
     private $gamerTag;
@@ -74,6 +80,7 @@ class Profile
      * @ORM\ManyToOne(targetEntity="Country", inversedBy="playersNationalities")
      * @ORM\JoinColumn(onDelete="SET NULL")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview", "tournaments_details"})
      */
     private $nationality;
@@ -84,6 +91,7 @@ class Profile
      * @ORM\ManyToOne(targetEntity="Country", inversedBy="playersCountries")
      * @ORM\JoinColumn(onDelete="SET NULL")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview", "tournaments_details"})
      */
     private $country;
@@ -93,6 +101,7 @@ class Profile
      *
      * @ORM\Column(name="region", type="string", length=255, nullable=true)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview", "tournaments_details"})
      */
     private $region;
@@ -102,6 +111,7 @@ class Profile
      *
      * @ORM\Column(name="city", type="string", length=255, nullable=true)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview", "tournaments_details"})
      */
     private $city;
@@ -111,6 +121,7 @@ class Profile
      *
      * @ORM\Column(name="is_competing", type="boolean")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview"})
      */
     private $isCompeting = true;
@@ -120,6 +131,7 @@ class Profile
      *
      * @ORM\Column(name="is_active", type="boolean")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview"})
      */
     private $isActive = true;
@@ -145,6 +157,7 @@ class Profile
      *  }
      * )
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview"})
      */
     private $mains;
@@ -163,6 +176,7 @@ class Profile
      *  }
      * )
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview"})
      */
     private $secondaries;
@@ -330,7 +344,6 @@ class Profile
      * @return string
      *
      * @Serializer\Groups({"players_overview"})
-     * @Serializer\SerializedName("location")
      * @Serializer\VirtualProperty()
      */
     public function getLocation(): string

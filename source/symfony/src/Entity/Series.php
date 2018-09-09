@@ -8,12 +8,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Table(name="series", indexes={
  *     @ORM\Index(name="name_index", columns={"name"}),
  * })
  * @ORM\Entity(repositoryClass="App\Repository\SeriesRepository")
+ *
+ * @Serializer\ExclusionPolicy("all")
  */
 class Series
 {
@@ -30,6 +33,7 @@ class Series
      * @var string
      *
      * @Gedmo\Slug(fields={"name"}, updatable=false)
+     *
      * @ORM\Column(name="slug", type="string", length=128, unique=true)
      */
     private $slug;

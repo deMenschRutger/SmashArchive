@@ -18,6 +18,8 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
  * @ORM\Entity(repositoryClass="App\Repository\GameRepository")
+ *
+ * @Serializer\ExclusionPolicy("all")
  */
 class Game
 {
@@ -30,6 +32,7 @@ class Game
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_sets", "tournaments_details", "players_overview"})
      */
     private $id;
@@ -46,6 +49,7 @@ class Game
      *
      * @ORM\Column(name="name", type="string", length=128, unique=true)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_sets", "tournaments_details", "players_overview"})
      */
     private $name;
@@ -55,6 +59,7 @@ class Game
      *
      * @ORM\Column(name="display_name", type="string", length=255)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_sets", "tournaments_details", "players_overview"})
      */
     private $displayName;

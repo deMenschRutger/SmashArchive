@@ -17,6 +17,8 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
  * @ORM\Entity(repositoryClass="App\Repository\SetRepository")
+ *
+ * @Serializer\ExclusionPolicy("all")
  */
 class Set
 {
@@ -34,6 +36,7 @@ class Set
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
+     * @Serializer\Expose()
      * @Serializer\Groups({"players_sets"})
      */
     private $id;
@@ -50,6 +53,7 @@ class Set
      *
      * @ORM\Column(name="round", type="integer")
      *
+     * @Serializer\Expose()
      * @Serializer\Groups({"players_sets"})
      */
     private $round;
@@ -59,6 +63,7 @@ class Set
      *
      * @ORM\Column(name="round_name", type="string", length=255, nullable=true)
      *
+     * @Serializer\Expose()
      * @Serializer\Groups({"players_sets"})
      */
     private $roundName;
@@ -82,6 +87,7 @@ class Set
      *
      * @ORM\Column(name="winner_score", type="integer", nullable=true)
      *
+     * @Serializer\Expose()
      * @Serializer\Groups({"players_sets"})
      */
     private $winnerScore;
@@ -91,6 +97,7 @@ class Set
      *
      * @ORM\Column(name="loser_score", type="integer", nullable=true)
      *
+     * @Serializer\Expose()
      * @Serializer\Groups({"players_sets"})
      */
     private $loserScore;
@@ -100,6 +107,7 @@ class Set
      *
      * @ORM\Column(name="is_ranked", type="boolean")
      *
+     * @Serializer\Expose()
      * @Serializer\Groups({"players_sets"})
      */
     private $isRanked = true;
@@ -109,6 +117,7 @@ class Set
      *
      * @ORM\Column(name="status", type="string")
      *
+     * @Serializer\Expose()
      * @Serializer\Groups({"players_sets"})
      */
     private $status = self::STATUS_PLAYED;
@@ -126,6 +135,7 @@ class Set
      * @ORM\ManyToOne(targetEntity="PhaseGroup", inversedBy="sets")
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
+     * @Serializer\Expose()
      * @Serializer\Groups({"players_sets"})
      */
     private $phaseGroup;
@@ -136,6 +146,7 @@ class Set
      * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="entrantOneSets")
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
+     * @Serializer\Expose()
      * @Serializer\Groups({"players_sets"})
      */
     private $entrantOne;
@@ -146,6 +157,7 @@ class Set
      * @ORM\ManyToOne(targetEntity="Entrant", inversedBy="entrantTwoSets")
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
+     * @Serializer\Expose()
      * @Serializer\Groups({"players_sets"})
      */
     private $entrantTwo;

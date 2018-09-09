@@ -18,6 +18,8 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
  * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
+ *
+ * @Serializer\ExclusionPolicy("all")
  */
 class Event
 {
@@ -30,6 +32,7 @@ class Event
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_sets", "tournaments_details"})
      */
     private $id;
@@ -46,6 +49,7 @@ class Event
      *
      * @ORM\Column(name="name", type="string", length=255)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_sets", "tournaments_details"})
      */
     private $name;
@@ -55,6 +59,7 @@ class Event
      *
      * @ORM\Column(name="entrant_count", type="integer", nullable=true)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $entrantCount;
@@ -65,6 +70,7 @@ class Event
      * @ORM\ManyToOne(targetEntity="Tournament", inversedBy="events")
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_sets"})
      */
     private $tournament;
@@ -75,6 +81,7 @@ class Event
      * @ORM\ManyToOne(targetEntity="Game", inversedBy="events")
      * @ORM\JoinColumn(onDelete="SET NULL")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_sets", "tournaments_details"})
      */
     private $game;
@@ -84,6 +91,7 @@ class Event
      *
      * @ORM\OneToMany(targetEntity="Phase", mappedBy="event")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"tournaments_details"})
      */
     private $phases;

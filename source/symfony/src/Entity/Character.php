@@ -12,6 +12,8 @@ use JMS\Serializer\Annotation as Serializer;
  *  @ORM\UniqueConstraint(name="name_game_unique", columns={"name", "game_id"})
  * })
  * @ORM\Entity(repositoryClass="App\Repository\CharacterRepository")
+ *
+ * @Serializer\ExclusionPolicy("all")
  */
 class Character
 {
@@ -22,6 +24,7 @@ class Character
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview"})
      */
     private $id;
@@ -31,6 +34,7 @@ class Character
      *
      * @ORM\Column(name="name", type="string", length=128)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview"})
      */
     private $name;
@@ -41,6 +45,7 @@ class Character
      * @ORM\ManyToOne(targetEntity="Game", inversedBy="characters")
      * @ORM\JoinColumn(onDelete="SET NULL")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_overview"})
      */
     private $game;
