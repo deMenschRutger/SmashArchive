@@ -21,9 +21,11 @@ new Vue({
     el: '#app',
 });
 
-(window as any).fbAsyncInit = async function () {
+const config: any = (window as any).config;
+
+(window as any).fbAsyncInit = async function (): Promise<void> {
     FB.init({
-        appId: '1878227255734015', // TODO Make this dynamic.
+        appId: config.facebook.appId,
         xfbml: false,
         version: 'v3.0',
     });
