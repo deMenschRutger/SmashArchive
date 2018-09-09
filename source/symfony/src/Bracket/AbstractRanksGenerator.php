@@ -33,6 +33,7 @@ abstract class AbstractRanksGenerator
 
     /**
      * @param Event $event
+     *
      * @return array
      */
     abstract public function getRanks(Event $event);

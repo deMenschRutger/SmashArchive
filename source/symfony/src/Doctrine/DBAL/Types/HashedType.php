@@ -17,6 +17,7 @@ class HashedType extends StringType
     /**
      * @param mixed            $value
      * @param AbstractPlatform $platform
+     *
      * @return string
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)

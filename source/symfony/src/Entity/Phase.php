@@ -19,6 +19,8 @@ use JMS\Serializer\Annotation as Serializer;
  *     @ORM\Index(name="updated_at_index", columns={"updated_at"}),
  * })
  * @ORM\Entity(repositoryClass="App\Repository\PhaseRepository")
+ *
+ * @Serializer\ExclusionPolicy("all")
  */
 class Phase
 {
@@ -31,6 +33,7 @@ class Phase
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_sets", "tournaments_details"})
      */
     private $id;
@@ -47,6 +50,7 @@ class Phase
      *
      * @ORM\Column(name="name", type="string", length=255)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_sets", "tournaments_details"})
      */
     private $name;
@@ -56,6 +60,7 @@ class Phase
      *
      * @ORM\Column(name="phase_order", type="integer")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"tournaments_details"})
      */
     private $phaseOrder;
@@ -66,6 +71,7 @@ class Phase
      * @ORM\ManyToOne(targetEntity="Event", inversedBy="phases")
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"players_sets"})
      */
     private $event;
@@ -75,6 +81,7 @@ class Phase
      *
      * @ORM\OneToMany(targetEntity="PhaseGroup", mappedBy="phase", cascade={"persist"}, orphanRemoval=true)
      *
+     * @Serializer\Expose
      * @Serializer\Groups({"tournaments_details"})
      */
     private $phaseGroups;

@@ -17,6 +17,10 @@ class DefaultController extends Controller
      */
     public function index(): Response
     {
-        return $this->render('index.html.twig');
+        $facebookAppId = $this->getParameter('facebook_app_id');
+
+        return $this->render('index.html.twig', [
+            'facebookAppId' => $facebookAppId,
+        ]);
     }
 }

@@ -75,6 +75,7 @@ class RanksGenerator extends AbstractRanksGenerator
 
     /**
      * @param Event $event
+     *
      * @return array
      */
     public function getRanks(Event $event)

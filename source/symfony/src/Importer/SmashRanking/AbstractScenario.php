@@ -260,6 +260,7 @@ abstract class AbstractScenario
     /**
      * @param string $name
      * @param int    $tournamentId
+     *
      * @return Event
      */
     protected function createEventEntity(string $name, $tournamentId)
@@ -280,6 +281,7 @@ abstract class AbstractScenario
      * @param string $name
      * @param int    $order
      * @param Event  $event
+     *
      * @return Phase
      */
     protected function createPhase(string $name, $order, Event $event)

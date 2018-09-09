@@ -44,6 +44,7 @@ class PhasesMultipleEvents extends AbstractScenario
 
     /**
      * @param array $events
+     *
      * @return array
      */
     protected function filterIntermediateAndAmateurBrackets(array $events)

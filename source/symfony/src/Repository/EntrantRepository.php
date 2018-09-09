@@ -17,6 +17,7 @@ class EntrantRepository extends EntityRepository
      * @param int    $eventId
      * @param string $name
      * @param array  $exclude
+     *
      * @return Query
      */
     public function findByEventId($eventId, $name = null, $exclude = null)
@@ -50,6 +51,7 @@ class EntrantRepository extends EntityRepository
     /**
      * @param string $slug
      * @param int    $eventId
+     *
      * @return Entrant[]
      */
     public function findByProfileSlug($slug, $eventId = null)
@@ -78,6 +80,7 @@ class EntrantRepository extends EntityRepository
 
     /**
      * @param string $slug
+     *
      * @return Entrant
      */
     public function findFirstByPlayerSlug($slug)
@@ -102,6 +105,7 @@ class EntrantRepository extends EntityRepository
     /**
      * @param string|array $slugs
      * @param string       $eventType
+     *
      * @return array
      */
     public function findIdByProfileSlugs($slugs, $eventType)

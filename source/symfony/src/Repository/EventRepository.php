@@ -34,6 +34,7 @@ class EventRepository extends EntityRepository
 
     /**
      * @param int $eventId
+     *
      * @return array
      */
     public function getOrderedPhases($eventId)
@@ -60,6 +61,7 @@ class EventRepository extends EntityRepository
 
     /**
      * @param int $eventId
+     *
      * @return int
      */
     public function countUniqueEntrants($eventId)

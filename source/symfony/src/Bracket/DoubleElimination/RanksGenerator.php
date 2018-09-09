@@ -26,6 +26,7 @@ class RanksGenerator extends SingleEliminationRanksGenerator
 
     /**
      * @param Event $event
+     *
      * @return array
      */
     public function getRanks(Event $event)

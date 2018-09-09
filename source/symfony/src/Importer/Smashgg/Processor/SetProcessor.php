@@ -22,6 +22,7 @@ class SetProcessor extends AbstractProcessor
 
     /**
      * @param int $setId
+     *
      * @return bool
      */
     public function hasSet($setId)
@@ -31,6 +32,7 @@ class SetProcessor extends AbstractProcessor
 
     /**
      * @param int $setId
+     *
      * @return Set
      */
     public function findSet($setId)

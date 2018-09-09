@@ -102,6 +102,7 @@ abstract class AbstractBracket
 
     /**
      * @param int $round
+     *
      * @return array
      */
     public function getSetsForRound($round)
@@ -115,6 +116,7 @@ abstract class AbstractBracket
 
     /**
      * @param Event $event
+     *
      * @return Rank[]
      */
     public function getRanks(Event $event)
@@ -146,6 +148,7 @@ abstract class AbstractBracket
      * of the bracket.
      *
      * @param array $bracket
+     *
      * @return array
      */
     protected function cleanBracket($bracket)

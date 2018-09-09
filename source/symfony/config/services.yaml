@@ -2,6 +2,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
+    facebook_app_id: '%env(resolve:FACEBOOK_APP_ID)%'
+    facebook_app_secret: '%env(resolve:FACEBOOK_APP_SECRET)%'
 
 services:
     # default configuration for services in *this* file
@@ -29,8 +31,8 @@ services:
     Facebook\Facebook:
         arguments:
             -
-                app_id: '%env(resolve:FACEBOOK_APP_ID)%'
-                app_secret: '%env(resolve:FACEBOOK_APP_SECRET)%'
+                app_id: '%facebook_app_id%'
+                app_secret: '%facebook_app_secret%'
                 default_graph_version: v3.0
 
     Reflex\Challonge\Challonge:

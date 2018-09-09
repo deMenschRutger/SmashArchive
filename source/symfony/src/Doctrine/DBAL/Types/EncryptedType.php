@@ -31,6 +31,7 @@ class EncryptedType extends TextType
     /**
      * @param mixed            $value
      * @param AbstractPlatform $platform
+     *
      * @return string
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
@@ -45,6 +46,7 @@ class EncryptedType extends TextType
     /**
      * @param mixed            $value
      * @param AbstractPlatform $platform
+     *
      * @return string
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)

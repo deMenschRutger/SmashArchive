@@ -14,6 +14,7 @@ class TournamentRepository extends EntityRepository
 {
     /**
      * @param string $slug
+     *
      * @return Tournament|null
      *
      * @TODO This is a relatively heavy query and a candidate for caching.

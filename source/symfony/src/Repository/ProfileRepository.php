@@ -13,6 +13,7 @@ class ProfileRepository extends EntityRepository
 {
     /**
      * @param string $slug
+     *
      * @return int
      */
     public function exists(string $slug)
