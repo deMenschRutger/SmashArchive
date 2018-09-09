@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Controller\Api;
 
+use App\Bus\Command\Player\DetailsCommand;
 use App\Bus\Command\Player\HeadToHeadCommand;
 use App\Bus\Command\Player\OverviewCommand;
 use App\Bus\Command\Player\RanksCommand;
@@ -57,6 +58,23 @@ class PlayerController extends AbstractController
     }
 
     /**
+     * @param string $slug
+     *
+     * @return array
+     *
+     * @Sensio\Route("/{slug}/", name="api_players_details")
+     */
+    public function detailsAction($slug)
+    {
+        $command = new DetailsCommand($slug);
+        $sets = $this->bus->handle($command);
+
+        $this->setSerializationGroups('players_details');
+
+        return $sets;
+    }
+
+    /**
      * @param Request $request
      * @param string  $slug
      *
@@ -83,6 +101,8 @@ class PlayerController extends AbstractController
      * @return array
      *
      * @Sensio\Route("/{slug}/ranks/", name="api_players_ranks")
+     *
+     * @TODO Add pagination.
      */
     public function ranksAction($slug)
     {
