@@ -21,6 +21,7 @@ class PhaseGroupProcessor extends AbstractProcessor
 
     /**
      * @param int $phaseGroupId
+     *
      * @return bool
      */
     public function hasPhaseGroup($phaseGroupId)
@@ -30,6 +31,7 @@ class PhaseGroupProcessor extends AbstractProcessor
 
     /**
      * @param int $phaseGroupId
+     *
      * @return PhaseGroup
      */
     public function findPhaseGroup($phaseGroupId)

@@ -85,6 +85,7 @@ class Bracket extends AbstractBracket
     /**
      * @param Entrant $entrantOne
      * @param Entrant $entrantTwo
+     *
      * @return Set
      */
     public function getSet(Entrant $entrantOne, Entrant $entrantTwo)
@@ -101,6 +102,7 @@ class Bracket extends AbstractBracket
 
     /**
      * @param Entrant $entrant
+     *
      * @return string
      */
     public function getScoreForEntrant(Entrant $entrant)
@@ -123,6 +125,7 @@ class Bracket extends AbstractBracket
 
     /**
      * @param Entrant $entrant
+     *
      * @return string
      */
     public function getRanksForEntrant(Entrant $entrant)

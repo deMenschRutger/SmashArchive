@@ -44,6 +44,7 @@ class Smashgg
     /**
      * @param string $slug
      * @param array  $expand
+     *
      * @return array
      */
     public function getTournamentEntities($slug, array $expand = [])
@@ -63,6 +64,7 @@ class Smashgg
 
     /**
      * @param string $slug
+     *
      * @return array
      */
     public function getTournament($slug)
@@ -73,6 +75,7 @@ class Smashgg
     /**
      * @param string $slug
      * @param bool   $filterInvalidGames
+     *
      * @return array
      */
     public function getTournamentEvents($slug, $filterInvalidGames = false)
@@ -91,6 +94,7 @@ class Smashgg
     /**
      * @param string $slug
      * @param bool   $filterInvalidGames
+     *
      * @return array
      */
     public function getTournamentVideogames($slug, $filterInvalidGames = false)
@@ -108,6 +112,7 @@ class Smashgg
 
     /**
      * @param string $slug
+     *
      * @return array
      */
     public function getTournamentPhases($slug)
@@ -118,6 +123,7 @@ class Smashgg
     /**
      * @param string $slug
      * @param array  $phaseIds
+     *
      * @return array
      */
     public function getTournamentGroups($slug, $phaseIds = null)
@@ -136,6 +142,7 @@ class Smashgg
     /**
      * @param int   $id
      * @param array $expand
+     *
      * @return array
      */
     public function getPhaseGroup($id, array $expand = [])
@@ -155,6 +162,7 @@ class Smashgg
 
     /**
      * @param int $id
+     *
      * @return array
      */
     public function getPhaseGroupSets($id)
@@ -164,6 +172,7 @@ class Smashgg
 
     /**
      * @param int $id
+     *
      * @return array
      */
     public function getPhaseGroupEntrants($id)
@@ -173,6 +182,7 @@ class Smashgg
 
     /**
      * @param int $id
+     *
      * @return array
      */
     public function getPhaseGroupPlayers($id)
@@ -185,6 +195,7 @@ class Smashgg
      * @param Request          $request
      * @param Response         $response
      * @param RequestException $exception
+     *
      * @return bool
      */
     public function retryDecider($retries, $request, $response = null, $exception = null)
@@ -206,6 +217,7 @@ class Smashgg
 
     /**
      * @param int $numberOfRetries
+     *
      * @return int
      */
     public function retryDelay($numberOfRetries)

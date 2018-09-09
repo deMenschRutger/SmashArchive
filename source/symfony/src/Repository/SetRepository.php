@@ -18,6 +18,7 @@ class SetRepository extends EntityRepository
     /**
      * @param string $entrantId
      * @param string $phaseId
+     *
      * @return Set[]
      */
     public function findByEntrantIdAndPhaseId($entrantId, $phaseId)
@@ -44,6 +45,7 @@ class SetRepository extends EntityRepository
 
     /**
      * @param Entrant $entrant
+     *
      * @return Set
      */
     public function findFirstByEntrant(Entrant $entrant)
@@ -70,6 +72,7 @@ class SetRepository extends EntityRepository
     /**
      * @param string|array $slugs
      * @param string       $eventType
+     *
      * @return Query
      */
     public function findByProfileSlug($slugs, $eventType)
@@ -81,6 +84,7 @@ class SetRepository extends EntityRepository
     /**
      * @param string|array $slugs
      * @param string       $eventId
+     *
      * @return Query
      */
     public function findByProfileSlugAndEventId($slugs, $eventId)
@@ -96,6 +100,7 @@ class SetRepository extends EntityRepository
     /**
      * @param string $playerOneSlug
      * @param string $playerTwoSlug
+     *
      * @return array
      */
     public function findHeadToHeadSets(string $playerOneSlug, string $playerTwoSlug)
@@ -127,6 +132,7 @@ class SetRepository extends EntityRepository
     /**
      * @param string|array $slugs
      * @param string       $eventType
+     *
      * @return QueryBuilder
      */
     protected function getProfileSetsQuery($slugs, $eventType)
@@ -143,6 +149,7 @@ class SetRepository extends EntityRepository
 
     /**
      * @param array $entrantIds
+     *
      * @return QueryBuilder
      */
     protected function getEntrantSetsQuery(array $entrantIds)

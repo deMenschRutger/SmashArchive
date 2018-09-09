@@ -19,6 +19,7 @@ class GameProcessor extends AbstractProcessor
 
     /**
      * @param int $gameId
+     *
      * @return bool
      */
     public function hasGame($gameId)
@@ -28,6 +29,7 @@ class GameProcessor extends AbstractProcessor
 
     /**
      * @param int $gameId
+     *
      * @return Game
      */
     public function findGame($gameId)

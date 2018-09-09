@@ -22,6 +22,7 @@ class SetProcessor extends AbstractProcessor
 
     /**
      * @param int $setId
+     *
      * @return bool
      */
     public function hasSet($setId)
@@ -31,6 +32,7 @@ class SetProcessor extends AbstractProcessor
 
     /**
      * @param int $setId
+     *
      * @return Set
      */
     public function findSet($setId)
@@ -134,6 +136,7 @@ class SetProcessor extends AbstractProcessor
 
     /**
      * @param string $score
+     *
      * @return array|false
      */
     protected function processScores($score)

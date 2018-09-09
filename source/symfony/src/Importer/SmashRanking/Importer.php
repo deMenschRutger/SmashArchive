@@ -185,6 +185,7 @@ class Importer extends AbstractImporter
 
     /**
      * @param string $contentKey
+     *
      * @return array
      */
     public function getContentFromJson(string $contentKey)
@@ -285,6 +286,7 @@ class Importer extends AbstractImporter
 
     /**
      * @param int $playerId
+     *
      * @return Player
      */
     public function getPlayerById($playerId)
@@ -367,6 +369,7 @@ class Importer extends AbstractImporter
 
     /**
      * @param int $tournamentId
+     *
      * @return Tournament
      */
     public function getTournamentById($tournamentId)
@@ -393,6 +396,7 @@ class Importer extends AbstractImporter
 
     /**
      * @param int $id
+     *
      * @return Country|null
      */
     protected function getCountryBySmashRankingId($id)
@@ -414,6 +418,7 @@ class Importer extends AbstractImporter
 
     /**
      * @param int $id
+     *
      * @return Character
      */
     protected function getCharacterBySmashRankingId($id)
@@ -522,6 +527,7 @@ class Importer extends AbstractImporter
      * @param integer $playerId
      * @param integer $tournamentId
      * @param Phase   $originPhase
+     *
      * @return Entrant|bool
      */
     protected function getEntrant($playerId, $tournamentId, Phase $originPhase)

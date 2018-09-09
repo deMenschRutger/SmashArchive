@@ -69,6 +69,7 @@ class Bracket extends AbstractBracket
 
     /**
      * @param int $roundNumber
+     *
      * @return array
      */
     protected function generateVirtualRound($roundNumber)
@@ -94,6 +95,7 @@ class Bracket extends AbstractBracket
 
     /**
      * @param int $roundNumber
+     *
      * @return string
      */
     protected function getRoundName($roundNumber)
@@ -116,6 +118,7 @@ class Bracket extends AbstractBracket
      * @param array $bracket
      * @param int   $roundNumber
      * @param Set[] $sets
+     *
      * @return array
      */
     protected function matchSetsForRound($bracket, $roundNumber, $sets)

@@ -138,6 +138,7 @@ class Bracket extends SingleEliminationBracket
     /**
      * @param int  $initialRoundNumber
      * @param bool $isFinals
+     *
      * @return array
      */
     protected function generateVirtualLosersRound($initialRoundNumber, $isFinals)
@@ -169,6 +170,7 @@ class Bracket extends SingleEliminationBracket
 
     /**
      * @param int $roundNumber
+     *
      * @return string
      */
     protected function getRoundName($roundNumber)
@@ -189,6 +191,7 @@ class Bracket extends SingleEliminationBracket
 
     /**
      * @param int $roundNumber
+     *
      * @return string
      */
     protected function getLoserRoundName($roundNumber)

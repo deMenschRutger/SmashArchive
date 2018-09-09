@@ -14,6 +14,7 @@ class PhaseGroupRepository extends EntityRepository
 {
     /**
      * @param int $id
+     *
      * @return PhaseGroup
      */
     public function findWithTournament($id)

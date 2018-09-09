@@ -83,6 +83,12 @@ This will add the tournament *Spice 14* to the database. If the tournament
 already exists in the database, the importer will synchronize it with its
 provider (smash.gg in the example).
 
+#### Generating standings for a tournament
+After you have imported a tournament, standings will not be automatically
+generated for it. To do so, execute this command:
+
+```bin/console app:tournament:import -i {event_id}```
+
 #### Starting the server
 You can start a local server for development purposes using this command:
 

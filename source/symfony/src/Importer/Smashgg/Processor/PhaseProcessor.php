@@ -21,6 +21,7 @@ class PhaseProcessor extends AbstractProcessor
 
     /**
      * @param int $phaseId
+     *
      * @return bool
      */
     public function hasPhase($phaseId)
@@ -30,6 +31,7 @@ class PhaseProcessor extends AbstractProcessor
 
     /**
      * @param int $phaseId
+     *
      * @return Phase
      */
     public function findPhase($phaseId)

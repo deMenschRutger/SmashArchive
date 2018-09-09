@@ -13,6 +13,7 @@ class RankRepository extends EntityRepository
 {
     /**
      * @param int $tournamentId
+     *
      * @return array
      */
     public function findForTournament($tournamentId)
@@ -37,6 +38,7 @@ class RankRepository extends EntityRepository
 
     /**
      * @param int $eventId
+     *
      * @return array
      */
     public function findForEvent($eventId)
@@ -61,6 +63,7 @@ class RankRepository extends EntityRepository
     /**
      * @param string $slug
      * @param int    $eventId
+     *
      * @return array
      */
     public function findForProfile($slug, $eventId = null)

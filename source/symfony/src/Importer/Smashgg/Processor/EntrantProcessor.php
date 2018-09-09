@@ -22,6 +22,7 @@ class EntrantProcessor extends AbstractProcessor
 
     /**
      * @param int $entrantId
+     *
      * @return bool
      */
     public function hasEntrant($entrantId)
@@ -31,6 +32,7 @@ class EntrantProcessor extends AbstractProcessor
 
     /**
      * @param int $entrantId
+     *
      * @return Entrant
      */
     public function findEntrant($entrantId)

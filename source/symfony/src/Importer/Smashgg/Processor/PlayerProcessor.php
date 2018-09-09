@@ -22,6 +22,7 @@ class PlayerProcessor extends AbstractProcessor
 
     /**
      * @param int $playerId
+     *
      * @return bool
      */
     public function hasPlayer($playerId)
@@ -31,6 +32,7 @@ class PlayerProcessor extends AbstractProcessor
 
     /**
      * @param int $playerId
+     *
      * @return Player
      */
     public function findPlayer($playerId)
