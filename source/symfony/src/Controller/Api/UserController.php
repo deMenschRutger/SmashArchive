@@ -77,9 +77,6 @@ class UserController extends AbstractController
             $this->entityManager->flush();
         }
 
-        // TODO Configure the roles in the database.
-        $user->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
-
         return [
             'accessToken' => $this->jwtManager->create($user),
         ];
