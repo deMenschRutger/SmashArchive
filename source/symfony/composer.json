@@ -34,6 +34,7 @@
     "require-dev": {
         "sensiolabs/security-checker": "^4.1",
         "symfony/dotenv": "^4.1",
+        "symfony/phpunit-bridge": "^4.1",
         "symfony/profiler-pack": "^1.0",
         "symfony/web-server-bundle": "^4.1"
     },
