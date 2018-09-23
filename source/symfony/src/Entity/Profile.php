@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="profile", indexes={
@@ -47,6 +48,7 @@ class Profile
      * @var string
      *
      * @Gedmo\Slug(fields={"gamerTag"}, updatable=false)
+     *
      * @ORM\Column(name="slug", type="string", length=128, unique=true)
      *
      * @Serializer\Expose
@@ -68,6 +70,8 @@ class Profile
      * @var string
      *
      * @ORM\Column(name="gamer_tag", type="string")
+     *
+     * @Assert\NotBlank
      *
      * @Serializer\Expose
      * @Serializer\Groups({"players_overview", "players_details", "tournaments_overview", "tournaments_details"})
@@ -120,6 +124,8 @@ class Profile
      * @var bool
      *
      * @ORM\Column(name="is_competing", type="boolean")
+     *
+     * @Assert\NotBlank
      *
      * @Serializer\Expose
      * @Serializer\Groups({"players_overview", "players_details"})
@@ -247,9 +253,9 @@ class Profile
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getGamerTag(): string
+    public function getGamerTag(): ?string
     {
         return $this->gamerTag;
     }

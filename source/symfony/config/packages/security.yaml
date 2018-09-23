@@ -13,7 +13,7 @@ security:
             stateless: true
             anonymous: true
         api:
-            pattern: ^/api/users
+            pattern: ^/api
             stateless: true
             provider: jwt
             guard:
@@ -23,7 +23,5 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/api/users/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/users, roles: IS_AUTHENTICATED_FULLY }

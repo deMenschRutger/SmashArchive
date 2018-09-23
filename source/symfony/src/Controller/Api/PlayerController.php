@@ -9,7 +9,11 @@ use App\Bus\Command\Player\HeadToHeadCommand;
 use App\Bus\Command\Player\OverviewCommand;
 use App\Bus\Command\Player\RanksCommand;
 use App\Bus\Command\Player\SetsCommand;
+use App\Entity\Profile;
+use App\Form\Player\ProfileType;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Tactician\CommandBus;
+use MediaMonks\RestApi\Exception\FormValidationException;
 use MediaMonks\RestApi\Response\OffsetPaginatedResponse;
 use MediaMonks\RestApi\Response\PaginatedResponseInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
@@ -23,15 +27,22 @@ use Symfony\Component\HttpFoundation\Request;
 class PlayerController extends AbstractController
 {
     /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
      * @var CommandBus
      */
     protected $bus;
 
     /**
-     * @param CommandBus $bus
+     * @param EntityManagerInterface $entityManager
+     * @param CommandBus             $bus
      */
-    public function __construct(CommandBus $bus)
+    public function __construct(EntityManagerInterface $entityManager, CommandBus $bus)
     {
+        $this->entityManager = $entityManager;
         $this->bus = $bus;
     }
 
@@ -40,6 +51,7 @@ class PlayerController extends AbstractController
      *
      * @return PaginatedResponseInterface
      *
+     * @Sensio\Method("GET")
      * @Sensio\Route("/", name="api_players_overview")
      */
     public function indexAction(Request $request)
@@ -62,6 +74,7 @@ class PlayerController extends AbstractController
      *
      * @return array
      *
+     * @Sensio\Method("GET")
      * @Sensio\Route("/{slug}/", name="api_players_details")
      */
     public function detailsAction($slug)
@@ -80,6 +93,7 @@ class PlayerController extends AbstractController
      *
      * @return array|OffsetPaginatedResponse
      *
+     * @Sensio\Method("GET")
      * @Sensio\Route("/{slug}/sets/", name="api_players_sets")
      */
     public function setsAction(Request $request, $slug)
@@ -100,6 +114,7 @@ class PlayerController extends AbstractController
      *
      * @return array
      *
+     * @Sensio\Method("GET")
      * @Sensio\Route("/{slug}/ranks/", name="api_players_ranks")
      *
      * @TODO Add pagination.
@@ -120,6 +135,7 @@ class PlayerController extends AbstractController
      *
      * @return array
      *
+     * @Sensio\Method("GET")
      * @Sensio\Route("/{playerOneSlug}/head-to-head/{playerTwoSlug}/", name="api_players_head_to_head")
      */
     public function headToHeadAction($playerOneSlug, $playerTwoSlug)
@@ -127,5 +143,31 @@ class PlayerController extends AbstractController
         $command = new HeadToHeadCommand($playerOneSlug, $playerTwoSlug);
 
         return $this->bus->handle($command);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return Profile
+     *
+     * @Sensio\Method("POST")
+     * @Sensio\Route("/", name="api_players_add")
+     * @Sensio\IsGranted("ROLE_ADMIN")
+     */
+    public function addAction(Request $request)
+    {
+        $profile = new Profile();
+
+        $form = $this->createForm(ProfileType::class, $profile);
+        $form->submit($request->request->all());
+
+        if (!$form->isValid()) {
+            throw new FormValidationException($form);
+        }
+
+        $this->entityManager->persist($profile);
+        $this->entityManager->flush();
+
+        return $profile;
     }
 }
