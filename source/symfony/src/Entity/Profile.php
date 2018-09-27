@@ -434,7 +434,15 @@ class Profile
      */
     public function addMain(Character $character): void
     {
-        $this->mains[] = $character;
+        $this->mains->add($character);
+    }
+
+    /**
+     * @param Character $character
+     */
+    public function removeMain(Character $character): void
+    {
+        $this->mains->remove($character);
     }
 
     /**

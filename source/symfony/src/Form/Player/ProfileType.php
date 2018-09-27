@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Form\Player;
 
+use App\Entity\Character;
 use App\Entity\Country;
 use App\Entity\Profile;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -50,6 +51,14 @@ class ProfileType extends AbstractType
             ->add('city', TextType::class)
             ->add('isCompeting', CheckboxType::class, [
                 'required' => true,
+            ])
+            ->add('mains', EntityType::class, [
+                'class'    => Character::class,
+                'multiple' => true,
+            ])
+            ->add('secondaries', EntityType::class, [
+                'class'    => Character::class,
+                'multiple' => true,
             ])
             ->getForm()
         ;
