@@ -4,7 +4,9 @@ declare(strict_types = 1);
 
 namespace App\Form\Player;
 
+use App\Entity\Country;
 use App\Entity\Profile;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -38,6 +40,12 @@ class ProfileType extends AbstractType
                 'required' => true,
             ])
             ->add('name', TextType::class)
+            ->add('nationality', EntityType::class, [
+                'class' => Country::class,
+            ])
+            ->add('country', EntityType::class, [
+                'class' => Country::class,
+            ])
             ->add('region', TextType::class)
             ->add('city', TextType::class)
             ->add('isCompeting', CheckboxType::class, [
