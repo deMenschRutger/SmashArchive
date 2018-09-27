@@ -158,7 +158,7 @@ class ProfileController extends AbstractController
     {
         $profile = new Profile();
 
-        $this->validateForm($request, ProfileType::class, $profile);
+        $this->validateForm($request, ProfileType::class, $profile, true);
 
         $this->entityManager->persist($profile);
         $this->entityManager->flush();
@@ -172,7 +172,7 @@ class ProfileController extends AbstractController
      *
      * @return Profile
      *
-     * @Sensio\Method("PUT")
+     * @Sensio\Method("PATCH")
      * @Sensio\Route("/{slug}/", name="api_profiles_update")
      * @Sensio\IsGranted("ROLE_ADMIN")
      */

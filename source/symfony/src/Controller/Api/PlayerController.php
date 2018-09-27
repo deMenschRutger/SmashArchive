@@ -37,7 +37,7 @@ class PlayerController extends AbstractController
      *
      * @return Player
      *
-     * @Sensio\Method("PUT")
+     * @Sensio\Method("PATCH")
      * @Sensio\Route("/{id}/", name="api_players_update")
      * @Sensio\IsGranted("ROLE_ADMIN")
      */

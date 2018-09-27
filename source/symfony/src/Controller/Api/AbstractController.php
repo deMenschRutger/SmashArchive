@@ -52,11 +52,12 @@ class AbstractController extends Controller
      * @param Request $request
      * @param string  $type
      * @param mixed   $entity
+     * @param bool    $clearMissing
      */
-    protected function validateForm(Request $request, string $type, $entity)
+    protected function validateForm(Request $request, string $type, $entity, $clearMissing = false)
     {
         $form = $this->createForm($type, $entity);
-        $form->submit($request->request->all());
+        $form->submit($request->request->all(), $clearMissing);
 
         if (!$form->isValid()) {
             throw new FormValidationException($form);
