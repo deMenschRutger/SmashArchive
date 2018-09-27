@@ -8,7 +8,9 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Facebook\Facebook;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -50,12 +52,23 @@ class UserController extends AbstractController
     }
 
     /**
+     * Log the user in using a login provider like Facebook.
+     *
      * @param Request $request
      *
      * @return array
      *
      * @Sensio\Route("/login/")
      * @Sensio\Method("POST")
+     *
+     * @SWG\Tag(name="Users")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the user was successfully logged in.",
+     *     @SWG\Items(
+     *         @SWG\Property(property="accessToken", type="string")
+     *     )
+     * )
      */
     public function login(Request $request): array
     {
@@ -83,10 +96,19 @@ class UserController extends AbstractController
     }
 
     /**
+     * Retrieve information about the user matching the access token.
+     *
      * @return User
      *
      * @Sensio\Route("/me/")
      * @Sensio\Method("GET")
+     *
+     * @SWG\Tag(name="Users")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the user information was successfully retrieved.",
+     *     @SWG\Items(ref=@Model(type=User::class))
+     * )
      */
     public function me(): User
     {

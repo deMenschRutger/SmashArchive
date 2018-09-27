@@ -16,4 +16,5 @@ return [
     Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle::class => ['all' => true],
     League\Tactician\Bundle\TacticianBundle::class => ['all' => true],
     Knp\Bundle\PaginatorBundle\KnpPaginatorBundle::class => ['all' => true],
+    Nelmio\ApiDocBundle\NelmioApiDocBundle::class => ['all' => true],
 ];

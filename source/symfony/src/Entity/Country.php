@@ -7,6 +7,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Swagger\Annotations as SWG;
 
 /**
  * @ORM\Table(name="country", indexes={
@@ -27,6 +28,8 @@ class Country
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_overview", "profiles_details", "tournaments_overview", "tournaments_details"})
+     *
+     * @SWG\Property(example=1)
      */
     private $id;
 
@@ -37,6 +40,8 @@ class Country
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_overview", "profiles_details", "tournaments_overview", "tournaments_details"})
+     *
+     * @SWG\Property(example="NL")
      */
     private $code;
 
@@ -47,6 +52,8 @@ class Country
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_overview", "profiles_details", "tournaments_overview", "tournaments_details"})
+     *
+     * @SWG\Property(example="The Netherlands")
      */
     private $name;
 

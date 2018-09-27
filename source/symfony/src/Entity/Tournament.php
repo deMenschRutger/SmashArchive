@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
+use Swagger\Annotations as SWG;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -44,6 +45,8 @@ class Tournament
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_ranks", "profiles_sets", "tournaments_overview", "tournaments_details"})
+     *
+     * @SWG\Property(example=1)
      */
     private $id;
 
@@ -54,6 +57,8 @@ class Tournament
      *
      * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     *
+     * @SWG\Property(example="smashgg")
      */
     private $source = self::SOURCE_CUSTOM;
 
@@ -65,6 +70,8 @@ class Tournament
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_ranks", "profiles_sets", "tournaments_overview", "tournaments_details"})
+     *
+     * @SWG\Property(example="spice-14")
      */
     private $slug;
 
@@ -82,6 +89,8 @@ class Tournament
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_ranks", "profiles_sets", "tournaments_overview", "tournaments_details"})
+     *
+     * @SWG\Property(example="Spice 14")
      */
     private $name;
 
@@ -103,6 +112,8 @@ class Tournament
      *
      * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     *
+     * @SWG\Property(example="Utrecht")
      */
     private $region;
 
@@ -113,6 +124,8 @@ class Tournament
      *
      * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     *
+     * @SWG\Property(example="Utrecht")
      */
     private $city;
 
@@ -147,6 +160,8 @@ class Tournament
      *
      * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     *
+     * @SWG\Property(example="Europe\Amsterdam")
      */
     private $timezone;
 

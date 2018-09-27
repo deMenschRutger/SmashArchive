@@ -7,7 +7,9 @@ namespace App\Controller\Api;
 use App\Entity\Player;
 use App\Form\PlayerType;
 use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -32,6 +34,8 @@ class PlayerController extends AbstractController
     }
 
     /**
+     * Updates individual properties of a specific player.
+     *
      * @param Request $request
      * @param int     $id
      *
@@ -40,6 +44,13 @@ class PlayerController extends AbstractController
      * @Sensio\Method("PATCH")
      * @Sensio\Route("/{id}/", name="api_players_update")
      * @Sensio\IsGranted("ROLE_ADMIN")
+     *
+     * @SWG\Tag(name="Players")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the countries were successfully retrieved.",
+     *     @SWG\Items(ref=@Model(type=Player::class))
+     * )
      */
     public function updateAction(Request $request, $id)
     {

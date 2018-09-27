@@ -7,6 +7,8 @@ namespace App\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 
 /**
  * @ORM\Table(name="rank", indexes={
@@ -15,6 +17,11 @@ use JMS\Serializer\Annotation as Serializer;
  * @ORM\Entity(repositoryClass="App\Repository\RankRepository")
  *
  * @Serializer\ExclusionPolicy("all")
+ *
+ * @SWG\Definition(
+ *     @SWG\Property(property="entrant", type="string", example="[A]rmada"),
+ *     @SWG\Property(property="players", type="array", @SWG\Items(ref=@Model(type=Player::class))),
+ * )
  */
 class Rank
 {
@@ -46,6 +53,8 @@ class Rank
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_ranks", "tournaments_standings"})
+     *
+     * @SWG\Property(example=1)
      */
     private $rank;
 

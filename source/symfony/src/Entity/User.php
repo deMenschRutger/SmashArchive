@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Swagger\Annotations as SWG;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -26,6 +27,8 @@ class User implements UserInterface
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @Serializer\Expose()
+     *
+     * @SWG\Property(example=1)
      */
     protected $id;
 
@@ -35,6 +38,9 @@ class User implements UserInterface
      * @ORM\Column(type="encrypted")
      *
      * @Serializer\Expose()
+     * @Serializer\Type("string")
+     *
+     * @SWG\Property(example="JohnDoe")
      */
     protected $username;
 

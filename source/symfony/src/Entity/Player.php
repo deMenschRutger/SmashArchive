@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Swagger\Annotations as SWG;
 
 /**
  * @ORM\Table(name="player", indexes={
@@ -21,6 +22,13 @@ use JMS\Serializer\Annotation as Serializer;
  * @ORM\Entity(repositoryClass="App\Repository\PlayerRepository")
  *
  * @Serializer\ExclusionPolicy("all")
+ * @Serializer\AccessorOrder("custom", custom={"name", "type", "slug", "gamerTag"})
+ *
+ * @SWG\Definition(
+ *     description="The account of a player at a certain source (for example Armada's smash.gg account). An individual competitor can have multiple accounts from multiple sources, which are combined to create the profile model.",
+ *     @SWG\Property(property="slug", type="string", example="armada"),
+ *     @SWG\Property(property="gamerTag", type="string", example="Armada")
+ * )
  */
 class Player
 {
@@ -45,6 +53,8 @@ class Player
      * @var string
      *
      * @ORM\Column(name="type", type="string")
+     *
+     * @Serializer\Expose
      */
     private $type = self::SOURCE_CUSTOM;
 
@@ -62,6 +72,8 @@ class Player
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_ranks", "profiles_sets", "tournaments_standings"})
+     *
+     * @SWG\Property(example="[A]rmada")
      */
     private $name;
 
@@ -247,6 +259,7 @@ class Player
      *
      * @Serializer\Groups({"profiles_ranks", "profiles_sets", "tournaments_standings"})
      * @Serializer\VirtualProperty()
+     * @Serializer\Type("string")
      */
     public function getSlug(): ?string
     {
@@ -264,6 +277,7 @@ class Player
      *
      * @Serializer\Groups({"profiles_ranks", "profiles_sets", "tournaments_standings"})
      * @Serializer\VirtualProperty()
+     * @Serializer\Type("string")
      */
     public function getGamerTag()
     {
