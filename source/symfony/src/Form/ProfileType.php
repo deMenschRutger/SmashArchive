@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace App\Form\Player;
+namespace App\Form;
 
 use App\Entity\Character;
 use App\Entity\Country;
@@ -60,7 +60,6 @@ class ProfileType extends AbstractType
                 'class'    => Character::class,
                 'multiple' => true,
             ])
-            ->getForm()
         ;
     }
 }

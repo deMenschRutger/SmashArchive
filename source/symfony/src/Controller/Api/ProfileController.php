@@ -10,7 +10,7 @@ use App\Bus\Command\Player\OverviewCommand;
 use App\Bus\Command\Player\RanksCommand;
 use App\Bus\Command\Player\SetsCommand;
 use App\Entity\Profile;
-use App\Form\Player\ProfileType;
+use App\Form\ProfileType;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Tactician\CommandBus;
 use MediaMonks\RestApi\Response\OffsetPaginatedResponse;

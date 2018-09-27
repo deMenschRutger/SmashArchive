@@ -59,6 +59,9 @@ class Player
      * @var string|null
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
+     *
+     * @Serializer\Expose
+     * @Serializer\Groups({"profiles_ranks", "profiles_sets", "tournaments_standings"})
      */
     private $name;
 
