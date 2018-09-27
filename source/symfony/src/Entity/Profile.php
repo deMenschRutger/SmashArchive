@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
+use Swagger\Annotations as SWG;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -27,6 +28,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="App\Repository\ProfileRepository")
  *
  * @Serializer\ExclusionPolicy("all")
+ * @Serializer\AccessorOrder(order="custom", custom={
+ *     "id", "slug", "gamerTag", "name", "nationality", "country", "region", "city", "location", "isCompeting", "isActive", "mains",
+ *     "secondaries"
+ * })
+ *
+ * @SWG\Definition(
+ *     @SWG\Property(property="location", type="string", example="Göteborg, Västergötland, Sweden"),
+ * )
  */
 class Profile
 {
@@ -41,6 +50,8 @@ class Profile
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_overview", "profiles_details"})
+     *
+     * @SWG\Property(example=1)
      */
     private $id;
 
@@ -53,6 +64,8 @@ class Profile
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_overview", "profiles_details", "tournaments_overview", "tournaments_details"})
+     *
+     * @SWG\Property(example="armada")
      */
     private $slug;
 
@@ -63,6 +76,8 @@ class Profile
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_overview", "profiles_details", "tournaments_details"})
+     *
+     * @SWG\Property(example="Adam Lindgren")
      */
     private $name;
 
@@ -75,6 +90,8 @@ class Profile
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_overview", "profiles_details", "tournaments_overview", "tournaments_details"})
+     *
+     * @SWG\Property(example="Armada")
      */
     private $gamerTag;
 
@@ -107,6 +124,8 @@ class Profile
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_overview", "profiles_details", "tournaments_details"})
+     *
+     * @SWG\Property(example="Västergötland")
      */
     private $region;
 
@@ -117,6 +136,8 @@ class Profile
      *
      * @Serializer\Expose
      * @Serializer\Groups({"profiles_overview", "profiles_details", "tournaments_details"})
+     *
+     * @SWG\Property(example="Göteborg")
      */
     private $city;
 

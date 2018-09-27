@@ -46,6 +46,11 @@ class PlayerController extends AbstractController
      * @Sensio\IsGranted("ROLE_ADMIN")
      *
      * @SWG\Tag(name="Players")
+     * @SWG\Parameter(
+     *     in="body",
+     *     name="status",
+     *     @Model(type=PlayerType::class)
+     * )
      * @SWG\Response(
      *     response=200,
      *     description="Returned when the countries were successfully retrieved.",

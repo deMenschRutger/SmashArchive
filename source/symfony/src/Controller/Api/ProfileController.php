@@ -10,12 +10,16 @@ use App\Bus\Command\Player\OverviewCommand;
 use App\Bus\Command\Player\RanksCommand;
 use App\Bus\Command\Player\SetsCommand;
 use App\Entity\Profile;
+use App\Entity\Rank;
+use App\Entity\Set;
 use App\Form\ProfileType;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Tactician\CommandBus;
 use MediaMonks\RestApi\Response\OffsetPaginatedResponse;
 use MediaMonks\RestApi\Response\PaginatedResponseInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -47,12 +51,24 @@ class ProfileController extends AbstractController
     }
 
     /**
+     * Returns a list of profiles.
+     *
      * @param Request $request
      *
      * @return PaginatedResponseInterface
      *
      * @Sensio\Method("GET")
      * @Sensio\Route("/", name="api_profiles_overview")
+     *
+     * @SWG\Tag(name="Profiles")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the profiles were successfully retrieved.",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Profile::class, groups={"profiles_overview"}))
+     *     )
+     * )
      */
     public function indexAction(Request $request)
     {
@@ -70,12 +86,21 @@ class ProfileController extends AbstractController
     }
 
     /**
+     * Returns the details of a specific profile.
+     *
      * @param string $slug
      *
      * @return array
      *
      * @Sensio\Method("GET")
      * @Sensio\Route("/{slug}/", name="api_profiles_details")
+     *
+     * @SWG\Tag(name="Profiles")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the profile details were successfully retrieved.",
+     *     @SWG\Items(ref=@Model(type=Profile::class, groups={"profiles_details"}))
+     * )
      */
     public function detailsAction($slug)
     {
@@ -88,6 +113,8 @@ class ProfileController extends AbstractController
     }
 
     /**
+     * Returns all sets that are associated with this profile.
+     *
      * @param Request $request
      * @param string  $slug
      *
@@ -95,6 +122,16 @@ class ProfileController extends AbstractController
      *
      * @Sensio\Method("GET")
      * @Sensio\Route("/{slug}/sets/", name="api_profiles_sets")
+     *
+     * @SWG\Tag(name="Profiles")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the sets were successfully retrieved.",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Set::class, groups={"profiles_sets"}))
+     *     )
+     * )
      */
     public function setsAction(Request $request, $slug)
     {
@@ -110,12 +147,24 @@ class ProfileController extends AbstractController
     }
 
     /**
+     * Returns all ranks that are associated with this profile.
+     *
      * @param string $slug
      *
      * @return array
      *
      * @Sensio\Method("GET")
      * @Sensio\Route("/{slug}/ranks/", name="api_profiles_ranks")
+     *
+     * @SWG\Tag(name="Profiles")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the ranks were successfully retrieved.",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Rank::class, groups={"profiles_ranks"}))
+     *     )
+     * )
      *
      * @TODO Add pagination.
      */
@@ -130,6 +179,8 @@ class ProfileController extends AbstractController
     }
 
     /**
+     * Returns the head-to-head score between two profiles.
+     *
      * @param string $playerOneSlug
      * @param string $playerTwoSlug
      *
@@ -137,6 +188,12 @@ class ProfileController extends AbstractController
      *
      * @Sensio\Method("GET")
      * @Sensio\Route("/{playerOneSlug}/head-to-head/{playerTwoSlug}/", name="api_profiles_head_to_head")
+     *
+     * @SWG\Tag(name="Profiles")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the head-to-head score was successfully retrieved."
+     * )
      */
     public function headToHeadAction($playerOneSlug, $playerTwoSlug)
     {
@@ -146,6 +203,8 @@ class ProfileController extends AbstractController
     }
 
     /**
+     * Adds a new profile.
+     *
      * @param Request $request
      *
      * @return Profile
@@ -153,6 +212,18 @@ class ProfileController extends AbstractController
      * @Sensio\Method("POST")
      * @Sensio\Route("/", name="api_profiles_add")
      * @Sensio\IsGranted("ROLE_ADMIN")
+     *
+     * @SWG\Tag(name="Profiles")
+     * @SWG\Parameter(
+     *     in="body",
+     *     name="status",
+     *     @Model(type=ProfileType::class)
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the profile details were successfully updated.",
+     *     @SWG\Items(ref=@Model(type=Profile::class, groups={"profiles_details"}))
+     * )
      */
     public function addAction(Request $request)
     {
@@ -167,6 +238,8 @@ class ProfileController extends AbstractController
     }
 
     /**
+     * Updates specific properties of an existing profile.
+     *
      * @param Request $request
      * @param string  $slug
      *
@@ -175,6 +248,18 @@ class ProfileController extends AbstractController
      * @Sensio\Method("PATCH")
      * @Sensio\Route("/{slug}/", name="api_profiles_update")
      * @Sensio\IsGranted("ROLE_ADMIN")
+     *
+     * @SWG\Tag(name="Profiles")
+     * @SWG\Parameter(
+     *     in="body",
+     *     name="status",
+     *     @Model(type=ProfileType::class)
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the profile details were successfully updated.",
+     *     @SWG\Items(ref=@Model(type=Profile::class, groups={"profiles_details"}))
+     * )
      */
     public function updateAction(Request $request, $slug)
     {
