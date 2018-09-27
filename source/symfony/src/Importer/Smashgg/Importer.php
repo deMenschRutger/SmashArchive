@@ -284,8 +284,6 @@ class Importer extends AbstractImporter
             $processor->processNew($phaseData, $event);
         }
 
-        $processor->cleanUp($this->tournament);
-
         return $processor;
     }
 
@@ -318,8 +316,6 @@ class Importer extends AbstractImporter
 
         $this->io->progressFinish();
         $this->io->newLine();
-
-        $processor->cleanUp($this->tournament);
 
         return $processor;
     }
@@ -400,8 +396,6 @@ class Importer extends AbstractImporter
                 $processor->processNew($setData, $this->entrantProcessor, $phaseGroup);
             }
         }
-
-        $processor->cleanUp($this->tournament);
 
         return $processor;
     }

@@ -82,6 +82,8 @@ class PhaseProcessor extends AbstractProcessor
     }
 
     /**
+     * @deprecated
+     *
      * @param Tournament $tournament
      */
     public function cleanUp(Tournament $tournament)
