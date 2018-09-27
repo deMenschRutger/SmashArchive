@@ -89,7 +89,11 @@ class EventProcessor extends AbstractProcessor
     /**
      * This will remove existing entities that were not imported from the database.
      *
+     * @deprecated
+     *
      * @param Tournament $tournament
+     *
+     * @TODO This method was previously used after all events were imported, but I'm not sure if it's still required.
      */
     public function cleanUp(Tournament $tournament)
     {

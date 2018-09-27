@@ -252,8 +252,6 @@ class Importer extends AbstractImporter
             $processor->processNew($eventData, $this->tournament, $game);
         }
 
-        $processor->cleanUp($this->tournament);
-
         return $processor;
     }
 
