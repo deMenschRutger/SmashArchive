@@ -171,6 +171,12 @@ class Importer extends AbstractImporter
             $tournament->setDateStart($dateStart);
         }
 
+        if (!$tournament->getDateEnd()) {
+            $dateEnd = new \DateTime();
+            $dateEnd->setTimestamp($smashggTournament['endAt']);
+            $tournament->setDateEnd($dateEnd);
+        }
+
         if (!$tournament->getCountry()) {
             $country = $this->findCountry(null, $smashggTournament['countryCode']);
             $tournament->setCountry($country);

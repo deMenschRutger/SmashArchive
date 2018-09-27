@@ -117,16 +117,28 @@ class Tournament
     private $city;
 
     /**
-     * The first (and possibly only) day of the tournament
+     * The first (and possibly only) day/time of the tournament.
      *
      * @var \DateTime|null
      *
-     * @ORM\Column(name="date_start", type="date", nullable=true)
+     * @ORM\Column(name="date_start", type="datetime", nullable=true)
      *
      * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
      */
     private $dateStart;
+
+    /**
+     * The last day/time of the tournament.
+     *
+     * @var \DateTime|null
+     *
+     * @ORM\Column(name="date_end", type="datetime", nullable=true)
+     *
+     * @Serializer\Expose
+     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     */
+    private $dateEnd;
 
     /**
      * @var string|null
@@ -348,6 +360,28 @@ class Tournament
     public function setDateStart(?\DateTime $dateStart): void
     {
         $this->dateStart = $dateStart;
+    }
+
+    /**
+     * @param string|null $format
+     *
+     * @return \DateTime|string|null
+     */
+    public function getDateEnd($format = null)
+    {
+        if ($this->dateEnd instanceof \DateTime && $format) {
+            return $this->dateEnd->format($format);
+        }
+
+        return $this->dateEnd;
+    }
+
+    /**
+     * @param \DateTime|null $dateEnd
+     */
+    public function setDateEnd(?\DateTime $dateEnd): void
+    {
+        $this->dateEnd = $dateEnd;
     }
 
     /**
