@@ -37,7 +37,7 @@ class Set
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      */
     private $id;
 
@@ -54,7 +54,7 @@ class Set
      * @ORM\Column(name="round", type="integer")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      */
     private $round;
 
@@ -64,7 +64,7 @@ class Set
      * @ORM\Column(name="round_name", type="string", length=255, nullable=true)
      *
      * @Serializer\Expose()
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      */
     private $roundName;
 
@@ -88,7 +88,7 @@ class Set
      * @ORM\Column(name="winner_score", type="integer", nullable=true)
      *
      * @Serializer\Expose()
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      */
     private $winnerScore;
 
@@ -98,7 +98,7 @@ class Set
      * @ORM\Column(name="loser_score", type="integer", nullable=true)
      *
      * @Serializer\Expose()
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      */
     private $loserScore;
 
@@ -108,7 +108,7 @@ class Set
      * @ORM\Column(name="is_ranked", type="boolean")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      */
     private $isRanked = true;
 
@@ -118,7 +118,7 @@ class Set
      * @ORM\Column(name="status", type="string")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      */
     private $status = self::STATUS_PLAYED;
 
@@ -136,7 +136,7 @@ class Set
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      */
     private $phaseGroup;
 
@@ -147,7 +147,7 @@ class Set
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      */
     private $entrantOne;
 
@@ -158,7 +158,7 @@ class Set
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
      * @Serializer\Expose()
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      */
     private $entrantTwo;
 
@@ -541,7 +541,7 @@ class Set
     /**
      * @return int|null
      *
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      * @Serializer\SerializedName("winner")
      * @Serializer\VirtualProperty()
      */
@@ -583,7 +583,7 @@ class Set
     /**
      * @return int|null
      *
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      * @Serializer\SerializedName("loser")
      * @Serializer\VirtualProperty()
      */

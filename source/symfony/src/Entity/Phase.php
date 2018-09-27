@@ -34,7 +34,7 @@ class Phase
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_sets", "tournaments_details"})
+     * @Serializer\Groups({"profiles_sets", "tournaments_details"})
      */
     private $id;
 
@@ -51,7 +51,7 @@ class Phase
      * @ORM\Column(name="name", type="string", length=255)
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_sets", "tournaments_details"})
+     * @Serializer\Groups({"profiles_sets", "tournaments_details"})
      */
     private $name;
 
@@ -72,7 +72,7 @@ class Phase
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      */
     private $event;
 

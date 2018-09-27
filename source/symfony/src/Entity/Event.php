@@ -33,7 +33,7 @@ class Event
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_sets", "tournaments_details"})
+     * @Serializer\Groups({"profiles_sets", "tournaments_details"})
      */
     private $id;
 
@@ -50,7 +50,7 @@ class Event
      * @ORM\Column(name="name", type="string", length=255)
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_ranks", "players_sets", "tournaments_details"})
+     * @Serializer\Groups({"profiles_ranks", "profiles_sets", "tournaments_details"})
      */
     private $name;
 
@@ -71,7 +71,7 @@ class Event
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_ranks", "players_sets"})
+     * @Serializer\Groups({"profiles_ranks", "profiles_sets"})
      */
     private $tournament;
 
@@ -82,7 +82,7 @@ class Event
      * @ORM\JoinColumn(onDelete="SET NULL")
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_ranks", "players_sets", "tournaments_details"})
+     * @Serializer\Groups({"profiles_ranks", "profiles_sets", "tournaments_details"})
      */
     private $game;
 

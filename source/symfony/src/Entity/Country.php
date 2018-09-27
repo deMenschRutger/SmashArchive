@@ -26,7 +26,7 @@ class Country
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_overview", "players_details", "tournaments_overview", "tournaments_details"})
+     * @Serializer\Groups({"profiles_overview", "profiles_details", "tournaments_overview", "tournaments_details"})
      */
     private $id;
 
@@ -36,7 +36,7 @@ class Country
      * @ORM\Column(name="code", type="string", length=4, unique=true)
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_overview", "players_details", "tournaments_overview", "tournaments_details"})
+     * @Serializer\Groups({"profiles_overview", "profiles_details", "tournaments_overview", "tournaments_details"})
      */
     private $code;
 
@@ -46,7 +46,7 @@ class Country
      * @ORM\Column(name="name", type="string", length=255)
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_overview", "players_details", "tournaments_overview", "tournaments_details"})
+     * @Serializer\Groups({"profiles_overview", "profiles_details", "tournaments_overview", "tournaments_details"})
      */
     private $name;
 

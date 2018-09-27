@@ -26,7 +26,7 @@ class Rank
      * @ORM\JoinColumn(onDelete="CASCADE")
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_ranks"})
+     * @Serializer\Groups({"profiles_ranks"})
      */
     private $event;
 
@@ -45,7 +45,7 @@ class Rank
      * @ORM\Column(name="rank", type="integer")
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_ranks", "tournaments_standings"})
+     * @Serializer\Groups({"profiles_ranks", "tournaments_standings"})
      */
     private $rank;
 
@@ -84,7 +84,7 @@ class Rank
     /**
      * @return string
      *
-     * @Serializer\Groups({"players_ranks", "tournaments_standings"})
+     * @Serializer\Groups({"profiles_ranks", "tournaments_standings"})
      * @Serializer\SerializedName("entrant")
      * @Serializer\VirtualProperty()
      */
@@ -98,7 +98,7 @@ class Rank
      *
      * @return Player[]|Collection
      *
-     * @Serializer\Groups({"players_ranks", "tournaments_standings"})
+     * @Serializer\Groups({"profiles_ranks", "tournaments_standings"})
      * @Serializer\VirtualProperty()
      */
     public function getPlayers($excludePlayerSlug = null): Collection

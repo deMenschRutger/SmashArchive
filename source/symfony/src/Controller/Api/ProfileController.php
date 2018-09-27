@@ -13,7 +13,6 @@ use App\Entity\Profile;
 use App\Form\Player\ProfileType;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Tactician\CommandBus;
-use MediaMonks\RestApi\Exception\FormValidationException;
 use MediaMonks\RestApi\Response\OffsetPaginatedResponse;
 use MediaMonks\RestApi\Response\PaginatedResponseInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
@@ -23,9 +22,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  *
- * @Sensio\Route("/api/players")
+ * @Sensio\Route("/api/profiles")
  */
-class PlayerController extends AbstractController
+class ProfileController extends AbstractController
 {
     /**
      * @var EntityManagerInterface
@@ -53,7 +52,7 @@ class PlayerController extends AbstractController
      * @return PaginatedResponseInterface
      *
      * @Sensio\Method("GET")
-     * @Sensio\Route("/", name="api_players_overview")
+     * @Sensio\Route("/", name="api_profiles_overview")
      */
     public function indexAction(Request $request)
     {
@@ -65,7 +64,7 @@ class PlayerController extends AbstractController
         $command = new OverviewCommand($tag, $location, $page, $limit);
         $pagination = $this->bus->handle($command);
 
-        $this->setSerializationGroups('players_overview');
+        $this->setSerializationGroups('profiles_overview');
 
         return $this->buildPaginatedResponse($pagination);
     }
@@ -76,14 +75,14 @@ class PlayerController extends AbstractController
      * @return array
      *
      * @Sensio\Method("GET")
-     * @Sensio\Route("/{slug}/", name="api_players_details")
+     * @Sensio\Route("/{slug}/", name="api_profiles_details")
      */
     public function detailsAction($slug)
     {
         $command = new DetailsCommand($slug);
         $sets = $this->bus->handle($command);
 
-        $this->setSerializationGroups('players_details');
+        $this->setSerializationGroups('profiles_details');
 
         return $sets;
     }
@@ -95,7 +94,7 @@ class PlayerController extends AbstractController
      * @return array|OffsetPaginatedResponse
      *
      * @Sensio\Method("GET")
-     * @Sensio\Route("/{slug}/sets/", name="api_players_sets")
+     * @Sensio\Route("/{slug}/sets/", name="api_profiles_sets")
      */
     public function setsAction(Request $request, $slug)
     {
@@ -105,7 +104,7 @@ class PlayerController extends AbstractController
         $command = new SetsCommand($slug, null, false, $page, $limit);
         $sets = $this->bus->handle($command);
 
-        $this->setSerializationGroups('players_sets');
+        $this->setSerializationGroups('profiles_sets');
 
         return $this->buildPaginatedResponse($sets);
     }
@@ -116,7 +115,7 @@ class PlayerController extends AbstractController
      * @return array
      *
      * @Sensio\Method("GET")
-     * @Sensio\Route("/{slug}/ranks/", name="api_players_ranks")
+     * @Sensio\Route("/{slug}/ranks/", name="api_profiles_ranks")
      *
      * @TODO Add pagination.
      */
@@ -125,7 +124,7 @@ class PlayerController extends AbstractController
         $command = new RanksCommand($slug);
         $sets = $this->bus->handle($command);
 
-        $this->setSerializationGroups('players_ranks');
+        $this->setSerializationGroups('profiles_ranks');
 
         return $sets;
     }
@@ -137,7 +136,7 @@ class PlayerController extends AbstractController
      * @return array
      *
      * @Sensio\Method("GET")
-     * @Sensio\Route("/{playerOneSlug}/head-to-head/{playerTwoSlug}/", name="api_players_head_to_head")
+     * @Sensio\Route("/{playerOneSlug}/head-to-head/{playerTwoSlug}/", name="api_profiles_head_to_head")
      */
     public function headToHeadAction($playerOneSlug, $playerTwoSlug)
     {
@@ -152,7 +151,7 @@ class PlayerController extends AbstractController
      * @return Profile
      *
      * @Sensio\Method("POST")
-     * @Sensio\Route("/", name="api_players_add")
+     * @Sensio\Route("/", name="api_profiles_add")
      * @Sensio\IsGranted("ROLE_ADMIN")
      */
     public function addAction(Request $request)
@@ -174,7 +173,7 @@ class PlayerController extends AbstractController
      * @return Profile
      *
      * @Sensio\Method("PUT")
-     * @Sensio\Route("/{slug}/", name="api_players_update")
+     * @Sensio\Route("/{slug}/", name="api_profiles_update")
      * @Sensio\IsGranted("ROLE_ADMIN")
      */
     public function updateAction(Request $request, $slug)
@@ -184,7 +183,7 @@ class PlayerController extends AbstractController
         ]);
 
         if (!$profile instanceof Profile) {
-            throw new NotFoundHttpException('The player profile could not be found.');
+            throw new NotFoundHttpException('The profile could not be found.');
         }
 
         $this->validateForm($request, ProfileType::class, $profile);

@@ -33,7 +33,7 @@ class Entrant
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      */
     private $id;
 
@@ -50,7 +50,7 @@ class Entrant
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      */
     private $name;
 
@@ -318,7 +318,7 @@ class Entrant
     /**
      * @return ArrayCollection
      *
-     * @Serializer\Groups({"players_sets"})
+     * @Serializer\Groups({"profiles_sets"})
      * @Serializer\VirtualProperty()
      */
     public function getPlayers(): ArrayCollection
