@@ -143,6 +143,16 @@ class Tournament
     /**
      * @var string|null
      *
+     * @ORM\Column(name="timezone", type="string", nullable=true)
+     *
+     * @Serializer\Expose
+     * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     */
+    private $timezone;
+
+    /**
+     * @var string|null
+     *
      * @ORM\Column(name="smashgg_url", type="text", nullable=true)
      * @Assert\Url
      */
@@ -382,6 +392,22 @@ class Tournament
     public function setDateEnd(?\DateTime $dateEnd): void
     {
         $this->dateEnd = $dateEnd;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
+    }
+
+    /**
+     * @param null|string $timezone
+     */
+    public function setTimezone(?string $timezone): void
+    {
+        $this->timezone = $timezone;
     }
 
     /**
