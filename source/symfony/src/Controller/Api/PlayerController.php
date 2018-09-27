@@ -18,6 +18,7 @@ use MediaMonks\RestApi\Response\OffsetPaginatedResponse;
 use MediaMonks\RestApi\Response\PaginatedResponseInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -158,14 +159,36 @@ class PlayerController extends AbstractController
     {
         $profile = new Profile();
 
-        $form = $this->createForm(ProfileType::class, $profile);
-        $form->submit($request->request->all());
-
-        if (!$form->isValid()) {
-            throw new FormValidationException($form);
-        }
+        $this->validateForm($request, ProfileType::class, $profile);
 
         $this->entityManager->persist($profile);
+        $this->entityManager->flush();
+
+        return $profile;
+    }
+
+    /**
+     * @param Request $request
+     * @param string  $slug
+     *
+     * @return Profile
+     *
+     * @Sensio\Method("PATCH")
+     * @Sensio\Route("/{slug}/", name="api_players_update")
+     * @Sensio\IsGranted("ROLE_ADMIN")
+     */
+    public function updateAction(Request $request, $slug)
+    {
+        $profile = $this->getRepository('App:Profile')->findOneBy([
+            'slug' => $slug,
+        ]);
+
+        if (!$profile instanceof Profile) {
+            throw new NotFoundHttpException('The player profile could not be found.');
+        }
+
+        $this->validateForm($request, ProfileType::class, $profile);
+
         $this->entityManager->flush();
 
         return $profile;

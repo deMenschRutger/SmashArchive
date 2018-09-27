@@ -8,8 +8,10 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser;
+use MediaMonks\RestApi\Exception\FormValidationException;
 use MediaMonks\RestApi\Response\OffsetPaginatedResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -44,6 +46,21 @@ class AbstractController extends Controller
         $jwtUser = $this->get('security.token_storage')->getToken()->getUser();
 
         return $this->getRepository('App:User')->find($jwtUser->getUsername());
+    }
+
+    /**
+     * @param Request $request
+     * @param string  $type
+     * @param mixed   $entity
+     */
+    protected function validateForm(Request $request, string $type, $entity)
+    {
+        $form = $this->createForm($type, $entity);
+        $form->submit($request->request->all());
+
+        if (!$form->isValid()) {
+            throw new FormValidationException($form);
+        }
     }
 
     /**

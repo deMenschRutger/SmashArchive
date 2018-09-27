@@ -38,6 +38,8 @@ class ProfileType extends AbstractType
                 'required' => true,
             ])
             ->add('name', TextType::class)
+            ->add('region', TextType::class)
+            ->add('city', TextType::class)
             ->add('isCompeting', CheckboxType::class, [
                 'required' => true,
             ])
