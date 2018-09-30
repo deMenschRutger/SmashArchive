@@ -5,12 +5,14 @@ declare(strict_types = 1);
 namespace App\Form;
 
 use App\Entity\Country;
+use App\Entity\Profile;
 use App\Entity\Tournament;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -50,6 +52,11 @@ class TournamentType extends AbstractType
             ->add('dateEnd', DateTimeType::class, [
                 'widget' => 'single_text',
                 'input'  => 'string',
+            ])
+            ->add('timezone', TimezoneType::class)
+            ->add('organizers', EntityType::class, [
+                'class'    => Profile::class,
+                'multiple' => true,
             ])
         ;
 
