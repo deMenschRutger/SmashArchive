@@ -98,7 +98,8 @@ Alternatively, you can use `server:run` if you want to see the server's output
 in the terminal. After running one of these commands, you will be able to
 access the server by navigating to `http://localhost:8000` in your browser
 (assuming you did not change the default port). The API can be accessed at
-`http://localhost:8000/api` (documentation for the API will be added soon).
+`http://localhost:8000/api`. You can access the automatically generated
+API documentation at `http://localhost:8000/api/doc`.
 
 ### Front-end
 The front-end of SmashArchive currently uses Vue.js, but is in such an early
