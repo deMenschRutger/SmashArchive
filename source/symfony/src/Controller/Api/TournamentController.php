@@ -9,12 +9,15 @@ use App\Bus\Command\Tournament\OverviewCommand;
 use App\Bus\Command\Tournament\StandingsCommand;
 use App\Entity\Rank;
 use App\Entity\Tournament;
+use App\Form\TournamentType;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Tactician\CommandBus;
 use MediaMonks\RestApi\Response\PaginatedResponseInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -24,15 +27,22 @@ use Symfony\Component\HttpFoundation\Request;
 class TournamentController extends AbstractController
 {
     /**
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
      * @var CommandBus
      */
     protected $bus;
 
     /**
-     * @param CommandBus $bus
+     * @param EntityManagerInterface $entityManager
+     * @param CommandBus             $bus
      */
-    public function __construct(CommandBus $bus)
+    public function __construct(EntityManagerInterface $entityManager, CommandBus $bus)
     {
+        $this->entityManager = $entityManager;
         $this->bus = $bus;
     }
 
@@ -124,5 +134,48 @@ class TournamentController extends AbstractController
         $command = new StandingsCommand(null, intval($eventId));
 
         return $this->bus->handle($command);
+    }
+
+    /**
+     * Updates specific properties of an existing tournament.
+     *
+     * @param Request $request
+     * @param string  $slug
+     *
+     * @return Tournament
+     *
+     * @Sensio\Method("PATCH")
+     * @Sensio\Route("/{slug}/", name="api_tournaments_update")
+     * @Sensio\IsGranted("ROLE_ADMIN")
+     *
+     * @SWG\Tag(name="Tournaments")
+     * @SWG\Parameter(
+     *     in="body",
+     *     name="status",
+     *     @Model(type=TournamentType::class)
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the tournament details were successfully updated.",
+     *     @SWG\Items(ref=@Model(type=Tournament::class, groups={"tournaments_details"}))
+     * )
+     */
+    public function updateAction(Request $request, $slug)
+    {
+        $tournament = $this->getRepository('App:Tournament')->findOneBy([
+            'slug' => $slug,
+        ]);
+
+        if (!$tournament instanceof Tournament) {
+            throw new NotFoundHttpException('The tournament could not be found.');
+        }
+
+        $this->validateForm($request, TournamentType::class, $tournament);
+
+        $this->entityManager->flush();
+
+        $this->setSerializationGroups('tournaments_details');
+
+        return $tournament;
     }
 }

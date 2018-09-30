@@ -138,6 +138,7 @@ class Tournament
      *
      * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
      */
     private $dateStart;
 
@@ -150,6 +151,7 @@ class Tournament
      *
      * @Serializer\Expose
      * @Serializer\Groups({"tournaments_overview", "tournaments_details"})
+     * @Serializer\Type("DateTime<'Y-m-d\TH:i:s'>")
      */
     private $dateEnd;
 

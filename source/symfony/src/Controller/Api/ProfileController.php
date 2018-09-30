@@ -275,6 +275,8 @@ class ProfileController extends AbstractController
 
         $this->entityManager->flush();
 
+        $this->setSerializationGroups('profiles_details');
+
         return $profile;
     }
 }
