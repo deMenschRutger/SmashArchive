@@ -17,7 +17,6 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -100,11 +99,12 @@ class TournamentController extends AbstractController
      */
     public function detailsAction($slug)
     {
+        $command = new DetailsCommand($slug);
+        $tournament = $this->bus->handle($command);
+
         $this->setSerializationGroups('tournaments_details');
 
-        $command = new DetailsCommand($slug);
-
-        return $this->bus->handle($command);
+        return $tournament;
     }
 
     /**
@@ -129,11 +129,12 @@ class TournamentController extends AbstractController
      */
     public function standingsAction($eventId)
     {
+        $command = new StandingsCommand(null, intval($eventId));
+        $standings = $this->bus->handle($command);
+
         $this->setSerializationGroups('tournaments_standings');
 
-        $command = new StandingsCommand(null, intval($eventId));
-
-        return $this->bus->handle($command);
+        return $standings;
     }
 
     /**
@@ -162,13 +163,8 @@ class TournamentController extends AbstractController
      */
     public function updateAction(Request $request, $slug)
     {
-        $tournament = $this->getRepository('App:Tournament')->findOneBy([
-            'slug' => $slug,
-        ]);
-
-        if (!$tournament instanceof Tournament) {
-            throw new NotFoundHttpException('The tournament could not be found.');
-        }
+        $command = new DetailsCommand($slug);
+        $tournament = $this->bus->handle($command);
 
         $this->validateForm($request, TournamentType::class, $tournament);
 
@@ -177,5 +173,33 @@ class TournamentController extends AbstractController
         $this->setSerializationGroups('tournaments_details');
 
         return $tournament;
+    }
+
+    /**
+     * Deletes an existing tournament.
+     *
+     * @param string $slug
+     *
+     * @return bool
+     *
+     * @Sensio\Method("DELETE")
+     * @Sensio\Route("/{slug}/", name="api_tournaments_delete")
+     * @Sensio\IsGranted("ROLE_ADMIN")
+     *
+     * @SWG\Tag(name="Tournaments")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the tournament was successfully deleted."
+     * )
+     */
+    public function deleteAction($slug)
+    {
+        $command = new DetailsCommand($slug);
+        $tournament = $this->bus->handle($command);
+
+        $this->entityManager->remove($tournament);
+        $this->entityManager->flush();
+
+        return true;
     }
 }
