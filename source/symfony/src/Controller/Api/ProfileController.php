@@ -279,4 +279,37 @@ class ProfileController extends AbstractController
 
         return $profile;
     }
+
+    /**
+     * Deletes an existing profile.
+     *
+     * @param string $slug
+     *
+     * @return bool
+     *
+     * @Sensio\Method("DELETE")
+     * @Sensio\Route("/{slug}/", name="api_profiles_delete")
+     * @Sensio\IsGranted("ROLE_ADMIN")
+     *
+     * @SWG\Tag(name="Profiles")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the profile was successfully deleted."
+     * )
+     */
+    public function deleteAction($slug)
+    {
+        $profile = $this->getRepository('App:Profile')->findOneBy([
+            'slug' => $slug,
+        ]);
+
+        if (!$profile instanceof Profile) {
+            throw new NotFoundHttpException('The profile could not be found.');
+        }
+
+        $this->entityManager->remove($profile);
+        $this->entityManager->flush();
+
+        return true;
+    }
 }
