@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace App\Bus\Command\Player;
+namespace App\Bus\Command\Profile;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>

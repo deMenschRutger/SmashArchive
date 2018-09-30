@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace App\Bus\Command\Player;
+namespace App\Bus\Command\Profile;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -12,12 +12,12 @@ class HeadToHeadCommand
     /**
      * @var string
      */
-    private $playerOneSlug;
+    private $profileOneSlug;
 
     /**
      * @var string
      */
-    private $playerTwoSlug;
+    private $profileTwoSlug;
 
     /**
      * @param string $playerOneSlug
@@ -25,23 +25,23 @@ class HeadToHeadCommand
      */
     public function __construct(string $playerOneSlug, string $playerTwoSlug)
     {
-        $this->playerOneSlug = $playerOneSlug;
-        $this->playerTwoSlug = $playerTwoSlug;
+        $this->profileOneSlug = $playerOneSlug;
+        $this->profileTwoSlug = $playerTwoSlug;
     }
 
     /**
      * @return string
      */
-    public function getPlayerOneSlug(): string
+    public function getProfileOneSlug(): string
     {
-        return $this->playerOneSlug;
+        return $this->profileOneSlug;
     }
 
     /**
      * @return string
      */
-    public function getPlayerTwoSlug(): string
+    public function getProfileTwoSlug(): string
     {
-        return $this->playerTwoSlug;
+        return $this->profileTwoSlug;
     }
 }

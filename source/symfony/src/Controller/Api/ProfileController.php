@@ -4,11 +4,11 @@ declare(strict_types = 1);
 
 namespace App\Controller\Api;
 
-use App\Bus\Command\Player\DetailsCommand;
-use App\Bus\Command\Player\HeadToHeadCommand;
-use App\Bus\Command\Player\OverviewCommand;
-use App\Bus\Command\Player\RanksCommand;
-use App\Bus\Command\Player\SetsCommand;
+use App\Bus\Command\Profile\DetailsCommand;
+use App\Bus\Command\Profile\HeadToHeadCommand;
+use App\Bus\Command\Profile\OverviewCommand;
+use App\Bus\Command\Profile\RanksCommand;
+use App\Bus\Command\Profile\SetsCommand;
 use App\Entity\Profile;
 use App\Entity\Rank;
 use App\Entity\Set;
@@ -21,7 +21,6 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -105,11 +104,11 @@ class ProfileController extends AbstractController
     public function detailsAction($slug)
     {
         $command = new DetailsCommand($slug);
-        $sets = $this->bus->handle($command);
+        $profile = $this->bus->handle($command);
 
         $this->setSerializationGroups('profiles_details');
 
-        return $sets;
+        return $profile;
     }
 
     /**
@@ -171,23 +170,23 @@ class ProfileController extends AbstractController
     public function ranksAction($slug)
     {
         $command = new RanksCommand($slug);
-        $sets = $this->bus->handle($command);
+        $ranks = $this->bus->handle($command);
 
         $this->setSerializationGroups('profiles_ranks');
 
-        return $sets;
+        return $ranks;
     }
 
     /**
      * Returns the head-to-head score between two profiles.
      *
-     * @param string $playerOneSlug
-     * @param string $playerTwoSlug
+     * @param string $profileOneSlug
+     * @param string $profileTwoSlug
      *
      * @return array
      *
      * @Sensio\Method("GET")
-     * @Sensio\Route("/{playerOneSlug}/head-to-head/{playerTwoSlug}/", name="api_profiles_head_to_head")
+     * @Sensio\Route("/{profileOneSlug}/head-to-head/{profileTwoSlug}/", name="api_profiles_head_to_head")
      *
      * @SWG\Tag(name="Profiles")
      * @SWG\Response(
@@ -195,9 +194,9 @@ class ProfileController extends AbstractController
      *     description="Returned when the head-to-head score was successfully retrieved."
      * )
      */
-    public function headToHeadAction($playerOneSlug, $playerTwoSlug)
+    public function headToHeadAction($profileOneSlug, $profileTwoSlug)
     {
-        $command = new HeadToHeadCommand($playerOneSlug, $playerTwoSlug);
+        $command = new HeadToHeadCommand($profileOneSlug, $profileTwoSlug);
 
         return $this->bus->handle($command);
     }
@@ -263,13 +262,8 @@ class ProfileController extends AbstractController
      */
     public function updateAction(Request $request, $slug)
     {
-        $profile = $this->getRepository('App:Profile')->findOneBy([
-            'slug' => $slug,
-        ]);
-
-        if (!$profile instanceof Profile) {
-            throw new NotFoundHttpException('The profile could not be found.');
-        }
+        $command = new DetailsCommand($slug);
+        $profile = $this->bus->handle($command);
 
         $this->validateForm($request, ProfileType::class, $profile);
 
@@ -299,13 +293,8 @@ class ProfileController extends AbstractController
      */
     public function deleteAction($slug)
     {
-        $profile = $this->getRepository('App:Profile')->findOneBy([
-            'slug' => $slug,
-        ]);
-
-        if (!$profile instanceof Profile) {
-            throw new NotFoundHttpException('The profile could not be found.');
-        }
+        $command = new DetailsCommand($slug);
+        $profile = $this->bus->handle($command);
 
         $this->entityManager->remove($profile);
         $this->entityManager->flush();

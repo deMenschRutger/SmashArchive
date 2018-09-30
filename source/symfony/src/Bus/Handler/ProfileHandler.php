@@ -4,11 +4,11 @@ declare(strict_types = 1);
 
 namespace App\Bus\Handler;
 
-use App\Bus\Command\Player\DetailsCommand;
-use App\Bus\Command\Player\HeadToHeadCommand;
-use App\Bus\Command\Player\OverviewCommand;
-use App\Bus\Command\Player\RanksCommand;
-use App\Bus\Command\Player\SetsCommand;
+use App\Bus\Command\Profile\DetailsCommand;
+use App\Bus\Command\Profile\HeadToHeadCommand;
+use App\Bus\Command\Profile\OverviewCommand;
+use App\Bus\Command\Profile\RanksCommand;
+use App\Bus\Command\Profile\SetsCommand;
 use App\Entity\Entrant;
 use App\Entity\Event;
 use App\Entity\Profile;
@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-final class PlayerHandler extends AbstractHandler
+final class ProfileHandler extends AbstractHandler
 {
     /**
      * @var PaginatorInterface
@@ -135,7 +135,7 @@ final class PlayerHandler extends AbstractHandler
         if ($eventId) {
             $query = $repository->findByProfileSlugAndEventId($slug, $eventId);
         } else {
-            // TODO Add option to filter by even type.
+            // TODO Add option to filter by event type.
             $query = $repository->findByProfileSlug($slug, 'all');
         }
 
@@ -192,26 +192,26 @@ final class PlayerHandler extends AbstractHandler
      */
     public function handleHeadToHeadCommand(HeadToHeadCommand $command)
     {
-        $playerOneSlug = $command->getPlayerOneSlug();
-        $playerTwoSlug = $command->getPlayerTwoSlug();
+        $profileOneSlug = $command->getProfileOneSlug();
+        $profileTwoSlug = $command->getProfileTwoSlug();
 
         /** @var ProfileRepository $profileRepository */
         $profileRepository = $this->getRepository('App:Profile');
 
-        if (!$profileRepository->exists($playerOneSlug)) {
-            throw new NotFoundHttpException("The player '{$playerOneSlug}' could not be found.");
+        if (!$profileRepository->exists($profileOneSlug)) {
+            throw new NotFoundHttpException("The first profile could not be found.");
         }
 
-        if (!$profileRepository->exists($playerTwoSlug)) {
-            throw new NotFoundHttpException("The player '{$playerTwoSlug}' could not be found.");
+        if (!$profileRepository->exists($profileTwoSlug)) {
+            throw new NotFoundHttpException("The second profile could not be found.");
         }
 
         /** @var SetRepository $setRepository */
         $setRepository = $this->getRepository('App:Set');
-        $sets = $setRepository->findHeadToHeadSets($playerOneSlug, $playerTwoSlug);
+        $sets = $setRepository->findHeadToHeadSets($profileOneSlug, $profileTwoSlug);
 
-        $playerOneScore = 0;
-        $playerTwoScore = 0;
+        $profileOneScore = 0;
+        $profileTwoScore = 0;
 
         foreach ($sets as $set) {
             /** @var Set $set */
@@ -223,16 +223,16 @@ final class PlayerHandler extends AbstractHandler
 
             $winnerSlug = $set->getWinner()->getPlayers()->first()->getSlug();
 
-            if ($winnerSlug == $playerOneSlug) {
-                $playerOneScore += 1;
-            } elseif ($winnerSlug == $playerTwoSlug) {
-                $playerTwoScore += 1;
+            if ($winnerSlug == $profileOneSlug) {
+                $profileOneScore += 1;
+            } elseif ($winnerSlug == $profileTwoSlug) {
+                $profileTwoScore += 1;
             }
         }
 
         return [
-            $playerOneSlug => $playerOneScore,
-            $playerTwoSlug => $playerTwoScore,
+            $profileOneSlug => $profileOneScore,
+            $profileTwoSlug => $profileTwoScore,
         ];
     }
 

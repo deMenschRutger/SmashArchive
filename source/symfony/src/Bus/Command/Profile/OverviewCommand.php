@@ -2,14 +2,14 @@
 
 declare(strict_types = 1);
 
-namespace App\Bus\Command\Player;
+namespace App\Bus\Command\Profile;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
  */
-class SetsCommand
+class OverviewCommand
 {
     const DEFAULT_PAGE = 1;
     const DEFAULT_LIMIT = 50;
@@ -17,17 +17,12 @@ class SetsCommand
     /**
      * @var string
      */
-    private $slug;
+    private $tag;
 
     /**
-     * @var int
+     * @var string
      */
-    private $eventId;
-
-    /**
-     * @var bool
-     */
-    private $sortByPhase;
+    private $location;
 
     /**
      * @var int
@@ -39,27 +34,24 @@ class SetsCommand
     /**
      * @var int
      *
-     * @Assert\Range(min=1)
+     * @Assert\Range(min=1, max=250)
      */
     private $limit;
 
     /**
-     * @param string $slug
-     * @param int    $eventId
-     * @param bool   $sortByPhase
+     * @param string $tag
+     * @param string $location
      * @param int    $page
      * @param int    $limit
      */
     public function __construct(
-        string $slug,
-        ?int $eventId = null,
-        bool $sortByPhase = false,
+        ?string $tag = null,
+        ?string $location = null,
         ?int $page = null,
         ?int $limit = null
     ) {
-        $this->slug = $slug;
-        $this->eventId = $eventId;
-        $this->sortByPhase = $sortByPhase;
+        $this->tag = $tag;
+        $this->location = $location;
         $this->page = $page ? $page : self::DEFAULT_PAGE;
         $this->limit = $limit ? $limit : self::DEFAULT_LIMIT;
     }
@@ -67,25 +59,17 @@ class SetsCommand
     /**
      * @return string
      */
-    public function getSlug(): string
+    public function getTag(): ?string
     {
-        return $this->slug;
+        return $this->tag;
     }
 
     /**
-     * @return int|null
+     * @return string
      */
-    public function getEventId(): ?int
+    public function getLocation(): ?string
     {
-        return $this->eventId;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getSortByPhase(): bool
-    {
-        return $this->sortByPhase;
+        return $this->location;
     }
 
     /**
