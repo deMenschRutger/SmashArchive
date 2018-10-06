@@ -10,6 +10,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
@@ -32,6 +33,11 @@ class Smashgg
     ];
 
     /**
+     * @var CurlHandler|MockHandler
+     */
+    protected $httpHandler;
+
+    /**
      * @var Client
      */
     protected $client;
@@ -40,6 +46,18 @@ class Smashgg
      * @var CacheProvider
      */
     protected $cache;
+
+    /**
+     * @param $httpHandler
+     */
+    public function __construct($httpHandler = null)
+    {
+        if ($httpHandler === null) {
+            $httpHandler = new CurlHandler();
+        }
+
+        $this->httpHandler = $httpHandler;
+    }
 
     /**
      * @param string $slug
@@ -236,7 +254,7 @@ class Smashgg
             $this->cache = new ArrayCache();
             $cache = new GreedyCacheStrategy(new DoctrineCacheStorage($this->cache), 3600);
 
-            $handlerStack = HandlerStack::create(new CurlHandler());
+            $handlerStack = HandlerStack::create($this->httpHandler);
             $handlerStack->push(Middleware::retry([$this, 'retryDecider'], [$this, 'retryDelay']), 'retry');
             $handlerStack->push(new CacheMiddleware($cache), 'cache');
 
