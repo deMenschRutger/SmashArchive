@@ -185,6 +185,9 @@
     "paragonie/random_compat": {
         "version": "v2.0.17"
     },
+    "pda/pheanstalk": {
+        "version": "v3.2.1"
+    },
     "phpcollection/phpcollection": {
         "version": "0.5.0"
     },
@@ -313,6 +316,9 @@
     },
     "symfony/intl": {
         "version": "v4.1.4"
+    },
+    "symfony/lock": {
+        "version": "v4.1.6"
     },
     "symfony/lts": {
         "version": "4-dev"

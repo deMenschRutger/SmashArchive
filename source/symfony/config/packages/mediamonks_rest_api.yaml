@@ -2,3 +2,10 @@ mediamonks_rest_api:
     serializer: jms_groups
     request_matcher:
         path: ^/api(?!/doc)
+
+services:
+    mediamonks_rest_api.serializer.jms_groups:
+        class: App\Serializer\JMSSerializer
+        arguments:
+            - '@jms_serializer'
+        public: true

@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Tactician\CommandBus;
 use MediaMonks\RestApi\Response\PaginatedResponseInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Pheanstalk\Pheanstalk;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,13 +37,20 @@ class TournamentController extends AbstractController
     protected $bus;
 
     /**
+     * @var Pheanstalk
+     */
+    protected $pheanstalk;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param CommandBus             $bus
+     * @param Pheanstalk             $pheanstalk
      */
-    public function __construct(EntityManagerInterface $entityManager, CommandBus $bus)
+    public function __construct(EntityManagerInterface $entityManager, CommandBus $bus, Pheanstalk $pheanstalk)
     {
         $this->entityManager = $entityManager;
         $this->bus = $bus;
+        $this->pheanstalk = $pheanstalk;
     }
 
     /**
@@ -135,6 +143,27 @@ class TournamentController extends AbstractController
         $this->setSerializationGroups('tournaments_standings');
 
         return $standings;
+    }
+
+    /**
+     * @return bool
+     *
+     * @Sensio\Method("POST")
+     * @Sensio\Route("/", name="api_tournaments_import")
+     * @Sensio\IsGranted("ROLE_ADMIN")
+     *
+     * @SWG\Tag(name="Tournaments")
+     */
+    public function importAction()
+    {
+        // TODO Create the job.
+        $this->pheanstalk->put(\GuzzleHttp\json_encode([
+            'type'   => 'tournament-import',
+            'source' => 'smashgg',
+            'events' => [],
+        ]));
+
+        return true;
     }
 
     /**

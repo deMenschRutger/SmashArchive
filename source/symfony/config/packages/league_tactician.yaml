@@ -7,3 +7,23 @@ tactician:
                 - tactician.middleware.validator
                 - tactician.middleware.command_handler
     method_inflector: tactician.handler.method_name_inflector.handle_class_name
+
+# Tactician bus handlers
+services:
+    App\Bus\Handler\Event\GenerateStandingsHandler:
+        tags:
+            - { name: "tactician.handler", typehints: true }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    App\Bus\Handler\ProfileHandler:
+        tags:
+            - { name: "tactician.handler", typehints: true }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    App\Bus\Handler\TournamentHandler:
+        tags:
+            - { name: "tactician.handler", typehints: true }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]

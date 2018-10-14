@@ -35,6 +35,10 @@ services:
                 app_secret: '%facebook_app_secret%'
                 default_graph_version: v3.0
 
+    Pheanstalk\Pheanstalk:
+        arguments:
+            - '%env(resolve:BEANSTALKD_HOST)%'
+
     Reflex\Challonge\Challonge:
         arguments:
             - '%env(resolve:CHALLONGE_API_KEY)%'
@@ -49,32 +53,3 @@ services:
                 mode: 'gcm'
         calls:
             - [ 'setKey', [ '%env(resolve:ENCRYPTION_KEY)' ] ]
-
-    JMS\Serializer\Naming\SerializedNameAnnotationStrategy:
-        arguments:
-            - '@jms_serializer.identical_property_naming_strategy'
-
-    mediamonks_rest_api.serializer.jms_groups:
-        class: App\Serializer\JMSSerializer
-        arguments:
-            - '@jms_serializer'
-        public: true
-
-    # Tactician bus handlers
-    App\Bus\Handler\Event\GenerateStandingsHandler:
-        tags:
-            - { name: "tactician.handler", typehints: true }
-        calls:
-            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
-
-    App\Bus\Handler\ProfileHandler:
-        tags:
-            - { name: "tactician.handler", typehints: true }
-        calls:
-            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
-
-    App\Bus\Handler\TournamentHandler:
-        tags:
-            - { name: "tactician.handler", typehints: true }
-        calls:
-            - ['setEntityManager', ['@doctrine.orm.entity_manager']]

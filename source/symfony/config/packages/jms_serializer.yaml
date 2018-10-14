@@ -4,3 +4,8 @@ jms_serializer:
             serialize_null: true
     property_naming:
         id: JMS\Serializer\Naming\SerializedNameAnnotationStrategy
+
+services:
+    JMS\Serializer\Naming\SerializedNameAnnotationStrategy:
+        arguments:
+            - '@jms_serializer.identical_property_naming_strategy'
