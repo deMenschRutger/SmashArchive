@@ -7,10 +7,10 @@ namespace App\Command;
 use League\Tactician\CommandBus;
 use Pheanstalk\Job;
 use Pheanstalk\Pheanstalk;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Lock\Factory;
 use Symfony\Component\Lock\Store\SemaphoreStore;
 
@@ -20,6 +20,11 @@ use Symfony\Component\Lock\Store\SemaphoreStore;
 class WorkQueueProcessCommand extends ContainerAwareCommand
 {
     const JOB_LIMIT = 10;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
      * @var CommandBus
@@ -32,16 +37,13 @@ class WorkQueueProcessCommand extends ContainerAwareCommand
     protected $pheanstalk;
 
     /**
-     * @var SymfonyStyle
+     * @param LoggerInterface $logger
+     * @param CommandBus      $commandBus
+     * @param Pheanstalk      $pheanstalk
      */
-    protected $io;
-
-    /**
-     * @param CommandBus $commandBus
-     * @param Pheanstalk $pheanstalk
-     */
-    public function __construct(CommandBus $commandBus, Pheanstalk $pheanstalk)
+    public function __construct(LoggerInterface $logger, CommandBus $commandBus, Pheanstalk $pheanstalk)
     {
+        $this->logger = $logger;
         $this->commandBus = $commandBus;
         $this->pheanstalk = $pheanstalk;
 
@@ -67,21 +69,14 @@ class WorkQueueProcessCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->io = new SymfonyStyle($input, $output);
-
-        // TODO Use a Monolog logger?
-        if ($this->io->getVerbosity() <= OutputInterface::VERBOSITY_NORMAL) {
-            $this->io->setVerbosity(OutputInterface::VERBOSITY_QUIET);
-        }
-
         $store = new SemaphoreStore();
         $factory = new Factory($store);
         $lock = $factory->createLock('app:work-queue:process');
 
         if ($lock->acquire()) {
-            $this->io->comment('Lock acquired.');
+            $this->logger->info('Lock acquired.');
         } else {
-            $this->io->warning('Could not acquire a lock.');
+            $this->logger->warning('Could not acquire a lock.');
 
             return;
         }
@@ -97,18 +92,24 @@ class WorkQueueProcessCommand extends ContainerAwareCommand
             }
 
             try {
+                $this->logger->notice("Processing job #{$job->getId()}...");
+
+
                 // TODO Handle the job.
                 var_dump($job);
+
+
+                $this->logger->notice("Job #{$job->getId()} was successfully processed.");
             } finally {
                 $this->pheanstalk->delete($job);
                 $counter++;
             }
         }
 
-        $this->io->comment('Releasing the lock...');
+        $this->logger->info('Releasing the lock...');
 
         $lock->release();
 
-        $this->io->comment('The lock was released.');
+        $this->logger->info('The lock was released.');
     }
 }

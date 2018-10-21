@@ -1,0 +1,17 @@
+monolog:
+    handlers:
+        info:
+            type: rotating_file
+            path: "%kernel.logs_dir%/%kernel.environment%/info/info.log"
+            level: debug
+            channels: [security, request]
+            max_files: 30
+        error:
+            type: rotating_file
+            path: "%kernel.logs_dir%/%kernel.environment%/error/error.log"
+            level: error
+            max_files: 30
+        console:
+            type: console
+            process_psr_3_messages: false
+            channels: ["!event", "!doctrine", "!console"]
