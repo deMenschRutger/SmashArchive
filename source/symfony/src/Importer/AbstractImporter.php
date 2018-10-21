@@ -7,7 +7,7 @@ namespace App\Importer;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Tactician\CommandBus;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -15,9 +15,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 abstract class AbstractImporter
 {
     /**
-     * @var SymfonyStyle
+     * @var LoggerInterface
      */
-    protected $io;
+    protected $logger;
 
     /**
      * @var EntityManagerInterface
@@ -30,19 +30,19 @@ abstract class AbstractImporter
     protected $commandBus;
 
     /**
-     * @return SymfonyStyle
+     * @return LoggerInterface
      */
-    public function getIo()
+    public function getLogger()
     {
-        return $this->io;
+        return $this->logger;
     }
 
     /**
-     * @param SymfonyStyle $io
+     * @param LoggerInterface $logger
      */
-    public function setIo(SymfonyStyle $io)
+    public function setLogger(LoggerInterface $logger)
     {
-        $this->io = $io;
+        $this->logger = $logger;
     }
 
     /**

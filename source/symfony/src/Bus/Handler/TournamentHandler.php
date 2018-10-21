@@ -4,7 +4,11 @@ declare(strict_types = 1);
 
 namespace App\Bus\Handler;
 
+use App\Importer\Challonge\Importer as ChallongeImporter;
+use App\Importer\Smashgg\Importer as SmashggImporter;
+use App\Service\Smashgg\Smashgg;
 use App\Bus\Command\Tournament\DetailsCommand;
+use App\Bus\Command\Tournament\ImportCommand;
 use App\Bus\Command\Tournament\OverviewCommand;
 use App\Bus\Command\Tournament\StandingsCommand;
 use App\Entity\Rank;
@@ -13,6 +17,8 @@ use App\Repository\RankRepository;
 use App\Repository\TournamentRepository;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Psr\Log\LoggerInterface;
+use Reflex\Challonge\Challonge;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -21,16 +27,41 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class TournamentHandler extends AbstractHandler
 {
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @var PaginatorInterface
      */
     protected $paginator;
 
     /**
-     * @param PaginatorInterface $paginator
+     * @var Smashgg
      */
-    public function __construct(PaginatorInterface $paginator)
-    {
+    protected $smashgg;
+
+    /**
+     * @var Challonge
+     */
+    protected $challonge;
+
+    /**
+     * @param LoggerInterface    $logger
+     * @param PaginatorInterface $paginator
+     * @param Smashgg            $smashgg
+     * @param Challonge          $challonge
+     */
+    public function __construct(
+        LoggerInterface $logger,
+        PaginatorInterface $paginator,
+        Smashgg $smashgg,
+        Challonge $challonge
+    ) {
+        $this->logger = $logger;
         $this->paginator = $paginator;
+        $this->smashgg = $smashgg;
+        $this->challonge = $challonge;
     }
 
     /**
@@ -122,5 +153,35 @@ final class TournamentHandler extends AbstractHandler
         }
 
         return [];
+    }
+
+    /**
+     * @param ImportCommand $command
+     */
+    public function handleImportCommand(ImportCommand $command): void
+    {
+        $source = $command->getSource();
+
+        if ($source === Tournament::SOURCE_SMASHGG) {
+            if (!$command->getEvents()) {
+                throw new \InvalidArgumentException(
+                    "You need to provide an array of event IDs for the source '{$source}'."
+                );
+            }
+
+            $importer = new SmashggImporter($this->logger, $this->entityManager, $this->smashgg);
+            $importer->import($command->getSlug(), $command->getEvents());
+
+            return;
+        }
+
+        if ($source === Tournament::SOURCE_CHALLONGE) {
+            $importer = new ChallongeImporter($this->logger, $this->entityManager, $this->challonge);
+            $importer->import($command->getSlug());
+
+            return;
+        }
+
+        throw new \InvalidArgumentException("Unfortunately the source '{$source}' can not be handled yet.");
     }
 }

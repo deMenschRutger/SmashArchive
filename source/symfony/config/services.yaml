@@ -53,3 +53,22 @@ services:
                 mode: 'gcm'
         calls:
             - [ 'setKey', [ '%env(resolve:ENCRYPTION_KEY)' ] ]
+
+  # Tactician bus handlers
+    App\Bus\Handler\Event\GenerateStandingsHandler:
+        tags:
+            - { name: "tactician.handler", typehints: true }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    App\Bus\Handler\ProfileHandler:
+        tags:
+            - { name: "tactician.handler", typehints: true }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]
+
+    App\Bus\Handler\TournamentHandler:
+        tags:
+            - { name: "tactician.handler", typehints: true }
+        calls:
+            - ['setEntityManager', ['@doctrine.orm.entity_manager']]

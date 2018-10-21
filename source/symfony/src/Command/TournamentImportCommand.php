@@ -4,11 +4,11 @@ declare(strict_types = 1);
 
 namespace App\Command;
 
-use App\Importer\Challonge\Importer as ChallongeImporter;
-use App\Importer\Smashgg\Importer as SmashggImporter;
+use App\Bus\Command\Tournament\ImportCommand;
+use App\Entity\Tournament;
 use App\Service\Smashgg\Smashgg;
-use Doctrine\ORM\EntityManagerInterface;
-use Reflex\Challonge\Challonge;
+use League\Tactician\CommandBus;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,19 +20,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 final class TournamentImportCommand extends ContainerAwareCommand
 {
-    const PROVIDER_SMASHGG = 'smash.gg';
-    const PROVIDER_CHALLONGE = 'Challonge';
-    const PROVIDER_TIO = 'TIO';
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
 
     /**
-     * @var EntityManagerInterface
+     * @var CommandBus
      */
-    protected $entityManager;
-
-    /**
-     * @var SymfonyStyle
-     */
-    protected $io;
+    protected $commandBus;
 
     /**
      * @var Smashgg
@@ -40,20 +36,20 @@ final class TournamentImportCommand extends ContainerAwareCommand
     protected $smashgg;
 
     /**
-     * @var Challonge
+     * @var SymfonyStyle
      */
-    protected $challonge;
+    protected $io;
 
     /**
-     * @param EntityManagerInterface $entityManager
-     * @param Smashgg                $smashgg
-     * @param Challonge              $challonge
+     * @param LoggerInterface $logger
+     * @param CommandBus      $commandBus
+     * @param Smashgg         $smashgg
      */
-    public function __construct(EntityManagerInterface $entityManager, Smashgg $smashgg, Challonge $challonge)
+    public function __construct(LoggerInterface $logger, CommandBus $commandBus, Smashgg $smashgg)
     {
-        $this->entityManager = $entityManager;
+        $this->logger = $logger;
+        $this->commandBus = $commandBus;
         $this->smashgg = $smashgg;
-        $this->challonge = $challonge;
 
         parent::__construct();
     }
@@ -79,13 +75,13 @@ final class TournamentImportCommand extends ContainerAwareCommand
 
         $question = new ChoiceQuestion(
             'Which provider would you like to use?',
-            [ self::PROVIDER_SMASHGG, self::PROVIDER_CHALLONGE, self::PROVIDER_TIO ]
+            [ Tournament::SOURCE_SMASHGG, Tournament::SOURCE_CHALLONGE ]
         );
         $provider = $this->io->askQuestion($question);
 
-        if ($provider === self::PROVIDER_SMASHGG) {
+        if ($provider === Tournament::SOURCE_SMASHGG) {
             $this->executeSmashgg();
-        } elseif ($provider === self::PROVIDER_CHALLONGE) {
+        } elseif ($provider === Tournament::SOURCE_CHALLONGE) {
                 $this->executeChallonge();
         } else {
             $this->io->error('Unfortunately that provider is currently not supported.');
@@ -93,6 +89,7 @@ final class TournamentImportCommand extends ContainerAwareCommand
             return;
         }
 
+        $this->io->newLine();
         $this->io->success('The tournament was successfully imported.');
     }
 
@@ -120,8 +117,9 @@ final class TournamentImportCommand extends ContainerAwareCommand
             $selectedEvent = $ids[$selectedEvent];
         }
 
-        $importer = new SmashggImporter($this->io, $this->entityManager, $this->smashgg);
-        $importer->import($slug, $selectedEvents);
+        $command = new ImportCommand(Tournament::SOURCE_SMASHGG, $slug, $selectedEvents);
+
+        $this->commandBus->handle($command);
     }
 
     /**
@@ -131,7 +129,8 @@ final class TournamentImportCommand extends ContainerAwareCommand
     {
         $slug = $this->io->ask('Please enter the slug of this tournament');
 
-        $importer = new ChallongeImporter($this->io, $this->entityManager, $this->challonge);
-        $importer->import($slug);
+        $command = new ImportCommand(Tournament::SOURCE_CHALLONGE, $slug);
+
+        $this->commandBus->handle($command);
     }
 }

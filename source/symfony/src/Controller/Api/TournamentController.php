@@ -160,7 +160,8 @@ class TournamentController extends AbstractController
         $this->pheanstalk->put(\GuzzleHttp\json_encode([
             'type'   => 'tournament-import',
             'source' => 'smashgg',
-            'events' => [],
+            'slug'   => 'spice-13',
+            'events' => [146597, 146598],
         ]));
 
         return true;

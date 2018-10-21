@@ -19,7 +19,7 @@ use App\Importer\Smashgg\Processor\PlayerProcessor;
 use App\Importer\Smashgg\Processor\SetProcessor;
 use App\Service\Smashgg\Smashgg;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -67,13 +67,13 @@ class Importer extends AbstractImporter
     protected $entrantProcessor;
 
     /**
-     * @param SymfonyStyle           $io
+     * @param LoggerInterface        $logger
      * @param EntityManagerInterface $entityManager
      * @param Smashgg                $smashgg
      */
-    public function __construct(SymfonyStyle $io, EntityManagerInterface $entityManager, Smashgg $smashgg)
+    public function __construct(LoggerInterface $logger, EntityManagerInterface $entityManager, Smashgg $smashgg)
     {
-        $this->setIo($io);
+        $this->setLogger($logger);
         $this->setEntityManager($entityManager);
         $this->smashgg = $smashgg;
     }
@@ -96,20 +96,20 @@ class Importer extends AbstractImporter
     {
         $this->entityManager->getConfiguration()->setSQLLogger(null);
 
-        $this->io->writeln('Retrieving tournament...');
+        $this->logger->info('Retrieving tournament...');
         $this->tournament = $this->getTournament($smashggId);
 
         if ($this->tournament->getSource() !== Tournament::SOURCE_SMASHGG) {
             throw new \InvalidArgumentException('The tournament does not have smash.gg as its source.');
         }
 
-        $this->io->writeln('Processing games...');
+        $this->logger->info('Processing games...');
         $this->gameProcessor = $this->processGames();
 
-        $this->io->writeln('Processing events...');
+        $this->logger->info('Processing events...');
         $this->eventProcessor = $this->processEvents($eventIds);
 
-        $this->io->writeln('Processing phases...');
+        $this->logger->info('Processing phases...');
         $this->phaseProcessor = $this->processPhases();
 
         $phaseIds = array_keys($this->phaseProcessor->getAllPhases());
@@ -118,22 +118,22 @@ class Importer extends AbstractImporter
         $this->phaseGroupProcessor = $this->processPhaseGroups($groups);
         $this->playerProcessor = $this->processPlayers($groups);
 
-        $this->io->writeln('Processing entrants...');
+        $this->logger->info('Processing entrants...');
         $this->entrantProcessor = $this->processEntrants($groups);
 
-        $this->io->writeln('Processing sets...');
+        $this->logger->info('Processing sets...');
         $this->entrantProcessor = $this->processSets($groups);
 
-        $this->io->writeln('Flushing the entity manager...');
+        $this->logger->info('Flushing the entity manager...');
         $this->entityManager->flush();
 
-        $this->io->writeln('Counting confirmed players for the tournament...');
+        $this->logger->info('Counting confirmed players for the tournament...');
         $this->entityManager->clear();
 
         $this->tournament = $this->getRepository('App:Tournament')->find($this->tournament->getId());
         $this->tournament->setPlayerCount();
 
-        $this->io->writeln('Flushing the entity manager...');
+        $this->logger->debug('Flushing the entity manager...');
         $this->entityManager->flush();
 
         return $this->tournament;
@@ -296,13 +296,11 @@ class Importer extends AbstractImporter
     {
         $counter = count($groups);
 
-        $this->io->writeln(sprintf('Processing %d groups...', $counter));
-        $this->io->newLine();
-        $this->io->progressStart($counter);
+        $this->logger->info(sprintf('Processing %d phase groups...', $counter));
 
         $processor = new PhaseGroupProcessor($this->entityManager);
 
-        foreach ($groups as $phaseGroupData) {
+        foreach ($groups as $index => $phaseGroupData) {
             $phase = $this->phaseProcessor->findPhase($phaseGroupData['phaseId']);
 
             if (!$phase instanceof Phase) {
@@ -311,11 +309,10 @@ class Importer extends AbstractImporter
 
             $processor->processNew($phaseGroupData, $phase);
 
-            $this->io->progressAdvance();
+            $this->logger->debug(sprintf('Processed phase group %d.', $index + 1));
         }
 
-        $this->io->progressFinish();
-        $this->io->newLine();
+        $this->logger->info('The phase groups were successfully processed.');
 
         return $processor;
     }
@@ -327,11 +324,8 @@ class Importer extends AbstractImporter
      */
     protected function processPlayers(array $groups)
     {
-        $counter = count($groups);
-
-        $this->io->writeln('Processing players...');
-        $this->io->newLine();
-        $this->io->progressStart($counter);
+        $this->logger->info('Processing players...');
+        $counter = 0;
 
         $processor = new PlayerProcessor($this->entityManager);
 
@@ -341,13 +335,12 @@ class Importer extends AbstractImporter
             foreach ($players as $playerData) {
                 $country = $this->findCountry($playerData['country']);
                 $processor->processNew($playerData, $country, $this->tournament);
-            }
 
-            $this->io->progressAdvance();
+                $counter++;
+            }
         }
 
-        $this->io->progressFinish();
-        $this->io->newLine();
+        $this->logger->info(sprintf('%d players were successfully processed.', $counter));
 
         return $processor;
     }

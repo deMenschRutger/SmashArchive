@@ -11,8 +11,8 @@ use App\Importer\AbstractImporter;
 use App\Importer\Challonge\Processor\EntrantProcessor;
 use App\Importer\Challonge\Processor\SetProcessor;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Reflex\Challonge\Challonge;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -35,13 +35,13 @@ class Importer extends AbstractImporter
     protected $entrantProcessor;
 
     /**
-     * @param SymfonyStyle           $io
+     * @param LoggerInterface        $logger
      * @param EntityManagerInterface $entityManager
      * @param Challonge              $challonge
      */
-    public function __construct(SymfonyStyle $io, EntityManagerInterface $entityManager, Challonge $challonge)
+    public function __construct(LoggerInterface $logger, EntityManagerInterface $entityManager, Challonge $challonge)
     {
-        $this->setIo($io);
+        $this->setLogger($logger);
         $this->setEntityManager($entityManager);
         $this->challonge = $challonge;
     }
@@ -53,7 +53,7 @@ class Importer extends AbstractImporter
     {
         $this->entityManager->getConfiguration()->setSQLLogger(null);
 
-        $this->io->writeln('Retrieving tournament...');
+        $this->logger->info('Retrieving tournament...');
 
         // TODO Improve the query (load more entities).
         $this->tournament = $this->getRepository('App:Tournament')->findOneBy([
@@ -79,7 +79,7 @@ class Importer extends AbstractImporter
             }
         }
 
-        $this->io->writeln('Flushing the entity manager...');
+        $this->logger->debug('Flushing the entity manager...');
         $this->entityManager->flush();
     }
 
@@ -90,14 +90,14 @@ class Importer extends AbstractImporter
     {
         $challongeId = $phaseGroup->getExternalId();
 
-        $this->io->writeln('Processing entrants...');
+        $this->logger->info('Processing entrants...');
         $entrants = $this->challonge->getParticipants($challongeId);
 
         foreach ($entrants as $entrant) {
             $this->entrantProcessor->processNew($entrant, $phaseGroup->getPhase());
         }
 
-        $this->io->writeln('Processing sets...');
+        $this->logger->info('Processing sets...');
         $setProcessor = new SetProcessor($this->entityManager);
         $sets = $this->challonge->getMatches($challongeId);
 

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Command;
 
+use App\Bus\Command\Tournament\ImportCommand;
 use League\Tactician\CommandBus;
 use Pheanstalk\Job;
 use Pheanstalk\Pheanstalk;
@@ -91,19 +92,8 @@ class WorkQueueProcessCommand extends ContainerAwareCommand
                 break;
             }
 
-            try {
-                $this->logger->notice("Processing job #{$job->getId()}...");
-
-
-                // TODO Handle the job.
-                var_dump($job);
-
-
-                $this->logger->notice("Job #{$job->getId()} was successfully processed.");
-            } finally {
-                $this->pheanstalk->delete($job);
-                $counter++;
-            }
+            $this->handleJob($job);
+            $counter++;
         }
 
         $this->logger->info('Releasing the lock...');
@@ -111,5 +101,35 @@ class WorkQueueProcessCommand extends ContainerAwareCommand
         $lock->release();
 
         $this->logger->info('The lock was released.');
+    }
+
+    /**
+     * @param Job $job
+     */
+    protected function handleJob(Job $job): void
+    {
+        try {
+            $this->logger->notice("Processing job #{$job->getId()}...");
+
+            $data = \GuzzleHttp\json_decode($job->getData(), true);
+
+            if (!array_key_exists('source', $data)) {
+                throw new \InvalidArgumentException("Job #{$job->getId()} does not have a source.");
+            }
+
+            if (!array_key_exists('slug', $data)) {
+                throw new \InvalidArgumentException("Job #{$job->getId()} does not have a slug.");
+            }
+
+            $events = array_key_exists('events', $data) ? $data['events'] : null;
+
+            $command = new ImportCommand($data['source'], $data['slug'], $events);
+
+            $this->commandBus->handle($command);
+
+            $this->logger->notice("Job #{$job->getId()} was successfully processed.");
+        } finally {
+            $this->pheanstalk->delete($job);
+        }
     }
 }
