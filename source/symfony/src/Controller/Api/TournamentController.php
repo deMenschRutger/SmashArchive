@@ -9,9 +9,11 @@ use App\Bus\Command\Tournament\OverviewCommand;
 use App\Bus\Command\Tournament\StandingsCommand;
 use App\Entity\Rank;
 use App\Entity\Tournament;
+use App\Form\TournamentJobType;
 use App\Form\TournamentType;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Tactician\CommandBus;
+use MediaMonks\RestApi\Exception\FormValidationException;
 use MediaMonks\RestApi\Response\PaginatedResponseInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Pheanstalk\Pheanstalk;
@@ -146,6 +148,15 @@ class TournamentController extends AbstractController
     }
 
     /**
+     * Add a job to the work queue to import the tournament.
+     *
+     * This endpoint doesn't actually do any importing. Instead it adds the tournament information to a job and puts it
+     * in a work queue. A separate process, running in the background, then picks up the job and does the actual
+     * importing. Therefore, it may take some time (a few minutes at most) before the results of the import are
+     * actually visible in the API.
+     *
+     * @param Request $request
+     *
      * @return bool
      *
      * @Sensio\Method("POST")
@@ -153,15 +164,32 @@ class TournamentController extends AbstractController
      * @Sensio\IsGranted("ROLE_ADMIN")
      *
      * @SWG\Tag(name="Tournaments")
+     * @SWG\Parameter(
+     *     in="body",
+     *     name="tournament",
+     *     @Model(type=TournamentJobType::class)
+     * )
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the tournament import job was successfully added."
+     * )
      */
-    public function importAction()
+    public function importAction(Request $request)
     {
-        // TODO Create the job.
+        $form = $this->createForm(TournamentJobType::class);
+        $form->submit($request->request->all());
+
+        if (!$form->isValid()) {
+            throw new FormValidationException($form);
+        }
+
+        $data = $form->getData();
+
         $this->pheanstalk->put(\GuzzleHttp\json_encode([
             'type'   => 'tournament-import',
-            'source' => 'smashgg',
-            'slug'   => 'spice-13',
-            'events' => [146597, 146598],
+            'source' => $data['provider'],
+            'slug'   => $data['slug'],
+            'events' => $data['events'],
         ]));
 
         return true;

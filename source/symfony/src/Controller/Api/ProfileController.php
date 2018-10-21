@@ -215,7 +215,7 @@ class ProfileController extends AbstractController
      * @SWG\Tag(name="Profiles")
      * @SWG\Parameter(
      *     in="body",
-     *     name="status",
+     *     name="profile",
      *     @Model(type=ProfileType::class)
      * )
      * @SWG\Response(
