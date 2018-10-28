@@ -191,7 +191,8 @@ class ProfileController extends AbstractController
      * @SWG\Tag(name="Profiles")
      * @SWG\Response(
      *     response=200,
-     *     description="Returned when the head-to-head score was successfully retrieved."
+     *     description="Returned when the head-to-head score was successfully retrieved.",
+     *     @SWG\Schema(type="object", example={"Amsah": 12, "Zgetto": 10})
      * )
      */
     public function headToHeadAction($profileOneSlug, $profileTwoSlug)

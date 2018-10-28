@@ -11,7 +11,9 @@ use App\Entity\Rank;
 use App\Entity\Tournament;
 use App\Form\TournamentJobType;
 use App\Form\TournamentType;
+use App\Service\Smashgg\Smashgg;
 use Doctrine\ORM\EntityManagerInterface;
+use GuzzleHttp\Exception\RequestException;
 use League\Tactician\CommandBus;
 use MediaMonks\RestApi\Exception\FormValidationException;
 use MediaMonks\RestApi\Response\PaginatedResponseInterface;
@@ -20,6 +22,7 @@ use Pheanstalk\Pheanstalk;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as Sensio;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @author Rutger Mensch <rutger@rutgermensch.com>
@@ -44,15 +47,26 @@ class TournamentController extends AbstractController
     protected $pheanstalk;
 
     /**
+     * @var Smashgg
+     */
+    protected $smashgg;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param CommandBus             $bus
      * @param Pheanstalk             $pheanstalk
+     * @param Smashgg                $smashgg
      */
-    public function __construct(EntityManagerInterface $entityManager, CommandBus $bus, Pheanstalk $pheanstalk)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        CommandBus $bus,
+        Pheanstalk $pheanstalk,
+        Smashgg $smashgg
+    ) {
         $this->entityManager = $entityManager;
         $this->bus = $bus;
         $this->pheanstalk = $pheanstalk;
+        $this->smashgg = $smashgg;
     }
 
     /**
@@ -88,6 +102,48 @@ class TournamentController extends AbstractController
         $this->setSerializationGroups('tournaments_overview');
 
         return $this->buildPaginatedResponse($pagination);
+    }
+
+    /**
+     * Returns a list of available event IDs for a tournament/provider combination.
+     *
+     * This currently only supports smash.gg. The Challonge API does not support multiple events
+     * per tournament at the time of writing.
+     *
+     * @param Request $request
+     *
+     * @return array
+     *
+     * @Sensio\Route("/available-events/", name="api_tournaments_available_events")
+     * @Sensio\Method("GET")
+     *
+     * @SWG\Tag(name="Tournaments")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returned when the available events were successfully retrieved.",
+     *     @SWG\Schema(type="object", example={"123456": "Melee Singles"})
+     * )
+     */
+    public function availableEvents(Request $request)
+    {
+        $provider = $request->query->getAlnum('provider');
+        $slug = $request->query->filter('provider-slug', null, FILTER_SANITIZE_URL);
+
+        if (!$provider === 'smashgg') {
+            throw new \InvalidArgumentException('The given provider is not valid.');
+        }
+
+        try {
+            $availableEvents = $this->smashgg->getTournamentEvents($slug, true);
+        } catch (RequestException $error) {
+            throw new BadRequestHttpException('Could not retrieve the event information from smash.gg.');
+        }
+
+        return array_reduce($availableEvents, function ($carrier, $event) {
+            $carrier[$event['id']] = $event['name'];
+
+            return $carrier;
+        }, []);
     }
 
     /**
