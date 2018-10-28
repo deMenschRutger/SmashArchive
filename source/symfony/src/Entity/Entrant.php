@@ -33,7 +33,7 @@ class Entrant
      * @ORM\GeneratedValue(strategy="AUTO")
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"profiles_sets"})
+     * @Serializer\Groups({"phase_group_sets", "profiles_sets"})
      */
     private $id;
 
@@ -50,7 +50,7 @@ class Entrant
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"profiles_sets"})
+     * @Serializer\Groups({"phase_group_sets", "profiles_sets"})
      */
     private $name;
 
@@ -318,8 +318,9 @@ class Entrant
     /**
      * @return ArrayCollection
      *
-     * @Serializer\Groups({"profiles_sets"})
+     * @Serializer\Groups({"phase_group_sets", "profiles_sets"})
      * @Serializer\VirtualProperty()
+     * @Serializer\Type("ArrayCollection<App\Entity\Player>")
      */
     public function getPlayers(): ArrayCollection
     {

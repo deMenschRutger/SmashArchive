@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace App\Repository;
 
 use App\Entity\Entrant;
+use App\Entity\PhaseGroup;
 use App\Entity\Set;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
@@ -15,6 +16,30 @@ use Doctrine\ORM\QueryBuilder;
  */
 class SetRepository extends EntityRepository
 {
+    /**
+     * @param PhaseGroup $phaseGroup
+     *
+     * @return Set[]
+     */
+    public function findByPhaseGroup($phaseGroup)
+    {
+        return $this
+            ->createQueryBuilder('s')
+            ->select('s, e1, e2, p1, p2, pr1, pr2')
+            ->leftJoin('s.phaseGroup', 'pg')
+            ->leftJoin('s.entrantOne', 'e1')
+            ->leftJoin('s.entrantTwo', 'e2')
+            ->leftJoin('e1.players', 'p1')
+            ->leftJoin('p1.profile', 'pr1')
+            ->leftJoin('e2.players', 'p2')
+            ->leftJoin('p2.profile', 'pr2')
+            ->where('pg = :phaseGroup')
+            ->setParameter('phaseGroup', $phaseGroup)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     /**
      * @param string $entrantId
      * @param string $phaseId

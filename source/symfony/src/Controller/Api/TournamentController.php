@@ -176,7 +176,7 @@ class TournamentController extends AbstractController
     /**
      * Returns the standings of a single tournament event.
      *
-     * @param int $eventId
+     * @param string $eventId
      *
      * @return array
      *

@@ -71,7 +71,7 @@ class Player
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
      *
      * @Serializer\Expose
-     * @Serializer\Groups({"profiles_ranks", "profiles_sets", "tournaments_standings"})
+     * @Serializer\Groups({"phase_group_sets", "profiles_ranks", "profiles_sets", "tournaments_standings"})
      *
      * @SWG\Property(example="[A]rmada")
      */
@@ -257,7 +257,7 @@ class Player
     /**
      * @return string|null
      *
-     * @Serializer\Groups({"profiles_ranks", "profiles_sets", "tournaments_standings"})
+     * @Serializer\Groups({"phase_group_sets", "profiles_ranks", "profiles_sets", "tournaments_standings"})
      * @Serializer\VirtualProperty()
      * @Serializer\Type("string")
      */
@@ -275,7 +275,7 @@ class Player
     /**
      * @return string|null
      *
-     * @Serializer\Groups({"profiles_ranks", "profiles_sets", "tournaments_standings"})
+     * @Serializer\Groups({"phase_group_sets", "profiles_ranks", "profiles_sets", "tournaments_standings"})
      * @Serializer\VirtualProperty()
      * @Serializer\Type("string")
      */
