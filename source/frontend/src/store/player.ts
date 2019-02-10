@@ -1,11 +1,12 @@
 import smashArchive from '../service/smasharchive';
+import { Player } from '../service/smasharchive/players';
 import { UserStore } from './';
 
 export interface PlayerStore {
   state: {
-    players: any[];
+    players: Player[];
   };
-  getPlayers: () => Promise<any[]>;
+  getPlayers: () => Promise<Player[]>;
 }
 
 const store: PlayerStore = {
@@ -15,9 +16,7 @@ const store: PlayerStore = {
 
   async getPlayers() {
     if (this.state.players.length === 0) {
-      const response = await smashArchive.players.getAll();
-
-      this.state.players = response.data;
+       this.state.players = await smashArchive.players.getAll();
     }
 
     return this.state.players;

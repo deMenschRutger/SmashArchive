@@ -1,11 +1,12 @@
 import smashArchive from '../service/smasharchive';
+import { Tournament } from '../service/smasharchive/tournaments';
 import { UserStore } from './';
 
 export interface TournamentStore {
   state: {
-    tournaments: any[];
+    tournaments: Tournament[];
   };
-  getTournaments: () => Promise<any[]>;
+  getTournaments: () => Promise<Tournament[]>;
 }
 
 const store: TournamentStore = {
@@ -15,9 +16,7 @@ const store: TournamentStore = {
 
   async getTournaments() {
     if (this.state.tournaments.length === 0) {
-      const response = await smashArchive.tournaments.getAll();
-
-      this.state.tournaments = response.data;
+      this.state.tournaments = await smashArchive.tournaments.getAll();
     }
 
     return this.state.tournaments;

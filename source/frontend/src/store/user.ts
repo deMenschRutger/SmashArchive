@@ -108,9 +108,6 @@ const store: UserStore = {
 
       if (decodedToken) {
         this.state.authentication.roles = decodedToken.roles;
-
-        console.log(this.state.authentication.roles);
-
       }
     }
   },
@@ -124,8 +121,6 @@ const store: UserStore = {
 
     this.state.authentication.accessToken = null;
     this.state.authentication.roles = [];
-
-    console.log(this.state.authentication.roles);
 
     this.state.profile = {
       id: null,
