@@ -1,9 +1,9 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    locale: 'en'
     facebook_app_id: '%env(resolve:FACEBOOK_APP_ID)%'
     facebook_app_secret: '%env(resolve:FACEBOOK_APP_SECRET)%'
+    locale: 'en'
 
 services:
     # default configuration for services in *this* file
