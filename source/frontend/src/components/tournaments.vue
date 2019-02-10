@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { TournamentStore } from '../store';
+import { TournamentStore, UserStore } from '../store';
 
 export default Vue.component('tournaments', {
   data: () => {

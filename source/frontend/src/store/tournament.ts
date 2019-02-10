@@ -1,4 +1,5 @@
 import smashArchive from '../service/smasharchive';
+import { UserStore } from './';
 
 export interface TournamentStore {
   state: {
@@ -14,7 +15,7 @@ const store: TournamentStore = {
 
   async getTournaments() {
     if (this.state.tournaments.length === 0) {
-      const response = await smashArchive.tournaments.getAll();
+      const response = await smashArchive.tournaments.getAll(UserStore.getAccessToken());
 
       this.state.tournaments = response.data;
     }

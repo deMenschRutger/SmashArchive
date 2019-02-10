@@ -1,4 +1,5 @@
 import smashArchive from '../service/smasharchive';
+import { UserStore } from './';
 
 export interface PlayerStore {
   state: {
@@ -14,7 +15,7 @@ const store: PlayerStore = {
 
   async getPlayers() {
     if (this.state.players.length === 0) {
-      const response = await smashArchive.players.getAll();
+      const response = await smashArchive.players.getAll(UserStore.getAccessToken());
 
       this.state.players = response.data;
     }

@@ -16,11 +16,6 @@ const router = new VueRouter({
   mode: 'history',
 });
 
-new Vue({
-  router,
-  el: '#app',
-});
-
 const config: any = (window as any).config;
 
 (window as any).fbAsyncInit = async function(): Promise<void> {
@@ -31,4 +26,9 @@ const config: any = (window as any).config;
   });
 
   await UserStore.init();
+
+  new Vue({
+    router,
+    el: '#app',
+  });
 };

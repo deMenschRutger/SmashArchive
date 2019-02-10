@@ -14,6 +14,7 @@ export interface UserStore {
       username: string | null;
     };
   };
+  getAccessToken: () => string;
   init: () => Promise<void>;
   tokenIsValid: (accessToken: string) => boolean;
   reconnect: () => Promise<void>;
@@ -34,6 +35,15 @@ const store: UserStore = {
       id: null,
       username: null,
     },
+  },
+
+  getAccessToken() {
+    if (!this.state.authentication.accessToken) {
+      // TODO Find a more elegant way to handle this situation.
+      return '';
+    }
+
+    return this.state.authentication.accessToken;
   },
 
   async init() {
