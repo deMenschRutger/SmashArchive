@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no"/>
 
-  <title><%= htmlWebpackPlugin.options.title %></title>
+  <title><%= title %></title>
 
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
         rel="stylesheet"
@@ -23,7 +23,7 @@
   <script>
     window.config = {
       facebook: {
-        appId: 'N/A',
+        appId: '<%= facebookAppId %>',
       }
     };
   </script>

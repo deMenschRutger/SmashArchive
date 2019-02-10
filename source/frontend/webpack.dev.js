@@ -22,7 +22,10 @@ module.exports = merge(common, {
     new CleanWebpackPlugin(['./dist']),
     new HtmlWebpackPlugin({
       template: 'index.html',
-      title: 'SmashArchive',
+      templateParameters: {
+        title: 'SmashArchive',
+        facebookAppId: process.env.FB_APP_ID,
+      },
     }),
   ],
   output: {

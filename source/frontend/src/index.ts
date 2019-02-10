@@ -23,12 +23,12 @@ new Vue({
 
 const config: any = (window as any).config;
 
-// (window as any).fbAsyncInit = async function(): Promise<void> {
-//   FB.init({
-//     appId: config.facebook.appId,
-//     xfbml: false,
-//     version: 'v3.0',
-//   });
-//
-//   await UserStore.init();
-// };
+(window as any).fbAsyncInit = async function(): Promise<void> {
+  FB.init({
+    appId: config.facebook.appId,
+    xfbml: false,
+    version: 'v3.0',
+  });
+
+  await UserStore.init();
+};
