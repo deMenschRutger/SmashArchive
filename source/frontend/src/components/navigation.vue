@@ -25,6 +25,9 @@
           <li>
             <router-link to="/players">Players</router-link>
           </li>
+          <li v-if="isAdmin">
+            <a>Admin</a>
+          </li>
         </ul>
         <authentication></authentication>
       </div>
@@ -34,6 +37,19 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { UserStore } from '../store';
 
-export default Vue.component('navigation', {});
+export default Vue.component('navigation', {
+  data: () => {
+    return {
+      UserStore,
+    };
+  },
+
+  computed: {
+    isAdmin () {
+      return UserStore.state.authentication.roles.indexOf('ROLE_ADMIN') >= 0;
+    }
+  }
+});
 </script>

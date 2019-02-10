@@ -1,13 +1,20 @@
 import * as jwt from 'jsonwebtoken';
-import * as _ from 'lodash';
 import * as Facebook from '../service/facebook';
 import smashArchive from '../service/smasharchive';
+
+type DecodedJwt = {
+  iat: number;
+  exp: number;
+  roles: string[],
+  sub: number,
+}
 
 export interface UserStore {
   state: {
     authentication: {
       accessToken: string | null;
       initialized: boolean;
+      roles: string[];
     };
     profile: {
       id: number | null;
@@ -16,7 +23,7 @@ export interface UserStore {
   };
   getAccessToken: () => string;
   init: () => Promise<void>;
-  tokenIsValid: (accessToken: string) => boolean;
+  decodeToken: (accessToken: string) => DecodedJwt | null;
   reconnect: () => Promise<void>;
   hasSession: () => boolean;
   clearSession: () => void;
@@ -30,6 +37,7 @@ const store: UserStore = {
     authentication: {
       accessToken: null,
       initialized: false,
+      roles: [],
     },
     profile: {
       id: null,
@@ -39,8 +47,7 @@ const store: UserStore = {
 
   getAccessToken() {
     if (!this.state.authentication.accessToken) {
-      // TODO Find a more elegant way to handle this situation.
-      return '';
+      throw new Error('Could not retrieve a valid access token.');
     }
 
     return this.state.authentication.accessToken;
@@ -48,9 +55,11 @@ const store: UserStore = {
 
   async init() {
     const accessToken = localStorage.getItem('app/accessToken');
+    const decodedToken = this.decodeToken(accessToken || '');
 
-    if (accessToken && this.tokenIsValid(accessToken)) {
+    if (decodedToken) {
       this.state.authentication.accessToken = accessToken;
+      this.state.authentication.roles = decodedToken.roles;
     } else {
       await this.reconnect();
     }
@@ -60,17 +69,21 @@ const store: UserStore = {
     return this.updateProfile();
   },
 
-  tokenIsValid(accessToken: string) {
-    const decodedToken: any | undefined = jwt.decode(accessToken);
+  decodeToken(accessToken: string) {
+    const decodedToken = <DecodedJwt | null>jwt.decode(accessToken);
 
-    if (!decodedToken || !_.has(decodedToken, 'exp')) {
-      return false;
+    if (!decodedToken || !decodedToken.exp) {
+      return null;
     }
 
     const expiresAt = decodedToken.exp * 1000;
     const now = Date.now();
 
-    return expiresAt > now;
+    if (expiresAt > now) {
+      return decodedToken;
+    }
+
+    return null;
   },
 
   async reconnect() {
@@ -88,7 +101,17 @@ const store: UserStore = {
 
     if (response.accessToken) {
       localStorage.setItem('app/accessToken', response.accessToken);
+
       this.state.authentication.accessToken = response.accessToken;
+
+      const decodedToken = this.decodeToken(response.accessToken);
+
+      if (decodedToken) {
+        this.state.authentication.roles = decodedToken.roles;
+
+        console.log(this.state.authentication.roles);
+
+      }
     }
   },
 
@@ -100,6 +123,9 @@ const store: UserStore = {
     localStorage.removeItem('app/accessToken');
 
     this.state.authentication.accessToken = null;
+    this.state.authentication.roles = [];
+
+    console.log(this.state.authentication.roles);
 
     this.state.profile = {
       id: null,
