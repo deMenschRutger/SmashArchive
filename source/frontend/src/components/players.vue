@@ -37,12 +37,12 @@ import { PlayerStore } from '../store';
 export default Vue.component('players', {
   data: () => {
     return {
-      players: [],
+      players: [] as any[],
     };
   },
 
   async created() {
-    await PlayerStore.getPlayers();
+    this.players = await PlayerStore.getPlayers();
   },
 });
 </script>

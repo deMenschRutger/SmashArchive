@@ -15,7 +15,7 @@ const store: TournamentStore = {
 
   async getTournaments() {
     if (this.state.tournaments.length === 0) {
-      const response = await smashArchive.tournaments.getAll(UserStore.getAccessToken());
+      const response = await smashArchive.tournaments.getAll();
 
       this.state.tournaments = response.data;
     }

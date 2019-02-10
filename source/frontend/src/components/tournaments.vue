@@ -38,12 +38,12 @@ import { TournamentStore, UserStore } from '../store';
 export default Vue.component('tournaments', {
   data: () => {
     return {
-      tournaments: [],
+      tournaments: [] as any[],
     };
   },
 
   async created() {
-    await TournamentStore.getTournaments();
+    this.tournaments = await TournamentStore.getTournaments();
   },
 });
 </script>

@@ -17,6 +17,7 @@ security:
         api:
             pattern: ^/api
             stateless: true
+            anonymous: true
             provider: jwt
             guard:
                 authenticators:
@@ -26,5 +27,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/profiles, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/tournaments, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/users/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
