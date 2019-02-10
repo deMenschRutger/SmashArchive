@@ -1,29 +1,26 @@
 import smashArchive from '../service/smasharchive';
 
 export interface TournamentStore {
-    state: {
-        tournaments: any[];
-    };
-    getTournaments: () => Promise<any[]>;
+  state: {
+    tournaments: any[];
+  };
+  getTournaments: () => Promise<any[]>;
 }
 
 const store: TournamentStore = {
-    state: {
-        tournaments: [],
-    },
+  state: {
+    tournaments: [],
+  },
 
-    /**
-     * @return {Promise<*[]>}
-     */
-    async getTournaments(): Promise<any[]> {
-        if (this.state.tournaments.length === 0) {
-            const response: any = await smashArchive.tournaments.getAll();
+  async getTournaments() {
+    if (this.state.tournaments.length === 0) {
+      const response = await smashArchive.tournaments.getAll();
 
-            this.state.tournaments = response.data;
-        }
+      this.state.tournaments = response.data;
+    }
 
-        return this.state.tournaments;
-    },
+    return this.state.tournaments;
+  },
 };
 
 export default store;

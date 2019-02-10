@@ -1,22 +1,26 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "es2015"],
-    "module": "es2015",
-    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["dom", "es2017"],
+    "module": "esnext",
+    "moduleResolution": "Node",
     "newLine": "LF",
+    "noEmitOnError": true,
     "noImplicitReturns": true,
-    "noImplicitThis": false,
     "noUnusedParameters": true,
+    "preserveConstEnums": true,
+    "pretty": true,
     "removeComments": true,
-    "sourceMap": false,
     "strict": true,
-    "target": "es5"
+    "suppressImplicitAnyIndexErrors": true,
+    "sourceMap": true,
+    "target": "es5",
+    "typeRoots": ["node_modules/@types", "@types"]
   },
-  "include" :[
+  "include": [
     "src/*",
     "src/**/*"
-  ],
-  "exclude": [
-    "node_modules"
   ]
 }

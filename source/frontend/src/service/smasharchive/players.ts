@@ -1,20 +1,11 @@
-import { AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosInstance } from 'axios';
 
-/**
- * @author Rutger Mensch <rutger@rutgermensch.com>
- */
 export default class Players {
-    /**
-     * @param {Object} agent
-     */
-    constructor (private agent: AxiosInstance) {}
+  constructor(private agent: AxiosInstance) {}
 
-    /**
-     * @return {Promise<*>}
-     */
-    public async getAll (): Promise<any> {
-        const response: AxiosResponse = await this.agent.get('/players/');
+  public async getAll() {
+    const response = await this.agent.get('/players/');
 
-        return response.data;
-    }
+    return response.data;
+  }
 }

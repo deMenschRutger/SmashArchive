@@ -1,38 +1,24 @@
-import axios, { AxiosInstance } from 'axios';
+import axios from 'axios';
 import Players from './players';
 import Tournaments from './tournaments';
 import Users from './users';
 
-/**
- * @author Rutger Mensch <rutger@rutgermensch.com>
- */
 class SmashArchive {
-    /**
-     * @type {Object}
-     */
-    public players: Players;
+  public players: Players;
+  public tournaments: Tournaments;
+  public users: Users;
 
-    /**
-     * @type {Object}
-     */
-    public tournaments: Tournaments;
+  constructor() {
+    const agent = axios.create({
+      baseURL: 'http://localhost:8000/api/',
+    });
 
-    /**
-     * @type {Object}
-     */
-    public users: Users;
-
-    constructor () {
-        const agent: AxiosInstance = axios.create({
-            baseURL: 'http://localhost:8000/api/',
-        });
-
-        this.players = new Players(agent);
-        this.tournaments = new Tournaments(agent);
-        this.users = new Users(agent)
-    }
+    this.players = new Players(agent);
+    this.tournaments = new Tournaments(agent);
+    this.users = new Users(agent);
+  }
 }
 
-const smashArchive: SmashArchive = new SmashArchive();
+const smashArchive = new SmashArchive();
 
 export default smashArchive;

@@ -4,148 +4,122 @@ import * as Facebook from '../service/facebook';
 import smashArchive from '../service/smasharchive';
 
 export interface UserStore {
-    state: {
-        authentication: {
-            accessToken: string | null;
-            initialized: boolean;
-        };
-        profile: {
-            id: number | null;
-            username: string | null;
-        }
+  state: {
+    authentication: {
+      accessToken: string | null;
+      initialized: boolean;
     };
-    init: () => Promise<void>;
-    tokenIsValid: (accessToken: string) => boolean;
-    reconnect: () => Promise<void>;
-    hasSession: () => void;
-    clearSession: () => void;
-    login: () => Promise<void>;
-    logout: () => Promise<void>;
-    updateProfile: () => Promise<void>;
+    profile: {
+      id: number | null;
+      username: string | null;
+    };
+  };
+  init: () => Promise<void>;
+  tokenIsValid: (accessToken: string) => boolean;
+  reconnect: () => Promise<void>;
+  hasSession: () => boolean;
+  clearSession: () => void;
+  login: () => Promise<void>;
+  logout: () => Promise<void>;
+  updateProfile: () => Promise<void>;
 }
 
 const store: UserStore = {
-    state: {
-        authentication: {
-            accessToken: null,
-            initialized: false,
-        },
-        profile: {
-            id: null,
-            username: null,
-        },
+  state: {
+    authentication: {
+      accessToken: null,
+      initialized: false,
     },
-
-    /**
-     * @return {Promise<void>}
-     */
-    async init(): Promise<void> {
-        const accessToken: string | null = localStorage.getItem('app/accessToken');
-
-        if (accessToken && this.tokenIsValid(accessToken)) {
-            this.state.authentication.accessToken = accessToken;
-        } else {
-            await this.reconnect();
-        }
-
-        this.state.authentication.initialized = true;
-
-        return this.updateProfile();
+    profile: {
+      id: null,
+      username: null,
     },
+  },
 
-    /**
-     * @param {string} accessToken
-     *
-     * @return {boolean}
-     */
-    tokenIsValid(accessToken: string): boolean {
-        const decodedToken: any = jwt.decode(accessToken);
+  async init() {
+    const accessToken = localStorage.getItem('app/accessToken');
 
-        if (!_.has(decodedToken, 'exp')) {
-            return false;
-        }
+    if (accessToken && this.tokenIsValid(accessToken)) {
+      this.state.authentication.accessToken = accessToken;
+    } else {
+      await this.reconnect();
+    }
 
-        const expiresAt: number = decodedToken.exp * 1000;
-        const now: number = Date.now();
+    this.state.authentication.initialized = true;
 
-        return expiresAt > now;
-    },
+    return this.updateProfile();
+  },
 
-    /**
-     * @return {Promise<void>}
-     */
-    async reconnect(): Promise<void> {
-        this.clearSession();
+  tokenIsValid(accessToken: string) {
+    const decodedToken: any | undefined = jwt.decode(accessToken);
 
-        const loginStatus: facebook.AuthResponse = await Facebook.getLoginStatus();
+    if (!decodedToken || !_.has(decodedToken, 'exp')) {
+      return false;
+    }
 
-        if (loginStatus.status !== 'connected') {
-            return;
-        }
+    const expiresAt = decodedToken.exp * 1000;
+    const now = Date.now();
 
-        const response: any = await smashArchive.users.login(
-            loginStatus.authResponse.accessToken,
-        );
+    return expiresAt > now;
+  },
 
-        if (response.accessToken) {
-            localStorage.setItem('app/accessToken', response.accessToken);
-            this.state.authentication.accessToken = response.accessToken;
-        }
-    },
+  async reconnect() {
+    this.clearSession();
 
-    /**
-     * @return {boolean}
-     */
-    hasSession(): boolean {
-        return !!this.state.authentication.accessToken;
-    },
+    const loginStatus = await Facebook.getLoginStatus();
 
-    /**
-     * @return {void}
-     */
-    clearSession(): void {
-        localStorage.removeItem('app/accessToken');
+    if (loginStatus.status !== 'connected') {
+      return;
+    }
 
-        this.state.authentication.accessToken = null;
+    const response = await smashArchive.users.login(
+      loginStatus.authResponse.accessToken,
+    );
 
-        this.state.profile = {
-            id: null,
-            username: null,
-        };
-    },
+    if (response.accessToken) {
+      localStorage.setItem('app/accessToken', response.accessToken);
+      this.state.authentication.accessToken = response.accessToken;
+    }
+  },
 
-    /**
-     * @return {Promise<void>}
-     */
-    async login(): Promise<void> {
-        await Facebook.login();
-        await this.reconnect();
+  hasSession() {
+    return !!this.state.authentication.accessToken;
+  },
 
-        return this.updateProfile();
-    },
+  clearSession() {
+    localStorage.removeItem('app/accessToken');
 
-    /**
-     * @return {Promise<void>}
-     */
-    async logout(): Promise<void> {
-        await Facebook.getLoginStatus();
-        await Facebook.logout();
+    this.state.authentication.accessToken = null;
 
-        this.clearSession();
-    },
+    this.state.profile = {
+      id: null,
+      username: null,
+    };
+  },
 
-    /**
-     * @return {Promise<void>}
-     */
-    async updateProfile(): Promise<void> {
-        if (!this.hasSession()) {
-            return;
-        }
+  async login() {
+    await Facebook.login();
+    await this.reconnect();
 
-        const accessToken: string = <string>this.state.authentication.accessToken;
+    return this.updateProfile();
+  },
 
-        this.state.profile = await smashArchive.users.me(accessToken);
-    },
+  async logout() {
+    await Facebook.getLoginStatus();
+    await Facebook.logout();
+
+    this.clearSession();
+  },
+
+  async updateProfile() {
+    if (!this.hasSession()) {
+      return;
+    }
+
+    const accessToken = <string>this.state.authentication.accessToken;
+
+    this.state.profile = await smashArchive.users.me(accessToken);
+  },
 };
 
 export default store;

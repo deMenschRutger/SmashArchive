@@ -1,8 +1,16 @@
 {
-  "extends": "tslint-config-airbnb",
+  "extends": ["tslint-config-airbnb", "tslint-config-prettier"],
   "rules": {
-    "cyclomatic-complexity": [true, 5],
+    "cyclomatic-complexity": [
+      true,
+      10
+    ],
     "import-name": false,
-    "ter-indent": [true, 4]
+    "ter-prefer-arrow-callback": false,
+    "variable-name": [
+      true,
+      "allow-leading-underscore",
+      "ban-keywords"
+    ]
   }
 }

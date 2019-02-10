@@ -7,11 +7,11 @@ import tournaments from './tournaments.vue';
 import tournamentsRow from './tournaments-row.vue';
 
 export {
-    authentication,
-    home,
-    navigation,
-    players,
-    playersRow,
-    tournaments,
-    tournamentsRow,
+  authentication,
+  home,
+  navigation,
+  players,
+  playersRow,
+  tournaments,
+  tournamentsRow,
 };
