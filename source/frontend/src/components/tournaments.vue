@@ -6,6 +6,11 @@
       __filters__
     </div>
     <div class="col-md-9">
+      <pagination
+        v-bind:pagination="store.state.pagination"
+        v-bind:store="store"
+      ></pagination>
+      <br />
       <table class="table">
         <thead>
           <tr>
@@ -16,17 +21,18 @@
         </thead>
         <tbody>
           <tournaments-row
-            v-for="tournament in tournaments"
+            v-for="tournament in store.state.tournaments"
             v-bind:key="tournament.id"
             v-bind:tournament="tournament"
           ></tournaments-row>
         </tbody>
       </table>
-      <div class="text-center">
-        __pagination__
-        <br />
-        <br />
-      </div>
+      <pagination
+        v-bind:pagination="store.state.pagination"
+        v-bind:store="store"
+      ></pagination>
+      <br />
+      <br />
     </div>
   </div>
 </template>
@@ -38,12 +44,12 @@ import { TournamentStore, UserStore } from '../store';
 export default Vue.component('tournaments', {
   data: () => {
     return {
-      tournaments: [] as any[],
+      store: TournamentStore,
     };
   },
 
-  async created() {
-    this.tournaments = await TournamentStore.getTournaments();
+  created() {
+    return TournamentStore.updateTournaments();
   },
 });
 </script>

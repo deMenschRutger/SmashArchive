@@ -4,7 +4,7 @@
       <a href="#">{{ tournament.name }}</a>
     </td>
     <td>{{ tournament.location }}</td>
-    <td>2018-06-02</td>
+    <td>{{ tournament.dateStart }}</td>
   </tr>
 </template>
 
