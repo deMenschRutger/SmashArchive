@@ -1,4 +1,5 @@
 import { AxiosInstance } from 'axios';
+import { Pagination } from './types';
 
 export type Tournament = {
   id: number;
@@ -20,12 +21,22 @@ export type Tournament = {
   isComplete: boolean;
 };
 
+export type TournamentResponse = {
+  data: Tournament[];
+  pagination: Pagination;
+};
+
 export default class Tournaments {
   constructor(private agent: AxiosInstance) {}
 
-  public async getAll(): Promise<Tournament[]> {
-    const response = await this.agent.get('/tournaments/');
+  public async getAll(): Promise<TournamentResponse> {
+    const response = await this.agent.get('/tournaments/', {
+      params: {
+        page: 3,
+        limit: 5,
+      },
+    });
 
-    return response.data.data;
+    return response.data;
   }
 }

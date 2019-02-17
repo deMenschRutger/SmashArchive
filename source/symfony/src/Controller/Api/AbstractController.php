@@ -4,12 +4,12 @@ declare(strict_types = 1);
 
 namespace App\Controller\Api;
 
+use App\RestApi\Response\KnpPaginatedResponse;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser;
 use MediaMonks\RestApi\Exception\FormValidationException;
-use MediaMonks\RestApi\Response\OffsetPaginatedResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -75,21 +75,10 @@ class AbstractController extends Controller
     /**
      * @param SlidingPagination $pagination
      *
-     * @return OffsetPaginatedResponse
+     * @return KnpPaginatedResponse
      */
     protected function buildPaginatedResponse(SlidingPagination $pagination)
     {
-        $data = [];
-
-        foreach ($pagination as $item) {
-            $data[] = $item;
-        }
-
-        $paginationData = $pagination->getPaginationData();
-        $offset = $paginationData['firstItemNumber'] - 1;
-        $limit = $paginationData['numItemsPerPage'];
-        $total = $paginationData['totalCount'];
-
-        return new OffsetPaginatedResponse($data, $offset, $limit, $total);
+        return new KnpPaginatedResponse($pagination);
     }
 }

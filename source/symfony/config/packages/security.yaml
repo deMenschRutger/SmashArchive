@@ -25,6 +25,7 @@ security:
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
+    # TODO Configure the exact protected routes.
     access_control:
         - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/profiles, roles: IS_AUTHENTICATED_ANONYMOUSLY }

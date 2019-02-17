@@ -25,6 +25,11 @@ use Webmozart\Assert\Assert;
 class Importer extends AbstractImporter
 {
     /**
+     * @var SymfonyStyle
+     */
+    protected $io;
+
+    /**
      * @var array
      */
     protected $rounds = [
@@ -106,12 +111,12 @@ class Importer extends AbstractImporter
      * @var array
      */
     protected $scenarios = [
-        'NoPhasesMultipleEvents'       => true, // Cleared (273 tournaments)
-        'NoPhasesSingleEventBracket'   => true, // Cleared (1057 tournaments)
-        'NoPhasesSingleEventNoBracket' => true, // Cleared (11 tournaments)
-        'PhasesMultipleEvents'         => true, // Cleared (114 tournaments)
+//        'NoPhasesMultipleEvents'       => true, // Cleared (273 tournaments)
+//        'NoPhasesSingleEventBracket'   => true, // Cleared (1057 tournaments)
+//        'NoPhasesSingleEventNoBracket' => true, // Cleared (11 tournaments)
+//        'PhasesMultipleEvents'         => true, // Cleared (114 tournaments)
         'PhasesSingleEventBracket'     => true, // Cleared (75 tournaments)
-        'PhasesSingleEventNoBracket'   => true, // Cleared (1 tournament)
+//        'PhasesSingleEventNoBracket'   => true, // Cleared (1 tournament)
     ];
 
     /**
@@ -121,7 +126,7 @@ class Importer extends AbstractImporter
      */
     public function __construct(SymfonyStyle $io, string $contentDirPath, EntityManagerInterface $entityManager)
     {
-        $this->setIo($io);
+        $this->io = $io;
         $this->contentDirPath = $contentDirPath;
         $this->setEntityManager($entityManager);
     }
