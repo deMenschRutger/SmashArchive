@@ -1,4 +1,5 @@
 import { AxiosInstance } from 'axios';
+import { Pagination } from './types';
 
 export type Player = {
   id: number;
@@ -22,12 +23,19 @@ export type Player = {
   isActive: boolean;
 };
 
+export type PlayerResponse = {
+  data: Player[];
+  pagination: Pagination;
+};
+
 export default class Players {
   constructor(private agent: AxiosInstance) {}
 
-  public async getAll(): Promise<Player[]> {
-    const response = await this.agent.get('/profiles/');
+  public async getAll(limit: number, page: number): Promise<PlayerResponse> {
+    const params: { [key: string]: string | number } = { limit, page };
 
-    return response.data.data;
+    const response = await this.agent.get('/profiles/', { params });
+
+    return response.data;
   }
 }

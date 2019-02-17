@@ -6,6 +6,11 @@
       __filters__
     </div>
     <div class="col-md-9">
+      <pagination
+        v-bind:pagination="store.state.pagination"
+        v-bind:store="store"
+      ></pagination>
+      <br />
       <table class="table">
         <thead>
           <tr>
@@ -15,17 +20,18 @@
         </thead>
         <tbody>
           <players-row
-            v-for="player in players"
+            v-for="player in store.state.players"
             v-bind:key="player.id"
             v-bind:player="player"
           ></players-row>
         </tbody>
       </table>
-      <div class="text-center">
-        __pagination__
-        <br />
-        <br />
-      </div>
+      <pagination
+        v-bind:pagination="store.state.pagination"
+        v-bind:store="store"
+      ></pagination>
+      <br />
+      <br />
     </div>
   </div>
 </template>
@@ -37,12 +43,12 @@ import { PlayerStore } from '../store';
 export default Vue.component('players', {
   data: () => {
     return {
-      players: [] as any[],
+      store: PlayerStore,
     };
   },
 
-  async created() {
-    this.players = await PlayerStore.getPlayers();
+  created() {
+    return PlayerStore.updatePlayers();
   },
 });
 </script>
