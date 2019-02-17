@@ -15,7 +15,7 @@
         <button type="submit" class="btn btn-default">Filter</button>
       </form>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-9" v-if="store.state.tournaments.length > 0">
       <pagination
         v-bind:pagination="store.state.pagination"
         v-bind:store="store"
@@ -43,6 +43,9 @@
       ></pagination>
       <br />
       <br />
+    </div>
+    <div class="col-md-9" v-else>
+      Could not find any results for your query.
     </div>
   </div>
 </template>

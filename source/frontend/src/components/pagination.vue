@@ -2,7 +2,7 @@
   <div class="text-center">
     <nav v-if="pagination">
       <ul class="pagination">
-        <li>
+        <li v-bind:class="{ disabled: pageNumber === pagination.previous }">
           <a
             href="#"
             v-on:click.prevent="changePageNumber(pagination.previous)"
@@ -18,7 +18,7 @@
             pageNumber
           }}</a>
         </li>
-        <li>
+        <li v-bind:class="{ disabled: pageNumber === pagination.next }">
           <a href="#" v-on:click.prevent="changePageNumber(pagination.next)">
             <span>&raquo;</span>
           </a>
@@ -36,6 +36,10 @@ export default Vue.component('pagination', {
 
   methods: {
     changePageNumber (pageNumber: number) {
+      if (!pageNumber) {
+        return;
+      }
+
       return this.store.updateFilter({
         page: pageNumber,
       });

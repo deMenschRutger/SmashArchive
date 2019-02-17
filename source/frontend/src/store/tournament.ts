@@ -55,10 +55,13 @@ const store: TournamentStore = {
 
   async updateFilter(values) {
     _.each(values, (value, key) => {
-      this.state.filters[key] = value;
-    });
+      if (this.state.filters[key] === value) {
+        return;
+      }
 
-    this.state.filtersUpdated = true;
+      this.state.filters[key] = value;
+      this.state.filtersUpdated = true;
+    });
 
     await this.updateTournaments();
   },

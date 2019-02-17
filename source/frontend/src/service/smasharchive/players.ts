@@ -31,8 +31,21 @@ export type PlayerResponse = {
 export default class Players {
   constructor(private agent: AxiosInstance) {}
 
-  public async getAll(limit: number, page: number): Promise<PlayerResponse> {
-    const params: { [key: string]: string | number } = { limit, page };
+  public async getAll(
+    limit: number,
+    page: number,
+    tag: string | undefined,
+    location: string | undefined,
+  ): Promise<PlayerResponse> {
+    let params: { [key: string]: string | number } = { limit, page };
+
+    if (tag) {
+      params.tag = tag;
+    }
+
+    if (location) {
+      params.location = location;
+    }
 
     const response = await this.agent.get('/profiles/', { params });
 

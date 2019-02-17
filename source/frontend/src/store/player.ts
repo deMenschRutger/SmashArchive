@@ -9,6 +9,8 @@ export interface PlayerStore {
     filters: {
       limit: number;
       page: number;
+      tag: string | undefined;
+      location: string | undefined;
     };
     filtersUpdated: boolean;
     players: Player[];
@@ -25,6 +27,8 @@ const store: PlayerStore = {
     filters: {
       limit: 50,
       page: 1,
+      tag: undefined,
+      location: undefined,
     },
     filtersUpdated: true,
     players: [],
@@ -39,6 +43,8 @@ const store: PlayerStore = {
     const response = await smashArchive.players.getAll(
       this.state.filters.limit,
       this.state.filters.page,
+      this.state.filters.tag,
+      this.state.filters.location,
     );
 
     this.state.players = response.data;
@@ -49,10 +55,13 @@ const store: PlayerStore = {
 
   async updateFilter(values) {
     _.each(values, (value, key) => {
-      this.state.filters[key] = value;
-    });
+      if (this.state.filters[key] === value) {
+        return;
+      }
 
-    this.state.filtersUpdated = true;
+      this.state.filters[key] = value;
+      this.state.filtersUpdated = true;
+    });
 
     await this.updatePlayers();
   },
