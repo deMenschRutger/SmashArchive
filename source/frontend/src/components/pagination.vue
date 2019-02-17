@@ -5,7 +5,7 @@
         <li>
           <a
             href="#"
-            v-on:click.prevent="store.changePage(pagination.previous)"
+            v-on:click.prevent="changePageNumber(pagination.previous)"
           >
             <span>&laquo;</span>
           </a>
@@ -14,12 +14,12 @@
           v-for="pageNumber in pagination.pagesInRange"
           v-bind:class="{ active: pageNumber === pagination.current }"
         >
-          <a href="#" v-on:click.prevent="store.changePage(pageNumber)">{{
+          <a href="#" v-on:click.prevent="changePageNumber(pageNumber)">{{
             pageNumber
           }}</a>
         </li>
         <li>
-          <a href="#" v-on:click.prevent="store.changePage(pagination.next)">
+          <a href="#" v-on:click.prevent="changePageNumber(pagination.next)">
             <span>&raquo;</span>
           </a>
         </li>
@@ -33,5 +33,13 @@ import Vue from 'vue';
 
 export default Vue.component('pagination', {
   props: ['pagination', 'store'],
+
+  methods: {
+    changePageNumber (pageNumber: number) {
+      return this.store.updateFilter({
+        page: pageNumber,
+      });
+    }
+  }
 });
 </script>

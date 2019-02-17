@@ -32,13 +32,20 @@ export default class Tournaments {
   public async getAll(
     limit: number,
     page: number,
+    name: string | undefined,
+    location: string | undefined,
   ): Promise<TournamentResponse> {
-    const response = await this.agent.get('/tournaments/', {
-      params: {
-        limit,
-        page,
-      },
-    });
+    let params: { [key: string]: string | number } = { limit, page };
+
+    if (name) {
+      params.name = name;
+    }
+
+    if (location) {
+      params.location = location;
+    }
+
+    const response = await this.agent.get('/tournaments/', { params });
 
     return response.data;
   }

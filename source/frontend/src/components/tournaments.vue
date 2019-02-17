@@ -3,7 +3,17 @@
     <div class="col-md-3 well">
       <h3>Tournaments</h3>
       <br />
-      __filters__
+      <form v-on:submit.prevent="updateFilters">
+        <div class="form-group">
+          <label for="filterName">Name</label>
+          <input type="text" class="form-control" id="filterName" v-model="name">
+        </div>
+        <div class="form-group">
+          <label for="filterLocation">Location</label>
+          <input type="text" class="form-control" id="filterLocation" v-model="location">
+        </div>
+        <button type="submit" class="btn btn-default">Filter</button>
+      </form>
     </div>
     <div class="col-md-9">
       <pagination
@@ -45,11 +55,23 @@ export default Vue.component('tournaments', {
   data: () => {
     return {
       store: TournamentStore,
+      name: undefined,
+      location: undefined,
     };
   },
 
   created() {
     return TournamentStore.updateTournaments();
+  },
+
+  methods: {
+    updateFilters () {
+      return this.store.updateFilter({
+        page: 1,
+        name: this.name,
+        location: this.location,
+      });
+    }
   },
 });
 </script>

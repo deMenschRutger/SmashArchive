@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import smashArchive from '../service/smasharchive';
 import { Tournament } from '../service/smasharchive/tournaments';
 import { Pagination } from '../service/smasharchive/types';
@@ -8,13 +9,17 @@ export interface TournamentStore {
     filters: {
       limit: number;
       page: number;
+      name: string | undefined;
+      location: string | undefined;
     };
     filtersUpdated: boolean;
     tournaments: Tournament[];
     pagination?: Pagination;
   };
   updateTournaments: () => Promise<void>;
-  changePage: (pageNumber: number) => Promise<void>;
+  updateFilter: (values: {
+    [key: string]: string | number | undefined;
+  }) => Promise<void>;
 }
 
 const store: TournamentStore = {
@@ -22,6 +27,8 @@ const store: TournamentStore = {
     filters: {
       limit: 50,
       page: 1,
+      name: undefined,
+      location: undefined,
     },
     filtersUpdated: true,
     tournaments: [],
@@ -36,6 +43,8 @@ const store: TournamentStore = {
     const response = await smashArchive.tournaments.getAll(
       this.state.filters.limit,
       this.state.filters.page,
+      this.state.filters.name,
+      this.state.filters.location,
     );
 
     this.state.tournaments = response.data;
@@ -44,8 +53,11 @@ const store: TournamentStore = {
     this.state.filtersUpdated = false;
   },
 
-  async changePage(pageNumber) {
-    this.state.filters.page = pageNumber;
+  async updateFilter(values) {
+    _.each(values, (value, key) => {
+      this.state.filters[key] = value;
+    });
+
     this.state.filtersUpdated = true;
 
     await this.updateTournaments();
