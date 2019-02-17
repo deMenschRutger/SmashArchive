@@ -5,9 +5,9 @@ import smashArchive from '../service/smasharchive';
 type DecodedJwt = {
   iat: number;
   exp: number;
-  roles: string[],
-  sub: number,
-}
+  roles: string[];
+  sub: number;
+};
 
 export interface UserStore {
   state: {

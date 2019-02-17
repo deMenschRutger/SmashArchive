@@ -16,7 +16,7 @@ const store: PlayerStore = {
 
   async getPlayers() {
     if (this.state.players.length === 0) {
-       this.state.players = await smashArchive.players.getAll();
+      this.state.players = await smashArchive.players.getAll();
     }
 
     return this.state.players;

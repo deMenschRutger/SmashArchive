@@ -47,9 +47,9 @@ export default Vue.component('navigation', {
   },
 
   computed: {
-    isAdmin () {
+    isAdmin() {
       return UserStore.state.authentication.roles.indexOf('ROLE_ADMIN') >= 0;
-    }
-  }
+    },
+  },
 });
 </script>

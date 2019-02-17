@@ -2,12 +2,12 @@ import { AxiosInstance } from 'axios';
 
 export type AccessTokenResponse = {
   accessToken: string;
-}
+};
 
 export type User = {
   id: number;
   username: string;
-}
+};
 
 export default class Users {
   constructor(private agent: AxiosInstance) {}

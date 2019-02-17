@@ -3,7 +3,10 @@
     <nav v-if="pagination">
       <ul class="pagination">
         <li>
-          <a href="#" v-on:click.prevent="store.changePage(pagination.previous)">
+          <a
+            href="#"
+            v-on:click.prevent="store.changePage(pagination.previous)"
+          >
             <span>&laquo;</span>
           </a>
         </li>
@@ -11,7 +14,9 @@
           v-for="pageNumber in pagination.pagesInRange"
           v-bind:class="{ active: pageNumber === pagination.current }"
         >
-          <a href="#" v-on:click.prevent="store.changePage(pageNumber)">{{ pageNumber }}</a>
+          <a href="#" v-on:click.prevent="store.changePage(pageNumber)">{{
+            pageNumber
+          }}</a>
         </li>
         <li>
           <a href="#" v-on:click.prevent="store.changePage(pagination.next)">
@@ -20,7 +25,7 @@
         </li>
       </ul>
     </nav>
-    </div>
+  </div>
 </template>
 
 <script lang="ts">

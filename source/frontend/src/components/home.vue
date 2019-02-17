@@ -38,9 +38,7 @@ export default Vue.component('home', {});
 </script>
 
 <style>
-
-  body {
-    padding-top: 80px;
-  }
-
+body {
+  padding-top: 80px;
+}
 </style>

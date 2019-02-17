@@ -29,7 +29,10 @@ export type TournamentResponse = {
 export default class Tournaments {
   constructor(private agent: AxiosInstance) {}
 
-  public async getAll(limit: number, page: number): Promise<TournamentResponse> {
+  public async getAll(
+    limit: number,
+    page: number,
+  ): Promise<TournamentResponse> {
     const response = await this.agent.get('/tournaments/', {
       params: {
         limit,
