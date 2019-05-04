@@ -6,9 +6,7 @@ exhaustive database of tournament results, it also aims to expose this data
 using an API.
 
 This project originated from the now defunct smashranking.eu project. A
-prototype version of SmashArchive, using the old smashranking.eu database, can
-be found at [smasharchive.eu](http://smasharchive.eu/). The code used for this
-prototype is no longer in use, but can still be inspected in the history of
+prototype version of SmashArchive can still be inspected in the history of
 this repository (it is tagged as version 0.1.0).
 
 ## Contribute
@@ -16,9 +14,7 @@ SmashArchive is currently in an early state. The front-end in particular still
 needs a lot of work before others can start adding tournament results using
 the site (currently all tournaments are imported manually on the CLI). We are
 currently looking for developers who are interested in contributing to the
-development of the front-end. If you are interested, please contact the
-project lead at rutger@rutgermensch.com or on
-[Twitter](https://twitter.com/UttoNL).
+project.
 
 ### Git workflow
 For developers contributing to the project, please note that we use the
@@ -53,6 +49,8 @@ can create [here](https://developers.facebook.com/). After this you have to
 enable JWT generation by creating your own keys in the directory
 `/source/symfony/config/jwt`, using these 
 [instructions](https://github.com/lexik/LexikJWTAuthenticationBundle/blob/master/Resources/doc/index.md#getting-started).
+You will also need to set the `FACEBOOK_APP_ID` and `FACEBOOK_APP_SECRET`
+environment variables (for example in your `.env` file).
 
 ##### Challonge
 You need to set your own Challonge API key if you want to be able to import
@@ -87,7 +85,15 @@ provider (smash.gg in the example).
 After you have imported a tournament, standings will not be automatically
 generated for it. To do so, execute this command:
 
-```bin/console app:tournament:import -i {event_id}```
+```bin/console app:event:standings:generate -i {event_id}```
+
+You can also execute the following command to generate standings for all
+imported events:
+
+```bin/console app:event:standings:generate --all 1```
+
+Be aware that this may take a long time on a database containing many
+tournaments.
 
 #### Starting the server
 You can start a local server for development purposes using this command:
@@ -103,23 +109,31 @@ API documentation at `http://localhost:8000/api/doc`.
 
 ### Front-end
 The front-end of SmashArchive currently uses Vue.js, but is in such an early
-state that this could still change. For now, you can build the front-end by
-navigating to the directory `/source/front-end` in your terminal and running:
+state that this could still change. For now, you can build the front-end
+locally by navigating to the directory `/source/front-end` in your terminal
+and running:
 
 ```yarn install```
 
 Followed by:
 
+```FB_APP_ID={your_facebook_app_id} yarn build:server```
+
+This will run a local development server using Webpack. Setting the `FB_APP_ID`
+to a Facebook app that is configured to run on `localhost` domains will allow
+you to log in locally.
+
+If you want to make a production build instead, simply run the following
+command:
+
 ```yarn build```
 
-If you don't use Yarn yet, you can get it [here](https://yarnpkg.com/).
+This will output a build to the `/source/front-end/dist` directory. You will
+have to manually move the `.js` file to `/source/symfony/public/dist/bundle.js`
+to use the build together with a running PHP server. On non-local environments
+this should be a part of a build step somehow.
 
-## Roadmap
-* Add additional API endpoints to retrieve information about tournaments and
-  players.
-* Improve the way tournaments and players are shown in the front-end.
-* Add API endpoints to add and modify tournaments and players.
-* Create an admin panel for admins to manage the data in the database.
+If you don't use Yarn yet, you can get it [here](https://yarnpkg.com/).
 
 ## License
 SmashArchive is licensed under
