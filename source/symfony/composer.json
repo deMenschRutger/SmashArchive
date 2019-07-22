@@ -38,7 +38,7 @@
         "zendframework/zend-crypt": "^3.3"
     },
     "require-dev": {
-        "sensiolabs/security-checker": "^4.1",
+        "sensiolabs/security-checker": "^5.0.3",
         "symfony/dotenv": "^4.1",
         "symfony/phpunit-bridge": "^4.1",
         "symfony/profiler-pack": "^1.0",
