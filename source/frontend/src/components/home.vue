@@ -11,23 +11,10 @@
       Obviously the project is far from done, but a large part of the back-end
       is already in place, and some data can already be accessed through an API.
     </p>
-    <br />
-    <h4>To-do</h4>
-    <ul>
-      <li>
-        Add additional API endpoints to retrieve information about tournaments
-        and players.
-      </li>
-      <li>
-        Improve the way tournaments and players are shown in the front-end.
-      </li>
-      <li>
-        Add API endpoints to add and modify tournaments and players.
-      </li>
-      <li>
-        Create an admin panel for admins to manage the data in the database.
-      </li>
-    </ul>
+    <p>
+      If you are a developer interested in contributing to the project, please
+      visit <a href="https://github.com/deMenschRutger/SmashArchive">our GitHub repository</a>.
+    </p>
   </div>
 </template>
 
