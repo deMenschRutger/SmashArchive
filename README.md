@@ -1,4 +1,4 @@
-# SmashArchive 
+# SmashArchive
 SmashArchive is an archive of results of tournaments for the Super Smash. Bros
 video game series (although it could easily be modified to accommodate any type
 of game where two parties compete against each other). Besides building an
@@ -22,7 +22,7 @@ For developers contributing to the project, please note that we use the
 
 ## Installing
 ### Back-end
-The SmashArchive back-end is built on the Symfony 4 framework. To install 
+The SmashArchive back-end is built on the Symfony 4 framework (it requires PHP 7.2). To install
 the project, first check out the repository (use the develop branch initially),
 then navigate to the Symfony root directory (`/source/symfony`) in your
 terminal and run:
@@ -47,7 +47,7 @@ Currently the only authentication mechanism available is Facebook. To make it
 work locally you will have to configure your own app ID and secret, which you
 can create [here](https://developers.facebook.com/). After this you have to
 enable JWT generation by creating your own keys in the directory
-`/source/symfony/config/jwt`, using these 
+`/source/symfony/config/jwt`, using these
 [instructions](https://github.com/lexik/LexikJWTAuthenticationBundle/blob/master/Resources/doc/index.md#getting-started).
 You will also need to set the `FACEBOOK_APP_ID` and `FACEBOOK_APP_SECRET`
 environment variables (for example in your `.env` file).
