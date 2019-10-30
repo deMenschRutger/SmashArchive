@@ -13,7 +13,7 @@
   "dependencies": {
     "axios": "~0.18.0",
     "jsonwebtoken": "~8.4.0",
-    "lodash": "~4.17.10",
+    "lodash": "~4.17.13",
     "vue": "~2.6.4",
     "vue-router": "~3.0.1"
   },
